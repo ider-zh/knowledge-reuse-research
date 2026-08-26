@@ -18,8 +18,15 @@ direction = "consumer_to_dependency"
 edge_types = ["TYPE", "VALUE"]
 
 [smoke]
-# Final module names will be frozen after inventory against the pinned checkout.
 domains = ["Algebra", "Analysis", "Topology", "NumberTheory", "CategoryTheory"]
 min_modules = 5
 max_modules = 20
-
+modules = [
+  "Mathlib.Algebra.BigOperators.Field",
+  "Mathlib.Analysis.Normed.Algebra.Ultra",
+  "Mathlib.CategoryTheory.MorphismProperty.HasCardinalLT",
+  "Mathlib.Data.Set.Lattice",
+  "Mathlib.ModelTheory.Substructures",
+  "Mathlib.NumberTheory.DiophantineApproximation.ContinuedFractions",
+  "Mathlib.Topology.Algebra.IsUniformGroup.Order",
+]

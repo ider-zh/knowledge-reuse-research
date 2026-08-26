@@ -1,0 +1,75 @@
+{
+  "artifacts": {
+    "edges": {
+      "null_counts": {
+        "dst_id": 0,
+        "edge_type": 0,
+        "multiplicity": 17561,
+        "snapshot_id": 0,
+        "src_id": 0
+      },
+      "path": "data/parquet/mathlib-v4.32.1/smoke/edges.parquet",
+      "rows": 17561,
+      "sha256": "47e195d1e81cf82e6d7e3eed0be72a31faa13fbccbc0c134b985693a196b85c9"
+    },
+    "external_nodes": {
+      "null_counts": {
+        "external_reason": 0,
+        "name": 0,
+        "node_id": 0,
+        "snapshot_id": 0
+      },
+      "path": "data/parquet/mathlib-v4.32.1/smoke/external_nodes.parquet",
+      "rows": 1071,
+      "sha256": "46de9ca4e7858583df4480e721a76079a72e79d960b99e6a1c01e2494965eff9"
+    },
+    "modules": {
+      "null_counts": {
+        "decl_count": 0,
+        "domain": 0,
+        "duration_seconds": 0,
+        "edge_count": 0,
+        "error_text": 7,
+        "module": 0,
+        "snapshot_id": 0,
+        "source_file": 0,
+        "status": 0,
+        "warning_count": 0
+      },
+      "path": "data/parquet/mathlib-v4.32.1/smoke/modules.parquet",
+      "rows": 7,
+      "sha256": "b84782b0ce12fcd195fd6eceb9dbddfcf3cffbbc2592aac8c8c730a0b0ed36e7"
+    },
+    "nodes": {
+      "null_counts": {
+        "domain": 0,
+        "has_value": 0,
+        "is_definition": 0,
+        "is_generated": 0,
+        "is_internal": 0,
+        "is_theorem": 0,
+        "kind": 0,
+        "module": 0,
+        "name": 0,
+        "node_id": 0,
+        "snapshot_id": 0,
+        "source_bytes": 220,
+        "source_file": 0,
+        "source_lines": 220,
+        "source_tokens": 220,
+        "type_const_unique": 0,
+        "type_expr_nodes": 0,
+        "value_const_unique": 3,
+        "value_expr_nodes": 3
+      },
+      "path": "data/parquet/mathlib-v4.32.1/smoke/nodes.parquet",
+      "rows": 758,
+      "sha256": "280f7df972453e86c041c1260d677230767fd615404e0242525dfd5936d9b871"
+    }
+  },
+  "generated_heuristic": "name matches private/auxiliary/recursor/cases/noConfusion/injection/ctorIdx/sizeOf patterns",
+  "run_kind": "smoke",
+  "schema_version": "normalized-manifest-v1",
+  "snapshot_id": "mathlib-v4.32.1",
+  "source_length_status": "declaration_ranges_with_nulls_for_unranged_generated_declarations"
+}

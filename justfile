@@ -15,22 +15,37 @@ golden:
     uv run pytest -q tests/golden
 
 inventory:
-    uv run python scripts/inventory.py
+    uv run python -m scripts.inventory
 
 extract-smoke:
-    uv run python scripts/run_extract.py --smoke
+    uv run python -m scripts.run_extract --smoke
 
 extract:
-    uv run python scripts/run_extract.py
+    uv run python -m scripts.run_extract
+
+benchmark-extract:
+    uv run python -m scripts.benchmark_extract
 
 normalize:
     uv run python -m pipeline.normalize
 
+normalize-smoke:
+    uv run python -m pipeline.normalize --smoke
+
 validate:
-    uv run python scripts/verify_run.py
+    uv run python -m scripts.verify_run
+
+validate-smoke:
+    uv run python -m scripts.verify_run --smoke
 
 analyze:
     uv run python -m pipeline.metrics
+
+analyze-smoke:
+    uv run python -m pipeline.metrics --smoke
+
+report-smoke:
+    uv run python -m pipeline.report --smoke
 
 report:
     uv run python -m pipeline.report

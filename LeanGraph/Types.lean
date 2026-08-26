@@ -25,6 +25,10 @@ structure DeclRecord where
   valueExprNodes : Option Nat
   typeConstants : Array String
   valueConstants : Option (Array String)
+  sourceStartLine : Option Nat
+  sourceStartColumn : Option Nat
+  sourceEndLine : Option Nat
+  sourceEndColumn : Option Nat
 
 structure EdgeRecord where
   snapshot : String
@@ -33,4 +37,3 @@ structure EdgeRecord where
   edgeType : EdgeType
 
 end LeanGraph
-

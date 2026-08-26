@@ -14,8 +14,10 @@ open LeanGraph.Compat
 private def sortedNames (names : Array Name) : Array String :=
   names.qsort Name.quickLt |>.map (·.toString)
 
-def extractDecl (snapshot : String) (module : Name) (info : ConstantInfo) : DeclRecord :=
+def extractDecl (env : Environment) (snapshot : String) (module : Name)
+    (info : ConstantInfo) : DeclRecord :=
   let value? := getDeclarationValue? info
+  let range? := getSourceRangeFromEnv? env info.name |>.map (·.range)
   {
     snapshot
     name := info.name.toString
@@ -26,6 +28,10 @@ def extractDecl (snapshot : String) (module : Name) (info : ConstantInfo) : Decl
     valueExprNodes := value?.map ExprStats.treeOccurrences
     typeConstants := sortedNames (getUsedConstants info.type)
     valueConstants := value?.map fun value => sortedNames (getUsedConstants value)
+    sourceStartLine := range?.map (·.pos.line)
+    sourceStartColumn := range?.map (·.pos.column)
+    sourceEndLine := range?.map (·.endPos.line)
+    sourceEndColumn := range?.map (·.endPos.column)
   }
 
 def DeclRecord.edges (record : DeclRecord) : Array EdgeRecord :=
@@ -49,7 +55,11 @@ def DeclRecord.toJson (record : DeclRecord) : Json := Json.mkObj [
   ("type_expr_nodes", record.typeExprNodes),
   ("value_expr_nodes", optionNatJson record.valueExprNodes),
   ("type_const_unique", record.typeConstants.size),
-  ("value_const_unique", optionNatJson (record.valueConstants.map (·.size)))
+  ("value_const_unique", optionNatJson (record.valueConstants.map (·.size))),
+  ("source_start_line", optionNatJson record.sourceStartLine),
+  ("source_start_column", optionNatJson record.sourceStartColumn),
+  ("source_end_line", optionNatJson record.sourceEndLine),
+  ("source_end_column", optionNatJson record.sourceEndColumn)
 ]
 
 def EdgeRecord.toJson (record : EdgeRecord) : Json := Json.mkObj [
@@ -62,4 +72,3 @@ def EdgeRecord.toJson (record : EdgeRecord) : Json := Json.mkObj [
 ]
 
 end LeanGraph
-

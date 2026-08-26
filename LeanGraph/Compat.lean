@@ -40,6 +40,12 @@ def getSourceRange? [Monad m] [MonadEnv m] [MonadLiftT BaseIO m]
     (name : Name) : m (Option DeclarationRanges) :=
   Lean.findDeclarationRanges? name
 
+/-- Read persisted declaration ranges directly from an imported module. -/
+def getSourceRangeFromEnv? (env : Environment) (name : Name) : Option DeclarationRanges :=
+  Lean.declRangeExt.find? (level := .exported) env name <|>
+    Lean.declRangeExt.find? (level := .server) env name <|>
+    Lean.declRangeExt.find? (level := .private) env name
+
 /-- Visibility evidence available without guessing from declaration prefixes. -/
 structure VisibilityInfo where
   isImported : Bool
@@ -51,4 +57,3 @@ def getVisibilityInfo? (env : Environment) (name : Name) : Option VisibilityInfo
   return { isImported := env.isImportedConst name, hasValue := (getDeclarationValue? info).isSome }
 
 end LeanGraph.Compat
-

@@ -6,25 +6,54 @@ from that checkout rather than duplicated by hand.
 
 ## Current status
 
-Phase 0 (bootstrap) is in progress. Full-corpus extraction is intentionally
-blocked until the pinned-version capability probe and exact golden dependency
-tests pass.
+The pinned capability probe, exact golden dependency gate, deterministic
+inventory/sharding, resumable extraction, Parquet normalization, DuckDB audit,
+statistical analysis, and offline report pipeline are implemented. The compact
+result summaries identify whether a run is the smoke corpus or the full corpus;
+do not interpret smoke estimates as mathlib-wide findings.
 
 ## Bootstrap
 
-Prerequisites: Git, Python 3.12+, `uv`, and network access for the initial
-mathlib checkout and dependency downloads.
+Prerequisites: Git, Python 3.12+, `uv`, `just`, and network access for the
+initial mathlib checkout and dependency downloads.
 
 ```bash
 just doctor
 just bootstrap
 just probe
 just golden
+just inventory
 ```
 
-The remaining command surface is reserved by the experiment specification:
-`inventory`, `extract-smoke`, `extract`, `normalize`, `validate`, `analyze`,
-`report`, and `all`.
+Run the cheap end-to-end validation path first:
+
+```bash
+just extract-smoke
+just normalize-smoke
+just validate-smoke
+just analyze-smoke
+just report-smoke
+```
+
+Then reproduce the formal full-corpus result:
+
+```bash
+just extract       # resumable; checksummed shards are skipped
+just normalize
+just validate      # hard gate before interpreting results
+just analyze
+just report
+```
+
+`just all` executes bootstrap through report in dependency order. Extraction
+worker scaling can be measured with `just benchmark-extract` (1, 2, 4, and 8
+workers on the frozen smoke module list).
+
+The final offline artifact is
+`results/report/report_standalone.html`. Its ordinary local-assets counterpart
+is `results/report/index.html`. Machine-readable results live in
+`results/metrics/` and `results/tables/`; run identity and checksums are recorded
+in `results/run-manifest.json` and the stage summaries under `results/`.
 
 ## Data policy
 
@@ -32,3 +61,12 @@ The remaining command surface is reserved by the experiment specification:
 Raw extraction data is immutable JSONL.zst; canonical analytical data is
 Parquet; DuckDB databases are rebuildable caches.
 
+## Semantics and interpretation
+
+Edges point from a consumer declaration to a dependency. TYPE and VALUE edges
+are retained separately, and reuse is the target's unique-source indegree.
+Extraction uses Lean's elaborated environment with pinned-version `import all`;
+source text is used only for range-based length metrics, never dependency
+identity. Tail claims are based on fitted-model comparisons, not visual log-log
+linearity. `H*ref` is explicitly an empirical operational proxy, not a claim to
+Veldhuizen's theoretical entropy H.

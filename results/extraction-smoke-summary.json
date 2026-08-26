@@ -1,0 +1,99 @@
+{
+  "bytes_written": 114718,
+  "failed_retries": 0,
+  "module_count": 7,
+  "peak_child_rss_kib": 2022388,
+  "record_count": 18326,
+  "records_per_second": 202.27148584323308,
+  "run_kind": "smoke",
+  "schema_version": "raw-manifest-v1",
+  "shard_count": 7,
+  "shards": [
+    {
+      "bytes_written": 3205,
+      "duration_seconds": 29.6920245597139,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00000.jsonl.zst",
+      "record_count": 442,
+      "resumed": false,
+      "sha256": "3b762aabc003a00779dbf077727d6021f847b9d1c507ea974460e22ddd13bf2a",
+      "shard_id": "smoke-00000",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 1585,
+      "duration_seconds": 55.08677107701078,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00001.jsonl.zst",
+      "record_count": 166,
+      "resumed": false,
+      "sha256": "1ce9fbd80b959a78ee829334d2d5af0aafd543177bed855b69a613f8d1a1e821",
+      "shard_id": "smoke-00001",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 1450,
+      "duration_seconds": 32.506905564107,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00002.jsonl.zst",
+      "record_count": 145,
+      "resumed": false,
+      "sha256": "480993f682dcca070b98c0508f33fb8380de9f4f0ad76a17f36cf5448eb102c4",
+      "shard_id": "smoke-00002",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 50808,
+      "duration_seconds": 13.769407605752349,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00003.jsonl.zst",
+      "record_count": 8032,
+      "resumed": false,
+      "sha256": "fe3fcc2faa9f02ebffc21b92f0ff09c9e6da5f1e00d28bdc983a02af10a0528f",
+      "shard_id": "smoke-00003",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 54058,
+      "duration_seconds": 31.981357583776116,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00004.jsonl.zst",
+      "record_count": 9128,
+      "resumed": false,
+      "sha256": "ae2903d8220ec8980d81a4804b62c80782a629e4a8312e277ca1d75988a8b1a5",
+      "shard_id": "smoke-00004",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 1698,
+      "duration_seconds": 60.90376275079325,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00005.jsonl.zst",
+      "record_count": 186,
+      "resumed": false,
+      "sha256": "fcae5cf102516383e0974e955e01149df1afaf62b9492ddb69fa34d11d577d79",
+      "shard_id": "smoke-00005",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 1914,
+      "duration_seconds": 40.19713734136894,
+      "module_audits": null,
+      "raw_path": "data/raw/mathlib-v4.32.1/smoke/smoke-00006.jsonl.zst",
+      "record_count": 227,
+      "resumed": false,
+      "sha256": "c47bcb7aecc3f5cdbfda65def8f8c7ffe388c10d43e7d692735488e6e93f236b",
+      "shard_id": "smoke-00006",
+      "status": "ok"
+    }
+  ],
+  "snapshot_id": "mathlib-v4.32.1",
+  "status_counts": {
+    "excluded": 0,
+    "failed": 0,
+    "ok": 7,
+    "partial": 0
+  },
+  "wall_time_seconds": 90.60100549319759,
+  "worker_count": 4
+}
