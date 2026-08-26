@@ -8,4 +8,15 @@ path = "vendor/mathlib4"
 
 [[lean_lib]]
 name = "LeanGraph"
-roots = ["LeanGraph.Compat", "LeanGraph.ProbeFixture"]
+roots = [
+  "LeanGraph.Compat",
+  "LeanGraph.Types",
+  "LeanGraph.ExprStats",
+  "LeanGraph.ExtractDecl",
+  "LeanGraph.ExtractModule",
+  "LeanGraph.ProbeFixture",
+]
+
+[[lean_exe]]
+name = "lean-graph-extract"
+root = "LeanGraph.Main"

@@ -1,0 +1,22 @@
+{
+  "checks": {
+    "no_duplicate_nodes": true,
+    "no_duplicate_typed_edges": true,
+    "node_count": true,
+    "node_set_exact": true,
+    "one_successful_audit": true,
+    "required_nodes": true,
+    "required_typed_edges": true,
+    "typed_edge_count": true,
+    "typed_edge_set_exact": true
+  },
+  "module": "LeanGraph.ProbeFixture",
+  "observed": {
+    "node_count": 60,
+    "node_set_sha256": "cbc0aa52608306452d6ee30e66f2b210a57b2af42d06eeb4c393eee999bcf73c",
+    "typed_edge_count": 409,
+    "typed_edge_set_sha256": "df3f6d09e5289647c9a1bbd879ed3ce7a81a48d3a13902209d71c66e9d2808de"
+  },
+  "passed": true,
+  "schema_version": "golden-v1"
+}

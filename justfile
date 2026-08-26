@@ -11,6 +11,7 @@ probe:
     uv run python scripts/run_probe.py
 
 golden:
+    uv run python scripts/run_golden.py
     uv run pytest -q tests/golden
 
 inventory:
@@ -35,4 +36,3 @@ report:
     uv run python -m pipeline.report
 
 all: bootstrap probe golden inventory extract normalize validate analyze report
-
