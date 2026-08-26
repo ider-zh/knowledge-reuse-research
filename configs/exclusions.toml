@@ -1,0 +1,20 @@
+[[rule]]
+pattern = "Archive/**"
+reason = "Historical archive outside the primary corpus"
+
+[[rule]]
+pattern = "MathlibTest/**"
+reason = "Test sources"
+
+[[rule]]
+pattern = "Mathlib/Counterexamples/**"
+reason = "Counterexamples excluded from the primary experiment"
+
+[[rule]]
+pattern = "**/Benchmarks/**"
+reason = "Benchmark sources"
+
+[[rule]]
+pattern = "**/benchmark*/**"
+reason = "Benchmark sources"
+

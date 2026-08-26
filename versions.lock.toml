@@ -1,0 +1,10 @@
+schema_version = "lean-graph-v1"
+
+[mathlib]
+repository = "https://github.com/leanprover-community/mathlib4.git"
+tag = "v4.32.1"
+commit = "520045ab14e26149ee970e2e617ca04b09bde5d6"
+
+[python]
+requires = ">=3.12"
+package_lock = "uv.lock"

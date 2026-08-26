@@ -1,0 +1,9 @@
+{
+  "checkout_clean": true,
+  "git_path": "/usr/bin/git",
+  "lean_toolchain": "leanprover/lean4:v4.32.1",
+  "mathlib_commit": "520045ab14e26149ee970e2e617ca04b09bde5d6",
+  "mathlib_repository": "https://github.com/leanprover-community/mathlib4.git",
+  "mathlib_tag": "v4.32.1",
+  "schema_version": "lean-graph-v1"
+}

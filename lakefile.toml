@@ -1,0 +1,11 @@
+name = "knowledge-reuse-research"
+version = "0.1.0"
+defaultTargets = ["LeanGraph"]
+
+[[require]]
+name = "mathlib"
+path = "vendor/mathlib4"
+
+[[lean_lib]]
+name = "LeanGraph"
+roots = ["LeanGraph.Compat", "LeanGraph.ProbeFixture"]
