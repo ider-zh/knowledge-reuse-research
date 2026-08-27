@@ -4,7 +4,7 @@ mathlib_tag = "v4.32.1"
 corpus_glob = "Mathlib/**/*.lean"
 raw_format = "jsonl.zst"
 canonical_format = "parquet"
-default_workers = 4
+default_workers = 8
 multiplicity = "nullable_pending_probe"
 
 [gates]

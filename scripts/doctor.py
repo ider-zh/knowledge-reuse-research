@@ -1,16 +1,23 @@
 from __future__ import annotations
 
 import json
+import pathlib
 import shutil
 import sys
 
 
-REQUIRED = ("git", "uv")
-OPTIONAL = ("just", "lean", "lake", "zstd", "duckdb", "rustc")
+REQUIRED = ("git", "uv", "just")
+OPTIONAL = ("lean", "lake", "zstd", "duckdb", "rustc")
+
+
+def locate(name: str) -> str | None:
+    found = shutil.which(name)
+    elan = pathlib.Path.home() / ".elan" / "bin" / name
+    return found or (str(elan) if elan.is_file() else None)
 
 
 def main() -> int:
-    tools = {name: shutil.which(name) for name in (*REQUIRED, *OPTIONAL)}
+    tools = {name: locate(name) for name in (*REQUIRED, *OPTIONAL)}
     payload = {
         "python": sys.version.split()[0],
         "tools": tools,
@@ -23,4 +30,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

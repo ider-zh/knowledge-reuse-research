@@ -1,9 +1,9 @@
 {
-  "config_sha256": "6459f0b642a37d31408b3e39062397636e6f3920201ed458c99232daa3ebe768",
+  "config_sha256": "b6df914e02c8366749b98dc53c8bff81a06d0c1ffc13f57ff198003a7553129e",
   "cpu": "Intel(R) Core(TM) i7-5820K CPU @ 3.30GHz",
   "duckdb_version": "1.4.0",
-  "extractor_commit": "84f5662df35dbc7353b3116610a9675e0b4372a2",
-  "finished_at": null,
+  "extractor_commit": "114c840922cba627e88dc53e56411e5fb134699b",
+  "finished_at": "2026-08-26T19:42:15.540659+00:00",
   "lean_toolchain": "leanprover/lean4:v4.32.1",
   "mathlib_commit": "520045ab14e26149ee970e2e617ca04b09bde5d6",
   "mathlib_tag": "v4.32.1",
@@ -11,11 +11,11 @@
   "polars_version": "1.32.3",
   "python_version": "3.13.12",
   "ram_bytes": 134963523584,
-  "raw_manifest_sha256": "bc1e53ad879bb94ec398b75ded0dc53c4005c0729dd9fc276cefbed274472a8c",
+  "raw_manifest_sha256": "c4093fdf01e9151c7f14dd321424ba9a4fb4f5005d625f839f1bc0c94d6cda2a",
   "run_kind": "smoke",
   "rust_version": null,
   "schema_version": "lean-graph-v1",
   "snapshot_id": "mathlib-v4.32.1",
-  "started_at": null,
-  "worker_count": 4
+  "started_at": "2026-08-26T19:41:10.163260+00:00",
+  "worker_count": 8
 }

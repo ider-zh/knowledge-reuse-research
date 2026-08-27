@@ -16,6 +16,7 @@ golden:
 
 inventory:
     uv run python -m scripts.inventory
+    uv run python -m scripts.make_shards
 
 extract-smoke:
     uv run python -m scripts.run_extract --smoke

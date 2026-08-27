@@ -313,6 +313,7 @@ source ranges. Path domains are coarse. Statistical results are observational.</
 the reproducible baseline. Next: cross-version comparisons, bootstrap
 goodness-of-fit, and attribution-sensitive views.</p></section>
 <section><h2>17. Appendix</h2><h3>Top reusable declarations</h3>{{ top_table|safe }}
+<h3>Extraction worker benchmark</h3>{{ benchmark_table|safe }}
 <h3>Commands</h3><pre>just bootstrap
 just probe
 just golden
@@ -360,6 +361,14 @@ def generate(run_kind: str) -> dict[str, Any]:
     matrix = pl.read_parquet(tables / "domain_matrix.parquet")
     views = pl.read_parquet(metrics / "view_metrics.parquet")
     bins = pl.read_parquet(metrics / "length_binned.parquet")
+    benchmark_path = metrics / "extraction_benchmark.parquet"
+    benchmark = (
+        pl.read_parquet(benchmark_path)
+        if benchmark_path.exists()
+        else pl.DataFrame(
+            json.loads((ROOT / "results" / "extraction-benchmark.json").read_text())["rows"]
+        )
+    )
 
     degree = sorted(nodes["in_degree_all"].to_list(), reverse=True)
     positive = sorted([value for value in degree if value > 0])
@@ -377,7 +386,7 @@ def generate(run_kind: str) -> dict[str, Any]:
     ]
     kind_counts = sorted(summary["declaration_counts_by_kind"].items())
     top_domains = domains.sort("node_count", descending=True).head(14)
-    all_fit = fits.filter(pl.col("population") == "all")
+    all_fit = fits.filter(pl.col("population") == "all_declarations")
     alpha = (
         float(all_fit["alpha"][0])
         if all_fit.height and all_fit["alpha"][0] is not None
@@ -558,6 +567,7 @@ def generate(run_kind: str) -> dict[str, Any]:
             ),
             25,
         ),
+        "benchmark_table": render_table(benchmark, 10),
     }
     (report / "index.html").write_text(TEMPLATE.render(**context, figs=local))
     standalone = TEMPLATE.render(**context, figs=inline)

@@ -47,7 +47,9 @@ just report
 
 `just all` executes bootstrap through report in dependency order. Extraction
 worker scaling can be measured with `just benchmark-extract` (1, 2, 4, and 8
-workers on the frozen smoke module list).
+workers on the frozen smoke module list). The v1 default is 8 workers, selected
+from the recorded benchmark; lower it with `--workers` on memory-constrained
+machines.
 
 The final offline artifact is
 `results/report/report_standalone.html`. Its ordinary local-assets counterpart

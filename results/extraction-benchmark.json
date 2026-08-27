@@ -1,0 +1,46 @@
+{
+  "rows": [
+    {
+      "all_modules_ok": true,
+      "bytes_written": 114807,
+      "failed_retries": 0,
+      "peak_child_rss_kib": 2025264,
+      "record_count": 18326,
+      "records_per_second": 70.474242528339,
+      "wall_time_seconds": 260.0382684869692,
+      "worker_count": 1
+    },
+    {
+      "all_modules_ok": true,
+      "bytes_written": 114811,
+      "failed_retries": 0,
+      "peak_child_rss_kib": 2024848,
+      "record_count": 18326,
+      "records_per_second": 138.58767246817303,
+      "wall_time_seconds": 132.23398353997618,
+      "worker_count": 2
+    },
+    {
+      "all_modules_ok": true,
+      "bytes_written": 114806,
+      "failed_retries": 0,
+      "peak_child_rss_kib": 2024140,
+      "record_count": 18326,
+      "records_per_second": 203.23329815813744,
+      "wall_time_seconds": 90.17223145067692,
+      "worker_count": 4
+    },
+    {
+      "all_modules_ok": true,
+      "bytes_written": 114806,
+      "failed_retries": 0,
+      "peak_child_rss_kib": 2020976,
+      "record_count": 18326,
+      "records_per_second": 280.31098917889784,
+      "wall_time_seconds": 65.37738692900166,
+      "worker_count": 8
+    }
+  ],
+  "run_kind": "smoke",
+  "schema_version": "extraction-benchmark-v1"
+}
