@@ -28,10 +28,10 @@ benchmark-extract:
     uv run python -m scripts.benchmark_extract
 
 normalize:
-    uv run python -m pipeline.normalize
+    uv run python -m knowledge_reuse.sources.lean_mathlib.normalize
 
 normalize-smoke:
-    uv run python -m pipeline.normalize --smoke
+    uv run python -m knowledge_reuse.sources.lean_mathlib.normalize --smoke
 
 validate:
     uv run python -m scripts.verify_run
@@ -40,15 +40,15 @@ validate-smoke:
     uv run python -m scripts.verify_run --smoke
 
 analyze:
-    uv run python -m pipeline.metrics
+    uv run python -m knowledge_reuse.sources.lean_mathlib.metrics
 
 analyze-smoke:
-    uv run python -m pipeline.metrics --smoke
+    uv run python -m knowledge_reuse.sources.lean_mathlib.metrics --smoke
 
 report-smoke:
-    uv run python -m pipeline.report --smoke
+    uv run python -m knowledge_reuse.sources.lean_mathlib.report --smoke
 
 report:
-    uv run python -m pipeline.report
+    uv run python -m knowledge_reuse.sources.lean_mathlib.report
 
 all: bootstrap probe golden inventory extract normalize validate analyze report

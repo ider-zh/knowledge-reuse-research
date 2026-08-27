@@ -7,7 +7,7 @@ import pathlib
 import tomllib
 from typing import Any
 
-from pipeline.domains import domain_from_module, module_from_path
+from knowledge_reuse.sources.lean_mathlib.domains import domain_from_module, module_from_path
 
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
@@ -130,4 +130,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

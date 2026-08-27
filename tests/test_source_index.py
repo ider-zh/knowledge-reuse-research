@@ -1,4 +1,4 @@
-from pipeline.source_index import slice_range
+from knowledge_reuse.sources.lean_mathlib.source_index import slice_range
 
 
 def test_slice_range_uses_lean_line_and_column_coordinates(tmp_path) -> None:

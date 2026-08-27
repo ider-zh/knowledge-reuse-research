@@ -4,6 +4,11 @@ Reproducible research on declaration-level knowledge reuse in Lean 4 / mathlib.
 The baseline experiment is pinned to mathlib `v4.32.1`; Lean's toolchain is read
 from that checkout rather than duplicated by hand.
 
+This is now a multi-source research monorepo. Lean/mathlib is the first adapter;
+Wikipedia and open-source software graph workstreams have isolated namespaces
+and experiment folders. Shared cross-system contracts and ownership rules are
+documented in [`docs/architecture.md`](docs/architecture.md).
+
 ## Current status
 
 The pinned capability probe, exact golden dependency gate, deterministic

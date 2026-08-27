@@ -1,0 +1,1 @@
+"""Wikipedia source adapter namespace."""

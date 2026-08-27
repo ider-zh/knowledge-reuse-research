@@ -1,0 +1,40 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "graph-core-v1",
+  "title": "Knowledge reuse graph core v1",
+  "type": "object",
+  "required": ["graph_id", "nodes", "links"],
+  "properties": {
+    "graph_id": {"type": "string", "minLength": 1},
+    "nodes": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["node_id", "native_id", "label", "node_type"],
+        "properties": {
+          "node_id": {"type": "integer", "minimum": 0},
+          "native_id": {"type": "string"},
+          "label": {"type": "string"},
+          "node_type": {"type": "string"},
+          "domain": {"type": ["string", "null"]},
+          "is_generated": {"type": ["boolean", "null"]},
+          "size_source": {"type": ["integer", "null"], "minimum": 0},
+          "size_semantic": {"type": ["integer", "null"], "minimum": 0}
+        }
+      }
+    },
+    "links": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["src_id", "dst_id", "relation"],
+        "properties": {
+          "src_id": {"type": "integer", "minimum": 0},
+          "dst_id": {"type": "integer", "minimum": 0},
+          "relation": {"type": "string"},
+          "multiplicity": {"type": ["integer", "null"], "minimum": 0}
+        }
+      }
+    }
+  }
+}

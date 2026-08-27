@@ -1,6 +1,6 @@
 import polars as pl
 
-from pipeline.normalize import null_statistics
+from knowledge_reuse.sources.lean_mathlib.normalize import null_statistics
 
 
 def test_null_statistics_counts_missing_values() -> None:

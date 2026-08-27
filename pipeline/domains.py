@@ -1,13 +1,3 @@
-from __future__ import annotations
+"""Compatibility import for the Lean v1 pipeline."""
 
-import pathlib
-
-
-def module_from_path(path: pathlib.Path) -> str:
-    return ".".join(path.with_suffix("").parts)
-
-
-def domain_from_module(module: str) -> str:
-    parts = module.split(".")
-    return parts[1] if len(parts) > 1 and parts[0] == "Mathlib" else parts[0]
-
+from knowledge_reuse.sources.lean_mathlib.domains import *  # noqa: F403

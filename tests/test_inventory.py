@@ -1,4 +1,4 @@
-from pipeline.domains import domain_from_module, module_from_path
+from knowledge_reuse.sources.lean_mathlib.domains import domain_from_module, module_from_path
 from scripts.inventory import exclusion_for
 
 
