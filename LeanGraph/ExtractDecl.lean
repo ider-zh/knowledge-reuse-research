@@ -11,8 +11,8 @@ namespace LeanGraph
 open Lean
 open LeanGraph.Compat
 
-private def sortedNames (names : Array Name) : Array String :=
-  names.qsort Name.quickLt |>.map (·.toString)
+private def deterministicNames (names : Array Name) : Array String :=
+  names.map (·.toString)
 
 def extractDecl (env : Environment) (snapshot : String) (module : Name)
     (info : ConstantInfo) : DeclRecord :=
@@ -26,8 +26,8 @@ def extractDecl (env : Environment) (snapshot : String) (module : Name)
     hasValue := value?.isSome
     typeExprNodes := ExprStats.treeOccurrences info.type
     valueExprNodes := value?.map ExprStats.treeOccurrences
-    typeConstants := sortedNames (getUsedConstants info.type)
-    valueConstants := value?.map fun value => sortedNames (getUsedConstants value)
+    typeConstants := deterministicNames (getUsedConstants info.type)
+    valueConstants := value?.map fun value => deterministicNames (getUsedConstants value)
     sourceStartLine := range?.map (·.pos.line)
     sourceStartColumn := range?.map (·.pos.column)
     sourceEndLine := range?.map (·.endPos.line)

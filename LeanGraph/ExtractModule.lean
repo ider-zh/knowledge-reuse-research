@@ -11,49 +11,50 @@ open LeanGraph.Compat
 
 structure ModuleExtraction where
   declarations : Array DeclRecord
-  edges : Array EdgeRecord
   deriving Inhabited
 
 def extractModule (env : Environment) (snapshot : String) (module : Name) : ModuleExtraction := Id.run do
   let mut declarations := #[]
-  let mut edges := #[]
   for name in listDeclarations env do
     if getDeclarationModule env name != some module then
       continue
     if let some info := env.find? name then
       let record := extractDecl env snapshot module info
       declarations := declarations.push record
-      edges := edges ++ record.edges
-  return { declarations, edges }
+  return { declarations }
 
 def extractModules
     (env : Environment) (snapshot : String) (modules : Array Name) : Array ModuleExtraction := Id.run do
-  let mut results := modules.map fun _ => { declarations := #[], edges := #[] }
+  let mut records : Array (Name × DeclRecord) := #[]
   for name in listDeclarations env do
     let some module := getDeclarationModule env name | continue
-    let some index := modules.findIdx? (· == module) | continue
+    if !modules.contains module then
+      continue
     if let some info := env.find? name then
       let record := extractDecl env snapshot module info
-      let current := results[index]!
-      results := results.set! index {
-        declarations := current.declarations.push record
-        edges := current.edges ++ record.edges
-      }
-  return results
+      records := records.push (module, record)
+  return modules.map fun module => {
+    declarations := records.filterMap fun (declarationModule, record) =>
+      if declarationModule == module then some record else none
+  }
 
 def ModuleExtraction.writeJsonLines
     (result : ModuleExtraction) (snapshot : String) (module : Name) : IO Unit := do
   for declaration in result.declarations do
     IO.println declaration.toJson.compress
-  for edge in result.edges do
-    IO.println edge.toJson.compress
+  let mut edgeCount := 0
+  for declaration in result.declarations do
+    let edges := declaration.edges
+    edgeCount := edgeCount + edges.size
+    for edge in edges do
+      IO.println edge.toJson.compress
   IO.println <| Json.mkObj [
     ("record", "audit"),
     ("snapshot", snapshot),
     ("module", module.toString),
     ("status", "ok"),
     ("decl_count", result.declarations.size),
-    ("edge_count", result.edges.size),
+    ("edge_count", edgeCount),
     ("warning_count", 0),
     ("error", Json.null)
   ] |>.compress
