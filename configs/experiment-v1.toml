@@ -7,6 +7,10 @@ canonical_format = "parquet"
 default_workers = 8
 multiplicity = "nullable_pending_probe"
 
+[extraction]
+profiled_chunk_size = 1
+profiled_chunk_shards = ["shard-00113", "shard-00151"]
+
 [gates]
 require_clean_checkout = true
 require_capability_probe = true

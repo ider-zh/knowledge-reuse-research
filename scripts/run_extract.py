@@ -20,6 +20,7 @@ import zstandard
 
 ROOT = pathlib.Path(__file__).resolve().parents[1]
 CONFIG_PATH = ROOT / "configs" / "experiment-v1.toml"
+RUNNER_CONFIG = tomllib.loads(CONFIG_PATH.read_text())
 INVENTORY_PATH = ROOT / "results" / "inventory.json"
 PLAN_PATH = ROOT / "results" / "shard-plan.json"
 LAKE = shutil.which("lake") or str(pathlib.Path.home() / ".elan" / "bin" / "lake")
@@ -154,15 +155,24 @@ def write_shard(
     failed_retries = 0
     record_count = 0
     modules = shard["modules"]
-    rows, shard_audits, complete = run_modules(
-        snapshot, modules, log_dir / f"{shard['id']}.log"
+    extraction_config = RUNNER_CONFIG.get("extraction", {})
+    chunk_size = (
+        extraction_config.get("profiled_chunk_size", len(modules))
+        if shard["id"] in extraction_config.get("profiled_chunk_shards", [])
+        else len(modules)
     )
-    if complete:
-        audits = shard_audits
-    else:
-        failed_retries = len(modules)
-        rows = []
-        for module in modules:
+    groups = [modules[index : index + chunk_size] for index in range(0, len(modules), chunk_size)]
+    rows = []
+    for group_index, group in enumerate(groups):
+        group_rows, group_audits, complete = run_modules(
+            snapshot, group, log_dir / f"{shard['id']}-part-{group_index:03d}.log"
+        )
+        if complete:
+            rows.extend(group_rows)
+            audits.extend(group_audits)
+            continue
+        failed_retries += len(group)
+        for module in group:
             module_rows, audit = run_module(snapshot, module, log_dir)
             rows.extend(module_rows)
             audits.append(audit)

@@ -29,9 +29,12 @@ def main (args : List String) : IO UInt32 := do
   let modules := moduleStrings.toArray.map String.toName
   try
     Lean.initSearchPath (← Lean.findSysroot)
+    IO.eprintln s!"import_start modules={modules.size}"
     let imports := modules.map fun module => { module, importAll := true }
     let env ← Lean.importModules imports {}
+    IO.eprintln s!"import_complete modules={modules.size}"
     let results := extractModules env snapshot modules
+    IO.eprintln s!"extraction_complete modules={modules.size}"
     for index in [:modules.size] do
       results[index]!.writeJsonLines snapshot modules[index]!
     return 0
