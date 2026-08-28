@@ -1,0 +1,75 @@
+{
+  "artifacts": {
+    "edges": {
+      "null_counts": {
+        "dst_id": 0,
+        "edge_type": 0,
+        "multiplicity": 24741186,
+        "snapshot_id": 0,
+        "src_id": 0
+      },
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/edges.parquet",
+      "rows": 24741186,
+      "sha256": "c99b631c7cf4802ee2a2b5cadffbf1e6b4b0d8c6316d725b3ebedd29e4ee88fd"
+    },
+    "external_nodes": {
+      "null_counts": {
+        "external_reason": 0,
+        "name": 0,
+        "node_id": 0,
+        "snapshot_id": 0
+      },
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/external_nodes.parquet",
+      "rows": 10805,
+      "sha256": "b1c361989c8af67e500e25e147c524b96edd92b1d97597ae700455ee2a5bba2d"
+    },
+    "modules": {
+      "null_counts": {
+        "decl_count": 0,
+        "domain": 0,
+        "duration_seconds": 0,
+        "edge_count": 0,
+        "error_text": 8264,
+        "module": 0,
+        "snapshot_id": 0,
+        "source_file": 0,
+        "status": 0,
+        "warning_count": 0
+      },
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/modules.parquet",
+      "rows": 8264,
+      "sha256": "c3771df5a7d009ec11e8cd48854a66bc5ed086cea57aa08c7d34f89cd3600495"
+    },
+    "nodes": {
+      "null_counts": {
+        "domain": 0,
+        "has_value": 0,
+        "is_definition": 0,
+        "is_generated": 0,
+        "is_internal": 0,
+        "is_theorem": 0,
+        "kind": 0,
+        "module": 0,
+        "name": 0,
+        "node_id": 0,
+        "snapshot_id": 0,
+        "source_bytes": 235106,
+        "source_file": 0,
+        "source_lines": 235106,
+        "source_tokens": 235106,
+        "type_const_unique": 0,
+        "type_expr_nodes": 0,
+        "value_const_unique": 13115,
+        "value_expr_nodes": 13115
+      },
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/nodes.parquet",
+      "rows": 566238,
+      "sha256": "b4e6f9ffc6aee84442a21a7e9c7cdc18740bfe764c49fb39aa0a66a2f50d6b89"
+    }
+  },
+  "generated_heuristic": "name matches private/auxiliary/recursor/cases/noConfusion/injection/ctorIdx/sizeOf patterns",
+  "run_kind": "full",
+  "schema_version": "normalized-manifest-v1",
+  "snapshot_id": "mathlib-v4.32.1",
+  "source_length_status": "declaration_ranges_with_nulls_for_unranged_generated_declarations"
+}

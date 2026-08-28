@@ -2,18 +2,20 @@
 
 - Owner: primary research agent
 - Baseline commit: `6dcdf7b`
-- Scope: `LeanGraph/`, Lean Python adapter, v1 configs/results
+- Scope: `knowledge_reuse/sources/lean_mathlib/`,
+  `experiments/lean_mathlib_v1/`, `schemas/lean_mathlib/`, and
+  `results/lean_mathlib_v1/`
 - Current gate: complete. 331/331 raw shards, 8,264/8,264 module audits,
   normalization, all ten data-quality checks, full analysis, and the standalone
   17-section/14-figure report pass.
 - Verified evidence: pinned capability probe passed; golden exact 60-node and
   409-typed-edge digests pass; 1/2/4/8-worker benchmark complete; smoke
   normalize/validate/analyze/report passed.
-- Intentional dirty work: direct `moduleData` declaration indexing and explicitly
-  bounded expression-size metrics must be committed only after exact golden,
-  adapter tests, and heavy-module timing verification.
-- Generated artifacts: `vendor/`, `data/`, `results/metrics`, `results/tables`,
-  and report HTML are gitignored/rebuildable.
+- Current migration: Lean code, commands, configuration, fixtures, schema,
+  tests, data, and results now use source/experiment namespaces. See
+  `docs/migrations/2026-08-28-lean-source-namespace.md`.
+- Generated artifacts: `vendor/`, `data/`, experiment metrics/tables, and
+  report HTML are gitignored/rebuildable.
 - Formal v1 graph: 566,238 internal declarations, 24,741,186 unique typed
   edges, and 10,805 external targets. All 566,238 type-size observations and
   all 553,123 value-size observations for declarations with bodies are exact;

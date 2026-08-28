@@ -18,9 +18,14 @@ import duckdb
 import jinja2
 import polars as pl
 
+from knowledge_reuse.sources.lean_mathlib.layout import (
+    BENCHMARK_ROOT,
+    CONFIG_PATH,
+    ROOT,
+    raw_root,
+    run_results_root,
+)
 
-ROOT = pathlib.Path(__file__).resolve().parents[3]
-CONFIG_PATH = ROOT / "configs" / "experiment-v1.toml"
 CONFIG = tomllib.loads(CONFIG_PATH.read_text())
 TITLES = {
     "kind_counts": "Declaration counts by kind",
@@ -197,9 +202,7 @@ def render_table(frame: pl.DataFrame, limit: int = 20) -> str:
 
 
 def run_manifest(run_kind: str) -> dict[str, Any]:
-    raw_path = (
-        ROOT / "data" / "raw" / CONFIG["snapshot_id"] / run_kind / "manifest.json"
-    )
+    raw_path = raw_root(CONFIG["snapshot_id"], run_kind) / "manifest.json"
     raw = json.loads(raw_path.read_text())
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True
@@ -240,7 +243,7 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
         "config_sha256": file_sha256(CONFIG_PATH),
         "raw_manifest_sha256": file_sha256(raw_path),
     }
-    (ROOT / "results" / "run-manifest.json").write_text(
+    (run_results_root(run_kind) / "run-manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     )
     return manifest
@@ -346,9 +349,10 @@ footer{padding:42px 28px 70px;color:#59636e}"""
 
 
 def generate(run_kind: str) -> dict[str, Any]:
-    metrics = ROOT / "results" / "metrics"
-    tables = ROOT / "results" / "tables"
-    report = ROOT / "results" / "report"
+    run_dir = run_results_root(run_kind)
+    metrics = run_dir / "metrics"
+    tables = run_dir / "tables"
+    report = run_dir / "report"
     assets = report / "assets"
     assets.mkdir(parents=True, exist_ok=True)
     summary = json.loads((metrics / "summary.json").read_text())
@@ -368,7 +372,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         pl.read_parquet(benchmark_path)
         if benchmark_path.exists()
         else pl.DataFrame(
-            json.loads((ROOT / "results" / "extraction-benchmark.json").read_text())["rows"]
+            json.loads((BENCHMARK_ROOT / "extraction.json").read_text())["rows"]
         )
     )
 
@@ -584,7 +588,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         "standalone_bytes": len(standalone.encode()),
         "remote_dependencies": 0,
     }
-    (ROOT / "results" / f"report-{run_kind}-summary.json").write_text(
+    (run_dir / "report-summary.json").write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n"
     )
     return result

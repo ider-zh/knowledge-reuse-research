@@ -18,23 +18,29 @@ experiment binds one source snapshot to configuration, hypotheses, and results.
     experiments/<experiment_id>/         hypotheses and run notes
         ↓
     data/<source>/<snapshot>/            large rebuildable facts
-    results/<experiment_id>/             compact auditable results
+    results/<experiment_id>/runs/<run>/  compact auditable run results
 
-The pinned Lean experiment predates namespaced data. Its existing
-"data/raw/<snapshot>" and "results/*" paths remain supported until its v1 report
-is complete, so checksum resume is not invalidated by this reorganization. New
-sources use namespaced paths from their first run.
+All sources, including Lean/mathlib, use source/snapshot-namespaced data and
+experiment-namespaced results. Raw facts may be relocated as an atomic corpus,
+but their bytes and content checksums must not change during a structural
+migration.
+
+Smoke, full, and later robustness runs have separate result directories. They
+must never share mutable `metrics/`, `tables/`, `report/`, or run-manifest paths.
+Experiment-level evidence such as capability probes, golden gates, inventory,
+and shard plans remains directly under `results/<experiment_id>/`.
 
 ## Packages
 
 - knowledge_reuse.analysis: source-neutral metrics, fitting, and reports.
-- knowledge_reuse.sources.lean_mathlib: Lean ingestion and normalization.
+- knowledge_reuse.sources.lean_mathlib: Lean extractor sources, commands,
+  ingestion, normalization, source-specific SQL, and reporting.
 - knowledge_reuse.sources.wikipedia: Wikipedia page/link adapter.
 - knowledge_reuse.sources.software: repository/call/dependency graph adapter.
-- pipeline: compatibility entry points for original Lean v1 commands. New
-  implementation code must not be added here.
-- LeanGraph: pinned Lean semantic extractor. It remains at repository root
-  because its module namespace and accepted experiment contract require it.
+
+Source packages own their operational code. Root-level commands stay thin and
+dispatch into a source package; source-specific scripts, SQL, fixtures, and
+schemas must not be added to shared root directories.
 
 ## Cross-system invariants
 

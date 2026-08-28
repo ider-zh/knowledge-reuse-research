@@ -10,12 +10,20 @@ from typing import Any
 import polars as pl
 
 from knowledge_reuse.sources.lean_mathlib.ingest import scan_raw_shards
+from knowledge_reuse.sources.lean_mathlib.layout import (
+    CONFIG_PATH,
+    RESULTS_ROOT,
+    ROOT,
+    audit_root,
+    normalized_root,
+    raw_root,
+    run_results_root,
+)
 from knowledge_reuse.sources.lean_mathlib.source_index import add_source_metrics
 
 
-ROOT = pathlib.Path(__file__).resolve().parents[3]
-CONFIG = tomllib.loads((ROOT / "configs" / "experiment-v1.toml").read_text())
-INVENTORY_PATH = ROOT / "results" / "inventory.json"
+CONFIG = tomllib.loads(CONFIG_PATH.read_text())
+INVENTORY_PATH = RESULTS_ROOT / "inventory.json"
 
 
 def file_sha256(path: pathlib.Path) -> str:
@@ -47,8 +55,8 @@ def null_statistics(frame: pl.DataFrame) -> dict[str, int]:
 
 def normalize(run_kind: str) -> dict[str, Any]:
     snapshot = CONFIG["snapshot_id"]
-    raw_dir = ROOT / "data" / "raw" / snapshot / run_kind
-    output_dir = ROOT / "data" / "parquet" / snapshot / run_kind
+    raw_dir = raw_root(snapshot, run_kind)
+    output_dir = normalized_root(snapshot, run_kind)
     output_dir.mkdir(parents=True, exist_ok=True)
     raw = scan_raw_shards(raw_dir)
     metadata = inventory_frame().lazy()
@@ -192,7 +200,7 @@ def normalize(run_kind: str) -> dict[str, Any]:
             "sha256": file_sha256(path),
             "null_counts": null_statistics(frame),
         }
-    audit_path = ROOT / "data" / "audit" / "modules.parquet"
+    audit_path = audit_root(snapshot) / "modules.parquet"
     audit_path.parent.mkdir(parents=True, exist_ok=True)
     modules.write_parquet(audit_path, compression="zstd", statistics=True)
     manifest = {
@@ -207,7 +215,9 @@ def normalize(run_kind: str) -> dict[str, Any]:
     }
     manifest_path = output_dir / "manifest.json"
     manifest_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
-    (ROOT / "results" / f"normalization-{run_kind}-summary.json").write_text(
+    run_dir = run_results_root(run_kind)
+    run_dir.mkdir(parents=True, exist_ok=True)
+    (run_dir / "normalization-summary.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n"
     )
     return manifest

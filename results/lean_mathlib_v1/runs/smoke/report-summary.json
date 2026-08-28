@@ -1,0 +1,10 @@
+{
+  "figure_count": 14,
+  "index_sha256": "465c169ccc453e3c7b66074d84dd2d9f224d9e299edef852ccfc7dd749941b8a",
+  "remote_dependencies": 0,
+  "run_kind": "smoke",
+  "schema_version": "report-manifest-v1",
+  "section_count": 17,
+  "standalone_bytes": 134955,
+  "standalone_sha256": "935d734083a54e80febb8f78e9af493e037fe401c72ee26b903c86609d5a474b"
+}

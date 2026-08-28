@@ -56,17 +56,17 @@ workers on the frozen smoke module list). The v1 default is 8 workers, selected
 from the recorded benchmark; lower it with `--workers` on memory-constrained
 machines.
 
-The final offline artifact is
-`results/report/report_standalone.html`. Its ordinary local-assets counterpart
-is `results/report/index.html`. Machine-readable results live in
-`results/metrics/` and `results/tables/`; run identity and checksums are recorded
-in `results/run-manifest.json` and the stage summaries under `results/`.
+The final full-corpus offline artifact is
+`results/lean_mathlib_v1/runs/full/report/report_standalone.html`. Smoke and full
+artifacts are isolated under `runs/smoke/` and `runs/full/`; each run owns its
+metrics, tables, report, stage summaries, identity, and checksums.
 
 ## Data policy
 
 `vendor/`, `data/`, caches, and large generated artifacts are not committed.
-Raw extraction data is immutable JSONL.zst; canonical analytical data is
-Parquet; DuckDB databases are rebuildable caches.
+Each source writes to `data/<source>/<snapshot>/`, while compact outputs use
+`results/<experiment_id>/`. Raw extraction data is immutable JSONL.zst;
+canonical analytical data is Parquet; DuckDB databases are rebuildable caches.
 
 ## Semantics and interpretation
 

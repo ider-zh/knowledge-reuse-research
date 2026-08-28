@@ -1,7 +1,7 @@
 [project]
 name = "knowledge-reuse-research"
 version = "0.1.0"
-description = "Lean 4/mathlib declaration reuse graph experiment"
+description = "Multi-source knowledge reuse graph research"
 requires-python = ">=3.12"
 dependencies = [
   "duckdb==1.4.0",

@@ -3,7 +3,6 @@ from __future__ import annotations
 import argparse
 import json
 import math
-import pathlib
 import tomllib
 import warnings
 from typing import Any
@@ -15,10 +14,14 @@ import statsmodels.api as sm
 
 from knowledge_reuse.analysis.concentration import gini, hhi, top_share
 from knowledge_reuse.analysis.powerlaw import fit_tail
+from knowledge_reuse.sources.lean_mathlib.layout import (
+    CONFIG_PATH,
+    normalized_root,
+    run_results_root,
+)
 
 
-ROOT = pathlib.Path(__file__).resolve().parents[3]
-CONFIG = tomllib.loads((ROOT / "configs" / "experiment-v1.toml").read_text())
+CONFIG = tomllib.loads(CONFIG_PATH.read_text())
 
 
 def with_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.DataFrame:
@@ -191,9 +194,10 @@ def length_bins(node_metrics: pl.DataFrame) -> pl.DataFrame:
 
 def analyze(run_kind: str) -> dict[str, Any]:
     snapshot = CONFIG["snapshot_id"]
-    parquet_dir = ROOT / "data" / "parquet" / snapshot / run_kind
-    metrics_dir = ROOT / "results" / "metrics"
-    tables_dir = ROOT / "results" / "tables"
+    parquet_dir = normalized_root(snapshot, run_kind)
+    run_dir = run_results_root(run_kind)
+    metrics_dir = run_dir / "metrics"
+    tables_dir = run_dir / "tables"
     metrics_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
     nodes = pl.read_parquet(parquet_dir / "nodes.parquet")
@@ -331,7 +335,7 @@ def analyze(run_kind: str) -> dict[str, Any]:
         "reference_entropy_label": "H*ref empirical operational proxy; not theoretical H",
     }
     (metrics_dir / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
-    (ROOT / "results" / f"analysis-{run_kind}-summary.json").write_text(
+    (run_dir / "analysis-summary.json").write_text(
         json.dumps(summary, indent=2, sort_keys=True) + "\n"
     )
     return summary

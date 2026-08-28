@@ -1,31 +1,31 @@
 set shell := ["bash", "-eu", "-o", "pipefail", "-c"]
 
 doctor:
-    uv run python scripts/doctor.py
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.doctor
 
 bootstrap:
     uv sync --frozen
-    uv run python scripts/bootstrap.py
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.bootstrap
 
 probe:
-    uv run python scripts/run_probe.py
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_probe
 
 golden:
-    uv run python scripts/run_golden.py
-    uv run pytest -q tests/golden
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_golden
+    uv run pytest -q tests/sources/lean_mathlib/golden
 
 inventory:
-    uv run python -m scripts.inventory
-    uv run python -m scripts.make_shards
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.inventory
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.make_shards
 
 extract-smoke:
-    uv run python -m scripts.run_extract --smoke
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_extract --smoke
 
 extract:
-    uv run python -m scripts.run_extract
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_extract
 
 benchmark-extract:
-    uv run python -m scripts.benchmark_extract
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.benchmark_extract
 
 normalize:
     uv run python -m knowledge_reuse.sources.lean_mathlib.normalize
@@ -34,10 +34,10 @@ normalize-smoke:
     uv run python -m knowledge_reuse.sources.lean_mathlib.normalize --smoke
 
 validate:
-    uv run python -m scripts.verify_run
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.verify_run
 
 validate-smoke:
-    uv run python -m scripts.verify_run --smoke
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.verify_run --smoke
 
 analyze:
     uv run python -m knowledge_reuse.sources.lean_mathlib.metrics

@@ -8,6 +8,7 @@ path = "vendor/mathlib4"
 
 [[lean_lib]]
 name = "LeanGraph"
+srcDir = "knowledge_reuse/sources/lean_mathlib/lean"
 roots = [
   "LeanGraph.Compat",
   "LeanGraph.Types",
@@ -19,8 +20,10 @@ roots = [
 
 [[lean_exe]]
 name = "lean-graph-extract"
+srcDir = "knowledge_reuse/sources/lean_mathlib/lean"
 root = "LeanGraph.Main"
 
 [[lean_exe]]
 name = "lean-graph-expr-stats-test"
+srcDir = "knowledge_reuse/sources/lean_mathlib/lean"
 root = "LeanGraph.ExprStatsFixture"
