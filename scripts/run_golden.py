@@ -42,6 +42,11 @@ def check_golden() -> dict[str, Any]:
         capture_output=True,
     )
     rows = [json.loads(line) for line in proc.stdout.splitlines()]
+    size_rows = sorted(
+        (row["name"], row["type_expr_nodes"], row["value_expr_nodes"])
+        for row in rows
+        if row["record"] == "node"
+    )
     nodes = sorted(row["name"] for row in rows if row["record"] == "node")
     edges = sorted(
         (row["src"], row["dst"], row["edge_type"])
@@ -57,6 +62,8 @@ def check_golden() -> dict[str, Any]:
         "node_set_exact": canonical_sha256(nodes) == expected["node_set_sha256"],
         "typed_edge_count": len(edges) == expected["typed_edge_count"],
         "typed_edge_set_exact": canonical_sha256(edges) == expected["typed_edge_set_sha256"],
+        "expression_sizes_exact": canonical_sha256(size_rows)
+        == expected["expression_size_sha256"],
         "required_nodes": set(expected["required_nodes"]) <= node_set,
         "required_typed_edges": {tuple(edge) for edge in expected["required_typed_edges"]}
         <= edge_set,
@@ -73,6 +80,7 @@ def check_golden() -> dict[str, Any]:
             "node_set_sha256": canonical_sha256(nodes),
             "typed_edge_count": len(edges),
             "typed_edge_set_sha256": canonical_sha256(edges),
+            "expression_size_sha256": canonical_sha256(size_rows),
         },
     }
 
@@ -87,4 +95,3 @@ def main() -> int:
 
 if __name__ == "__main__":
     raise SystemExit(main())
-

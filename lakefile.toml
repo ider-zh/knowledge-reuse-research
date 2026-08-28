@@ -20,3 +20,7 @@ roots = [
 [[lean_exe]]
 name = "lean-graph-extract"
 root = "LeanGraph.Main"
+
+[[lean_exe]]
+name = "lean-graph-expr-stats-test"
+root = "LeanGraph.ExprStatsFixture"
