@@ -45,6 +45,23 @@ def null_statistics(frame: pl.DataFrame) -> dict[str, int]:
     return {column: frame[column].null_count() for column in frame.columns}
 
 
+def sanitize_expr_counts(frame: pl.LazyFrame) -> pl.LazyFrame:
+    """Keep saturation explicit and exclude capped counts from quantitative analysis."""
+    return frame.with_columns(
+        pl.col("type_expr_nodes_saturated").fill_null(False),
+        pl.col("value_expr_nodes_saturated").fill_null(False),
+    ).with_columns(
+        pl.when(pl.col("type_expr_nodes_saturated"))
+        .then(None)
+        .otherwise(pl.col("type_expr_nodes"))
+        .alias("type_expr_nodes"),
+        pl.when(pl.col("value_expr_nodes_saturated"))
+        .then(None)
+        .otherwise(pl.col("value_expr_nodes"))
+        .alias("value_expr_nodes"),
+    )
+
+
 def normalize(run_kind: str) -> dict[str, Any]:
     snapshot = CONFIG["snapshot_id"]
     raw_dir = ROOT / "data" / "raw" / snapshot / run_kind
@@ -62,7 +79,9 @@ def normalize(run_kind: str) -> dict[str, Any]:
             "kind",
             "has_value",
             "type_expr_nodes",
+            "type_expr_nodes_saturated",
             "value_expr_nodes",
+            "value_expr_nodes_saturated",
             "type_const_unique",
             "value_const_unique",
             "source_start_line",
@@ -70,6 +89,7 @@ def normalize(run_kind: str) -> dict[str, Any]:
             "source_end_line",
             "source_end_column",
         )
+        .pipe(sanitize_expr_counts)
         .unique(subset=["snapshot_id", "name"], keep="first")
         .join(metadata, on="module", how="left")
         .with_columns(
@@ -123,7 +143,9 @@ def normalize(run_kind: str) -> dict[str, Any]:
             "source_lines",
             "source_tokens",
             "type_expr_nodes",
+            "type_expr_nodes_saturated",
             "value_expr_nodes",
+            "value_expr_nodes_saturated",
             "type_const_unique",
             "value_const_unique",
         )

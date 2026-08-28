@@ -22,7 +22,9 @@ structure DeclRecord where
   kind : String
   hasValue : Bool
   typeExprNodes : Nat
+  typeExprNodesSaturated : Bool
   valueExprNodes : Option Nat
+  valueExprNodesSaturated : Option Bool
   typeConstants : Array String
   valueConstants : Option (Array String)
   sourceStartLine : Option Nat

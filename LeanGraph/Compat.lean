@@ -29,6 +29,30 @@ def getDeclarationModule (env : Environment) (name : Name) : Option Name := do
   let idx ← env.getModuleIdxFor? name
   env.header.moduleNames[idx.toNat]?
 
+private def sortUniqueNames (names : Array Name) : Array Name := Id.run do
+  let sorted := names.qsort Name.quickLt
+  let mut result := #[]
+  let mut previous : Option Name := none
+  for name in sorted do
+    if previous != some name then
+      result := result.push name
+      previous := some name
+  return result
+
+/--
+List declarations owned by the requested modules without scanning every declaration in the
+import closure. `moduleData` is indexed by `ModuleIdx`; include `extraConstNames` so generated
+auxiliary declarations retain the same provenance coverage as `getModuleIdxFor?`.
+-/
+def listDeclarationsInModules (env : Environment) (modules : Array Name) : Array Name := Id.run do
+  let mut names := #[]
+  for module in modules do
+    let some moduleIdx := env.getModuleIdx? module | continue
+    let some data := env.header.moduleData[moduleIdx]? | continue
+    names := names ++ data.constNames
+    names := names ++ data.extraConstNames
+  return sortUniqueNames names
+
 def getDeclarationType (info : ConstantInfo) : Expr := info.type
 
 def getDeclarationValue? (info : ConstantInfo) : Option Expr :=

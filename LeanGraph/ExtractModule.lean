@@ -15,7 +15,7 @@ structure ModuleExtraction where
 
 def extractModule (env : Environment) (snapshot : String) (module : Name) : ModuleExtraction := Id.run do
   let mut declarations := #[]
-  for name in listDeclarations env do
+  for name in listDeclarationsInModules env #[module] do
     if getDeclarationModule env name != some module then
       continue
     if let some info := env.find? name then
@@ -26,7 +26,7 @@ def extractModule (env : Environment) (snapshot : String) (module : Name) : Modu
 def extractModules
     (env : Environment) (snapshot : String) (modules : Array Name) : Array ModuleExtraction := Id.run do
   let mut records : Array (Name × DeclRecord) := #[]
-  for name in listDeclarations env do
+  for name in listDeclarationsInModules env modules do
     let some module := getDeclarationModule env name | continue
     if !modules.contains module then
       continue

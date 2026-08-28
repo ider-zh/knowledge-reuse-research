@@ -19,7 +19,9 @@
         "kind": {"type": "string"},
         "has_value": {"type": "boolean"},
         "type_expr_nodes": {"type": "integer", "minimum": 0},
+        "type_expr_nodes_saturated": {"type": "boolean"},
         "value_expr_nodes": {"type": ["integer", "null"], "minimum": 0},
+        "value_expr_nodes_saturated": {"type": ["boolean", "null"]},
         "type_const_unique": {"type": "integer", "minimum": 0},
         "value_const_unique": {"type": ["integer", "null"], "minimum": 0}
       },
@@ -51,4 +53,3 @@
     }
   }
 }
-

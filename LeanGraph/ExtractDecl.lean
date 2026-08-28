@@ -17,6 +17,8 @@ private def deterministicNames (names : Array Name) : Array String :=
 def extractDecl (env : Environment) (snapshot : String) (module : Name)
     (info : ConstantInfo) : DeclRecord :=
   let value? := getDeclarationValue? info
+  let typeExprCount := ExprStats.treeOccurrences info.type
+  let valueExprCount? := value?.map ExprStats.treeOccurrences
   let range? := getSourceRangeFromEnv? env info.name |>.map (·.range)
   {
     snapshot
@@ -24,8 +26,10 @@ def extractDecl (env : Environment) (snapshot : String) (module : Name)
     module := module.toString
     kind := getDeclarationKind info
     hasValue := value?.isSome
-    typeExprNodes := ExprStats.treeOccurrences info.type
-    valueExprNodes := value?.map ExprStats.treeOccurrences
+    typeExprNodes := typeExprCount.value
+    typeExprNodesSaturated := typeExprCount.saturated
+    valueExprNodes := valueExprCount?.map (·.value)
+    valueExprNodesSaturated := valueExprCount?.map (·.saturated)
     typeConstants := deterministicNames (getUsedConstants info.type)
     valueConstants := value?.map fun value => deterministicNames (getUsedConstants value)
     sourceStartLine := range?.map (·.pos.line)
@@ -45,6 +49,10 @@ private def optionNatJson : Option Nat → Json
   | some value => toJson value
   | none => Json.null
 
+private def optionBoolJson : Option Bool → Json
+  | some value => toJson value
+  | none => Json.null
+
 def DeclRecord.toJson (record : DeclRecord) : Json := Json.mkObj [
   ("record", "node"),
   ("snapshot", record.snapshot),
@@ -53,7 +61,9 @@ def DeclRecord.toJson (record : DeclRecord) : Json := Json.mkObj [
   ("kind", record.kind),
   ("has_value", record.hasValue),
   ("type_expr_nodes", record.typeExprNodes),
+  ("type_expr_nodes_saturated", record.typeExprNodesSaturated),
   ("value_expr_nodes", optionNatJson record.valueExprNodes),
+  ("value_expr_nodes_saturated", optionBoolJson record.valueExprNodesSaturated),
   ("type_const_unique", record.typeConstants.size),
   ("value_const_unique", optionNatJson (record.valueConstants.map (·.size))),
   ("source_start_line", optionNatJson record.sourceStartLine),
