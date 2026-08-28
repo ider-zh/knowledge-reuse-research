@@ -1,0 +1,58 @@
+{
+  "declaration_count": 566238,
+  "declaration_counts_by_kind": {
+    "constructor": 5056,
+    "definition": 115062,
+    "inductive": 4028,
+    "opaque": 628,
+    "recursor": 4031,
+    "theorem": 437433
+  },
+  "edge_count": 24741186,
+  "isolated_fraction": 1.4128334728506388e-05,
+  "length_correlations": [
+    {
+      "length_metric": "source_bytes",
+      "n": 331132,
+      "p_value": 0.0,
+      "spearman_rho": 0.1584845338873593
+    },
+    {
+      "length_metric": "source_tokens",
+      "n": 331132,
+      "p_value": 0.0,
+      "spearman_rho": 0.15218074585280839
+    },
+    {
+      "length_metric": "type_expr_nodes",
+      "n": 566231,
+      "p_value": 0.0,
+      "spearman_rho": -0.106626370284483
+    },
+    {
+      "length_metric": "value_expr_nodes",
+      "n": 553069,
+      "p_value": 1.3242820670744696e-141,
+      "spearman_rho": 0.034056616769867
+    }
+  ],
+  "module_count": 8264,
+  "reference_entropy_label": "H*ref empirical operational proxy; not theoretical H",
+  "reuse_concentration": {
+    "gini": 0.9509112971000462,
+    "hhi": 0.001400484995693506,
+    "nodes": 566238,
+    "top_10pct_share": 0.9366742398757222,
+    "top_1pct_share": 0.7989566870066114,
+    "top_5pct_share": 0.9039051810904911,
+    "view": "ALL"
+  },
+  "run_kind": "full",
+  "schema_version": "analysis-summary-v1",
+  "self_loop_count": 1009,
+  "snapshot_id": "mathlib-v4.32.1",
+  "type_edge_count": 9387434,
+  "value_edge_count": 15353752,
+  "zero_indegree_fraction": 0.2677337091470371,
+  "zero_outdegree_fraction": 0.0014834751464931706
+}

@@ -1,0 +1,43 @@
+{
+  "checks": {
+    "all_modules_ok": true,
+    "dangling_sources": true,
+    "dangling_targets": true,
+    "deterministic_sample_semantics": true,
+    "duplicate_node_names": true,
+    "duplicate_typed_edges": true,
+    "missing_domains": true,
+    "module_count_matches": true,
+    "shard_merge_order_independent": true,
+    "theorem_value_coverage_complete": true
+  },
+  "determinism_sample_module": "Mathlib.Algebra.BigOperators.Field",
+  "edge_count": 24741186,
+  "expected_module_count": 8264,
+  "external_node_count": 10805,
+  "extracted_module_count": 8264,
+  "extraction_completeness": 1.0,
+  "failure_counts": {
+    "dangling_sources": 0,
+    "dangling_targets": 0,
+    "duplicate_node_names": 0,
+    "duplicate_typed_edges": 0,
+    "missing_domains": 0
+  },
+  "module_status_counts": {
+    "ok": 8264
+  },
+  "node_count": 566238,
+  "null_rates": {
+    "source_bytes": 0.4152070330850279,
+    "source_lines": 0.4152070330850279,
+    "source_tokens": 0.4152070330850279,
+    "value_expr_nodes": 0.023257005004962576
+  },
+  "passed": true,
+  "run_kind": "full",
+  "schema_version": "data-quality-v1",
+  "snapshot_id": "mathlib-v4.32.1",
+  "theorem_count": 437433,
+  "theorem_with_value_count": 437433
+}
