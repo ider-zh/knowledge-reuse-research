@@ -38,7 +38,7 @@
       },
       "path": "data/parquet/mathlib-v4.32.1/full/modules.parquet",
       "rows": 8264,
-      "sha256": "9e6276abe02ae605c5bf69ac64554cc44229836d21468267c587ac96d9322bc9"
+      "sha256": "c3771df5a7d009ec11e8cd48854a66bc5ed086cea57aa08c7d34f89cd3600495"
     },
     "nodes": {
       "null_counts": {
@@ -58,15 +58,13 @@
         "source_lines": 235106,
         "source_tokens": 235106,
         "type_const_unique": 0,
-        "type_expr_nodes": 7,
-        "type_expr_nodes_saturated": 0,
+        "type_expr_nodes": 0,
         "value_const_unique": 13115,
-        "value_expr_nodes": 13169,
-        "value_expr_nodes_saturated": 0
+        "value_expr_nodes": 13115
       },
       "path": "data/parquet/mathlib-v4.32.1/full/nodes.parquet",
       "rows": 566238,
-      "sha256": "92ee621bf5859443a080e4883b1233311e13ebc577bf79c38e8d0c6230afe340"
+      "sha256": "b4e6f9ffc6aee84442a21a7e9c7cdc18740bfe764c49fb39aa0a66a2f50d6b89"
     }
   },
   "generated_heuristic": "name matches private/auxiliary/recursor/cases/noConfusion/injection/ctorIdx/sizeOf patterns",

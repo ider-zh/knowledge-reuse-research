@@ -25,15 +25,15 @@
     },
     {
       "length_metric": "type_expr_nodes",
-      "n": 566231,
+      "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.106626370284483
+      "spearman_rho": -0.10662321484164672
     },
     {
       "length_metric": "value_expr_nodes",
-      "n": 553069,
-      "p_value": 1.3242820670744696e-141,
-      "spearman_rho": 0.034056616769867
+      "n": 553123,
+      "p_value": 2.5295409319087612e-141,
+      "spearman_rho": 0.03402067397498357
     }
   ],
   "module_count": 8264,
