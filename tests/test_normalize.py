@@ -1,7 +1,7 @@
 import polars as pl
 
 from knowledge_reuse.sources.lean_mathlib.normalize import null_statistics, sanitize_expr_counts
-from scripts.verify_run import canonical_semantic_digest
+from scripts.verify_run import SemanticAccumulator, canonical_semantic_digest, semantic_accumulator
 
 
 def test_null_statistics_counts_missing_values() -> None:
@@ -36,3 +36,10 @@ def test_semantic_digest_adapts_pre_saturation_nodes() -> None:
         }
     ]
     assert canonical_semantic_digest(legacy) == canonical_semantic_digest(current)
+
+
+def test_semantic_accumulator_is_merge_order_independent() -> None:
+    left = semantic_accumulator([{"record": "edge", "src": "a", "dst": "b"}])
+    right = semantic_accumulator([{"record": "edge", "src": "c", "dst": "d"}])
+    assert left.merge(right).digest() == right.merge(left).digest()
+    assert left.merge(SemanticAccumulator()).digest() == left.digest()

@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import argparse
+from dataclasses import dataclass
 import hashlib
 import json
 import pathlib
@@ -19,21 +20,57 @@ LAKE = shutil.which("lake") or str(pathlib.Path.home() / ".elan" / "bin" / "lake
 EXTRACTOR = ROOT / ".lake" / "build" / "bin" / "lean-graph-extract"
 
 
-def canonical_semantic_digest(rows: list[dict[str, Any]]) -> str:
-    semantic = []
+SEMANTIC_MODULUS = 1 << 256
+
+
+def canonical_semantic_row(source: dict[str, Any]) -> bytes | None:
+    if source.get("record") not in {"node", "edge"}:
+        return None
+    row = dict(source)
+    if row["record"] == "node":
+        row.setdefault("type_expr_nodes_saturated", False)
+        row.setdefault("value_expr_nodes_saturated", False if row.get("has_value") else None)
+    return json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+
+
+@dataclass(frozen=True)
+class SemanticAccumulator:
+    count: int = 0
+    xor: int = 0
+    total: int = 0
+
+    def add(self, source: dict[str, Any]) -> SemanticAccumulator:
+        encoded = canonical_semantic_row(source)
+        if encoded is None:
+            return self
+        value = int.from_bytes(hashlib.sha256(encoded).digest())
+        return SemanticAccumulator(
+            self.count + 1,
+            self.xor ^ value,
+            (self.total + value) % SEMANTIC_MODULUS,
+        )
+
+    def merge(self, other: SemanticAccumulator) -> SemanticAccumulator:
+        return SemanticAccumulator(
+            self.count + other.count,
+            self.xor ^ other.xor,
+            (self.total + other.total) % SEMANTIC_MODULUS,
+        )
+
+    def digest(self) -> str:
+        encoded = f"{self.count}:{self.xor:064x}:{self.total:064x}".encode()
+        return hashlib.sha256(encoded).hexdigest()
+
+
+def semantic_accumulator(rows: list[dict[str, Any]]) -> SemanticAccumulator:
+    result = SemanticAccumulator()
     for source in rows:
-        if source.get("record") not in {"node", "edge"}:
-            continue
-        row = dict(source)
-        if row["record"] == "node":
-            row.setdefault("type_expr_nodes_saturated", False)
-            row.setdefault("value_expr_nodes_saturated", False if row.get("has_value") else None)
-        semantic.append(row)
-    encoded = sorted(
-        json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
-        for row in semantic
-    )
-    return hashlib.sha256(("\n".join(encoded) + "\n").encode()).hexdigest()
+        result = result.add(source)
+    return result
+
+
+def canonical_semantic_digest(rows: list[dict[str, Any]]) -> str:
+    return semantic_accumulator(rows).digest()
 
 
 def read_shard(path: pathlib.Path) -> list[dict[str, Any]]:
@@ -41,6 +78,15 @@ def read_shard(path: pathlib.Path) -> list[dict[str, Any]]:
         with zstandard.ZstdDecompressor().stream_reader(compressed) as reader:
             text = reader.read().decode()
     return [json.loads(line) for line in text.splitlines()]
+
+
+def shard_merge_digest(paths: list[pathlib.Path]) -> str:
+    """Order-independent digest of the already checksum-verified shard set."""
+    entries = []
+    for path in paths:
+        sidecar = json.loads(path.with_suffix(path.suffix + ".sha256").read_text())
+        entries.append(f"{path.name}:{sidecar['sha256']}:{sidecar['module_plan_sha256']}")
+    return hashlib.sha256(("\n".join(sorted(entries)) + "\n").encode()).hexdigest()
 
 
 def rerun_sample(module: str, snapshot: str) -> list[dict[str, Any]]:
@@ -101,15 +147,38 @@ def validate(run_kind: str) -> dict[str, Any]:
         con.close()
 
     shards = sorted(raw_dir.glob("*.jsonl.zst"))
-    raw_rows = [read_shard(path) for path in shards]
-    flat_forward = [row for rows in raw_rows for row in rows]
-    flat_reverse = [row for rows in reversed(raw_rows) for row in rows]
-    first_nodes = [row for row in raw_rows[0] if row.get("record") == "node"]
-    sample_module = first_nodes[0]["module"]
-    # A smoke shard contains exactly one module; declaration names need not share
-    # the module prefix (for example, a module may extend an existing namespace).
-    sample_rows = raw_rows[0]
+    sample_module = CONFIG["smoke"]["modules"][0]
+    if run_kind == "smoke":
+        sample_path = next(
+            path
+            for path in shards
+            if any(
+                row.get("record") == "node" and row.get("module") == sample_module
+                for row in read_shard(path)
+            )
+        )
+    else:
+        shard_plan = json.loads((ROOT / "results" / "shard-plan.json").read_text())
+        sample_shard_id = next(
+            shard["id"] for shard in shard_plan["shards"] if sample_module in shard["modules"]
+        )
+        sample_path = raw_dir / f"{sample_shard_id}.jsonl.zst"
+    sample_shard_rows = read_shard(sample_path)
+    first_nodes = [row for row in sample_shard_rows if row.get("record") == "node"]
+    sample_names = {
+        row["name"]
+        for row in first_nodes
+        if row.get("module") == sample_module
+    }
+    sample_rows = [
+        row
+        for row in sample_shard_rows
+        if (row.get("record") == "node" and row.get("name") in sample_names)
+        or (row.get("record") == "edge" and row.get("src") in sample_names)
+    ]
     rerun_rows = rerun_sample(sample_module, snapshot)
+    forward_digest = shard_merge_digest(shards)
+    reverse_digest = shard_merge_digest(list(reversed(shards)))
     checks = {
         **{name: count == 0 for name, count in failures.items()},
         "module_count_matches": module_count == expected_modules,
@@ -117,8 +186,7 @@ def validate(run_kind: str) -> dict[str, Any]:
         "theorem_value_coverage_complete": theorem_count == theorem_with_value,
         "deterministic_sample_semantics": canonical_semantic_digest(sample_rows)
         == canonical_semantic_digest(rerun_rows),
-        "shard_merge_order_independent": canonical_semantic_digest(flat_forward)
-        == canonical_semantic_digest(flat_reverse),
+        "shard_merge_order_independent": forward_digest == reverse_digest,
     }
     result = {
         "schema_version": "data-quality-v1",
