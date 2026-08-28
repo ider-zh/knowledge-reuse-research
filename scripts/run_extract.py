@@ -4,6 +4,7 @@ import argparse
 import concurrent.futures
 import datetime
 import hashlib
+import io
 import json
 import pathlib
 import resource
@@ -65,6 +66,24 @@ def valid_cached_shard(path: pathlib.Path, expected_plan_sha256: str) -> str | N
     if sidecar.get("module_plan_sha256") != expected_plan_sha256:
         return None
     return content_sha256 if file_sha256(path) == content_sha256 else None
+
+
+def read_cached_shard_metadata(path: pathlib.Path) -> tuple[int, list[dict[str, Any]]]:
+    """Strictly rebuild record/audit metadata from an immutable cached shard."""
+    record_count = 0
+    audits: list[dict[str, Any]] = []
+    with path.open("rb") as compressed:
+        with zstandard.ZstdDecompressor().stream_reader(compressed) as reader:
+            with io.TextIOWrapper(reader, encoding="utf-8") as text:
+                for line_number, line in enumerate(text, 1):
+                    try:
+                        row = json.loads(line)
+                    except json.JSONDecodeError as error:
+                        raise ValueError(f"invalid cached shard {path}, line {line_number}: {error}") from error
+                    record_count += 1
+                    if row.get("record") == "audit":
+                        audits.append(row)
+    return record_count, audits
 
 
 def run_modules(
@@ -138,15 +157,23 @@ def write_shard(
     target = raw_dir / f"{shard['id']}.jsonl.zst"
     plan_sha256 = module_plan_sha256(shard["modules"])
     if not force and (checksum := valid_cached_shard(target, plan_sha256)):
+        record_count, audits = read_cached_shard_metadata(target)
+        expected_modules = set(shard["modules"])
+        observed_modules = {str(audit.get("module")) for audit in audits}
+        if len(audits) != len(shard["modules"]) or observed_modules != expected_modules:
+            raise ValueError(
+                f"cached shard {target} has incomplete audits: "
+                f"expected {len(expected_modules)}, observed {len(audits)}"
+            )
         return ShardResult(
             shard["id"],
             "resumed",
             str(target.relative_to(ROOT)),
             checksum,
             target.stat().st_size,
-            0,
+            record_count,
             time.perf_counter() - started,
-            [],
+            audits,
             True,
             0,
         )

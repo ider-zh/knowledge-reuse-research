@@ -3,8 +3,8 @@
 - Owner: primary research agent
 - Baseline commit: `6dcdf7b`
 - Scope: `LeanGraph/`, Lean Python adapter, v1 configs/results
-- Current gate: 329/331 raw shards are checksum-complete; two profiled heavy
-  shards remain (`shard-00113`, `shard-00151`).
+- Current gate: 331/331 raw shards are checksum-complete; resume metadata must
+  be rebuilt from cached shard audits before normalization.
 - Verified evidence: pinned capability probe passed; golden exact 60-node and
   409-typed-edge digests pass; 1/2/4/8-worker benchmark complete; smoke
   normalize/validate/analyze/report passed.
