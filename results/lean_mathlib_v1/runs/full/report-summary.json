@@ -1,10 +1,10 @@
 {
   "figure_count": 14,
-  "index_sha256": "841454b6e0bb65e39618271379ee55ad9621df304e8cd411868501539f14d0bf",
+  "index_sha256": "60206023ec982fff508d2d62d015e89a574e568df881d1ec995f0f1a3b1e80ff",
   "remote_dependencies": 0,
   "run_kind": "full",
   "schema_version": "report-manifest-v1",
   "section_count": 17,
   "standalone_bytes": 14429657,
-  "standalone_sha256": "44cfcc2a51677492da080a3cd96618e94e1bf21193f3649e180eebbb5ca8309d"
+  "standalone_sha256": "5386e4382a3daae0110d5da308abed2278b2259bc80ce01f6837893aff467269"
 }
