@@ -104,8 +104,8 @@ def bar_svg(title: str, labels: list[str], values: list[float], y_label: str) ->
 
 def points_svg(
     title: str,
-    x_values: list[float],
-    y_values: list[float],
+    x_values: list[float | None],
+    y_values: list[float | None],
     x_label: str,
     y_label: str,
     log_x: bool = True,
@@ -114,7 +114,7 @@ def points_svg(
     pairs = [
         (x, y)
         for x, y in zip(x_values, y_values, strict=True)
-        if x > 0 and (y > 0 or not log_y)
+        if x is not None and y is not None and x > 0 and (y > 0 or not log_y)
     ]
     if len(pairs) > 2500:
         pairs = pairs[:: math.ceil(len(pairs) / 2500)]
