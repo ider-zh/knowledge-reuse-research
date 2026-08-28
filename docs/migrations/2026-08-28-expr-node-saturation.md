@@ -9,6 +9,9 @@ migration, raw Lean node records include `type_expr_nodes_saturated` and
 - `true` means the extractor reached its fixed work or `UInt64` bound. The numeric
   raw value is `UInt64.max`, never an empty or missing proof body.
 - Older raw shards have no saturation fields and are interpreted as `false`.
+- Determinism validation applies the same legacy-to-current default adapter before
+  hashing, so resumed runs can safely combine immutable pre-migration shards with
+  newly extracted shards.
 - Normalization retains the flags but converts saturated numeric counts to null so
   regressions, correlations, bins, and figures do not treat a bound as an observation.
 - TYPE and VALUE dependency edges are unaffected and remain complete because Lean's

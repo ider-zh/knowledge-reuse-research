@@ -20,7 +20,15 @@ EXTRACTOR = ROOT / ".lake" / "build" / "bin" / "lean-graph-extract"
 
 
 def canonical_semantic_digest(rows: list[dict[str, Any]]) -> str:
-    semantic = [row for row in rows if row.get("record") in {"node", "edge"}]
+    semantic = []
+    for source in rows:
+        if source.get("record") not in {"node", "edge"}:
+            continue
+        row = dict(source)
+        if row["record"] == "node":
+            row.setdefault("type_expr_nodes_saturated", False)
+            row.setdefault("value_expr_nodes_saturated", False if row.get("has_value") else None)
+        semantic.append(row)
     encoded = sorted(
         json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":"))
         for row in semantic
