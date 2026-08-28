@@ -28,20 +28,37 @@ from knowledge_reuse.sources.lean_mathlib.layout import (
 
 CONFIG = tomllib.loads(CONFIG_PATH.read_text())
 TITLES = {
-    "kind_counts": "Declaration counts by kind",
-    "indegree_ccdf": "Reuse indegree complementary CDF",
-    "rank_frequency": "Reuse rank-frequency",
-    "tail_overlay": "Power-law fitted-tail diagnostic",
-    "source_length": "Source length vs reuse",
-    "type_length": "Type Expr size vs reuse",
-    "value_length": "Value/proof Expr size vs reuse",
-    "length_binned": "Log-binned reuse vs length",
-    "lorenz": "Lorenz curve of reuse",
-    "domain_scale": "Top domains by node count",
-    "domain_heatmap": "Domain-to-domain dependency shares",
-    "domain_entropy": "Per-domain H*ref operational proxy",
-    "domain_tail": "Per-domain alpha and Gini",
-    "robustness": "Robustness: all vs no-generated declarations",
+    "kind_counts": "图 1 · 声明类型构成",
+    "indegree_ccdf": "图 2 · 复用入度经验 CCDF",
+    "rank_frequency": "图 3 · 复用入度 Rank–Frequency",
+    "tail_overlay": "图 4 · 幂律尾部拟合诊断",
+    "source_length": "图 5 · 源码长度与复用",
+    "type_length": "图 6 · 类型表达式复杂度与复用",
+    "value_length": "图 7 · 定义体/证明复杂度与复用",
+    "length_binned": "图 8 · 长度分箱后的复用分布",
+    "lorenz": "图 9 · 复用集中度 Lorenz 曲线",
+    "domain_scale": "图 10 · 主要领域的节点规模",
+    "domain_heatmap": "图 11 · 领域间依赖份额",
+    "domain_entropy": "图 12 · 领域 H*ref 操作性代理量",
+    "domain_tail": "图 13 · 领域 Gini 与尾部参数",
+    "robustness": "图 14 · 不同声明视图的稳健性",
+}
+
+FIGURE_CAPTIONS = {
+    "kind_counts": "按 Lean 声明种类统计。定理占主体，但构造器、归纳类型和递归器仍作为独立节点保留。",
+    "indegree_ccdf": "仅使用正入度节点；双对数坐标用于观察尾部，曲线形状本身不构成幂律证据。",
+    "rank_frequency": "声明按总入度降序排列；绘图时确定性降采样，不改变用于统计检验的完整数据。",
+    "tail_overlay": "经验 CCDF 与估计幂律尾部的诊断性叠加；模型优劣以似然比较而非视觉判断为准。",
+    "source_length": "仅绘制存在源码范围的声明；缺失值保持缺失，不被替换为零。",
+    "type_length": "类型表达式树出现次数覆盖全部内部声明；散点仅为可视化降采样。",
+    "value_length": "仅绘制具有定义体或证明体的声明；无 value 的声明保持缺失。",
+    "length_binned": "源码字节数的对数分箱，展示每箱复用入度中位数及四分位数。",
+    "lorenz": "横轴为声明累计比例，纵轴为收到的复用边累计比例；对角线代表完全均匀。",
+    "domain_scale": "领域由模块路径映射得到；它是可复现的工程分组，不等同于数学本体分类。",
+    "domain_heatmap": "行是依赖发起领域，列是被依赖领域；颜色表示行内依赖份额。",
+    "domain_entropy": "H*ref 是跨领域引用多样性的经验操作性代理，不是理论信息熵 H。",
+    "domain_tail": "仅包含可估计尾部参数的领域；缺失 alpha 不被替换为零。",
+    "robustness": "比较 ALL、去生成声明、定理、定义及用户可见近似等预注册视图。",
 }
 
 
@@ -121,8 +138,8 @@ def points_svg(
         for x, y in zip(x_values, y_values, strict=True)
         if x is not None and y is not None and x > 0 and (y > 0 or not log_y)
     ]
-    if len(pairs) > 2500:
-        pairs = pairs[:: math.ceil(len(pairs) / 2500)]
+    if len(pairs) > 1600:
+        pairs = pairs[:: math.ceil(len(pairs) / 1600)]
     xs = [pair[0] for pair in pairs] or [1]
     ys = [pair[1] for pair in pairs] or [1]
     sx, sy = scale(xs, 78, 730, log_x), scale(ys, 365, 60, log_y)
@@ -141,16 +158,27 @@ def line_svg(
     log_x: bool = False,
     log_y: bool = False,
 ) -> str:
-    all_x = [x for _, xs, _ in series for x in xs if x > 0 or not log_x]
-    all_y = [y for _, _, ys in series for y in ys if y > 0 or not log_y]
+    prepared = []
+    for label, xs, ys in series:
+        pairs = [
+            (x, y)
+            for x, y in zip(xs, ys, strict=True)
+            if math.isfinite(x)
+            and math.isfinite(y)
+            and (x > 0 or not log_x)
+            and (y > 0 or not log_y)
+        ]
+        if len(pairs) > 700:
+            pairs = pairs[:: math.ceil(len(pairs) / 700)]
+        prepared.append((label, pairs))
+    all_x = [x for _, pairs in prepared for x, _ in pairs]
+    all_y = [y for _, pairs in prepared for _, y in pairs]
     sx, sy = scale(all_x, 78, 730, log_x), scale(all_y, 365, 60, log_y)
     colors = ["#386cb0", "#e6550d", "#31a354", "#756bb1"]
     body = axes(x_label, y_label)
-    for index, (label, xs, ys) in enumerate(series):
+    for index, (label, pairs) in enumerate(prepared):
         points = " ".join(
-            f"{sx(x):.2f},{sy(y):.2f}"
-            for x, y in zip(xs, ys, strict=True)
-            if (x > 0 or not log_x) and (y > 0 or not log_y)
+            f"{sx(x):.2f},{sy(y):.2f}" for x, y in pairs
         )
         color = colors[index % len(colors)]
         body += (
@@ -191,12 +219,30 @@ def heatmap_svg(frame: pl.DataFrame) -> str:
     return svg_frame(TITLES["domain_heatmap"], body)
 
 
+def format_cell(value: Any) -> str:
+    if value is None:
+        return "—"
+    if isinstance(value, bool):
+        return "通过" if value else "未通过"
+    if isinstance(value, float):
+        if math.isnan(value):
+            return "—"
+        if abs(value) < 0.001 and value != 0:
+            return f"{value:.2e}"
+        return f"{value:,.4f}".rstrip("0").rstrip(".")
+    if isinstance(value, int):
+        return f"{value:,}"
+    return str(value)
+
+
 def render_table(frame: pl.DataFrame, limit: int = 20) -> str:
     frame = frame.head(limit)
     headings = "".join(f"<th>{html.escape(column)}</th>" for column in frame.columns)
     rows = []
     for row in frame.iter_rows():
-        cells = "".join(f"<td>{html.escape(str(value))}</td>" for value in row)
+        cells = "".join(
+            f"<td>{html.escape(format_cell(value))}</td>" for value in row
+        )
         rows.append(f"<tr>{cells}</tr>")
     return f"<table><thead><tr>{headings}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
@@ -249,77 +295,121 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
     return manifest
 
 
-TEMPLATE = jinja2.Template("""<!doctype html>
-<html lang="en"><head><meta charset="utf-8">
+_REPORT_ENV = jinja2.Environment(autoescape=True)
+_REPORT_ENV.filters["fmt"] = format_cell
+TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
+<html lang="zh-CN"><head><meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
-<title>Lean 4 / mathlib Reuse Graph Experiment</title>
-<style>{{ css }}</style></head><body>
-<header><p class="eyebrow">LEAN 4 / MATHLIB REUSE GRAPH</p>
-<h1>How is formal knowledge reused?</h1>
+<title>Lean 4 / mathlib 知识复用图正式实验报告</title>
+<style>{{ css|safe }}</style></head><body>
+<header><p class="eyebrow">KNOWLEDGE REUSE RESEARCH · LEAN / MATHLIB V1</p>
+<h1>形式化知识如何被复用？</h1>
+<p class="dek">从 Lean 声明、语义依赖图到重尾分布与复杂度关系的完整实验报告</p>
 <div class="status {{ 'ok' if quality.passed else 'bad' }}">
-<b>{{ 'COMPLETE' if quality.extraction_completeness == 1 else 'INCOMPLETE' }}</b>
- · {{ quality.extracted_module_count }}/{{ quality.expected_module_count }} modules
- · {{ manifest.mathlib_tag }} · {{ manifest.mathlib_commit[:12] }}</div>
-<p>{{ summary.declaration_count }} declarations and {{ summary.edge_count }} unique
-typed semantic edges. Generated from pinned elaborated Lean environments.</p></header><main>
-<section><h2>1. Executive Summary</h2><ul>
-<li><b>supported</b> — extraction completeness is
-{{ (quality.extraction_completeness*100)|round(2) }}%; validation gates
-{{ 'passed' if quality.passed else 'did not pass' }}.</li>
-<li><b>exploratory</b> — the top 1% receives
-{{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}% of reuse edges;
-Gini={{ summary.reuse_concentration.gini|round(3) }}.</li>
-<li><b>inconclusive</b> — fitted alternatives do not establish a Zipf law from
-plot shape alone.</li>
-<li><b>exploratory</b> — length associations are observational and
-snapshot-specific.</li></ul></section>
-<section><h2>2. Research Questions &amp; Hypotheses</h2>
-<p>RQ4-A reuse concentration; RQ4-B length versus reuse; RQ4-C domain
-heterogeneity; RQ4-D TYPE versus VALUE semantics; RQ4-E a portable graph contract.</p></section>
-<section><h2>3. Reproducibility Manifest</h2>{{ manifest_table|safe }}</section>
-<section><h2>4. Corpus Definition</h2><p>Configured corpus:
-<code>Mathlib/**/*.lean</code>. Archive, tests, benchmarks, and Counterexamples are
-configurable exclusions. Inventory: {{ quality.expected_module_count }} modules.</p></section>
-<section><h2>5. Lean Extraction Semantics</h2><p>A node is an elaborated
-declaration. Edges point consumer → dependency and are typed TYPE or VALUE.
-Private theorem bodies use pinned-version <code>import all</code>, verified by the
-capability probe and exact golden gate. Source ranges do not define identity.</p></section>
-<section><h2>6. Data Quality &amp; Completeness</h2>{{ quality_table|safe }}
-<p>Nulls remain null. External/prelude targets are explicit.</p></section>
-<section><h2>7. Graph Overview</h2>{{ figs.kind_counts|safe }}
-{{ figs.indegree_ccdf|safe }}<p class="caption">The CCDF is empirical, not a
-fitted-law conclusion.</p></section>
-<section><h2>8. Reuse Rank-Frequency</h2>{{ figs.rank_frequency|safe }}
-{{ figs.tail_overlay|safe }}</section>
-<section><h2>9. Heavy-tail Model Comparison</h2>{{ fits_table|safe }}
-<p>Likelihood comparisons cover lognormal and truncated alternatives. Bootstrap
-status explicitly records whether goodness-of-fit bootstrap was implemented.</p></section>
-<section><h2>10. Length vs Reuse</h2>{{ figs.source_length|safe }}
-{{ figs.type_length|safe }}{{ figs.value_length|safe }}
-{{ figs.length_binned|safe }}{{ regressions_table|safe }}
-<p class="caption">Models include 95% confidence intervals and kind/domain controls.</p></section>
-<section><h2>11. Declaration-kind Analysis</h2><p>Population fits separately cover
-theorem→theorem and theorem→definition reuse. TYPE and VALUE stay distinct.</p></section>
-<section><h2>12. Domain Analysis</h2>{{ figs.domain_scale|safe }}
-{{ figs.domain_heatmap|safe }}{{ figs.domain_entropy|safe }}
-{{ figs.domain_tail|safe }}{{ domain_table|safe }}
-<p class="caption"><b>H*ref is an empirical operational proxy, not theoretical H.</b></p></section>
-<section><h2>13. Robustness Checks</h2>{{ figs.lorenz|safe }}
+<b>{{ '完整图构建成功' if quality.extraction_completeness == 1 and quality.passed else '构建未通过完整性门禁' }}</b>
+<span>{{ quality.extracted_module_count }}/{{ quality.expected_module_count }} 模块 · {{ manifest.mathlib_tag }} · {{ manifest.mathlib_commit[:12] }}</span></div>
+<div class="hero-stats">
+<div><strong>{{ summary.declaration_count|fmt }}</strong><span>内部声明节点</span></div>
+<div><strong>{{ quality.external_node_count|fmt }}</strong><span>显式外部目标</span></div>
+<div><strong>{{ summary.edge_count|fmt }}</strong><span>唯一类型化语义边</span></div>
+<div><strong>{{ (quality.extraction_completeness*100)|round(1) }}%</strong><span>模块覆盖率</span></div>
+</div></header>
+<nav><b>报告目录</b><ol>
+<li><a href="#s1">执行摘要</a></li><li><a href="#s2">概念设计</a></li>
+<li><a href="#s3">图模型</a></li><li><a href="#s4">完整性</a></li>
+<li><a href="#s7">复杂度算法</a></li><li><a href="#s8">图统计</a></li>
+<li><a href="#s10">重尾检验</a></li><li><a href="#s11">复杂度分析</a></li>
+<li><a href="#s13">领域分析</a></li><li><a href="#s17">附录</a></li>
+</ol></nav><main>
+
+<section id="s1"><h2>1. 执行摘要</h2>
+<div class="verdict supported"><b>构建结论 · supported</b><p>正式 full run 已完成全部 {{ quality.expected_module_count|fmt }} 个配置内模块，所有质量门禁通过。图中没有因运行时间、递归深度、边数或节点数而截断的数据。</p></div>
+<div class="verdict exploratory"><b>统计结论 · exploratory</b><p>复用高度集中：前 1% 声明承接 {{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}% 的入边，Gini={{ summary.reuse_concentration.gini|round(3) }}。这是快照内的观察性结果。</p></div>
+<div class="verdict inconclusive"><b>分布结论 · inconclusive</b><p>尾部很重，但当前模型比较不支持仅凭直线外观宣称 Zipf/纯幂律；bootstrap 拟合优度尚未实现。</p></div>
+<p>本实验的核心产物不是源码文本网络，而是从固定版本 Lean elaborated environment 提取的 declaration graph。报告依次说明概念、图构建、完整性证据、复杂度算法、图统计与实验解释。</p></section>
+
+<section id="s2"><h2>2. 概念设计：研究对象与问题</h2>
+<p>研究对象是 <em>mathlib 中已 elaboration 的形式化知识单元及其直接语义依赖</em>。声明是可命名、可复用的最小稳定单位；一个声明在另一个声明的类型或定义体/证明体中作为常量出现，即形成复用关系。</p>
+<div class="grid"><article><h3>复用是什么</h3><p>若声明 A 的表达式包含声明 B 的常量引用，则 A 依赖 B；反向看，B 被 A 复用。入度衡量被多少唯一声明引用，出度衡量当前声明依赖多少唯一声明。</p></article>
+<article><h3>研究问题</h3><p>RQ-A 复用是否集中？RQ-B 长度/结构复杂度与复用有何关系？RQ-C 领域间是否异质？RQ-D TYPE 与 VALUE 依赖有何区别？RQ-E 图契约能否迁移到其他知识源？</p></article></div>
+<div class="callout"><b>解释边界</b> 语义常量引用不是人的引用意图。自动生成代码、类型类、强制转换和 elaborator 插入项都属于机器可复现的依赖事实，但不应直接解释为作者有意识的“引用”。</div></section>
+
+<section id="s3"><h2>3. Declaration Graph 模型</h2>
+<p>定义有向、类型化图 <code>G=(V,E)</code>。<code>V</code> 是内部声明与被引用的显式外部目标；<code>E</code> 的方向固定为 <code>consumer → dependency</code>。</p>
+<div class="grid three"><article><h3>节点 V</h3><p>稳定身份由完整声明名给出，附带 module、kind、domain、源码范围、是否生成、是否有 value 等属性。</p></article><article><h3>TYPE 边</h3><p>目标常量出现在声明的 elaborated type 中，描述接口、命题陈述与类型层依赖。</p></article><article><h3>VALUE 边</h3><p>目标常量出现在 definition value 或 theorem proof 中，描述实现与证明层依赖。</p></article></div>
+<p>同一 consumer、dependency、edge kind 只保留一条唯一边。因此本报告分析的是“被多少不同声明复用”，不是常量在表达式内出现了多少次；v1 的边 multiplicity 明确保留为空。</p></section>
+
+<section id="s4"><h2>4. 图构建与完整性：没有截断</h2>
+<div class="answer"><b>结论：完整图已成功构建。</b> {{ quality.extracted_module_count|fmt }}/{{ quality.expected_module_count|fmt }} 个模块状态均为 ok，{{ summary.declaration_count|fmt }} 个内部声明节点和 {{ summary.edge_count|fmt }} 条唯一语义边进入规范化数据；另有 {{ quality.external_node_count|fmt }} 个外部/prelude 目标被显式保留。</div>
+<p>提取顺序为 capability probe → golden fixture → inventory/sharding → full extraction → normalization → validation。正式提取仅在固定 Lean API 与金样门禁通过后运行。失败模块、不可用证明体和缺失 source range 都不会被悄悄转成空集合。</p>
+<div class="grid"><article><h3>为什么长时间运行</h3><p>工作量来自 8,264 个模块环境加载、56 万声明的表达式遍历，以及约 2,474 万条去重边的序列化与规范化；它不是算法以无界递归反复展开同一子表达式。</p></article><article><h3>缓存解决了什么</h3><p>Expr 是共享 DAG。复杂度提取先按对象指针访问每个唯一子表达式一次，再由缓存计算树出现次数，既避免共享子图的重复递归，又不牺牲研究所需的完整计数。</p></article></div>
+<h3>质量门禁</h3>{{ quality_table|safe }}
+<p class="note">“完整”是相对于固定 corpus 与提取契约：配置排除项不属于总体；外部目标不伪装成内部声明；源码范围缺失保持 null。</p></section>
+
+<section id="s5"><h2>5. 节点体系与总体边界</h2>
+<p>内部节点覆盖 theorem、definition、constructor、recursor、inductive 与 opaque。生成声明仍被保留并以 <code>is_generated</code> 标记，避免改变原始图；分析阶段另提供 NO_GENERATED 等视图。</p>
+{{ figs.kind_counts|safe }}
+<p>声明 identity 不依赖文件位置或 source range，因此即使 elaborator 生成的声明没有可靠源码区间，也不会从图中消失。</p></section>
+
+<section id="s6"><h2>6. 边语义、计数口径与图视图</h2>
+<div class="hero-stats compact"><div><strong>{{ summary.type_edge_count|fmt }}</strong><span>TYPE edges</span></div><div><strong>{{ summary.value_edge_count|fmt }}</strong><span>VALUE edges</span></div><div><strong>{{ summary.self_loop_count|fmt }}</strong><span>self loops</span></div><div><strong>{{ summary.edge_count|fmt }}</strong><span>合计</span></div></div>
+<p>TYPE 与 VALUE 分开保存、分别统计，同时提供 ALL 合并视图。自环保留，因为它可能来自递归结构或 elaborated 常量关系；重复类型化边在规范化时拒绝。所有内部 source 和 target 均通过 dangling 检查，外部 target 进入独立命名空间。</p></section>
+
+<section id="s7"><h2>7. 节点长度与复杂度变量</h2>
+<h3>精确算法</h3><ol class="steps"><li><b>指针访问阶段：</b>对 type/value Expr DAG 做指针去重的 postorder；用 visited set 保证每个唯一对象只展开一次。</li><li><b>缓存递推阶段：</b>为每个唯一 Expr 计算任意精度 <code>Nat</code> 结果，并按子项出现位置求和，从而恢复树语义下的出现次数。</li><li><b>常量集合：</b>分别收集 TYPE/VALUE 中唯一常量名，得到 <code>*_const_unique</code>；边生成不设置 cap。</li></ol>
+<div class="callout"><b>缓存不等于截断。</b> visited/cache 只消除相同 DAG 对象的重复计算；当共享子表达式被父节点多次引用时，其缓存值仍按每次出现累计。没有饱和上限，使用 Lean <code>Nat</code> 避免固定宽度溢出。</div>
+<h3>已测量变量与覆盖率</h3>{{ complexity_table|safe }}
+<p><code>source_bytes/source_lines/source_tokens</code> 来自可用的声明 source range；<code>type_expr_nodes/value_expr_nodes</code> 是表达式树出现次数；<code>type_const_unique/value_const_unique</code> 是唯一常量种类数。缺失 source range 的生成声明保持 null。</p>
+<div class="verdict inconclusive"><b>尚未测量</b><p>最大 Expr 深度与唯一指针节点数（DAG size）目前未进入 v1 schema。它们是有价值的补充复杂度变量，但不能用现有 tree-occurrence 计数冒充。本报告不补造结果。</p></div></section>
+
+<section id="s8"><h2>8. 图总体统计</h2>
+<div class="metric-table">{{ graph_table|safe }}</div>
+<div class="grid figures">{{ figs.indegree_ccdf|safe }}{{ figs.rank_frequency|safe }}</div>
+<p>{{ (summary.zero_indegree_fraction*100)|round(2) }}% 的内部声明没有被其他内部声明复用；{{ (summary.zero_outdegree_fraction*100)|round(2) }}% 没有内部依赖；完全孤立比例仅 {{ (summary.isolated_fraction*100)|round(4) }}%。</p></section>
+
+<section id="s9"><h2>9. 复用集中度</h2>
+<div class="hero-stats compact"><div><strong>{{ summary.reuse_concentration.gini|round(3) }}</strong><span>Gini</span></div><div><strong>{{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}%</strong><span>Top 1%</span></div><div><strong>{{ (summary.reuse_concentration.top_5pct_share*100)|round(1) }}%</strong><span>Top 5%</span></div><div><strong>{{ (summary.reuse_concentration.top_10pct_share*100)|round(1) }}%</strong><span>Top 10%</span></div></div>
+{{ figs.lorenz|safe }}
+<p>高 Gini 与陡峭 Lorenz 曲线共同表明，形式化库的复用不是均匀分散的：少数基础声明承接了大部分依赖。但集中度不自动等价于“重要性”，更不代表教学价值或证明难度。</p></section>
+
+<section id="s10"><h2>10. 重尾模型比较</h2>
+{{ figs.tail_overlay|safe }}
+{{ fits_table|safe }}
+<p>全体正入度声明的拟合参数为 alpha={{ all_fit.alpha }}, xmin={{ all_fit.xmin }}, KS={{ all_fit.ks }}。相对 lognormal 与 truncated power law 的对数似然比为负且达到显著性，说明替代模型在当前比较中更受支持。因此正确结论是“存在重尾和强集中”，而不是“已证实 Zipf 定律”。</p>
+<p class="note">bootstrap 状态为 <code>{{ all_fit.bootstrap_status }}</code>，所以不能报告基于 bootstrap 的绝对拟合优度 p 值。</p></section>
+
+<section id="s11"><h2>11. 长度/复杂度与复用</h2>
+<div class="grid figures">{{ figs.source_length|safe }}{{ figs.type_length|safe }}{{ figs.value_length|safe }}{{ figs.length_binned|safe }}</div>
+<h3>秩相关</h3>{{ correlations_table|safe }}
+<h3>控制声明类型与领域后的负二项 GLM</h3>{{ regressions_table|safe }}
+<p>模型使用 <code>log1p(length)</code> 并控制 kind + domain。系数不是因果效应；表中的“长度翻倍变化”将系数转换为更直观的期望复用相对变化。源码长度呈弱正的未控制秩相关，但控制变量后的模型系数为负，说明构成差异会改变表面关系。</p></section>
+
+<section id="s12"><h2>12. Declaration kind 分析</h2>
+{{ kind_table|safe }}
+<p>定理占 {{ theorem_share }}% 节点。拟合总体同时包含 theorem-only、definition-only、TYPE、VALUE、theorem→theorem 和 theorem→definition，避免把不同语义人口混成一个分布。kind 是分析控制变量，不用于删改原始图。</p></section>
+
+<section id="s13"><h2>13. 领域结构与 H*ref</h2>
+<div class="grid figures">{{ figs.domain_scale|safe }}{{ figs.domain_heatmap|safe }}{{ figs.domain_entropy|safe }}{{ figs.domain_tail|safe }}</div>
+{{ domain_table|safe }}
+<div class="callout"><b>H*ref 的含义：</b>它是领域依赖分布的经验操作性代理，用来比较跨领域引用的分散程度；它不等于理论 H，也不能直接解释为领域的内在复杂度。</div></section>
+
+<section id="s14"><h2>14. 稳健性视图</h2>
 {{ figs.robustness|safe }}{{ views_table|safe }}
-<p>Views include ALL, NO_GENERATED, theorem-only, definition-only,
-theorem-and-definition, and user-facing approximation. Multiplicity is null in v1.</p></section>
-<section><h2>14. Interpretation relative to Veldhuizen</h2><p>This is a conceptual
-replication on an elaborated declaration graph, with TYPE/VALUE and domain
-extensions. It does not identify human citation intent. H*ref ≠ theoretical H.</p></section>
-<section><h2>15. Limitations</h2><p>Automation, coercions, typeclasses, and generated
-references differ from human-visible citations. Some generated declarations lack
-source ranges. Path domains are coarse. Statistical results are observational.</p></section>
-<section><h2>16. Conclusions &amp; Next Experiments</h2><p>Use this pinned snapshot as
-the reproducible baseline. Next: cross-version comparisons, bootstrap
-goodness-of-fit, and attribution-sensitive views.</p></section>
-<section><h2>17. Appendix</h2><h3>Top reusable declarations</h3>{{ top_table|safe }}
-<h3>Extraction worker benchmark</h3>{{ benchmark_table|safe }}
-<h3>Commands</h3><pre>just bootstrap
+<p>ALL、NO_GENERATED、THEOREM_ONLY、DEFINITION_ONLY、THEOREM_AND_DEFINITION 与 USER_FACING_APPROX 使用同一不可变底图重建。若去掉生成声明后集中度仍然很高，就说明主要结论不是单由 compiler-generated 节点制造。</p></section>
+
+<section id="s15"><h2>15. 可复现性与审计链</h2>
+<p>原始 shard 数据不可变；normalized tables、metrics、figures 和 HTML 均可由其重建。manifest 固定 mathlib tag/commit、Lean toolchain、extractor commit、配置摘要、worker 数和运行环境。</p>
+{{ manifest_table|safe }}
+<p>图形中的降采样仅用于限制 HTML/SVG 体积；所有表格统计、拟合、相关、回归和集中度都在完整 metrics 上计算。</p></section>
+
+<section id="s16"><h2>16. 解释、局限与结论</h2>
+<div class="grid"><article><h3>可以说什么</h3><p>在固定 mathlib v4.32.1 快照和声明级语义图上，复用高度集中、分布具有重尾，领域与声明种类存在明显异质性，长度/结构复杂度与复用关系较弱且依赖控制口径。</p></article><article><h3>不能说什么</h3><p>不能由入度推断人的引用意图、数学深度或因果重要性；不能把路径领域当成本体；不能把尚未 bootstrap 的尾部拟合表述为已验证的普适定律。</p></article></div>
+<p>建议下一阶段补充 Expr 最大深度与 DAG unique-node 指标、实现拟合优度 bootstrap，并在保持同一图契约下进行跨版本比较。Wikipedia 与开源软件图应使用各自 adapter，不改变 Lean v1 的冻结语义。</p></section>
+
+<section id="s17"><h2>17. 附录：表格、性能与复现命令</h2>
+<h3>复用最高的声明</h3>{{ top_table|safe }}
+<h3>提取 worker benchmark</h3>{{ benchmark_table|safe }}
+<h3>完整流水线</h3><pre>just bootstrap
 just probe
 just golden
 just inventory
@@ -328,24 +418,48 @@ just normalize
 just validate
 just analyze
 just report</pre>
-<p>Schema: <code>schemas/lean-graph-v1.md</code>. Compact artifacts adjacent to this
-report contain fits, regressions, domain metrics, quality checks, and checksums.</p></section>
-</main><footer>Deterministic report from compact artifacts. No CDN, remote JavaScript,
-remote fonts, or external database.</footer></body></html>""")
+<p>核心契约：<code>schemas/lean-graph-v1.md</code>。报告相邻目录保存 fits、regressions、domain metrics、quality checks、checksums 与独立 HTML。<code>--force</code> 行为保持不变。</p></section>
+</main><footer>由版本化紧凑产物确定性生成 · 0 CDN · 0 远程脚本 · 0 远程字体</footer></body></html>""")
 
 
-CSS = """body{margin:0;background:#f2efe8;color:#17202a;font:16px/1.55 system-ui,sans-serif}
-header,main,footer{max-width:1100px;margin:auto}header{padding:64px 28px 36px}
-main{padding:0 28px}h1{font:700 clamp(2.4rem,7vw,5.4rem)/.95 Georgia,serif;
-max-width:900px;margin:.2em 0}h2{font:700 2rem Georgia,serif;border-top:1px solid #bbb;
-padding-top:32px}section{padding:12px 0 28px}.eyebrow{letter-spacing:.18em;font-weight:700}
-.status{padding:14px 18px;border-left:6px solid #27824b;background:#e5f4e9}
-.status.bad{border-color:#b83232;background:#fae5e5}svg,img{max-width:100%;height:auto;
-background:#fbfaf7;margin:12px 0}table{border-collapse:collapse;width:100%;font-size:.86rem;
-display:block;overflow:auto}th,td{border-bottom:1px solid #ccc;text-align:left;padding:7px 9px;
-white-space:nowrap}th{background:#ded9ce}code,pre{background:#e7e3da;padding:.15em .35em}
-pre{padding:16px;overflow:auto}.caption{color:#505962}.figure{margin:18px 0}
-footer{padding:42px 28px 70px;color:#59636e}"""
+CSS = """:root{--ink:#15231d;--muted:#5f6c65;--paper:#f4f0e7;--card:#fffdf8;
+--green:#175b45;--mint:#dceadf;--gold:#b47725;--red:#9c443d;--line:#cec7b9}
+*{box-sizing:border-box}html{scroll-behavior:smooth}body{margin:0;background:var(--paper);
+color:var(--ink);font:16px/1.68 system-ui,-apple-system,"Noto Sans CJK SC",sans-serif}
+header,main,nav,footer{max-width:1180px;margin:auto}header{padding:72px 34px 38px}
+main{padding:0 34px}.eyebrow{letter-spacing:.17em;font-size:.76rem;font-weight:800;
+color:var(--green)}h1{font:800 clamp(2.7rem,7vw,5.8rem)/.98 Georgia,"Noto Serif SC",serif;
+max-width:980px;margin:.16em 0}.dek{font:1.25rem/1.5 Georgia,"Noto Serif SC",serif;color:var(--muted)}
+h2{font:750 2.05rem/1.2 Georgia,"Noto Serif SC",serif;border-top:1px solid var(--line);
+padding-top:38px;margin-top:26px}h3{font-size:1.02rem;letter-spacing:.02em;margin:.2em 0 .5em}
+section{padding:10px 0 34px}.status{display:flex;justify-content:space-between;gap:14px;
+padding:15px 19px;border-left:6px solid #27824b;background:var(--mint);margin:28px 0}
+.status.bad{border-color:var(--red);background:#f7e4df}.hero-stats{display:grid;
+grid-template-columns:repeat(4,1fr);gap:12px}.hero-stats div{background:var(--card);padding:18px;
+border:1px solid var(--line)}.hero-stats strong{display:block;font:700 1.7rem Georgia,serif}
+.hero-stats span{display:block;color:var(--muted);font-size:.8rem}.hero-stats.compact{margin:18px 0}
+nav{padding:16px 34px 24px}nav ol{display:flex;flex-wrap:wrap;gap:7px 20px;padding:0;
+list-style-position:inside;font-size:.88rem}a{color:var(--green);text-decoration-thickness:1px}
+.grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px;margin:18px 0}
+.grid.three{grid-template-columns:repeat(3,minmax(0,1fr))}.grid article{background:var(--card);
+padding:20px;border:1px solid var(--line)}.grid.figures{align-items:start}.grid.figures .figure{margin:0}
+.verdict,.callout,.answer{padding:18px 20px;margin:14px 0;background:var(--card);
+border-left:5px solid var(--green)}.verdict p{margin:.35em 0 0}.verdict.exploratory{border-color:var(--gold)}
+.verdict.inconclusive{border-color:var(--red)}.answer{font-size:1.08rem;background:var(--mint)}
+.note,.caption,figcaption{color:var(--muted);font-size:.86rem}.steps li{margin:.65em 0}
+svg,img{display:block;max-width:100%;height:auto;background:var(--card);margin:0}
+.figure{margin:22px 0;background:var(--card);border:1px solid var(--line);padding:10px}
+figcaption{padding:8px 10px 4px}table{border-collapse:collapse;width:100%;font-size:.82rem;
+display:block;overflow:auto;background:var(--card);margin:14px 0}th,td{border-bottom:1px solid #ddd7cb;
+text-align:left;padding:8px 10px;white-space:nowrap}th{position:sticky;top:0;background:#e5dfd2}
+tr:hover td{background:#f4f8f2}code,pre{background:#e8e3d9;padding:.15em .35em}
+pre{padding:18px;overflow:auto;border-left:4px solid var(--green)}footer{padding:45px 34px 75px;
+color:var(--muted);border-top:1px solid var(--line);margin-top:30px}
+@media(max-width:760px){header,main,nav{padding-left:18px;padding-right:18px}.hero-stats,
+.grid,.grid.three{grid-template-columns:1fr 1fr}.status{display:block}.status span{display:block}}
+@media(max-width:480px){.hero-stats,.grid,.grid.three{grid-template-columns:1fr}}
+@media print{body{background:white}nav{display:none}section{break-inside:avoid}.figure{break-inside:avoid}}
+"""
 
 
 def generate(run_kind: str) -> dict[str, Any]:
@@ -374,6 +488,77 @@ def generate(run_kind: str) -> dict[str, Any]:
         else pl.DataFrame(
             json.loads((BENCHMARK_ROOT / "extraction.json").read_text())["rows"]
         )
+    )
+
+    complexity_labels = {
+        "source_bytes": "源码字节数",
+        "source_lines": "源码行数",
+        "source_tokens": "源码 token 数",
+        "type_expr_nodes": "Type Expr 树节点出现次数",
+        "value_expr_nodes": "Value/Proof Expr 树节点出现次数",
+        "type_const_unique": "Type 唯一常量数",
+        "value_const_unique": "Value/Proof 唯一常量数",
+    }
+    complexity_rows = []
+    for column, label in complexity_labels.items():
+        observed = nodes[column].drop_nulls()
+        complexity_rows.append(
+            {
+                "变量": label,
+                "非空 n": len(observed),
+                "覆盖率": f"{len(observed) / nodes.height:.2%}",
+                "中位数": observed.median(),
+                "P90": observed.quantile(0.90),
+                "P99": observed.quantile(0.99),
+                "最大值": observed.max(),
+            }
+        )
+    complexity_stats = pl.DataFrame(complexity_rows)
+
+    graph_stats = pl.DataFrame(
+        [
+            {"指标": "配置内模块", "数值": summary["module_count"]},
+            {"指标": "内部声明节点", "数值": summary["declaration_count"]},
+            {"指标": "显式外部目标", "数值": quality["external_node_count"]},
+            {"指标": "TYPE 唯一边", "数值": summary["type_edge_count"]},
+            {"指标": "VALUE 唯一边", "数值": summary["value_edge_count"]},
+            {"指标": "全部唯一边", "数值": summary["edge_count"]},
+            {"指标": "自环", "数值": summary["self_loop_count"]},
+        ]
+    )
+    kind_stats = (
+        nodes.group_by("kind")
+        .agg(
+            pl.len().alias("节点数"),
+            pl.col("in_degree_all").mean().alias("平均入度"),
+            pl.col("in_degree_all").median().alias("入度中位数"),
+            pl.col("in_degree_all").max().alias("最大入度"),
+        )
+        .rename({"kind": "声明类型"})
+        .sort("节点数", descending=True)
+    )
+    correlations = pl.DataFrame(summary["length_correlations"]).rename(
+        {
+            "length_metric": "长度/复杂度变量",
+            "n": "n",
+            "spearman_rho": "Spearman rho",
+            "p_value": "p value",
+        }
+    )
+    regression_report = regressions.with_columns(
+        (
+            ((pl.col("coefficient") * math.log(2)).exp() - 1) * 100
+        ).alias("长度翻倍变化 %")
+    ).select(
+        pl.col("length_metric").alias("变量"),
+        "n",
+        pl.col("coefficient").alias("beta"),
+        pl.col("ci_low").alias("95% CI low"),
+        pl.col("ci_high").alias("95% CI high"),
+        "长度翻倍变化 %",
+        pl.col("p_value").alias("p value"),
+        pl.col("controls").alias("控制变量"),
+        "status",
     )
 
     degree = sorted(nodes["in_degree_all"].to_list(), reverse=True)
@@ -441,7 +626,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         ),
         "source_length": points_svg(
             TITLES["source_length"],
-            nodes["source_bytes"].fill_null(0).to_list(),
+            nodes["source_bytes"].to_list(),
             nodes["in_degree_all"].to_list(),
             "source bytes (log)",
             "reuse (log)",
@@ -455,7 +640,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         ),
         "value_length": points_svg(
             TITLES["value_length"],
-            nodes["value_expr_nodes"].fill_null(0).to_list(),
+            nodes["value_expr_nodes"].to_list(),
             nodes["in_degree_all"].to_list(),
             "value Expr nodes (log)",
             "reuse (log)",
@@ -494,7 +679,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         "domain_tail": points_svg(
             TITLES["domain_tail"],
             domains["gini"].to_list(),
-            domains["alpha"].fill_null(0).to_list(),
+            domains["alpha"].to_list(),
             "Gini",
             "tail alpha",
             False,
@@ -513,14 +698,14 @@ def generate(run_kind: str) -> dict[str, Any]:
         name: (
             f'<figure class="figure"><img src="assets/{name}.svg" '
             f'alt="{html.escape(TITLES[name])}"><figcaption>'
-            f'n={summary["declaration_count"]} declarations unless noted.</figcaption></figure>'
+            f'{html.escape(FIGURE_CAPTIONS[name])}</figcaption></figure>'
         )
         for name in figures
     }
     inline = {
         name: (
             f'<figure class="figure">{svg}<figcaption>'
-            f'n={summary["declaration_count"]} declarations unless noted.</figcaption></figure>'
+            f'{html.escape(FIGURE_CAPTIONS[name])}</figcaption></figure>'
         )
         for name, svg in figures.items()
     }
@@ -529,6 +714,19 @@ def generate(run_kind: str) -> dict[str, Any]:
         "quality": quality,
         "summary": summary,
         "manifest": manifest,
+        "all_fit": {
+            "alpha": format_cell(alpha),
+            "xmin": format_cell(xmin),
+            "ks": format_cell(all_fit["ks"][0]) if all_fit.height else "—",
+            "bootstrap_status": (
+                all_fit["bootstrap_status"][0] if all_fit.height else "missing"
+            ),
+        },
+        "theorem_share": format_cell(
+            100
+            * summary["declaration_counts_by_kind"]["theorem"]
+            / summary["declaration_count"]
+        ),
         "manifest_table": render_table(
             pl.DataFrame([manifest]).transpose(
                 include_header=True, header_name="field", column_names=["value"]
@@ -541,6 +739,10 @@ def generate(run_kind: str) -> dict[str, Any]:
             ),
             40,
         ),
+        "complexity_table": render_table(complexity_stats, 20),
+        "graph_table": render_table(graph_stats, 20),
+        "correlations_table": render_table(correlations, 10),
+        "kind_table": render_table(kind_stats, 10),
         "fits_table": render_table(
             fits.select(
                 "population",
@@ -557,7 +759,7 @@ def generate(run_kind: str) -> dict[str, Any]:
             ),
             40,
         ),
-        "regressions_table": render_table(regressions, 10),
+        "regressions_table": render_table(regression_report, 10),
         "domain_table": render_table(
             domains.sort("node_count", descending=True), 30
         ),
