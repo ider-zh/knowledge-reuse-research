@@ -14,9 +14,8 @@
   adapter tests, and heavy-module timing verification.
 - Generated artifacts: `vendor/`, `data/`, `results/metrics`, `results/tables`,
   and report HTML are gitignored/rebuildable.
-- Formal v1 graph: 566,238 internal declarations, 24,741,186 unique typed
-  edges, and 10,805 external targets. Expression-size saturation affected 7
-  type metrics and 54 present value metrics; dependency edges remain complete.
+- Formal v1 graph must be regenerated after replacing the temporary saturation
+  approach with exact two-pass DAG dynamic programming.
 - Primary result: all-declaration reuse has Gini 0.9509; the top 1% receives
   79.90% of incoming reuse edges and the top 10% receives 93.67%.
 - Next safe action: freeze conclusions in the Notion experiment page, then

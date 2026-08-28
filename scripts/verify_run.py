@@ -27,9 +27,6 @@ def canonical_semantic_row(source: dict[str, Any]) -> bytes | None:
     if source.get("record") not in {"node", "edge"}:
         return None
     row = dict(source)
-    if row["record"] == "node":
-        row.setdefault("type_expr_nodes_saturated", False)
-        row.setdefault("value_expr_nodes_saturated", False if row.get("has_value") else None)
     return json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
 
 
