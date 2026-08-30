@@ -23,6 +23,7 @@ from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
     EXCLUSIONS_PATH,
     ROOT,
+    complexity_normalized_root,
     normalized_root,
     raw_root,
     run_results_root,
@@ -34,10 +35,10 @@ TITLES = {
     "indegree_ccdf": "图 2 · 复用入度经验 CCDF",
     "rank_frequency": "图 3 · 复用入度 Rank–Frequency",
     "tail_overlay": "图 4 · 幂律尾部拟合诊断",
-    "source_length": "图 5 · 源码长度与复用",
-    "type_length": "图 6 · 类型表达式复杂度与复用",
-    "value_length": "图 7 · 定义体/证明复杂度与复用",
-    "length_binned": "图 8 · 长度分箱后的复用分布",
+    "source_length": "图 5 · 源码 Token 代理量与复用",
+    "type_length": "图 6 · Type DAG 唯一节点与复用",
+    "value_length": "图 7 · Value/Proof DAG 唯一节点与复用",
+    "length_binned": "图 8 · Value 展开倍数分箱后的复用",
     "lorenz": "图 9 · 复用集中度 Lorenz 曲线",
     "domain_scale": "图 10 · 主要领域的节点规模",
     "domain_heatmap": "图 11 · 领域间依赖份额",
@@ -51,10 +52,10 @@ FIGURE_CAPTIONS = {
     "indegree_ccdf": "仅使用正入度节点；双对数坐标用于观察尾部，曲线形状本身不构成幂律证据。",
     "rank_frequency": "声明按总入度降序排列；绘图时确定性降采样，不改变用于统计检验的完整数据。",
     "tail_overlay": "经验 CCDF 与估计幂律尾部的诊断性叠加；模型优劣以似然比较而非视觉判断为准。",
-    "source_length": "仅绘制存在源码范围的声明；缺失值保持缺失，不被替换为零。",
-    "type_length": "类型表达式树出现次数覆盖全部内部声明；散点仅为可视化降采样。",
-    "value_length": "仅绘制具有定义体或证明体的声明；无 value 的声明保持缺失。",
-    "length_binned": "源码字节数的对数分箱，展示每箱复用入度中位数及四分位数。",
+    "source_length": "仅绘制存在源码范围的声明；这里的 Token 是明确规则的源码代理量，不是 Lean lexer token。",
+    "type_length": "类型表达式实际共享 DAG 的唯一指针节点数；散点仅为可视化降采样。",
+    "value_length": "仅绘制具有定义体或证明体的声明；null 不被替换为零。",
+    "length_binned": "Value 展开倍数 T/U 的对数分箱，展示每箱复用入度中位数及四分位数。",
     "lorenz": "横轴为声明累计比例，纵轴为收到的复用边累计比例；对角线代表完全均匀。",
     "domain_scale": "领域由模块路径映射得到；它是可复现的工程分组，不等同于数学本体分类。",
     "domain_heatmap": "行是依赖发起领域，列是被依赖领域；颜色表示行内依赖份额。",
@@ -324,20 +325,6 @@ def build_claim_registry(
                 "caveat": "配置排除项和 mathlib 外部 universe 不属于该总体。",
             },
             {
-                "claim_id": "graph.no_truncation",
-                "status": "fact",
-                "text": "图构建没有节点、边、深度、时间或饱和截断。",
-                "evidence": [
-                    "metrics/data_quality.json",
-                    "tables/report_examples.parquet",
-                    "run-manifest.json#/extractor_commit",
-                    f"data/lean_mathlib/{summary['snapshot_id']}/normalized/"
-                    f"{summary['run_kind']}/manifest.json",
-                ],
-                "scope": "lean-graph-v1 extraction contract",
-                "caveat": "完整性相对于固定 snapshot、corpus 与语义契约。",
-            },
-            {
                 "claim_id": "reuse.concentration",
                 "status": "supported",
                 "text": (
@@ -366,7 +353,7 @@ def build_claim_registry(
             {
                 "claim_id": "complexity.association",
                 "status": "exploratory",
-                "text": "长度/结构复杂度与复用的关系较弱，并随变量定义和控制项改变。",
+                "text": "源码、DAG、深度、展开树与依赖广度对复用呈现不同的关联强度，结论依赖复杂度定义与控制项。",
                 "evidence": [
                     "metrics/length_correlations.parquet",
                     "metrics/regressions.parquet",
@@ -450,16 +437,20 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <p class="bridge">下面不直接跳到总体图形。我们先用真实 mathlib declaration 建立 node、value 和 reuse 的直觉，再说明这些单例如何扩展成全库统计。</p></section>
 
 <section id="s2"><h2>2. 概念设计与研究对象</h2>
-<p>研究对象是 <em>mathlib 中已 elaboration 的形式化知识单元及其直接语义依赖</em>。声明是可命名、可复用的最小稳定单位；一个声明在另一个声明的类型或定义体/证明体中作为常量出现，即形成复用关系。</p>
-<div class="grid"><article><h3>Node 是什么</h3><p><code>Set</code> 是 definition；<code>CategoryTheory.Category</code> 是 inductive。二者都是真实节点，但后者没有 definition/proof value，所以其 value complexity 是 null，不是 0。</p></article>
-<article><h3>Reuse 是什么</h3><p>若 A 的 elaborated expression 包含常量 B，则 A → B。B 的入度统计有多少不同声明复用它；A 的出度描述自身直接依赖负担。</p></article></div>
+<p>研究对象是 <em>mathlib 中已 elaboration 的形式化知识单元及其直接语义依赖</em>。Lean 把一条定理、定义、公理、归纳类型、构造器或递归器登记为一个有完整名称的 declaration；本研究把配置语料内的每个 declaration 作为一个 node。Node 不是源码中的一行，也不是表达式树中的一个小括号。</p>
+<div class="grid"><article><h3>Node 有什么</h3><p>每个 node 一定有 <b>name</b>、<b>kind</b> 和 <b>type</b>。type 说明“它是什么”；如果环境还公开定义体或证明体，则另有 <b>value</b>，说明“它怎样被构造或证明”。源码范围是附加观测，缺失不会删除 node。</p></article>
+<article><h3>Node value 为什么会是 null</h3><p>判定规则只有一个：固定环境的 <code>getDeclarationValue?</code> 返回 none 时，<code>has_value=false</code>，全部 value-complexity 记为 null。null 表示“没有可观测 value”，不是“复杂度为零”。归纳类型和构造器等常出现这种情况；实际分布见下表。</p></article>
+<article><h3>Reuse 是什么</h3><p>若 A 的 elaborated type 或 value 包含常量 B，则 A → B。B 的入度统计有多少不同声明复用它；A 的出度描述自身直接依赖负担。</p></article>
+<article><h3>Complexity 是什么</h3><p>复杂度不是一个数字。本研究分别观察源码表面规模、表达式 DAG 的实际结构、最大嵌套深度、共享内容完全展开后的规模，以及引用了多少不同常量。它们回答不同问题，不能互相替代。</p></article></div>
+<h3>Value 可观测性按声明类型分布</h3>{{ value_availability_table|safe }}
+<p class="callout"><b>null 对复用实验的影响：</b>该 node 仍进入总体图；它的 type 边、别人指向它的入边和复用入度都可分析。只有它自身的 VALUE 出边与 value/proof 复杂度不可观测，因此相关分析按有效样本数排除，而不是补 0。若某类 node 的 null 比例很高，跨 kind 比较必须分层或控制 kind。</p>
 <h3>真实节点证据</h3>{{ node_examples_table|safe }}
 <div class="callout"><b>解释边界</b> 语义常量引用不是人的引用意图。自动生成代码、类型类、强制转换和 elaborator 插入项都属于机器可复现的依赖事实，但不应直接解释为作者有意识的“引用”。</div></section>
 
 <section id="s3"><h2>3. 研究问题与判断路径</h2>
 <table><thead><tr><th>RQ</th><th>问题</th><th>总体与方法</th><th>允许的结论</th></tr></thead><tbody>
 <tr><td>A</td><td>复用是否集中/重尾？</td><td>ALL/TYPE/VALUE；Gini、CCDF、模型比较</td><td>集中度可 supported；幂律必须经过比较</td></tr>
-<tr><td>B</td><td>长度/复杂度与复用关系？</td><td>source/type/value；Spearman、分箱、NB GLM</td><td>观察性关联，不作因果解释</td></tr>
+<tr><td>B</td><td>不同层次复杂度与复用关系？</td><td>source、DAG、depth、tree expansion、constant breadth；Spearman、分箱、NB GLM</td><td>比较指标敏感性；观察性关联不作因果解释</td></tr>
 <tr><td>C</td><td>领域是否异质？</td><td>路径领域；matrix、Gini、tail、H*ref</td><td>比较工程 taxonomy，不推断数学本体</td></tr>
 <tr><td>D</td><td>边/节点语义是否不同？</td><td>kind 与 TYPE/VALUE 子图</td><td>分层描述，不混合机制</td></tr>
 <tr><td>E</td><td>能否跨系统比较？</td><td>core graph projection</td><td>比较 core metric，不混同 native units</td></tr>
@@ -476,25 +467,33 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <div class="grid"><article><h3>TYPE 示例如何进入图</h3><p><code>padicValRat.of_nat</code> 的 elaborated type 包含 <code>padicValNat</code>，因此规范化为一条 theorem→definition TYPE edge。</p></article><article><h3>VALUE 示例如何进入图</h3><p><code>constantCoeff_xInTermsOfW</code> 的 proof/value 包含 <code>map_pow</code>，因此规范化为 theorem→theorem VALUE edge。</p></article></div>
 <p class="bridge">单条边只证明一个依赖实例存在。将所有 declaration 的常量引用按相同规则提取、确定性编号并对 `(src,dst,type)` 去重，才得到用于总体分析的完整图。</p></section>
 
-<section id="s6"><h2>6. 完整性与数据质量：是否截断？</h2>
-<div class="answer"><b>结论：研究契约下的完整图已构建，未截断。</b> {{ quality.extracted_module_count|fmt }}/{{ quality.expected_module_count|fmt }} 个模块均为 ok；{{ summary.declaration_count|fmt }} 个内部节点、{{ quality.external_node_count|fmt }} 个显式外部目标、{{ summary.edge_count|fmt }} 条唯一类型化边。</div>
-<p>capability probe → golden exact fixture → inventory/shards → extraction → normalization → validation 全部门禁通过。失败模块或不可用 proof body 不会被当作空；没有 node/edge/depth/time cap，也没有 saturation。</p>
-{{ quality_table|safe }}
-<p>源码范围缺失保持 null；external/prelude target 显式保留；multiplicity 在 v1 为 not available。</p></section>
+<section id="s6"><h2>6. 研究范围与观测完整性</h2>
+<div class="answer"><b>本报告覆盖配置语料的全部 {{ quality.expected_module_count|fmt }} 个模块。</b>共观测 {{ summary.declaration_count|fmt }} 个内部 declaration、{{ quality.external_node_count|fmt }} 个语料外依赖目标和 {{ summary.edge_count|fmt }} 条唯一类型化边。</div>
+<p>“完整”只针对第 4 节定义的固定 snapshot 与 configured corpus。语料外常量作为 external target 保留；源码范围和 value 的缺失保持 null。后续每个复杂度统计都报告非空样本数与覆盖率，使读者能区分“零”与“未观测”。</p></section>
 
 <section id="s7"><h2>7. 节点长度与复杂度变量</h2>
-<p>源码长度、type statement 和 value/proof 是三种不同工作量，不能合并成一个“长度”。</p>
+<p>一个 node 的 type 与可观测 value/proof 各自都是 Lean Expr。下面把“复杂度”拆成可以独立计算、独立解释的层次。</p>
+<h3>7.1 源码表面复杂度：bytes、lines 与 Token 代理量</h3>
+<p><b>bytes</b> 是声明源码片段的 UTF-8 字节数；<b>lines</b> 是覆盖的源码行数。<b>Token 代理量</b>采用确定性正则规则：以 ASCII 英文字母或下划线开头、后接 ASCII 英文字母、数字、下划线或撇号的连续串算 1 个；连续数字算 1 个；其余每个非空白字符各算 1 个；空格和换行不计。</p>
+<pre>theorem addOne (n : Nat) : n + 1 = Nat.succ n := by rfl
+→ theorem | addOne | ( | n | : | Nat | ) | : | n | + | 1 | = |
+  Nat | . | succ | n | : | = | by | rfl     （共 20 个）</pre>
+<p class="note">因此 <code>:=</code> 算两个、<code>Nat.succ</code> 算三个。它是便于跨声明复现的源码词法代理，不是 Lean lexer 的精确 token；注释或字符串内部字符仍按同一规则计数。报告据此只讨论“表面规模”，不把它冒充证明语义复杂度。</p>
+<h3>7.2 表达式结构复杂度：U、A、D、T</h3>
+<p>令 <code>children(x)</code> 是 Expr x 的直接子表达式位置。对根表达式 E：</p>
+<ul><li><b>唯一 DAG 节点 U</b>：从 E 可到达的不同 Expr 对象个数，近似回答“实际存了多少结构”。</li><li><b>DAG arcs A</b>：所有唯一节点的 child position 总数；同一 child 被引用两次就有两条 arc。</li><li><b>最大深度 D</b>：叶子深度为 1；非叶子为 <code>1 + max(child depth)</code>，回答“最长嵌套链有多深”。</li><li><b>展开树出现次数 T</b>：叶子为 1；非叶子为 <code>1 + sum(T(child))</code>。共享 child 每被引用一次就贡献一次，回答“若把共享完全展开，树有多大”。</li><li><b>展开倍数 T/U</b>：比较概念展开规模与实际共享结构；越大表示共享重复越强。</li></ul>
 <h3>可手算的共享 DAG</h3><pre class="dag">        parent
         /    \
      shared  shared
         |
        leaf</pre>
-<ol class="steps"><li>pointer visited set 只展开 <code>shared</code> 一次；</li><li>cache 只计算一次 <code>count(shared)</code>；</li><li><code>parent</code> 仍在两个 child position 各累加一次，所以 tree occurrence 完整保留；</li><li>Lean <code>Nat</code> 任意精度，不发生饱和。</li></ol>
-<div class="callout"><b>缓存不等于截断。</b> visited/cache 只消除相同 DAG 对象的重复计算；当共享子表达式被父节点多次引用时，其缓存值仍按每次出现累计。没有饱和上限，使用 Lean <code>Nat</code> 避免固定宽度溢出。</div>
-<h3>真实工作量：从 small 到 high</h3>{{ complexity_examples_table|safe }}
-<p><code>CategoryTheory.Limits.colimitLimitToLimitColimit_surjective</code> 的 value tree-occurrence 为 {{ high_example.value_expr_nodes|fmt }}。它说明可见源码与 elaborated proof tree 不是同一工作量，也说明递归展开共享子图为何不可行。</p>
-<h3>已测量变量与覆盖率</h3>{{ complexity_table|safe }}
-<div class="verdict inconclusive"><b>not_available</b><p>最大 Expr 深度、唯一指针节点数 U、DAG arcs A 与 constant occurrence multiplicity 尚未进入 v1，因此报告算法复杂度为约 <code>O(U+A)</code>，但不补造 per-node U/A 数值。</p></div></section>
+<p>这里只有 3 个不同对象，所以 U=3；parent 有两个 child position，shared 有一个，所以 A=3；最长路径 parent→shared→leaf，所以 D=3；完全展开时 parent 计 1，两个 shared 分支各计 2，所以 T=5，展开倍数 T/U=5/3。这个例子说明 T 很大时可能主要反映重复展开，而 U、A、D 描述的是另外三种结构性质。</p>
+<p>计算时先遍历每个唯一节点及其 arcs，再按上述递推式汇总，所以时间复杂度为 <code>O(U+A)</code>、辅助空间为 <code>O(U)</code>。这是算法定义，不把 T 解释成实际运行时间。</p>
+<p class="note">U 是固定 Lean 版本与载入环境中的指针共享测量，适合本 snapshot 内比较；跨 Lean 版本时必须重新测量，不能把它当成永恒不变的语义属性。</p>
+<h3>7.3 依赖广度</h3><p><b>unique constants</b> 统计 type 或 value 中出现了多少个不同的命名常量。重复调用同一常量只计一次，所以它衡量依赖“种类”的广度，不衡量调用次数。</p>
+<h3>真实节点复杂度：从 small 到 high</h3>{{ complexity_examples_table|safe }}
+<p><code>CategoryTheory.Limits.colimitLimitToLimitColimit_surjective</code> 的 value 展开树 T 为 {{ high_example.value_expr_tree_occurrences|fmt }}，但实际 DAG 唯一节点 U 为 {{ high_example.value_expr_unique_ptr_nodes|fmt }}，展开倍数为 {{ high_example.value_expr_expansion_factor|round(2) }}。三个数回答不同问题，不能单独称为“工作量”。</p>
+<h3>全部测量变量、覆盖率与分布</h3>{{ complexity_table|safe }}</section>
 
 <section id="s8"><h2>8. 图总体统计</h2>
 <div class="metric-table">{{ graph_table|safe }}</div>
@@ -515,12 +514,13 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <p class="note">bootstrap 状态为 <code>{{ all_fit.bootstrap_status }}</code>，所以不能报告基于 bootstrap 的绝对拟合优度 p 值。</p></section>
 
 <section id="s11"><h2>11. 长度/复杂度与复用</h2>
-<p>单例已经显示：结构很小的 <code>Set</code> 可以有很高复用，而 proof tree 极大的 theorem 并不因此成为最高复用节点。这提示 kind/domain 等混杂必须进入总体模型。</p>
+<p>本节不寻找一个“正确的复杂度数字”，而是比较结论对复杂度定义是否敏感。结构很小的 <code>Set</code> 可以有很高复用，展开树巨大的 theorem 也不一定成为最高复用节点，因此必须进行总体统计并控制 kind/domain。</p>
 {{ complexity_compare_table|safe }}
 <div class="grid figures">{{ figs.source_length|safe }}{{ figs.type_length|safe }}{{ figs.value_length|safe }}{{ figs.length_binned|safe }}</div>
 <h3>秩相关</h3>{{ correlations_table|safe }}
 <h3>控制声明类型与领域后的负二项 GLM</h3>{{ regressions_table|safe }}
-<p>模型使用 <code>log1p(length)</code> 并控制 kind + domain。系数不是因果效应；表中的“长度翻倍变化”将系数转换为更直观的期望复用相对变化。源码长度呈弱正的未控制秩相关，但控制变量后的模型系数为负，说明构成差异会改变表面关系。</p></section>
+<p>Spearman rho 比较排序关系，不要求线性；对数分箱检查趋势是否被少量极端值推动。负二项模型以复用入度为计数响应，使用 <code>log1p(complexity)</code> 并控制 kind + domain。表中的“复杂度翻倍变化”是期望复用的相对变化。所有结果都是观察性关联，不是“复杂度导致复用”的因果效应。</p>
+<div class="callout"><b>如何读多层结果：</b>若 T 的关联明显强于 U/A/D，可能是共享展开倍数在起作用；若 U 与 A 接近而 D 很弱，可能是总体结构规模而非最长嵌套链相关；若源码 Token 与 Expr 指标方向不同，说明短源码也可能 elaboration 成复杂对象。必须以表中实际系数、区间和 n 为准。</div></section>
 
 <section id="s12"><h2>12. Node kind 与 Edge semantics</h2>
 {{ figs.kind_counts|safe }}{{ kind_table|safe }}
@@ -542,28 +542,19 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <tr><td>node</td><td>declaration</td><td>page/article</td><td>固定粒度的 function/module/package</td></tr>
 <tr><td>edge</td><td>TYPE/VALUE reference</td><td>hyperlink/citation</td><td>call/import/dependency</td></tr>
 <tr><td>reuse</td><td>unique consumer indegree</td><td>unique linking pages</td><td>unique callers/dependents</td></tr>
-<tr><td>native complexity</td><td>Expr tree occurrences</td><td>wikitext/link structure</td><td>AST/cyclomatic structure</td></tr>
+<tr><td>native complexity</td><td>source proxy；Expr U/A/D/T；unique constants</td><td>wikitext/token/link/section structure</td><td>source token；AST/call depth/cyclomatic structure</td></tr>
 </tbody></table><p>indegree、Gini、rank-frequency 可通过 core projection 比较；Expr nodes、wikitext bytes 与 AST nodes 不是等价单位，不能直接比较原值。</p></section>
 
 <section id="s16"><h2>16. 解释、局限与结论</h2>
-<div class="grid"><article><h3>可以说什么</h3><p>在固定 mathlib v4.32.1 快照和声明级语义图上，复用高度集中、分布具有重尾，领域与声明种类存在明显异质性，长度/结构复杂度与复用关系较弱且依赖控制口径。</p></article><article><h3>不能说什么</h3><p>不能由入度推断人的引用意图、数学深度或因果重要性；不能把路径领域当成本体；不能把尚未 bootstrap 的尾部拟合表述为已验证的普适定律。</p></article></div>
-<p>建议下一阶段补充 Expr 最大深度与 DAG unique-node 指标、实现拟合优度 bootstrap，并在保持同一图契约下进行跨版本比较。Wikipedia 与开源软件图应使用各自 adapter，不改变 Lean v1 的冻结语义。</p></section>
+<div class="grid"><article><h3>可以说什么</h3><p>在固定 mathlib v4.32.1 快照和声明级语义图上，复用高度集中、分布具有重尾，领域与声明种类存在明显异质性；不同复杂度层次与复用的关联必须分别报告。</p></article><article><h3>不能说什么</h3><p>不能由入度推断人的引用意图、数学深度或因果重要性；不能把路径领域当成本体；不能把尚未 bootstrap 的尾部拟合表述为已验证的普适定律。</p></article></div>
+<p>下一阶段可实现拟合优度 bootstrap，并在保持同一图契约下进行跨版本比较。Wikipedia 与开源软件图应使用各自 adapter 和本地复杂度单位，再通过 indegree、集中度等 core metric 比较。</p></section>
 
-<section id="s17"><h2>17. 附录：表格、性能与复现命令</h2>
-<h3>Reproducibility manifest</h3>{{ manifest_table|safe }}
-<h3>Evidence artifacts</h3>{{ artifact_table|safe }}
+<section id="s17"><h2>17. 附录：证据索引</h2>
+<p>以下表格供研究人员从报告结论回到机器可读证据。复现命令、运行性能与执行日志保留在仓库文档和结果目录，不进入研究叙事。</p>
+<h3>研究数据版本</h3>{{ manifest_table|safe }}
+<h3>核心证据 artifacts</h3>{{ artifact_table|safe }}
 <h3>复用最高的声明</h3>{{ top_table|safe }}
-<h3>提取 worker benchmark</h3>{{ benchmark_table|safe }}
-<h3>完整流水线</h3><pre>just bootstrap
-just probe
-just golden
-just inventory
-just extract
-just normalize
-just validate
-just analyze
-just report</pre>
-<p>机器证据：<code>claims.json</code>、<code>examples.json</code>、<code>artifact-index.json</code>。图形降采样只影响显示，完整统计总体不变；<code>--force</code> 行为保持不变。</p></section>
+</section>
 </main><footer>由版本化 compact artifacts 确定性生成 · 0 CDN · 0 远程脚本 · 0 远程字体</footer></body></html>""")
 
 
@@ -633,6 +624,7 @@ def generate(run_kind: str) -> dict[str, Any]:
     matrix = pl.read_parquet(tables / "domain_matrix.parquet")
     views = pl.read_parquet(metrics / "view_metrics.parquet")
     bins = pl.read_parquet(metrics / "length_binned.parquet")
+    value_availability = pl.read_parquet(metrics / "value_availability.parquet")
     examples_path = tables / "report_examples.parquet"
     examples = pl.read_parquet(examples_path)
     claims = build_claim_registry(summary, quality, fits)
@@ -665,12 +657,14 @@ def generate(run_kind: str) -> dict[str, Any]:
         metrics / "view_metrics.parquet",
         metrics / "length_binned.parquet",
         metrics / "length_correlations.parquet",
+        metrics / "value_availability.parquet",
         tables / "top_reuse.csv",
         tables / "domain_matrix.parquet",
         examples_path,
         claims_path,
         examples_json_path,
         normalized_root(CONFIG["snapshot_id"], run_kind) / "manifest.json",
+        complexity_normalized_root(CONFIG["snapshot_id"], run_kind) / "manifest.json",
         run_dir / "run-manifest.json",
     ]
     artifacts = artifact_index(run_dir, compact_inputs)
@@ -680,11 +674,19 @@ def generate(run_kind: str) -> dict[str, Any]:
     complexity_labels = {
         "source_bytes": "源码字节数",
         "source_lines": "源码行数",
-        "source_tokens": "源码 token 数",
-        "type_expr_nodes": "Type Expr 树节点出现次数",
-        "value_expr_nodes": "Value/Proof Expr 树节点出现次数",
+        "source_tokens": "源码 Token 代理量",
         "type_const_unique": "Type 唯一常量数",
         "value_const_unique": "Value/Proof 唯一常量数",
+        "type_expr_unique_ptr_nodes": "Type DAG 唯一节点 U",
+        "type_expr_dag_arcs": "Type DAG arcs A",
+        "type_expr_max_depth": "Type 最大深度 D",
+        "type_expr_tree_occurrences": "Type 展开树出现次数 T",
+        "type_expr_expansion_factor": "Type 展开倍数 T/U",
+        "value_expr_unique_ptr_nodes": "Value/Proof DAG 唯一节点 U",
+        "value_expr_dag_arcs": "Value/Proof DAG arcs A",
+        "value_expr_max_depth": "Value/Proof 最大深度 D",
+        "value_expr_tree_occurrences": "Value/Proof 展开树出现次数 T",
+        "value_expr_expansion_factor": "Value/Proof 展开倍数 T/U",
     }
     complexity_rows = []
     for column, label in complexity_labels.items():
@@ -735,14 +737,14 @@ def generate(run_kind: str) -> dict[str, Any]:
     regression_report = regressions.with_columns(
         (
             ((pl.col("coefficient") * math.log(2)).exp() - 1) * 100
-        ).alias("长度翻倍变化 %")
+        ).alias("复杂度翻倍变化 %")
     ).select(
         pl.col("length_metric").alias("变量"),
         "n",
         pl.col("coefficient").alias("beta"),
         pl.col("ci_low").alias("95% CI low"),
         pl.col("ci_high").alias("95% CI high"),
-        "长度翻倍变化 %",
+        "复杂度翻倍变化 %",
         pl.col("p_value").alias("p value"),
         pl.col("controls").alias("控制变量"),
         "status",
@@ -777,7 +779,9 @@ def generate(run_kind: str) -> dict[str, Any]:
     )
     tail_x = [float(x) for x in ccdf_x if x >= xmin]
     tail_y = [(x / xmin) ** (1 - alpha) for x in tail_x]
-    binned = bins.filter(pl.col("length_metric") == "source_bytes").sort(
+    binned = bins.filter(
+        pl.col("length_metric") == "value_expr_expansion_factor"
+    ).sort(
         "length_median"
     )
     figures = {
@@ -813,23 +817,23 @@ def generate(run_kind: str) -> dict[str, Any]:
         ),
         "source_length": points_svg(
             TITLES["source_length"],
-            nodes["source_bytes"].to_list(),
+            nodes["source_tokens"].to_list(),
             nodes["in_degree_all"].to_list(),
-            "source bytes (log)",
+            "source token proxy (log)",
             "reuse (log)",
         ),
         "type_length": points_svg(
             TITLES["type_length"],
-            nodes["type_expr_nodes"].to_list(),
+            nodes["type_expr_unique_ptr_nodes"].to_list(),
             nodes["in_degree_all"].to_list(),
-            "type Expr nodes (log)",
+            "type DAG unique nodes U (log)",
             "reuse (log)",
         ),
         "value_length": points_svg(
             TITLES["value_length"],
-            nodes["value_expr_nodes"].to_list(),
+            nodes["value_expr_unique_ptr_nodes"].to_list(),
             nodes["in_degree_all"].to_list(),
-            "value Expr nodes (log)",
+            "value DAG unique nodes U (log)",
             "reuse (log)",
         ),
         "length_binned": line_svg(
@@ -839,7 +843,7 @@ def generate(run_kind: str) -> dict[str, Any]:
                 ("q25", binned["length_median"].to_list(), binned["reuse_q25"].to_list()),
                 ("q75", binned["length_median"].to_list(), binned["reuse_q75"].to_list()),
             ],
-            "source bytes (log)",
+            "value expansion T/U (log)",
             "reuse",
             True,
             False,
@@ -881,19 +885,19 @@ def generate(run_kind: str) -> dict[str, Any]:
     }
     for name, svg in figures.items():
         (assets / f"{name}.svg").write_text(svg)
-    source_valid = nodes["source_bytes"].drop_nulls().len()
-    value_valid = nodes["value_expr_nodes"].drop_nulls().len()
+    source_valid = nodes["source_tokens"].drop_nulls().len()
+    value_valid = nodes["value_expr_unique_ptr_nodes"].drop_nulls().len()
     source_plotted = nodes.filter(
-        pl.col("source_bytes").is_not_null()
-        & (pl.col("source_bytes") > 0)
+        pl.col("source_tokens").is_not_null()
+        & (pl.col("source_tokens") > 0)
         & (pl.col("in_degree_all") > 0)
     ).height
     type_plotted = nodes.filter(
-        (pl.col("type_expr_nodes") > 0) & (pl.col("in_degree_all") > 0)
+        (pl.col("type_expr_unique_ptr_nodes") > 0) & (pl.col("in_degree_all") > 0)
     ).height
     value_plotted = nodes.filter(
-        pl.col("value_expr_nodes").is_not_null()
-        & (pl.col("value_expr_nodes") > 0)
+        pl.col("value_expr_unique_ptr_nodes").is_not_null()
+        & (pl.col("value_expr_unique_ptr_nodes") > 0)
         & (pl.col("in_degree_all") > 0)
     ).height
     figure_samples = {
@@ -904,7 +908,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         "source_length": f"n_total={nodes.height:,}；metric n_valid={source_valid:,}；positive plotted population={source_plotted:,}；显示≤1,600点。",
         "type_length": f"n_total=n_valid={nodes.height:,}；positive plotted population={type_plotted:,}；显示≤1,600点。",
         "value_length": f"n_total={nodes.height:,}；metric n_valid={value_valid:,}；positive plotted population={value_plotted:,}；显示≤1,600点。",
-        "length_binned": f"source_bytes n_valid={source_valid:,}；分箱统计使用全部有效值。",
+        "length_binned": f"value expansion n_valid={value_valid:,}；分箱统计使用全部有效值。",
         "lorenz": f"population=ALL；n_total={nodes.height:,}；折线显示≤700点。",
         "domain_scale": f"population=top domains；展示 {top_domains.height} 个领域。",
         "domain_heatmap": f"population=internal typed edges；n={matrix['edge_count'].sum():,}。",
@@ -939,6 +943,19 @@ def generate(run_kind: str) -> dict[str, Any]:
     reuse_target_degree = reuse_examples["in_degree_all"][0]
     artifact_frame = pl.DataFrame(artifacts["artifacts"])
     exclusions = pl.DataFrame(tomllib.loads(EXCLUSIONS_PATH.read_text())["rule"])
+    research_manifest_fields = (
+        "schema_version",
+        "snapshot_id",
+        "run_kind",
+        "mathlib_tag",
+        "mathlib_commit",
+        "lean_toolchain",
+        "extractor_commit",
+        "report_generator_commit",
+        "config_sha256",
+        "raw_manifest_sha256",
+    )
+    research_manifest = {key: manifest.get(key) for key in research_manifest_fields}
     context = {
         "css": CSS,
         "quality": quality,
@@ -962,7 +979,7 @@ def generate(run_kind: str) -> dict[str, Any]:
             / summary["declaration_count"]
         ),
         "manifest_table": render_table(
-            pl.DataFrame([manifest]).transpose(
+            pl.DataFrame([research_manifest]).transpose(
                 include_header=True, header_name="field", column_names=["value"]
             ),
             40,
@@ -975,6 +992,18 @@ def generate(run_kind: str) -> dict[str, Any]:
         ),
         "exclusions_table": render_table(
             exclusions.rename({"pattern": "排除 pattern", "reason": "理由"}), 20
+        ),
+        "value_availability_table": render_table(
+            value_availability.rename(
+                {
+                    "kind": "声明类型",
+                    "node_count": "节点数",
+                    "value_available_count": "value 非空",
+                    "value_null_count": "value null",
+                    "value_available_fraction": "value 覆盖率",
+                }
+            ),
+            20,
         ),
         "node_examples_table": render_table(
             node_examples.select(
@@ -1003,12 +1032,17 @@ def generate(run_kind: str) -> dict[str, Any]:
         ),
         "complexity_examples_table": render_table(
             node_examples.select(
-                pl.col("role").alias("工作量角色"),
+                pl.col("role").alias("复杂度角色"),
                 pl.col("node_name").alias("declaration"),
                 "node_kind",
                 "source_bytes",
-                "type_expr_nodes",
-                "value_expr_nodes",
+                "type_expr_unique_ptr_nodes",
+                "type_expr_max_depth",
+                "type_expr_tree_occurrences",
+                "value_expr_unique_ptr_nodes",
+                "value_expr_max_depth",
+                "value_expr_tree_occurrences",
+                "value_expr_expansion_factor",
                 "in_degree_all",
             ),
             10,
@@ -1017,9 +1051,15 @@ def generate(run_kind: str) -> dict[str, Any]:
             node_examples.select(
                 pl.col("node_name").alias("真实节点"),
                 "node_kind",
+                "has_value",
                 "source_bytes",
-                "type_expr_nodes",
-                "value_expr_nodes",
+                "type_expr_unique_ptr_nodes",
+                "type_expr_max_depth",
+                "type_expr_tree_occurrences",
+                "value_expr_unique_ptr_nodes",
+                "value_expr_max_depth",
+                "value_expr_tree_occurrences",
+                "value_expr_expansion_factor",
                 "in_degree_all",
                 pl.col("caveat").alias("单例限制"),
             ),

@@ -6,7 +6,6 @@ import argparse
 import concurrent.futures
 import datetime
 import json
-import pathlib
 import resource
 import subprocess
 import time

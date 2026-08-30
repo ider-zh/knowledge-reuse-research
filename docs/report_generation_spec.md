@@ -1,7 +1,7 @@
 # Knowledge Reuse Research Report Generation Spec
 
 状态：`DRAFT FOR REVIEW`  
-版本：`report-spec-v1`  
+版本：`report-spec-v2`  
 适用范围：Lean/mathlib、Wikipedia、open-source software 及后续知识复用图实验  
 规范来源：项目多源架构、Lean/mathlib 实验 Notion spec、各实验 machine-readable results
 
@@ -27,14 +27,17 @@
 
 ### 1.1 目标
 
-报告必须同时满足四种角色：
+研究报告正文必须首先满足三种角色：
 
 | 角色 | 报告需要回答的问题 |
 |---|---|
 | 研究者 | 研究对象、变量、假设、统计方法与解释边界是什么？ |
-| 审计者 | 图是否完整？是否截断？失败、缺失、过滤和版本是否可追溯？ |
-| 工程者 | 数据从哪里来？如何重建？报告是否只消费版本化 compact artifacts？ |
+| 审计者 | 研究总体、缺失、过滤和版本是否可追溯？ |
 | 跨系统比较者 | 哪些指标可与其他图比较，哪些是 source-native 指标？ |
+
+工程运行轨迹（缓存、分片、进程、重试、性能、饱和/截断实现防护、
+命令清单）属于独立 machine audit 与工程文档，不进入研究报告正文。
+报告只保留理解总体范围、观测覆盖和统计有效性所必需的研究证据。
 
 报告必须做到：
 
@@ -42,7 +45,7 @@
 - 每个可具体化的核心概念先用 1–2 个真实、可回查案例建立直觉；
 - 事实、推断、限制和未来工作明确分层；
 - 所有数字可追溯到机器可读结果；
-- 所有过滤、缺失、降采样和失败都显式披露；
+- 所有影响研究总体或统计解释的过滤、缺失和展示降采样都显式披露；
 - 普通目录版与 standalone HTML 在离线环境中可读；
 - 不依赖 notebook、远程数据库、CDN、远程 JavaScript 或远程字体。
 
@@ -56,6 +59,7 @@
 - 为减小 HTML 而截断统计输入；
 - 把 source-specific 单位伪装成跨系统等价量；
 - 修改 raw、normalized graph 或实验参数；
+- 把缓存、分片、重试、进程耗时等工程运行轨迹写成研究结论；
 - 把交互效果置于静态可读性和审计性之上。
 
 ## 2. 通用研究模式
@@ -288,7 +292,8 @@ results/<experiment_id>/runs/<run_kind>/
 - extractor/normalizer/analyzer/report generator revision；
 - config hash 与 raw manifest hash；
 - schema versions；
-- started/finished time、worker count 和运行环境；
+- 研究报告正文绑定 source/snapshot/schema/revision/checksum；started/finished
+  time、worker count 和运行环境保存在 machine audit，可由证据索引回查；
 - 每个输入 compact artifact 的 checksum；
 - 报告输出 checksum 与 byte size。
 
@@ -319,7 +324,8 @@ results/<experiment_id>/runs/<run_kind>/
 - extracted/expected corpus units；
 - internal nodes、external nodes、typed unique edges；
 - 3–8 条 headline findings，每条带 evidence status；
-- 明确说明是否存在截断、失败、partial、过滤或未实现指标。
+- 明确 configured corpus、覆盖率、影响研究解释的过滤或未实现指标；
+  工程运行轨迹链接到 machine audit，不进入 headline findings。
 
 ### 2. 概念设计与研究对象
 
@@ -357,25 +363,30 @@ results/<experiment_id>/runs/<run_kind>/
 
 本章必须用一条真实 edge 逐步展示：source native object → extractor record → normalized IDs → typed edge → target indegree 增加 1。另给一条不同 edge semantic 的对照案例，避免读者把所有边理解为同一种引用。
 
-### 6. 完整性与数据质量
+### 6. 研究范围与观测完整性
 
 - expected/extracted/ok/partial/failed/excluded；
-- dangling、duplicate、null、coverage、checksum；
-- capability/golden/fixture 证据；
-- 失败是否影响总体；
+- dangling、duplicate、null 与 coverage；
+- 影响统计总体的 missing/failed/excluded 状态；
 - “完整”的精确定义。
 
-本章节必须直接回答：**是否构建了研究契约下的完整图？是否存在截断？**
+本章节必须直接回答：**报告覆盖哪个固定总体、观测到多少、哪些值为
+null，以及缺失如何进入或退出分析？** 工程上的截断防护、缓存实现与
+运行事故只在 machine audit 中记录。
 
 ### 7. 节点复杂度与长度
 
 - 每个变量的定义、单位、算法、coverage；
+- Token 指标必须给出可执行的精确定义，并用一行高中生可手算的源码
+  展示分词结果；若它不是 source lexer 的精确 token，必须称为代理量；
 - tree occurrence 与 unique DAG node 的区别；
+- 至少分别报告 unique DAG nodes U、DAG arcs A、maximum depth D、expanded
+  tree occurrences T、expansion factor T/U 和 unique constant breadth；
 - source length 与 elaborated/native structure 的区别；
-- 缺失机制；
-- 未实现的建议变量。
+- `value=null` 的判定规则，以及 null 对 node 保留、incoming reuse、TYPE
+  edge、VALUE edge 和 value-complexity 样本的不同影响。
 
-本章至少展示四种工作量案例：small、median、p99/high-complexity 和 null/not-applicable。每个案例列出输入对象、关键结构、算法访问的 unique objects/arcs（若可用）、输出值和所处总体分位数。算法讲解必须包含一个可手算的小例子和一个真实高工作量例子；前者解释 recurrence，后者解释为什么需要 cache、streaming 或 sharding。
+本章至少展示四种工作量案例：small、median、p99/high-complexity 和 null/not-applicable。每个案例列出输入对象、关键结构、算法访问的 unique objects/arcs（若可用）、输出值和所处总体分位数。算法讲解必须包含一个可手算的小例子和一个真实高工作量例子。解释止于研究定义、递推式、时间/空间复杂度和指标含义；不得以 cache、streaming、sharding 或运行事故组织正文叙事。
 
 ### 8. Graph Overview
 

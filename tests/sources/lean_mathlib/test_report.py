@@ -10,8 +10,12 @@ def test_report_contract_has_all_sections_and_figures() -> None:
         assert f"<h2>{section}." in source
     assert len(TITLES) >= 13
     assert 'src="http' not in source
-    assert "未截断" in source
-    assert "缓存不等于截断" in source
+    assert "唯一 DAG 节点 U" in source
+    assert "Value 可观测性按声明类型分布" in source
+    assert "Token 代理量" in source
+    assert "getDeclarationValue?" in source
+    assert "饱和截断" not in source
+    assert "缓存不等于截断" not in source
     assert '.fill_null(0)' not in source
     assert "report-claims-v1" in source
     assert "report-examples-v1" in source

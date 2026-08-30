@@ -16,12 +16,47 @@ from knowledge_reuse.analysis.concentration import gini, hhi, top_share
 from knowledge_reuse.analysis.powerlaw import fit_tail
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
+    complexity_normalized_root,
     normalized_root,
     run_results_root,
 )
 
 
 CONFIG = tomllib.loads(CONFIG_PATH.read_text())
+
+COMPLEXITY_METRICS = (
+    "source_bytes",
+    "source_lines",
+    "source_tokens",
+    "type_const_unique",
+    "value_const_unique",
+    "type_expr_unique_ptr_nodes",
+    "type_expr_dag_arcs",
+    "type_expr_max_depth",
+    "type_expr_tree_occurrences",
+    "type_expr_expansion_factor",
+    "value_expr_unique_ptr_nodes",
+    "value_expr_dag_arcs",
+    "value_expr_max_depth",
+    "value_expr_tree_occurrences",
+    "value_expr_expansion_factor",
+)
+
+REGRESSION_METRICS = (
+    "source_tokens",
+    "type_const_unique",
+    "type_expr_unique_ptr_nodes",
+    "type_expr_dag_arcs",
+    "type_expr_max_depth",
+    "type_expr_tree_occurrences",
+    "type_expr_expansion_factor",
+    "value_const_unique",
+    "value_expr_unique_ptr_nodes",
+    "value_expr_dag_arcs",
+    "value_expr_max_depth",
+    "value_expr_tree_occurrences",
+    "value_expr_expansion_factor",
+)
 
 EXAMPLE_COLUMNS = (
     "example_id",
@@ -49,6 +84,16 @@ EXAMPLE_COLUMNS = (
     "source_bytes",
     "type_expr_nodes",
     "value_expr_nodes",
+    "type_expr_unique_ptr_nodes",
+    "type_expr_dag_arcs",
+    "type_expr_max_depth",
+    "type_expr_tree_occurrences",
+    "type_expr_expansion_factor",
+    "value_expr_unique_ptr_nodes",
+    "value_expr_dag_arcs",
+    "value_expr_max_depth",
+    "value_expr_tree_occurrences",
+    "value_expr_expansion_factor",
     "in_degree_all",
     "evidence",
     "source_locator",
@@ -98,11 +143,11 @@ def build_report_examples(
         ),
         (
             "node.complexity.high",
-            "Expr workload",
+            "Expr complexity",
             "high",
             "CategoryTheory.Limits.colimitLimitToLimitColimit_surjective",
             "固定 snapshot 候选；缺失时选择非生成节点中 value complexity 最大者",
-            "真实高工作量 theorem，展示 tree-occurrence 计数为何需要缓存。",
+            "真实高展开复杂度 theorem，用于比较 DAG 结构与展开树规模。",
         ),
     ]
     for example_id, concept, role, preferred, rule, explanation in candidates:
@@ -150,6 +195,16 @@ def build_report_examples(
                 source_bytes=record["source_bytes"],
                 type_expr_nodes=record["type_expr_nodes"],
                 value_expr_nodes=record["value_expr_nodes"],
+                type_expr_unique_ptr_nodes=record.get("type_expr_unique_ptr_nodes"),
+                type_expr_dag_arcs=record.get("type_expr_dag_arcs"),
+                type_expr_max_depth=record.get("type_expr_max_depth"),
+                type_expr_tree_occurrences=record.get("type_expr_tree_occurrences"),
+                type_expr_expansion_factor=record.get("type_expr_expansion_factor"),
+                value_expr_unique_ptr_nodes=record.get("value_expr_unique_ptr_nodes"),
+                value_expr_dag_arcs=record.get("value_expr_dag_arcs"),
+                value_expr_max_depth=record.get("value_expr_max_depth"),
+                value_expr_tree_occurrences=record.get("value_expr_tree_occurrences"),
+                value_expr_expansion_factor=record.get("value_expr_expansion_factor"),
                 in_degree_all=record["in_degree_all"],
                 evidence=f"metrics/node_metrics.parquet#node_id={record['node_id']}",
                 source_locator=f"{record['source_file']}::{record['name']}",
@@ -451,7 +506,7 @@ def fit_regression(node_metrics: pl.DataFrame, length_column: str) -> dict[str, 
 
 def correlations(node_metrics: pl.DataFrame) -> list[dict[str, Any]]:
     rows = []
-    for length in ("source_bytes", "source_tokens", "type_expr_nodes", "value_expr_nodes"):
+    for length in COMPLEXITY_METRICS:
         frame = node_metrics.drop_nulls([length])
         coefficient, p_value = scipy.stats.spearmanr(
             frame[length].to_numpy(), frame["in_degree_all"].to_numpy()
@@ -469,7 +524,7 @@ def correlations(node_metrics: pl.DataFrame) -> list[dict[str, Any]]:
 
 def length_bins(node_metrics: pl.DataFrame) -> pl.DataFrame:
     frames = []
-    for length in ("source_bytes", "source_tokens", "type_expr_nodes", "value_expr_nodes"):
+    for length in COMPLEXITY_METRICS:
         frame = node_metrics.drop_nulls([length]).filter(pl.col(length) > 0)
         if frame.is_empty():
             continue
@@ -501,6 +556,22 @@ def analyze(run_kind: str) -> dict[str, Any]:
     metrics_dir.mkdir(parents=True, exist_ok=True)
     tables_dir.mkdir(parents=True, exist_ok=True)
     nodes = pl.read_parquet(parquet_dir / "nodes.parquet")
+    complexity = pl.read_parquet(
+        complexity_normalized_root(snapshot, run_kind) / "nodes.parquet"
+    ).drop("snapshot_id", "module", "has_value")
+    nodes = (
+        nodes.join(complexity, on="name", how="inner", validate="1:1")
+        .with_columns(
+            (
+                pl.col("type_expr_tree_occurrences")
+                / pl.col("type_expr_unique_ptr_nodes")
+            ).alias("type_expr_expansion_factor"),
+            (
+                pl.col("value_expr_tree_occurrences")
+                / pl.col("value_expr_unique_ptr_nodes")
+            ).alias("value_expr_expansion_factor"),
+        )
+    )
     edges = pl.read_parquet(parquet_dir / "edges.parquet")
     modules = pl.read_parquet(parquet_dir / "modules.parquet")
     node_metrics = with_node_metrics(nodes, edges)
@@ -541,7 +612,7 @@ def analyze(run_kind: str) -> dict[str, Any]:
     fits = pl.DataFrame([fit_tail(values, name) for name, values in populations.items()])
     fits.write_parquet(metrics_dir / "powerlaw_fits.parquet", compression="zstd")
     regressions = pl.DataFrame(
-        [fit_regression(node_metrics, length) for length in ("source_bytes", "type_expr_nodes", "value_expr_nodes")]
+        [fit_regression(node_metrics, length) for length in REGRESSION_METRICS]
     )
     regressions.write_parquet(metrics_dir / "regressions.parquet", compression="zstd")
     correlation_rows = correlations(node_metrics)
@@ -549,6 +620,25 @@ def analyze(run_kind: str) -> dict[str, Any]:
         metrics_dir / "length_correlations.parquet", compression="zstd"
     )
     length_bins(node_metrics).write_parquet(metrics_dir / "length_binned.parquet", compression="zstd")
+    availability = (
+        node_metrics.group_by("kind")
+        .agg(
+            pl.len().alias("node_count"),
+            pl.col("has_value").sum().alias("value_available_count"),
+        )
+        .with_columns(
+            (pl.col("value_available_count") / pl.col("node_count")).alias(
+                "value_available_fraction"
+            ),
+            (pl.col("node_count") - pl.col("value_available_count")).alias(
+                "value_null_count"
+            ),
+        )
+        .sort("node_count", descending=True)
+    )
+    availability.write_parquet(
+        metrics_dir / "value_availability.parquet", compression="zstd"
+    )
 
     node_domain = nodes.select("node_id", "domain")
     internal_edges = edges.join(
