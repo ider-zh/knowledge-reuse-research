@@ -1,0 +1,108 @@
+{
+  "bytes_written": 19416,
+  "failed_retries": 0,
+  "finished_at": "2026-08-30T15:18:40.584008+00:00",
+  "module_count": 7,
+  "peak_child_rss_kib": 1952084,
+  "record_count": 765,
+  "records_per_second": 356.83044078162226,
+  "run_kind": "smoke",
+  "schema_version": "expr-complexity-v2",
+  "shard_count": 7,
+  "shards": [
+    {
+      "bytes_written": 593,
+      "duration_seconds": 2.141182311810553,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00000.jsonl.zst",
+      "record_count": 10,
+      "resumed": false,
+      "sha256": "914c17aac64c29a2e67ee40f3b494de2a3a42bfa82abcd53e9fdc39110b82931",
+      "shard_id": "smoke-00000",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 420,
+      "duration_seconds": 2.0272214110009372,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00001.jsonl.zst",
+      "record_count": 4,
+      "resumed": false,
+      "sha256": "e624149e3be7b40a7caa7175ef904f6442e3efa3ab453b83ea3be5b103ff3447",
+      "shard_id": "smoke-00001",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 449,
+      "duration_seconds": 1.67457426013425,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00002.jsonl.zst",
+      "record_count": 5,
+      "resumed": false,
+      "sha256": "6185a7e153b4997ec74a7fde0c871c4939bcae98b24be6a36f33aff3bf7fe3da",
+      "shard_id": "smoke-00002",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 9102,
+      "duration_seconds": 1.4070273102261126,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00003.jsonl.zst",
+      "record_count": 442,
+      "resumed": false,
+      "sha256": "37a033a046bba98dbc2a40d12405dbd7ff41a3e8f9773fc47c79af3b0600b2a1",
+      "shard_id": "smoke-00003",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 7921,
+      "duration_seconds": 1.7645614161156118,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00004.jsonl.zst",
+      "record_count": 294,
+      "resumed": false,
+      "sha256": "f19d6d7d4ede48ad2234333e449e90f3a43bb84542edfccd0f12a94cb7363832",
+      "shard_id": "smoke-00004",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 410,
+      "duration_seconds": 1.9399758907966316,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00005.jsonl.zst",
+      "record_count": 3,
+      "resumed": false,
+      "sha256": "c5378dc45e0693a100bde5493ab6a65763ddeecc920490c3e2fc99cad257e565",
+      "shard_id": "smoke-00005",
+      "status": "ok"
+    },
+    {
+      "bytes_written": 521,
+      "duration_seconds": 2.028477981686592,
+      "failed_retries": 0,
+      "module_audits": null,
+      "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/expr-complexity-v2/smoke/smoke-00006.jsonl.zst",
+      "record_count": 7,
+      "resumed": false,
+      "sha256": "3cb650298d25b5ea7f3e1bf4f38fb821602d484d9cdaacdcfec53409e65b35c3",
+      "shard_id": "smoke-00006",
+      "status": "ok"
+    }
+  ],
+  "snapshot_id": "mathlib-v4.32.1",
+  "started_at": "2026-08-30T15:18:38.440070+00:00",
+  "status_counts": {
+    "excluded": 0,
+    "failed": 0,
+    "ok": 7,
+    "partial": 0
+  },
+  "wall_time_seconds": 2.14387538889423,
+  "worker_count": 8
+}

@@ -1,11 +1,13 @@
 {
-  "schema_version": "golden-v1",
+  "schema_version": "golden-v2",
+  "complexity_schema_version": "expr-complexity-v2",
   "module": "LeanGraph.ProbeFixture",
   "node_count": 60,
   "node_set_sha256": "cbc0aa52608306452d6ee30e66f2b210a57b2af42d06eeb4c393eee999bcf73c",
   "typed_edge_count": 409,
   "typed_edge_set_sha256": "df3f6d09e5289647c9a1bbd879ed3ce7a81a48d3a13902209d71c66e9d2808de",
   "expression_size_sha256": "d090182c8eae63475e702d3d64a53c1135cfb6f3416f2382d6c3ac7ccac4289c",
+  "expression_complexity_sha256": "08006099f60873345935faedae8e4f9bd6826ca8caed46edebc49fd87fd0d56f",
   "required_nodes": [
     "LeanGraph.ProbeFixture.P",
     "LeanGraph.ProbeFixture.D1",

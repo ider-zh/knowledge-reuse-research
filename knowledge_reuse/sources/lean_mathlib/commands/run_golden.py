@@ -22,7 +22,7 @@ def canonical_sha256(value: Any) -> str:
 def check_golden() -> dict[str, Any]:
     expected = json.loads(EXPECTED_PATH.read_text())
     subprocess.run(
-        [LAKE, "build", "lean-graph-extract", "LeanGraph.ProbeFixture"],
+        [LAKE, "build", "lean-graph-extract", "lean-graph-complexity", "LeanGraph.ProbeFixture"],
         cwd=ROOT,
         check=True,
         text=True,
@@ -42,6 +42,20 @@ def check_golden() -> dict[str, Any]:
         capture_output=True,
     )
     rows = [json.loads(line) for line in proc.stdout.splitlines()]
+    complexity_proc = subprocess.run(
+        [
+            LAKE,
+            "env",
+            ".lake/build/bin/lean-graph-complexity",
+            expected["complexity_schema_version"],
+            expected["module"],
+        ],
+        cwd=ROOT,
+        check=True,
+        text=True,
+        capture_output=True,
+    )
+    complexity_rows = [json.loads(line) for line in complexity_proc.stdout.splitlines()]
     size_rows = sorted(
         (row["name"], row["type_expr_nodes"], row["value_expr_nodes"])
         for row in rows
@@ -54,6 +68,25 @@ def check_golden() -> dict[str, Any]:
         if row["record"] == "edge"
     )
     audits = [row for row in rows if row["record"] == "audit"]
+    complexity_audits = [row for row in complexity_rows if row["record"] == "audit"]
+    complexity_values = sorted(
+        (
+            row["name"],
+            row["has_value"],
+            row["type_expr_tree_occurrences"],
+            row["type_expr_unique_ptr_nodes"],
+            row["type_expr_dag_arcs"],
+            row["type_expr_max_depth"],
+            row["value_expr_tree_occurrences"],
+            row["value_expr_unique_ptr_nodes"],
+            row["value_expr_dag_arcs"],
+            row["value_expr_max_depth"],
+        )
+        for row in complexity_rows
+        if row["record"] == "complexity"
+    )
+    complexity_names = [row[0] for row in complexity_values]
+    complexity_tree_sizes = [(row[0], row[2], row[6]) for row in complexity_values]
     node_set = set(nodes)
     edge_set = set(edges)
     checks = {
@@ -64,6 +97,12 @@ def check_golden() -> dict[str, Any]:
         "typed_edge_set_exact": canonical_sha256(edges) == expected["typed_edge_set_sha256"],
         "expression_sizes_exact": canonical_sha256(size_rows)
         == expected["expression_size_sha256"],
+        "complexity_one_successful_audit": len(complexity_audits) == 1
+        and complexity_audits[0]["status"] == "ok",
+        "complexity_node_set_exact": complexity_names == nodes,
+        "complexity_tree_matches_graph": complexity_tree_sizes == size_rows,
+        "expression_complexity_exact": canonical_sha256(complexity_values)
+        == expected["expression_complexity_sha256"],
         "required_nodes": set(expected["required_nodes"]) <= node_set,
         "required_typed_edges": {tuple(edge) for edge in expected["required_typed_edges"]}
         <= edge_set,
@@ -81,6 +120,7 @@ def check_golden() -> dict[str, Any]:
             "typed_edge_count": len(edges),
             "typed_edge_set_sha256": canonical_sha256(edges),
             "expression_size_sha256": canonical_sha256(size_rows),
+            "expression_complexity_sha256": canonical_sha256(complexity_values),
         },
     }
 

@@ -1,0 +1,48 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ider-zh/knowledge-reuse-research/schemas/expr-complexity-v2.json",
+  "title": "Lean expression complexity raw sidecar v2",
+  "oneOf": [
+    {"$ref": "#/$defs/complexity"},
+    {"$ref": "#/$defs/audit"}
+  ],
+  "$defs": {
+    "complexity": {
+      "type": "object",
+      "required": [
+        "record", "snapshot", "name", "module", "has_value",
+        "type_expr_tree_occurrences", "type_expr_unique_ptr_nodes",
+        "type_expr_dag_arcs", "type_expr_max_depth",
+        "value_expr_tree_occurrences", "value_expr_unique_ptr_nodes",
+        "value_expr_dag_arcs", "value_expr_max_depth"
+      ],
+      "properties": {
+        "record": {"const": "complexity"},
+        "snapshot": {"type": "string"},
+        "name": {"type": "string"},
+        "module": {"type": "string"},
+        "has_value": {"type": "boolean"},
+        "type_expr_tree_occurrences": {"type": "integer", "minimum": 1},
+        "type_expr_unique_ptr_nodes": {"type": "integer", "minimum": 1},
+        "type_expr_dag_arcs": {"type": "integer", "minimum": 0},
+        "type_expr_max_depth": {"type": "integer", "minimum": 1},
+        "value_expr_tree_occurrences": {"type": ["integer", "null"], "minimum": 1},
+        "value_expr_unique_ptr_nodes": {"type": ["integer", "null"], "minimum": 1},
+        "value_expr_dag_arcs": {"type": ["integer", "null"], "minimum": 0},
+        "value_expr_max_depth": {"type": ["integer", "null"], "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "required": ["record", "module", "status"],
+      "properties": {
+        "record": {"const": "audit"},
+        "module": {"type": "string"},
+        "status": {"enum": ["ok", "partial", "failed", "excluded"]},
+        "error": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    }
+  }
+}

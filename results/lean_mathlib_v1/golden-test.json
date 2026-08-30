@@ -1,5 +1,9 @@
 {
   "checks": {
+    "complexity_node_set_exact": true,
+    "complexity_one_successful_audit": true,
+    "complexity_tree_matches_graph": true,
+    "expression_complexity_exact": true,
     "expression_sizes_exact": true,
     "no_duplicate_nodes": true,
     "no_duplicate_typed_edges": true,
@@ -13,6 +17,7 @@
   },
   "module": "LeanGraph.ProbeFixture",
   "observed": {
+    "expression_complexity_sha256": "08006099f60873345935faedae8e4f9bd6826ca8caed46edebc49fd87fd0d56f",
     "expression_size_sha256": "d090182c8eae63475e702d3d64a53c1135cfb6f3416f2382d6c3ac7ccac4289c",
     "node_count": 60,
     "node_set_sha256": "cbc0aa52608306452d6ee30e66f2b210a57b2af42d06eeb4c393eee999bcf73c",
@@ -20,5 +25,5 @@
     "typed_edge_set_sha256": "df3f6d09e5289647c9a1bbd879ed3ce7a81a48d3a13902209d71c66e9d2808de"
   },
   "passed": true,
-  "schema_version": "golden-v1"
+  "schema_version": "golden-v2"
 }

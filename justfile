@@ -24,6 +24,12 @@ extract-smoke:
 extract:
     uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_extract
 
+complexity-smoke:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_complexity --smoke
+
+complexity:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.commands.run_complexity
+
 benchmark-extract:
     uv run python -m knowledge_reuse.sources.lean_mathlib.commands.benchmark_extract
 
@@ -32,6 +38,12 @@ normalize:
 
 normalize-smoke:
     uv run python -m knowledge_reuse.sources.lean_mathlib.normalize --smoke
+
+normalize-complexity-smoke:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.normalize_complexity --smoke
+
+normalize-complexity:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.normalize_complexity
 
 validate:
     uv run python -m knowledge_reuse.sources.lean_mathlib.commands.verify_run

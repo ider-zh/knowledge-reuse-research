@@ -93,11 +93,14 @@ def read_cached_shard_metadata(path: pathlib.Path) -> tuple[int, list[dict[str, 
 
 
 def run_modules(
-    snapshot: str, modules: list[str], log_path: pathlib.Path
+    snapshot: str,
+    modules: list[str],
+    log_path: pathlib.Path,
+    extractor: pathlib.Path = EXTRACTOR,
 ) -> tuple[list[dict[str, Any]], list[dict[str, Any]], bool]:
     started = time.perf_counter()
     proc = subprocess.run(
-        [LAKE, "env", str(EXTRACTOR), snapshot, *modules],
+        [LAKE, "env", str(extractor), snapshot, *modules],
         cwd=ROOT,
         text=True,
         capture_output=True,
@@ -129,9 +132,14 @@ def run_modules(
 
 
 def run_module(
-    snapshot: str, module: str, log_dir: pathlib.Path
+    snapshot: str,
+    module: str,
+    log_dir: pathlib.Path,
+    extractor: pathlib.Path = EXTRACTOR,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    rows, audits, complete = run_modules(snapshot, [module], log_dir / f"{module}.log")
+    rows, audits, complete = run_modules(
+        snapshot, [module], log_dir / f"{module}.log", extractor
+    )
     if complete:
         return rows, audits[0]
     audit = audits[0] if len(audits) == 1 else {
@@ -158,6 +166,7 @@ def write_shard(
     raw_dir: pathlib.Path,
     log_dir: pathlib.Path,
     force: bool,
+    extractor: pathlib.Path = EXTRACTOR,
 ) -> ShardResult:
     started = time.perf_counter()
     target = raw_dir / f"{shard['id']}.jsonl.zst"
@@ -198,7 +207,10 @@ def write_shard(
     rows = []
     for group_index, group in enumerate(groups):
         group_rows, group_audits, complete = run_modules(
-            snapshot, group, log_dir / f"{shard['id']}-part-{group_index:03d}.log"
+            snapshot,
+            group,
+            log_dir / f"{shard['id']}-part-{group_index:03d}.log",
+            extractor,
         )
         if complete:
             rows.extend(group_rows)
@@ -206,7 +218,7 @@ def write_shard(
             continue
         failed_retries += len(group)
         for module in group:
-            module_rows, audit = run_module(snapshot, module, log_dir)
+            module_rows, audit = run_module(snapshot, module, log_dir, extractor)
             rows.extend(module_rows)
             audits.append(audit)
     with tempfile.NamedTemporaryFile(dir=target.parent, suffix=".tmp", delete=False) as tmp:

@@ -10,3 +10,7 @@ human-auditable semantic edges are asserted separately so a digest change
 cannot be accepted without reviewing the intended relationships. Updating the
 pinned Lean toolchain requires reviewing and updating all expectations.
 
+Golden v2 also pins all four Type/Value expression complexity levels: unique
+pointer nodes, DAG arcs, maximum depth, and expanded tree occurrences. The
+expanded-tree values must exactly match the legacy graph fields, preventing the
+sidecar from silently changing existing graph semantics.
