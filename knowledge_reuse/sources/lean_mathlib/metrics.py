@@ -23,6 +23,301 @@ from knowledge_reuse.sources.lean_mathlib.layout import (
 
 CONFIG = tomllib.loads(CONFIG_PATH.read_text())
 
+EXAMPLE_COLUMNS = (
+    "example_id",
+    "concept",
+    "role",
+    "selection_rule",
+    "snapshot_id",
+    "src_id",
+    "src_name",
+    "src_module",
+    "src_domain",
+    "src_kind",
+    "dst_id",
+    "dst_name",
+    "dst_module",
+    "dst_domain",
+    "dst_kind",
+    "edge_type",
+    "node_id",
+    "node_name",
+    "node_module",
+    "node_domain",
+    "node_kind",
+    "has_value",
+    "source_bytes",
+    "type_expr_nodes",
+    "value_expr_nodes",
+    "in_degree_all",
+    "evidence",
+    "explanation",
+    "caveat",
+)
+
+
+def _node_record(frame: pl.DataFrame, name: str) -> dict[str, Any] | None:
+    selected = frame.filter(pl.col("name") == name)
+    return selected.row(0, named=True) if selected.height else None
+
+
+def _example_row(**values: Any) -> dict[str, Any]:
+    return {column: values.get(column) for column in EXAMPLE_COLUMNS}
+
+
+def build_report_examples(
+    nodes: pl.DataFrame, edges: pl.DataFrame, node_metrics: pl.DataFrame, snapshot: str
+) -> list[dict[str, Any]]:
+    """Build deterministic, evidence-addressable examples for the research report."""
+    examples: list[dict[str, Any]] = []
+    candidates = [
+        (
+            "node.definition.small",
+            "declaration node",
+            "small",
+            "Set",
+            "固定 snapshot 候选；缺失时选择最小的有 value definition",
+            "一个结构较小但高复用的 definition 节点。",
+        ),
+        (
+            "node.no_value",
+            "value null semantics",
+            "null",
+            "CategoryTheory.Category",
+            "固定 snapshot 候选；缺失时选择首个无 value 的 declaration",
+            "没有 value 的 inductive，其 value complexity 是 null 而不是 0。",
+        ),
+        (
+            "node.definition.value",
+            "definition value",
+            "medium",
+            "Semiring.toNonAssocSemiring",
+            "固定 snapshot 候选；缺失时选择接近 value complexity 中位数的 definition",
+            "同时具有 type 与 definition body 的真实节点。",
+        ),
+        (
+            "node.complexity.high",
+            "Expr workload",
+            "high",
+            "CategoryTheory.Limits.colimitLimitToLimitColimit_surjective",
+            "固定 snapshot 候选；缺失时选择非生成节点中 value complexity 最大者",
+            "真实高工作量 theorem，展示 tree-occurrence 计数为何需要缓存。",
+        ),
+    ]
+    for example_id, concept, role, preferred, rule, explanation in candidates:
+        record = _node_record(node_metrics, preferred)
+        if record is None:
+            if role == "null":
+                fallback = node_metrics.filter(~pl.col("has_value")).sort("name")
+            elif role == "high":
+                fallback = node_metrics.filter(
+                    ~pl.col("is_generated") & pl.col("value_expr_nodes").is_not_null()
+                ).sort("value_expr_nodes", "name", descending=[True, False])
+            elif role == "medium":
+                median = node_metrics["value_expr_nodes"].drop_nulls().median() or 0
+                fallback = (
+                    node_metrics.filter(
+                        pl.col("is_definition") & pl.col("value_expr_nodes").is_not_null()
+                    )
+                    .with_columns(
+                        (pl.col("value_expr_nodes").cast(pl.Int128) - int(median))
+                        .abs()
+                        .alias("distance")
+                    )
+                    .sort("distance", "name")
+                )
+            else:
+                fallback = node_metrics.filter(
+                    pl.col("is_definition") & pl.col("has_value")
+                ).sort("type_expr_nodes", "name")
+            if fallback.is_empty():
+                continue
+            record = fallback.row(0, named=True)
+        examples.append(
+            _example_row(
+                example_id=example_id,
+                concept=concept,
+                role=role,
+                selection_rule=rule,
+                snapshot_id=snapshot,
+                node_id=record["node_id"],
+                node_name=record["name"],
+                node_module=record["module"],
+                node_domain=record["domain"],
+                node_kind=record["kind"],
+                has_value=record["has_value"],
+                source_bytes=record["source_bytes"],
+                type_expr_nodes=record["type_expr_nodes"],
+                value_expr_nodes=record["value_expr_nodes"],
+                in_degree_all=record["in_degree_all"],
+                evidence=f"metrics/node_metrics.parquet#node_id={record['node_id']}",
+                explanation=explanation,
+                caveat="该单例用于解释概念，不能替代总体统计。",
+            )
+        )
+
+    edge_candidates = [
+        (
+            "edge.value.theorem_to_theorem",
+            "VALUE edge",
+            "constantCoeff_xInTermsOfW",
+            "map_pow",
+            "VALUE",
+            "theorem proof/value 对 theorem 的真实复用。",
+        ),
+        (
+            "edge.type.theorem_to_definition",
+            "TYPE edge",
+            "padicValRat.of_nat",
+            "padicValNat",
+            "TYPE",
+            "theorem statement/type 对 definition 的真实依赖。",
+        ),
+    ]
+    needed_names = {
+        name
+        for _, _, src_name, dst_name, _, _ in edge_candidates
+        for name in (src_name, dst_name)
+    } | {"DFunLike.coe"}
+    node_by_name = {
+        row["name"]: row
+        for row in nodes.filter(pl.col("name").is_in(sorted(needed_names))).iter_rows(
+            named=True
+        )
+    }
+    for example_id, concept, src_name, dst_name, edge_type, explanation in edge_candidates:
+        src, dst = node_by_name.get(src_name), node_by_name.get(dst_name)
+        if src is None or dst is None:
+            continue
+        found = edges.filter(
+            (pl.col("src_id") == src["node_id"])
+            & (pl.col("dst_id") == dst["node_id"])
+            & (pl.col("edge_type") == edge_type)
+        )
+        if found.is_empty():
+            continue
+        examples.append(
+            _example_row(
+                example_id=example_id,
+                concept=concept,
+                role="real_edge",
+                selection_rule="固定 v4.32.1 候选，并在当前 normalized edge table 中精确验证",
+                snapshot_id=snapshot,
+                src_id=src["node_id"],
+                src_name=src_name,
+                src_module=src["module"],
+                src_domain=src["domain"],
+                src_kind=src["kind"],
+                dst_id=dst["node_id"],
+                dst_name=dst_name,
+                dst_module=dst["module"],
+                dst_domain=dst["domain"],
+                dst_kind=dst["kind"],
+                edge_type=edge_type,
+                evidence=(
+                    "normalized/edges.parquet#"
+                    f"src_id={src['node_id']},dst_id={dst['node_id']},edge_type={edge_type}"
+                ),
+                explanation=explanation,
+                caveat="一条边证明该依赖实例存在，不证明总体分布。",
+            )
+        )
+
+    reuse_target = node_by_name.get("DFunLike.coe")
+    if reuse_target is None:
+        top = node_metrics.sort("in_degree_all", "name", descending=[True, False]).row(
+            0, named=True
+        )
+        reuse_target = _node_record(nodes, top["name"])
+        assert reuse_target is not None
+    incoming = edges.filter(pl.col("dst_id") == reuse_target["node_id"]).sort(
+        "src_id", "edge_type"
+    ).head(5)
+    incoming_ids = incoming["src_id"].to_list() + [reuse_target["node_id"]]
+    node_by_id = {
+        row["node_id"]: row
+        for row in nodes.filter(pl.col("node_id").is_in(incoming_ids)).iter_rows(named=True)
+    }
+    for index, edge in enumerate(incoming.iter_rows(named=True), 1):
+        src = node_by_id[edge["src_id"]]
+        examples.append(
+            _example_row(
+                example_id=f"reuse.incoming.{index:02d}",
+                concept="reuse indegree",
+                role="incoming_edge",
+                selection_rule="目标 DFunLike.coe；incoming typed edges 按 src_id、edge_type 排序取前 5",
+                snapshot_id=snapshot,
+                src_id=src["node_id"],
+                src_name=src["name"],
+                src_module=src["module"],
+                src_domain=src["domain"],
+                src_kind=src["kind"],
+                dst_id=reuse_target["node_id"],
+                dst_name=reuse_target["name"],
+                dst_module=reuse_target["module"],
+                dst_domain=reuse_target["domain"],
+                dst_kind=reuse_target["kind"],
+                edge_type=edge["edge_type"],
+                in_degree_all=_node_record(node_metrics, reuse_target["name"])["in_degree_all"],
+                evidence=(
+                    "normalized/edges.parquet#"
+                    f"src_id={src['node_id']},dst_id={reuse_target['node_id']},"
+                    f"edge_type={edge['edge_type']}"
+                ),
+                explanation="每个不同 source declaration 为 target 的 unique reuse 增加一次。",
+                caveat="这里只展示 5 条确定性样例，不是完整 incoming edge list。",
+            )
+        )
+    return examples
+
+
+def append_domain_examples(
+    examples: list[dict[str, Any]],
+    internal_edges: pl.DataFrame,
+    nodes: pl.DataFrame,
+    snapshot: str,
+) -> None:
+    selected = pl.concat(
+        [
+            internal_edges.filter(pl.col("src_domain") != pl.col("dst_domain")).head(2),
+            internal_edges.filter(pl.col("src_domain") == pl.col("dst_domain")).head(1),
+        ]
+    )
+    selected_ids = selected["src_id"].to_list() + selected["dst_id"].to_list()
+    node_by_id = {
+        row["node_id"]: row
+        for row in nodes.filter(pl.col("node_id").is_in(selected_ids)).iter_rows(named=True)
+    }
+    for index, edge in enumerate(selected.iter_rows(named=True), 1):
+        src, dst = node_by_id[edge["src_id"]], node_by_id[edge["dst_id"]]
+        examples.append(
+            _example_row(
+                example_id=f"domain.edge.{index:02d}",
+                concept="domain dependency matrix",
+                role="cross_domain" if src["domain"] != dst["domain"] else "within_domain",
+                selection_rule="normalized internal edges 的稳定顺序：前两条跨领域边与第一条领域内边",
+                snapshot_id=snapshot,
+                src_id=src["node_id"],
+                src_name=src["name"],
+                src_module=src["module"],
+                src_domain=src["domain"],
+                src_kind=src["kind"],
+                dst_id=dst["node_id"],
+                dst_name=dst["name"],
+                dst_module=dst["module"],
+                dst_domain=dst["domain"],
+                dst_kind=dst["kind"],
+                edge_type=edge["edge_type"],
+                evidence=(
+                    "normalized/edges.parquet#"
+                    f"src_id={src['node_id']},dst_id={dst['node_id']},"
+                    f"edge_type={edge['edge_type']}"
+                ),
+                explanation="该边使对应 src_domain→dst_domain matrix cell 增加 1。",
+                caveat="单条边只解释矩阵累加规则，不代表领域间总体强度。",
+            )
+        )
+
 
 def with_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.DataFrame:
     internal_ids = nodes.select("node_id")
@@ -205,6 +500,7 @@ def analyze(run_kind: str) -> dict[str, Any]:
     modules = pl.read_parquet(parquet_dir / "modules.parquet")
     node_metrics = with_node_metrics(nodes, edges)
     node_metrics.write_parquet(metrics_dir / "node_metrics.parquet", compression="zstd")
+    report_examples = build_report_examples(nodes, edges, node_metrics, snapshot)
 
     degree = node_metrics["in_degree_all"].to_numpy()
     view_metrics = []
@@ -270,6 +566,10 @@ def analyze(run_kind: str) -> dict[str, Any]:
         .sort("src_domain", "dst_domain", "edge_type")
     )
     domain_matrix.write_parquet(tables_dir / "domain_matrix.parquet", compression="zstd")
+    append_domain_examples(report_examples, internal_edges, nodes, snapshot)
+    pl.DataFrame(report_examples).select(EXAMPLE_COLUMNS).write_parquet(
+        tables_dir / "report_examples.parquet", compression="zstd"
+    )
     domain_rows = []
     for domain in sorted(nodes["domain"].unique().drop_nulls().to_list()):
         domain_nodes = node_metrics.filter(pl.col("domain") == domain)
