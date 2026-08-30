@@ -10,14 +10,25 @@ def test_report_contract_has_all_sections_and_figures() -> None:
         assert f"<h2>{section}." in source
     assert len(TITLES) >= 13
     assert 'src="http' not in source
-    assert "没有截断" in source
+    assert "未截断" in source
     assert "缓存不等于截断" in source
     assert '.fill_null(0)' not in source
+    assert "report-claims-v1" in source
+    assert "report-examples-v1" in source
+    assert "从真实边到 Graph" in source
 
 
 def test_points_svg_skips_missing_metrics() -> None:
     rendered = points_svg("test", [None, 4.0], [2.0, 3.0], "x", "y")
     assert rendered.count("<circle ") == 1
+
+
+def test_points_svg_sampling_is_independent_of_input_order() -> None:
+    x_values = list(range(1, 4_001))
+    y_values = [value % 97 + 1 for value in x_values]
+    forward = points_svg("test", x_values, y_values, "x", "y")
+    backward = points_svg("test", x_values[::-1], y_values[::-1], "x", "y")
+    assert forward == backward
 
 
 def test_line_svg_downsamples_display_without_changing_analysis() -> None:

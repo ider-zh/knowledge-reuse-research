@@ -51,6 +51,7 @@ EXAMPLE_COLUMNS = (
     "value_expr_nodes",
     "in_degree_all",
     "evidence",
+    "source_locator",
     "explanation",
     "caveat",
 )
@@ -151,6 +152,7 @@ def build_report_examples(
                 value_expr_nodes=record["value_expr_nodes"],
                 in_degree_all=record["in_degree_all"],
                 evidence=f"metrics/node_metrics.parquet#node_id={record['node_id']}",
+                source_locator=f"{record['source_file']}::{record['name']}",
                 explanation=explanation,
                 caveat="该单例用于解释概念，不能替代总体统计。",
             )
@@ -218,6 +220,7 @@ def build_report_examples(
                     "normalized/edges.parquet#"
                     f"src_id={src['node_id']},dst_id={dst['node_id']},edge_type={edge_type}"
                 ),
+                source_locator=f"{src['source_file']}::{src_name}",
                 explanation=explanation,
                 caveat="一条边证明该依赖实例存在，不证明总体分布。",
             )
@@ -264,6 +267,7 @@ def build_report_examples(
                     f"src_id={src['node_id']},dst_id={reuse_target['node_id']},"
                     f"edge_type={edge['edge_type']}"
                 ),
+                source_locator=f"{src['source_file']}::{src['name']}",
                 explanation="每个不同 source declaration 为 target 的 unique reuse 增加一次。",
                 caveat="这里只展示 5 条确定性样例，不是完整 incoming edge list。",
             )
@@ -313,6 +317,7 @@ def append_domain_examples(
                     f"src_id={src['node_id']},dst_id={dst['node_id']},"
                     f"edge_type={edge['edge_type']}"
                 ),
+                source_locator=f"{src['source_file']}::{src['name']}",
                 explanation="该边使对应 src_domain→dst_domain matrix cell 增加 1。",
                 caveat="单条边只解释矩阵累加规则，不代表领域间总体强度。",
             )

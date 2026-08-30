@@ -59,4 +59,7 @@ def test_report_examples_bind_real_type_value_and_null_cases() -> None:
     assert by_id["edge.value.theorem_to_theorem"]["edge_type"] == "VALUE"
     assert by_id["edge.type.theorem_to_definition"]["edge_type"] == "TYPE"
     assert by_id["node.no_value"]["value_expr_nodes"] is None
+    assert by_id["node.no_value"]["source_locator"].endswith(
+        "::CategoryTheory.Category"
+    )
     assert sum(row["concept"] == "reuse indegree" for row in examples) == 2

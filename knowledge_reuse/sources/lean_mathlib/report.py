@@ -21,7 +21,9 @@ import polars as pl
 from knowledge_reuse.sources.lean_mathlib.layout import (
     BENCHMARK_ROOT,
     CONFIG_PATH,
+    EXCLUSIONS_PATH,
     ROOT,
+    normalized_root,
     raw_root,
     run_results_root,
 )
@@ -138,6 +140,7 @@ def points_svg(
         for x, y in zip(x_values, y_values, strict=True)
         if x is not None and y is not None and x > 0 and (y > 0 or not log_y)
     ]
+    pairs.sort(key=lambda pair: (pair[0], pair[1]))
     if len(pairs) > 1600:
         pairs = pairs[:: math.ceil(len(pairs) / 1600)]
     xs = [pair[0] for pair in pairs] or [1]
@@ -276,6 +279,8 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
         "mathlib_commit": mathlib_commit,
         "lean_toolchain": (mathlib / "lean-toolchain").read_text().strip(),
         "extractor_commit": commit,
+        "report_generator_commit": commit,
+        "repository_commit": commit,
         "python_version": platform.python_version(),
         "polars_version": pl.__version__,
         "duckdb_version": duckdb.__version__,
@@ -295,6 +300,116 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
     return manifest
 
 
+def build_claim_registry(
+    summary: dict[str, Any], quality: dict[str, Any], fits: pl.DataFrame
+) -> dict[str, Any]:
+    all_fit = fits.filter(pl.col("population") == "all_declarations").row(
+        0, named=True
+    )
+    complete = quality["passed"] and quality["extraction_completeness"] == 1
+    return {
+        "schema_version": "report-claims-v1",
+        "snapshot_id": summary["snapshot_id"],
+        "run_kind": summary["run_kind"],
+        "claims": [
+            {
+                "claim_id": "completeness.configured_corpus",
+                "status": "fact" if complete else "inconclusive",
+                "text": (
+                    f"配置内 {quality['expected_module_count']:,} 个模块全部成功提取，"
+                    "没有失败、partial 或静默空结果。"
+                ),
+                "evidence": ["metrics/data_quality.json"],
+                "scope": "configured Mathlib corpus",
+                "caveat": "配置排除项和 mathlib 外部 universe 不属于该总体。",
+            },
+            {
+                "claim_id": "graph.no_truncation",
+                "status": "fact",
+                "text": "图构建没有节点、边、深度、时间或饱和截断。",
+                "evidence": [
+                    "metrics/data_quality.json",
+                    "tables/report_examples.parquet",
+                    "run-manifest.json#/extractor_commit",
+                    f"data/lean_mathlib/{summary['snapshot_id']}/normalized/"
+                    f"{summary['run_kind']}/manifest.json",
+                ],
+                "scope": "lean-graph-v1 extraction contract",
+                "caveat": "完整性相对于固定 snapshot、corpus 与语义契约。",
+            },
+            {
+                "claim_id": "reuse.concentration",
+                "status": "supported",
+                "text": (
+                    f"复用高度集中：Top 1% 承接 "
+                    f"{summary['reuse_concentration']['top_1pct_share']:.1%} 的唯一入边，"
+                    f"Gini={summary['reuse_concentration']['gini']:.3f}。"
+                ),
+                "evidence": [
+                    "metrics/summary.json#/reuse_concentration",
+                    "metrics/view_metrics.parquet",
+                ],
+                "scope": "ALL internal declarations",
+                "caveat": "入度集中不等于数学重要性或人的引用意图。",
+            },
+            {
+                "claim_id": "tail.model_comparison",
+                "status": "inconclusive",
+                "text": (
+                    "入度分布具有重尾，但替代模型比较不支持仅凭图形宣称"
+                    "纯幂律或 Zipf 定律。"
+                ),
+                "evidence": ["metrics/powerlaw_fits.parquet#population=all_declarations"],
+                "scope": f"positive indegree population; tail_n={all_fit['tail_n']:,}",
+                "caveat": f"goodness-of-fit bootstrap: {all_fit['bootstrap_status']}",
+            },
+            {
+                "claim_id": "complexity.association",
+                "status": "exploratory",
+                "text": "长度/结构复杂度与复用的关系较弱，并随变量定义和控制项改变。",
+                "evidence": [
+                    "metrics/length_correlations.parquet",
+                    "metrics/regressions.parquet",
+                ],
+                "scope": "source/type/value metrics with available observations",
+                "caveat": "观察性关联不是因果效应。",
+            },
+        ],
+    }
+
+
+def examples_payload(examples: pl.DataFrame, snapshot: str, run_kind: str) -> dict[str, Any]:
+    if examples["snapshot_id"].unique().to_list() != [snapshot]:
+        raise ValueError("report examples do not match requested snapshot")
+    return {
+        "schema_version": "report-examples-v1",
+        "snapshot_id": snapshot,
+        "run_kind": run_kind,
+        "selection_is_deterministic": True,
+        "examples": examples.to_dicts(),
+    }
+
+
+def artifact_index(run_dir: pathlib.Path, paths: list[pathlib.Path]) -> dict[str, Any]:
+    def display_path(path: pathlib.Path) -> str:
+        try:
+            return str(path.relative_to(run_dir))
+        except ValueError:
+            return str(path.relative_to(ROOT))
+
+    return {
+        "schema_version": "report-artifact-index-v1",
+        "artifacts": [
+            {
+                "path": display_path(path),
+                "bytes": path.stat().st_size,
+                "sha256": file_sha256(path),
+            }
+            for path in sorted(paths)
+        ],
+    }
+
+
 _REPORT_ENV = jinja2.Environment(autoescape=True)
 _REPORT_ENV.filters["fmt"] = format_cell
 TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
@@ -304,7 +419,7 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <style>{{ css|safe }}</style></head><body>
 <header><p class="eyebrow">KNOWLEDGE REUSE RESEARCH · LEAN / MATHLIB V1</p>
 <h1>形式化知识如何被复用？</h1>
-<p class="dek">从 Lean 声明、语义依赖图到重尾分布与复杂度关系的完整实验报告</p>
+<p class="dek">从真实声明与语义边出发，逐步建立可审计的图统计、复杂度分析和研究结论</p>
 <div class="status {{ 'ok' if quality.passed else 'bad' }}">
 <b>{{ '完整图构建成功' if quality.extraction_completeness == 1 and quality.passed else '构建未通过完整性门禁' }}</b>
 <span>{{ quality.extracted_module_count }}/{{ quality.expected_module_count }} 模块 · {{ manifest.mathlib_tag }} · {{ manifest.mathlib_commit[:12] }}</span></div>
@@ -316,56 +431,77 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 </div></header>
 <nav><b>报告目录</b><ol>
 <li><a href="#s1">执行摘要</a></li><li><a href="#s2">概念设计</a></li>
-<li><a href="#s3">图模型</a></li><li><a href="#s4">完整性</a></li>
-<li><a href="#s7">复杂度算法</a></li><li><a href="#s8">图统计</a></li>
-<li><a href="#s10">重尾检验</a></li><li><a href="#s11">复杂度分析</a></li>
-<li><a href="#s13">领域分析</a></li><li><a href="#s17">附录</a></li>
+<li><a href="#s3">研究问题</a></li><li><a href="#s4">Corpus</a></li>
+<li><a href="#s5">图语义</a></li><li><a href="#s6">完整性</a></li>
+<li><a href="#s7">复杂度</a></li><li><a href="#s8">图统计</a></li>
+<li><a href="#s9">集中度</a></li><li><a href="#s10">重尾检验</a></li>
+<li><a href="#s11">复杂度与复用</a></li><li><a href="#s12">Kind/Edge</a></li>
+<li><a href="#s13">领域</a></li><li><a href="#s14">稳健性</a></li>
+<li><a href="#s15">跨系统</a></li><li><a href="#s16">结论</a></li>
+<li><a href="#s17">附录</a></li>
 </ol></nav><main>
 
 <section id="s1"><h2>1. 执行摘要</h2>
-<div class="verdict supported"><b>构建结论 · supported</b><p>正式 full run 已完成全部 {{ quality.expected_module_count|fmt }} 个配置内模块，所有质量门禁通过。图中没有因运行时间、递归深度、边数或节点数而截断的数据。</p></div>
-<div class="verdict exploratory"><b>统计结论 · exploratory</b><p>复用高度集中：前 1% 声明承接 {{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}% 的入边，Gini={{ summary.reuse_concentration.gini|round(3) }}。这是快照内的观察性结果。</p></div>
-<div class="verdict inconclusive"><b>分布结论 · inconclusive</b><p>尾部很重，但当前模型比较不支持仅凭直线外观宣称 Zipf/纯幂律；bootstrap 拟合优度尚未实现。</p></div>
-<p>本实验的核心产物不是源码文本网络，而是从固定版本 Lean elaborated environment 提取的 declaration graph。报告依次说明概念、图构建、完整性证据、复杂度算法、图统计与实验解释。</p></section>
+<p>以下结论来自机器可读 claim registry。每条结论都标明证据等级、总体范围和限制。</p>
+{% for claim in claims.claims %}<article class="claim {{ claim.status }}" id="{{ claim.claim_id }}">
+<div><span class="badge">{{ claim.status }}</span><b>{{ claim.text }}</b></div>
+<p><strong>范围：</strong>{{ claim.scope }}　<strong>限制：</strong>{{ claim.caveat }}</p>
+<small>Evidence: {{ claim.evidence|join(' · ') }}</small></article>{% endfor %}
+<p class="bridge">下面不直接跳到总体图形。我们先用真实 mathlib declaration 建立 node、value 和 reuse 的直觉，再说明这些单例如何扩展成全库统计。</p></section>
 
-<section id="s2"><h2>2. 概念设计：研究对象与问题</h2>
+<section id="s2"><h2>2. 概念设计与研究对象</h2>
 <p>研究对象是 <em>mathlib 中已 elaboration 的形式化知识单元及其直接语义依赖</em>。声明是可命名、可复用的最小稳定单位；一个声明在另一个声明的类型或定义体/证明体中作为常量出现，即形成复用关系。</p>
-<div class="grid"><article><h3>复用是什么</h3><p>若声明 A 的表达式包含声明 B 的常量引用，则 A 依赖 B；反向看，B 被 A 复用。入度衡量被多少唯一声明引用，出度衡量当前声明依赖多少唯一声明。</p></article>
-<article><h3>研究问题</h3><p>RQ-A 复用是否集中？RQ-B 长度/结构复杂度与复用有何关系？RQ-C 领域间是否异质？RQ-D TYPE 与 VALUE 依赖有何区别？RQ-E 图契约能否迁移到其他知识源？</p></article></div>
+<div class="grid"><article><h3>Node 是什么</h3><p><code>Set</code> 是 definition；<code>CategoryTheory.Category</code> 是 inductive。二者都是真实节点，但后者没有 definition/proof value，所以其 value complexity 是 null，不是 0。</p></article>
+<article><h3>Reuse 是什么</h3><p>若 A 的 elaborated expression 包含常量 B，则 A → B。B 的入度统计有多少不同声明复用它；A 的出度描述自身直接依赖负担。</p></article></div>
+<h3>真实节点证据</h3>{{ node_examples_table|safe }}
 <div class="callout"><b>解释边界</b> 语义常量引用不是人的引用意图。自动生成代码、类型类、强制转换和 elaborator 插入项都属于机器可复现的依赖事实，但不应直接解释为作者有意识的“引用”。</div></section>
 
-<section id="s3"><h2>3. Declaration Graph 模型</h2>
-<p>定义有向、类型化图 <code>G=(V,E)</code>。<code>V</code> 是内部声明与被引用的显式外部目标；<code>E</code> 的方向固定为 <code>consumer → dependency</code>。</p>
-<div class="grid three"><article><h3>节点 V</h3><p>稳定身份由完整声明名给出，附带 module、kind、domain、源码范围、是否生成、是否有 value 等属性。</p></article><article><h3>TYPE 边</h3><p>目标常量出现在声明的 elaborated type 中，描述接口、命题陈述与类型层依赖。</p></article><article><h3>VALUE 边</h3><p>目标常量出现在 definition value 或 theorem proof 中，描述实现与证明层依赖。</p></article></div>
-<p>同一 consumer、dependency、edge kind 只保留一条唯一边。因此本报告分析的是“被多少不同声明复用”，不是常量在表达式内出现了多少次；v1 的边 multiplicity 明确保留为空。</p></section>
+<section id="s3"><h2>3. 研究问题与判断路径</h2>
+<table><thead><tr><th>RQ</th><th>问题</th><th>总体与方法</th><th>允许的结论</th></tr></thead><tbody>
+<tr><td>A</td><td>复用是否集中/重尾？</td><td>ALL/TYPE/VALUE；Gini、CCDF、模型比较</td><td>集中度可 supported；幂律必须经过比较</td></tr>
+<tr><td>B</td><td>长度/复杂度与复用关系？</td><td>source/type/value；Spearman、分箱、NB GLM</td><td>观察性关联，不作因果解释</td></tr>
+<tr><td>C</td><td>领域是否异质？</td><td>路径领域；matrix、Gini、tail、H*ref</td><td>比较工程 taxonomy，不推断数学本体</td></tr>
+<tr><td>D</td><td>边/节点语义是否不同？</td><td>kind 与 TYPE/VALUE 子图</td><td>分层描述，不混合机制</td></tr>
+<tr><td>E</td><td>能否跨系统比较？</td><td>core graph projection</td><td>比较 core metric，不混同 native units</td></tr>
+</tbody></table></section>
 
-<section id="s4"><h2>4. 图构建与完整性：没有截断</h2>
-<div class="answer"><b>结论：完整图已成功构建。</b> {{ quality.extracted_module_count|fmt }}/{{ quality.expected_module_count|fmt }} 个模块状态均为 ok，{{ summary.declaration_count|fmt }} 个内部声明节点和 {{ summary.edge_count|fmt }} 条唯一语义边进入规范化数据；另有 {{ quality.external_node_count|fmt }} 个外部/prelude 目标被显式保留。</div>
-<p>提取顺序为 capability probe → golden fixture → inventory/sharding → full extraction → normalization → validation。正式提取仅在固定 Lean API 与金样门禁通过后运行。失败模块、不可用证明体和缺失 source range 都不会被悄悄转成空集合。</p>
-<div class="grid"><article><h3>为什么长时间运行</h3><p>工作量来自 8,264 个模块环境加载、56 万声明的表达式遍历，以及约 2,474 万条去重边的序列化与规范化；它不是算法以无界递归反复展开同一子表达式。</p></article><article><h3>缓存解决了什么</h3><p>Expr 是共享 DAG。复杂度提取先按对象指针访问每个唯一子表达式一次，再由缓存计算树出现次数，既避免共享子图的重复递归，又不牺牲研究所需的完整计数。</p></article></div>
-<h3>质量门禁</h3>{{ quality_table|safe }}
-<p class="note">“完整”是相对于固定 corpus 与提取契约：配置排除项不属于总体；外部目标不伪装成内部声明；源码范围缺失保持 null。</p></section>
+<section id="s4"><h2>4. Corpus 与 Snapshot</h2>
+<p>本报告绑定 <code>{{ manifest.mathlib_tag }}</code>、完整 commit <code>{{ manifest.mathlib_commit }}</code> 和 toolchain <code>{{ manifest.lean_toolchain }}</code>。总体由 <code>{{ config.corpus_glob }}</code> 与版本化 exclusions 共同定义。</p>
+<h3>配置化排除规则</h3>{{ exclusions_table|safe }}
+<p class="note">“100% 完整”只指 configured corpus；不包含排除目录、其他 Lean package 或历史版本。</p></section>
 
-<section id="s5"><h2>5. 节点体系与总体边界</h2>
-<p>内部节点覆盖 theorem、definition、constructor、recursor、inductive 与 opaque。生成声明仍被保留并以 <code>is_generated</code> 标记，避免改变原始图；分析阶段另提供 NO_GENERATED 等视图。</p>
-{{ figs.kind_counts|safe }}
-<p>声明 identity 不依赖文件位置或 source range，因此即使 elaborator 生成的声明没有可靠源码区间，也不会从图中消失。</p></section>
+<section id="s5"><h2>5. 图构建语义：从真实边到 Graph</h2>
+<p>定义 <code>G=(V,E)</code>，方向固定为 <code>consumer → dependency</code>。TYPE 表示 target constant 出现在 type/statement；VALUE 表示它出现在 definition body 或 proof。</p>
+<h3>两个不同语义的真实关系</h3>{{ edge_examples_table|safe }}
+<div class="grid"><article><h3>TYPE 示例如何进入图</h3><p><code>padicValRat.of_nat</code> 的 elaborated type 包含 <code>padicValNat</code>，因此规范化为一条 theorem→definition TYPE edge。</p></article><article><h3>VALUE 示例如何进入图</h3><p><code>constantCoeff_xInTermsOfW</code> 的 proof/value 包含 <code>map_pow</code>，因此规范化为 theorem→theorem VALUE edge。</p></article></div>
+<p class="bridge">单条边只证明一个依赖实例存在。将所有 declaration 的常量引用按相同规则提取、确定性编号并对 `(src,dst,type)` 去重，才得到用于总体分析的完整图。</p></section>
 
-<section id="s6"><h2>6. 边语义、计数口径与图视图</h2>
-<div class="hero-stats compact"><div><strong>{{ summary.type_edge_count|fmt }}</strong><span>TYPE edges</span></div><div><strong>{{ summary.value_edge_count|fmt }}</strong><span>VALUE edges</span></div><div><strong>{{ summary.self_loop_count|fmt }}</strong><span>self loops</span></div><div><strong>{{ summary.edge_count|fmt }}</strong><span>合计</span></div></div>
-<p>TYPE 与 VALUE 分开保存、分别统计，同时提供 ALL 合并视图。自环保留，因为它可能来自递归结构或 elaborated 常量关系；重复类型化边在规范化时拒绝。所有内部 source 和 target 均通过 dangling 检查，外部 target 进入独立命名空间。</p></section>
+<section id="s6"><h2>6. 完整性与数据质量：是否截断？</h2>
+<div class="answer"><b>结论：研究契约下的完整图已构建，未截断。</b> {{ quality.extracted_module_count|fmt }}/{{ quality.expected_module_count|fmt }} 个模块均为 ok；{{ summary.declaration_count|fmt }} 个内部节点、{{ quality.external_node_count|fmt }} 个显式外部目标、{{ summary.edge_count|fmt }} 条唯一类型化边。</div>
+<p>capability probe → golden exact fixture → inventory/shards → extraction → normalization → validation 全部门禁通过。失败模块或不可用 proof body 不会被当作空；没有 node/edge/depth/time cap，也没有 saturation。</p>
+{{ quality_table|safe }}
+<p>源码范围缺失保持 null；external/prelude target 显式保留；multiplicity 在 v1 为 not available。</p></section>
 
 <section id="s7"><h2>7. 节点长度与复杂度变量</h2>
-<h3>精确算法</h3><ol class="steps"><li><b>指针访问阶段：</b>对 type/value Expr DAG 做指针去重的 postorder；用 visited set 保证每个唯一对象只展开一次。</li><li><b>缓存递推阶段：</b>为每个唯一 Expr 计算任意精度 <code>Nat</code> 结果，并按子项出现位置求和，从而恢复树语义下的出现次数。</li><li><b>常量集合：</b>分别收集 TYPE/VALUE 中唯一常量名，得到 <code>*_const_unique</code>；边生成不设置 cap。</li></ol>
+<p>源码长度、type statement 和 value/proof 是三种不同工作量，不能合并成一个“长度”。</p>
+<h3>可手算的共享 DAG</h3><pre class="dag">        parent
+        /    \
+     shared  shared
+        |
+       leaf</pre>
+<ol class="steps"><li>pointer visited set 只展开 <code>shared</code> 一次；</li><li>cache 只计算一次 <code>count(shared)</code>；</li><li><code>parent</code> 仍在两个 child position 各累加一次，所以 tree occurrence 完整保留；</li><li>Lean <code>Nat</code> 任意精度，不发生饱和。</li></ol>
 <div class="callout"><b>缓存不等于截断。</b> visited/cache 只消除相同 DAG 对象的重复计算；当共享子表达式被父节点多次引用时，其缓存值仍按每次出现累计。没有饱和上限，使用 Lean <code>Nat</code> 避免固定宽度溢出。</div>
+<h3>真实工作量：从 small 到 high</h3>{{ complexity_examples_table|safe }}
+<p><code>CategoryTheory.Limits.colimitLimitToLimitColimit_surjective</code> 的 value tree-occurrence 为 {{ high_example.value_expr_nodes|fmt }}。它说明可见源码与 elaborated proof tree 不是同一工作量，也说明递归展开共享子图为何不可行。</p>
 <h3>已测量变量与覆盖率</h3>{{ complexity_table|safe }}
-<p><code>source_bytes/source_lines/source_tokens</code> 来自可用的声明 source range；<code>type_expr_nodes/value_expr_nodes</code> 是表达式树出现次数；<code>type_const_unique/value_const_unique</code> 是唯一常量种类数。缺失 source range 的生成声明保持 null。</p>
-<div class="verdict inconclusive"><b>尚未测量</b><p>最大 Expr 深度与唯一指针节点数（DAG size）目前未进入 v1 schema。它们是有价值的补充复杂度变量，但不能用现有 tree-occurrence 计数冒充。本报告不补造结果。</p></div></section>
+<div class="verdict inconclusive"><b>not_available</b><p>最大 Expr 深度、唯一指针节点数 U、DAG arcs A 与 constant occurrence multiplicity 尚未进入 v1，因此报告算法复杂度为约 <code>O(U+A)</code>，但不补造 per-node U/A 数值。</p></div></section>
 
 <section id="s8"><h2>8. 图总体统计</h2>
 <div class="metric-table">{{ graph_table|safe }}</div>
+<h3>从 incoming edges 到 reuse indegree</h3><p>下面是目标 <code>DFunLike.coe</code> 的 5 条确定性展示边。相同 source 的 TYPE 与 VALUE 是两条 typed edges，但 ALL unique consumer 只计一次。</p>{{ reuse_examples_table|safe }}
+<p>该 target 的完整 ALL indegree 为 {{ reuse_target_degree|fmt }}；表中 5 行只是解释计数规则，不是统计样本。</p>
 <div class="grid figures">{{ figs.indegree_ccdf|safe }}{{ figs.rank_frequency|safe }}</div>
-<p>{{ (summary.zero_indegree_fraction*100)|round(2) }}% 的内部声明没有被其他内部声明复用；{{ (summary.zero_outdegree_fraction*100)|round(2) }}% 没有内部依赖；完全孤立比例仅 {{ (summary.isolated_fraction*100)|round(4) }}%。</p></section>
+<p class="bridge">从一个 target 的入度扩展到全部 {{ summary.declaration_count|fmt }} 个节点，得到 CCDF 与 rank-frequency：{{ (summary.zero_indegree_fraction*100)|round(2) }}% 入度为零，完全孤立比例 {{ (summary.isolated_fraction*100)|round(4) }}%。</p></section>
 
 <section id="s9"><h2>9. 复用集中度</h2>
 <div class="hero-stats compact"><div><strong>{{ summary.reuse_concentration.gini|round(3) }}</strong><span>Gini</span></div><div><strong>{{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}%</strong><span>Top 1%</span></div><div><strong>{{ (summary.reuse_concentration.top_5pct_share*100)|round(1) }}%</strong><span>Top 5%</span></div><div><strong>{{ (summary.reuse_concentration.top_10pct_share*100)|round(1) }}%</strong><span>Top 10%</span></div></div>
@@ -379,16 +515,20 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <p class="note">bootstrap 状态为 <code>{{ all_fit.bootstrap_status }}</code>，所以不能报告基于 bootstrap 的绝对拟合优度 p 值。</p></section>
 
 <section id="s11"><h2>11. 长度/复杂度与复用</h2>
+<p>单例已经显示：结构很小的 <code>Set</code> 可以有很高复用，而 proof tree 极大的 theorem 并不因此成为最高复用节点。这提示 kind/domain 等混杂必须进入总体模型。</p>
+{{ complexity_compare_table|safe }}
 <div class="grid figures">{{ figs.source_length|safe }}{{ figs.type_length|safe }}{{ figs.value_length|safe }}{{ figs.length_binned|safe }}</div>
 <h3>秩相关</h3>{{ correlations_table|safe }}
 <h3>控制声明类型与领域后的负二项 GLM</h3>{{ regressions_table|safe }}
 <p>模型使用 <code>log1p(length)</code> 并控制 kind + domain。系数不是因果效应；表中的“长度翻倍变化”将系数转换为更直观的期望复用相对变化。源码长度呈弱正的未控制秩相关，但控制变量后的模型系数为负，说明构成差异会改变表面关系。</p></section>
 
-<section id="s12"><h2>12. Declaration kind 分析</h2>
-{{ kind_table|safe }}
-<p>定理占 {{ theorem_share }}% 节点。拟合总体同时包含 theorem-only、definition-only、TYPE、VALUE、theorem→theorem 和 theorem→definition，避免把不同语义人口混成一个分布。kind 是分析控制变量，不用于删改原始图。</p></section>
+<section id="s12"><h2>12. Node kind 与 Edge semantics</h2>
+{{ figs.kind_counts|safe }}{{ kind_table|safe }}
+<p>定理占 {{ theorem_share }}% 节点。前述 VALUE theorem→theorem 与 TYPE theorem→definition 说明不同边机制必须分层；拟合总体也分别包含 theorem-only、definition-only、TYPE、VALUE、theorem→theorem 和 theorem→definition。</p>
+<p>完整 extraction 保留 generated/internal declarations；kind 只用于派生视图和控制变量，不改写底图。</p></section>
 
 <section id="s13"><h2>13. 领域结构与 H*ref</h2>
+<p>每条 src_domain→dst_domain 边使 dependency matrix 对应 cell 加 1。下面用两条跨领域边和一条领域内边展示累加规则。</p>{{ domain_examples_table|safe }}
 <div class="grid figures">{{ figs.domain_scale|safe }}{{ figs.domain_heatmap|safe }}{{ figs.domain_entropy|safe }}{{ figs.domain_tail|safe }}</div>
 {{ domain_table|safe }}
 <div class="callout"><b>H*ref 的含义：</b>它是领域依赖分布的经验操作性代理，用来比较跨领域引用的分散程度；它不等于理论 H，也不能直接解释为领域的内在复杂度。</div></section>
@@ -397,16 +537,21 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 {{ figs.robustness|safe }}{{ views_table|safe }}
 <p>ALL、NO_GENERATED、THEOREM_ONLY、DEFINITION_ONLY、THEOREM_AND_DEFINITION 与 USER_FACING_APPROX 使用同一不可变底图重建。若去掉生成声明后集中度仍然很高，就说明主要结论不是单由 compiler-generated 节点制造。</p></section>
 
-<section id="s15"><h2>15. 可复现性与审计链</h2>
-<p>原始 shard 数据不可变；normalized tables、metrics、figures 和 HTML 均可由其重建。manifest 固定 mathlib tag/commit、Lean toolchain、extractor commit、配置摘要、worker 数和运行环境。</p>
-{{ manifest_table|safe }}
-<p>图形中的降采样仅用于限制 HTML/SVG 体积；所有表格统计、拟合、相关、回归和集中度都在完整 metrics 上计算。</p></section>
+<section id="s15"><h2>15. 跨系统解释</h2>
+<table><thead><tr><th>通用概念</th><th>Lean</th><th>Wikipedia</th><th>Software</th></tr></thead><tbody>
+<tr><td>node</td><td>declaration</td><td>page/article</td><td>固定粒度的 function/module/package</td></tr>
+<tr><td>edge</td><td>TYPE/VALUE reference</td><td>hyperlink/citation</td><td>call/import/dependency</td></tr>
+<tr><td>reuse</td><td>unique consumer indegree</td><td>unique linking pages</td><td>unique callers/dependents</td></tr>
+<tr><td>native complexity</td><td>Expr tree occurrences</td><td>wikitext/link structure</td><td>AST/cyclomatic structure</td></tr>
+</tbody></table><p>indegree、Gini、rank-frequency 可通过 core projection 比较；Expr nodes、wikitext bytes 与 AST nodes 不是等价单位，不能直接比较原值。</p></section>
 
 <section id="s16"><h2>16. 解释、局限与结论</h2>
 <div class="grid"><article><h3>可以说什么</h3><p>在固定 mathlib v4.32.1 快照和声明级语义图上，复用高度集中、分布具有重尾，领域与声明种类存在明显异质性，长度/结构复杂度与复用关系较弱且依赖控制口径。</p></article><article><h3>不能说什么</h3><p>不能由入度推断人的引用意图、数学深度或因果重要性；不能把路径领域当成本体；不能把尚未 bootstrap 的尾部拟合表述为已验证的普适定律。</p></article></div>
 <p>建议下一阶段补充 Expr 最大深度与 DAG unique-node 指标、实现拟合优度 bootstrap，并在保持同一图契约下进行跨版本比较。Wikipedia 与开源软件图应使用各自 adapter，不改变 Lean v1 的冻结语义。</p></section>
 
 <section id="s17"><h2>17. 附录：表格、性能与复现命令</h2>
+<h3>Reproducibility manifest</h3>{{ manifest_table|safe }}
+<h3>Evidence artifacts</h3>{{ artifact_table|safe }}
 <h3>复用最高的声明</h3>{{ top_table|safe }}
 <h3>提取 worker benchmark</h3>{{ benchmark_table|safe }}
 <h3>完整流水线</h3><pre>just bootstrap
@@ -418,8 +563,8 @@ just normalize
 just validate
 just analyze
 just report</pre>
-<p>核心契约：<code>schemas/lean-graph-v1.md</code>。报告相邻目录保存 fits、regressions、domain metrics、quality checks、checksums 与独立 HTML。<code>--force</code> 行为保持不变。</p></section>
-</main><footer>由版本化紧凑产物确定性生成 · 0 CDN · 0 远程脚本 · 0 远程字体</footer></body></html>""")
+<p>机器证据：<code>claims.json</code>、<code>examples.json</code>、<code>artifact-index.json</code>。图形降采样只影响显示，完整统计总体不变；<code>--force</code> 行为保持不变。</p></section>
+</main><footer>由版本化 compact artifacts 确定性生成 · 0 CDN · 0 远程脚本 · 0 远程字体</footer></body></html>""")
 
 
 CSS = """:root{--ink:#15231d;--muted:#5f6c65;--paper:#f4f0e7;--card:#fffdf8;
@@ -428,7 +573,7 @@ CSS = """:root{--ink:#15231d;--muted:#5f6c65;--paper:#f4f0e7;--card:#fffdf8;
 color:var(--ink);font:16px/1.68 system-ui,-apple-system,"Noto Sans CJK SC",sans-serif}
 header,main,nav,footer{max-width:1180px;margin:auto}header{padding:72px 34px 38px}
 main{padding:0 34px}.eyebrow{letter-spacing:.17em;font-size:.76rem;font-weight:800;
-color:var(--green)}h1{font:800 clamp(2.7rem,7vw,5.8rem)/.98 Georgia,"Noto Serif SC",serif;
+color:var(--green)}h1{font:800 clamp(2.7rem,7vw,5.1rem)/.98 Georgia,"Noto Serif SC",serif;
 max-width:980px;margin:.16em 0}.dek{font:1.25rem/1.5 Georgia,"Noto Serif SC",serif;color:var(--muted)}
 h2{font:750 2.05rem/1.2 Georgia,"Noto Serif SC",serif;border-top:1px solid var(--line);
 padding-top:38px;margin-top:26px}h3{font-size:1.02rem;letter-spacing:.02em;margin:.2em 0 .5em}
@@ -446,6 +591,13 @@ padding:20px;border:1px solid var(--line)}.grid.figures{align-items:start}.grid.
 .verdict,.callout,.answer{padding:18px 20px;margin:14px 0;background:var(--card);
 border-left:5px solid var(--green)}.verdict p{margin:.35em 0 0}.verdict.exploratory{border-color:var(--gold)}
 .verdict.inconclusive{border-color:var(--red)}.answer{font-size:1.08rem;background:var(--mint)}
+.claim{padding:16px 18px;margin:12px 0;background:var(--card);border:1px solid var(--line);
+border-left:5px solid var(--green)}.claim.inconclusive{border-left-color:var(--red)}
+.claim.exploratory{border-left-color:var(--gold)}.claim p{margin:.35em 0}.claim small{color:var(--muted)}
+.badge{display:inline-block;min-width:88px;margin-right:10px;padding:2px 8px;border-radius:12px;
+background:var(--mint);font-size:.72rem;font-weight:800;text-transform:uppercase;text-align:center}
+.bridge{margin:24px 0;padding:16px 19px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
+font-family:Georgia,"Noto Serif SC",serif;color:var(--green)}.dag{font-size:1rem;line-height:1.25}
 .note,.caption,figcaption{color:var(--muted);font-size:.86rem}.steps li{margin:.65em 0}
 svg,img{display:block;max-width:100%;height:auto;background:var(--card);margin:0}
 .figure{margin:22px 0;background:var(--card);border:1px solid var(--line);padding:10px}
@@ -481,6 +633,20 @@ def generate(run_kind: str) -> dict[str, Any]:
     matrix = pl.read_parquet(tables / "domain_matrix.parquet")
     views = pl.read_parquet(metrics / "view_metrics.parquet")
     bins = pl.read_parquet(metrics / "length_binned.parquet")
+    examples_path = tables / "report_examples.parquet"
+    examples = pl.read_parquet(examples_path)
+    claims = build_claim_registry(summary, quality, fits)
+    claims_path = report / "claims.json"
+    examples_json_path = report / "examples.json"
+    claims_path.write_text(json.dumps(claims, indent=2, sort_keys=True) + "\n")
+    examples_json_path.write_text(
+        json.dumps(
+            examples_payload(examples, summary["snapshot_id"], run_kind),
+            indent=2,
+            sort_keys=True,
+        )
+        + "\n"
+    )
     benchmark_path = metrics / "extraction_benchmark.parquet"
     benchmark = (
         pl.read_parquet(benchmark_path)
@@ -489,6 +655,27 @@ def generate(run_kind: str) -> dict[str, Any]:
             json.loads((BENCHMARK_ROOT / "extraction.json").read_text())["rows"]
         )
     )
+    compact_inputs = [
+        metrics / "summary.json",
+        metrics / "data_quality.json",
+        metrics / "node_metrics.parquet",
+        metrics / "powerlaw_fits.parquet",
+        metrics / "regressions.parquet",
+        metrics / "domain_metrics.parquet",
+        metrics / "view_metrics.parquet",
+        metrics / "length_binned.parquet",
+        metrics / "length_correlations.parquet",
+        tables / "top_reuse.csv",
+        tables / "domain_matrix.parquet",
+        examples_path,
+        claims_path,
+        examples_json_path,
+        normalized_root(CONFIG["snapshot_id"], run_kind) / "manifest.json",
+        run_dir / "run-manifest.json",
+    ]
+    artifacts = artifact_index(run_dir, compact_inputs)
+    artifact_index_path = report / "artifact-index.json"
+    artifact_index_path.write_text(json.dumps(artifacts, indent=2, sort_keys=True) + "\n")
 
     complexity_labels = {
         "source_bytes": "源码字节数",
@@ -694,26 +881,73 @@ def generate(run_kind: str) -> dict[str, Any]:
     }
     for name, svg in figures.items():
         (assets / f"{name}.svg").write_text(svg)
+    source_valid = nodes["source_bytes"].drop_nulls().len()
+    value_valid = nodes["value_expr_nodes"].drop_nulls().len()
+    source_plotted = nodes.filter(
+        pl.col("source_bytes").is_not_null()
+        & (pl.col("source_bytes") > 0)
+        & (pl.col("in_degree_all") > 0)
+    ).height
+    type_plotted = nodes.filter(
+        (pl.col("type_expr_nodes") > 0) & (pl.col("in_degree_all") > 0)
+    ).height
+    value_plotted = nodes.filter(
+        pl.col("value_expr_nodes").is_not_null()
+        & (pl.col("value_expr_nodes") > 0)
+        & (pl.col("in_degree_all") > 0)
+    ).height
+    figure_samples = {
+        "kind_counts": f"population=ALL；n_total={nodes.height:,}；使用完整统计。",
+        "indegree_ccdf": f"population=positive indegree；n_valid={len(positive):,}；折线显示≤700点。",
+        "rank_frequency": f"n_total={nodes.height:,}；n_positive={len(positive):,}；折线显示≤700点。",
+        "tail_overlay": f"population=indegree≥xmin；tail_n={all_fit['tail_n'][0]:,}；折线显示≤700点。",
+        "source_length": f"n_total={nodes.height:,}；metric n_valid={source_valid:,}；positive plotted population={source_plotted:,}；显示≤1,600点。",
+        "type_length": f"n_total=n_valid={nodes.height:,}；positive plotted population={type_plotted:,}；显示≤1,600点。",
+        "value_length": f"n_total={nodes.height:,}；metric n_valid={value_valid:,}；positive plotted population={value_plotted:,}；显示≤1,600点。",
+        "length_binned": f"source_bytes n_valid={source_valid:,}；分箱统计使用全部有效值。",
+        "lorenz": f"population=ALL；n_total={nodes.height:,}；折线显示≤700点。",
+        "domain_scale": f"population=top domains；展示 {top_domains.height} 个领域。",
+        "domain_heatmap": f"population=internal typed edges；n={matrix['edge_count'].sum():,}。",
+        "domain_entropy": f"population=top domains；展示 {top_domains.height} 个领域。",
+        "domain_tail": f"population=domains with fitted alpha；n_valid={domains['alpha'].drop_nulls().len()}。",
+        "robustness": f"population=registered views；n_views={views.height}。",
+    }
     local = {
         name: (
             f'<figure class="figure"><img src="assets/{name}.svg" '
             f'alt="{html.escape(TITLES[name])}"><figcaption>'
-            f'{html.escape(FIGURE_CAPTIONS[name])}</figcaption></figure>'
+            f'{html.escape(FIGURE_CAPTIONS[name])} '
+            f'{html.escape(figure_samples[name])}</figcaption></figure>'
         )
         for name in figures
     }
     inline = {
         name: (
             f'<figure class="figure">{svg}<figcaption>'
-            f'{html.escape(FIGURE_CAPTIONS[name])}</figcaption></figure>'
+            f'{html.escape(FIGURE_CAPTIONS[name])} '
+            f'{html.escape(figure_samples[name])}</figcaption></figure>'
         )
         for name, svg in figures.items()
     }
+    node_examples = examples.filter(pl.col("node_id").is_not_null()).sort("example_id")
+    edge_examples = examples.filter(pl.col("example_id").str.starts_with("edge."))
+    reuse_examples = examples.filter(pl.col("concept") == "reuse indegree")
+    domain_examples = examples.filter(pl.col("concept") == "domain dependency matrix")
+    high_example = examples.filter(pl.col("example_id") == "node.complexity.high").row(
+        0, named=True
+    )
+    reuse_target_degree = reuse_examples["in_degree_all"][0]
+    artifact_frame = pl.DataFrame(artifacts["artifacts"])
+    exclusions = pl.DataFrame(tomllib.loads(EXCLUSIONS_PATH.read_text())["rule"])
     context = {
         "css": CSS,
         "quality": quality,
         "summary": summary,
         "manifest": manifest,
+        "config": CONFIG,
+        "claims": claims,
+        "high_example": high_example,
+        "reuse_target_degree": reuse_target_degree,
         "all_fit": {
             "alpha": format_cell(alpha),
             "xmin": format_cell(xmin),
@@ -739,6 +973,79 @@ def generate(run_kind: str) -> dict[str, Any]:
             ),
             40,
         ),
+        "exclusions_table": render_table(
+            exclusions.rename({"pattern": "排除 pattern", "reason": "理由"}), 20
+        ),
+        "node_examples_table": render_table(
+            node_examples.select(
+                pl.col("role").alias("案例角色"),
+                pl.col("node_name").alias("declaration"),
+                pl.col("node_kind").alias("kind"),
+                pl.col("node_module").alias("module"),
+                "has_value",
+                "type_expr_nodes",
+                "value_expr_nodes",
+                "in_degree_all",
+                pl.col("source_locator").alias("source locator"),
+            ),
+            10,
+        ),
+        "edge_examples_table": render_table(
+            edge_examples.select(
+                pl.col("src_name").alias("consumer/source"),
+                pl.col("src_kind").alias("src kind"),
+                "edge_type",
+                pl.col("dst_name").alias("dependency/target"),
+                pl.col("dst_kind").alias("dst kind"),
+                "evidence",
+            ),
+            10,
+        ),
+        "complexity_examples_table": render_table(
+            node_examples.select(
+                pl.col("role").alias("工作量角色"),
+                pl.col("node_name").alias("declaration"),
+                "node_kind",
+                "source_bytes",
+                "type_expr_nodes",
+                "value_expr_nodes",
+                "in_degree_all",
+            ),
+            10,
+        ),
+        "complexity_compare_table": render_table(
+            node_examples.select(
+                pl.col("node_name").alias("真实节点"),
+                "node_kind",
+                "source_bytes",
+                "type_expr_nodes",
+                "value_expr_nodes",
+                "in_degree_all",
+                pl.col("caveat").alias("单例限制"),
+            ),
+            10,
+        ),
+        "reuse_examples_table": render_table(
+            reuse_examples.select(
+                pl.col("src_name").alias("unique consumer"),
+                "edge_type",
+                pl.col("dst_name").alias("target"),
+                "evidence",
+            ),
+            10,
+        ),
+        "domain_examples_table": render_table(
+            domain_examples.select(
+                pl.col("role").alias("关系"),
+                "src_domain",
+                pl.col("src_name").alias("source"),
+                "edge_type",
+                "dst_domain",
+                pl.col("dst_name").alias("target"),
+            ),
+            10,
+        ),
+        "artifact_table": render_table(artifact_frame, 30),
         "complexity_table": render_table(complexity_stats, 20),
         "graph_table": render_table(graph_stats, 20),
         "correlations_table": render_table(correlations, 10),
@@ -789,6 +1096,11 @@ def generate(run_kind: str) -> dict[str, Any]:
         "standalone_sha256": file_sha256(report / "report_standalone.html"),
         "standalone_bytes": len(standalone.encode()),
         "remote_dependencies": 0,
+        "claim_count": len(claims["claims"]),
+        "example_count": examples.height,
+        "claim_registry_sha256": file_sha256(claims_path),
+        "examples_sha256": file_sha256(examples_json_path),
+        "artifact_index_sha256": file_sha256(artifact_index_path),
     }
     (run_dir / "report-summary.json").write_text(
         json.dumps(result, indent=2, sort_keys=True) + "\n"
