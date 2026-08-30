@@ -1,10 +1,15 @@
 {
+  "artifact_index_sha256": "8500a7f43d7e77c5313022b5c37f4eb9e54ad433b4fac95869e3b8ae02a3295e",
+  "claim_count": 4,
+  "claim_registry_sha256": "51433dc54995b092703ef97c54386835909675211b03e3efea02711a9e5aeb05",
+  "example_count": 12,
+  "examples_sha256": "fac61d4c73a8ab3e149a98defd52c7d55eaedf691bfda3c40c3e03e55e4305ab",
   "figure_count": 14,
-  "index_sha256": "d0b458b0a8b2b6e7f850b165b1019518be6f1505a653d1611947cfc869692b3d",
+  "index_sha256": "0eaed843a1b0a5fa62d028bf131f86ad5e79497a37b0d95c1256b21e3185a10f",
   "remote_dependencies": 0,
   "run_kind": "smoke",
   "schema_version": "report-manifest-v1",
   "section_count": 17,
-  "standalone_bytes": 134955,
-  "standalone_sha256": "f9d2b032878b786d98833ea9cf32c66c0dcafdca21212edd4856fd449451b10b"
+  "standalone_bytes": 161073,
+  "standalone_sha256": "da0341f4174d75c6c53b6fbb39042e12996f590e3642aa6c3e482ccea13d59d9"
 }

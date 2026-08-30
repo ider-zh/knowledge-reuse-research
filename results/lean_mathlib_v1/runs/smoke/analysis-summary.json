@@ -17,22 +17,88 @@
       "spearman_rho": 0.10965614595267476
     },
     {
+      "length_metric": "source_lines",
+      "n": 538,
+      "p_value": 8.922559170564683e-05,
+      "spearman_rho": 0.16811141677612929
+    },
+    {
       "length_metric": "source_tokens",
       "n": 538,
       "p_value": 0.0031323346157298153,
       "spearman_rho": 0.12715347302035845
     },
     {
-      "length_metric": "type_expr_nodes",
+      "length_metric": "type_const_unique",
+      "n": 758,
+      "p_value": 0.3668172875635334,
+      "spearman_rho": -0.03282383740886726
+    },
+    {
+      "length_metric": "value_const_unique",
+      "n": 755,
+      "p_value": 0.08987784743482055,
+      "spearman_rho": 0.06176869906924969
+    },
+    {
+      "length_metric": "type_expr_unique_ptr_nodes",
+      "n": 758,
+      "p_value": 0.06326905621362298,
+      "spearman_rho": -0.06749447644582428
+    },
+    {
+      "length_metric": "type_expr_dag_arcs",
+      "n": 758,
+      "p_value": 0.061198477972770615,
+      "spearman_rho": -0.0680297191657301
+    },
+    {
+      "length_metric": "type_expr_max_depth",
+      "n": 758,
+      "p_value": 0.2151472702071915,
+      "spearman_rho": -0.04507345793155955
+    },
+    {
+      "length_metric": "type_expr_tree_occurrences",
       "n": 758,
       "p_value": 0.031185379628518466,
       "spearman_rho": -0.07827127857646464
     },
     {
-      "length_metric": "value_expr_nodes",
+      "length_metric": "type_expr_expansion_factor",
+      "n": 758,
+      "p_value": 0.019417751693121082,
+      "spearman_rho": -0.08488545521965157
+    },
+    {
+      "length_metric": "value_expr_unique_ptr_nodes",
+      "n": 755,
+      "p_value": 0.239033420356824,
+      "spearman_rho": 0.04290155212215456
+    },
+    {
+      "length_metric": "value_expr_dag_arcs",
+      "n": 755,
+      "p_value": 0.19632512925886852,
+      "spearman_rho": 0.04707598602521566
+    },
+    {
+      "length_metric": "value_expr_max_depth",
+      "n": 755,
+      "p_value": 0.2702322382353049,
+      "spearman_rho": 0.040175464213442307
+    },
+    {
+      "length_metric": "value_expr_tree_occurrences",
       "n": 755,
       "p_value": 0.2644768833570719,
       "spearman_rho": 0.04066131953923135
+    },
+    {
+      "length_metric": "value_expr_expansion_factor",
+      "n": 755,
+      "p_value": 0.25965562657532,
+      "spearman_rho": 0.04107394900709682
     }
   ],
   "module_count": 7,

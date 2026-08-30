@@ -483,7 +483,7 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <p>令 <code>children(x)</code> 是 Expr x 的直接子表达式位置。对根表达式 E：</p>
 <ul><li><b>唯一 DAG 节点 U</b>：从 E 可到达的不同 Expr 对象个数，近似回答“实际存了多少结构”。</li><li><b>DAG arcs A</b>：所有唯一节点的 child position 总数；同一 child 被引用两次就有两条 arc。</li><li><b>最大深度 D</b>：叶子深度为 1；非叶子为 <code>1 + max(child depth)</code>，回答“最长嵌套链有多深”。</li><li><b>展开树出现次数 T</b>：叶子为 1；非叶子为 <code>1 + sum(T(child))</code>。共享 child 每被引用一次就贡献一次，回答“若把共享完全展开，树有多大”。</li><li><b>展开倍数 T/U</b>：比较概念展开规模与实际共享结构；越大表示共享重复越强。</li></ul>
 <h3>可手算的共享 DAG</h3><pre class="dag">        parent
-        /    \
+        /    \\
      shared  shared
         |
        leaf</pre>
@@ -518,8 +518,11 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 {{ complexity_compare_table|safe }}
 <div class="grid figures">{{ figs.source_length|safe }}{{ figs.type_length|safe }}{{ figs.value_length|safe }}{{ figs.length_binned|safe }}</div>
 <h3>秩相关</h3>{{ correlations_table|safe }}
+<p><b>实际结果：</b>源码 Token 代理量与复用的未控制秩相关为 ρ={{ complexity_analysis.source_token_rho }}；Type 的 U/A/D/T/T÷U 指标均为弱负相关（ρ 范围 {{ complexity_analysis.type_rho_min }} 至 {{ complexity_analysis.type_rho_max }}）；Value/Proof 的对应指标接近零（ρ 范围 {{ complexity_analysis.value_rho_min }} 至 {{ complexity_analysis.value_rho_max }}）。因此，极大的展开树 T 并不对应极高复用。</p>
 <h3>控制声明类型与领域后的负二项 GLM</h3>{{ regressions_table|safe }}
 <p>Spearman rho 比较排序关系，不要求线性；对数分箱检查趋势是否被少量极端值推动。负二项模型以复用入度为计数响应，使用 <code>log1p(complexity)</code> 并控制 kind + domain。表中的“复杂度翻倍变化”是期望复用的相对变化。所有结果都是观察性关联，不是“复杂度导致复用”的因果效应。</p>
+<p><b>控制后的读法：</b>在同 kind、同 domain 的比较口径下，Token 翻倍对应期望复用变化 {{ complexity_analysis.source_token_double }}%；Value DAG 唯一节点 U 翻倍为 {{ complexity_analysis.value_u_double }}%；Value 展开树 T 翻倍为 {{ complexity_analysis.value_t_double }}%；Value 最大深度 D 翻倍为 {{ complexity_analysis.value_d_double }}%。T 的效应幅度小于 U 与 D，再次说明展开计数不能代替实际结构或深度。</p>
+<p class="note">模型诊断：{{ complexity_analysis.regression_status }}。自由估计 dispersion 的拟合未产生全部有限估计时，分析器使用预先声明的 α=1 Negative Binomial GLM；因此置信区间是在该固定离散度模型下的条件结果，结论等级保持 exploratory。</p>
 <div class="callout"><b>如何读多层结果：</b>若 T 的关联明显强于 U/A/D，可能是共享展开倍数在起作用；若 U 与 A 接近而 D 很弱，可能是总体结构规模而非最长嵌套链相关；若源码 Token 与 Expr 指标方向不同，说明短源码也可能 elaboration 成复杂对象。必须以表中实际系数、区间和 n 为准。</div></section>
 
 <section id="s12"><h2>12. Node kind 与 Edge semantics</h2>
@@ -956,6 +959,43 @@ def generate(run_kind: str) -> dict[str, Any]:
         "raw_manifest_sha256",
     )
     research_manifest = {key: manifest.get(key) for key in research_manifest_fields}
+    correlation_by_metric = {
+        row["长度/复杂度变量"]: row["Spearman rho"]
+        for row in correlations.iter_rows(named=True)
+    }
+    regression_by_metric = {
+        row["length_metric"]: row for row in regressions.iter_rows(named=True)
+    }
+    type_rhos = [
+        correlation_by_metric[f"type_expr_{suffix}"]
+        for suffix in (
+            "unique_ptr_nodes",
+            "dag_arcs",
+            "max_depth",
+            "tree_occurrences",
+            "expansion_factor",
+        )
+    ]
+    value_rhos = [
+        correlation_by_metric[f"value_expr_{suffix}"]
+        for suffix in (
+            "unique_ptr_nodes",
+            "dag_arcs",
+            "max_depth",
+            "tree_occurrences",
+            "expansion_factor",
+        )
+    ]
+
+    def doubling_change(metric: str) -> str:
+        coefficient = regression_by_metric[metric]["coefficient"]
+        return f"{(math.exp(coefficient * math.log(2)) - 1) * 100:.1f}"
+
+    status_counts = regressions.group_by("status").len().sort("status")
+    regression_status = "；".join(
+        f"{row['len']}/{regressions.height} 为 {row['status']}"
+        for row in status_counts.iter_rows(named=True)
+    )
     context = {
         "css": CSS,
         "quality": quality,
@@ -965,6 +1005,18 @@ def generate(run_kind: str) -> dict[str, Any]:
         "claims": claims,
         "high_example": high_example,
         "reuse_target_degree": reuse_target_degree,
+        "complexity_analysis": {
+            "source_token_rho": f"{correlation_by_metric['source_tokens']:.3f}",
+            "type_rho_min": f"{min(type_rhos):.3f}",
+            "type_rho_max": f"{max(type_rhos):.3f}",
+            "value_rho_min": f"{min(value_rhos):.3f}",
+            "value_rho_max": f"{max(value_rhos):.3f}",
+            "source_token_double": doubling_change("source_tokens"),
+            "value_u_double": doubling_change("value_expr_unique_ptr_nodes"),
+            "value_t_double": doubling_change("value_expr_tree_occurrences"),
+            "value_d_double": doubling_change("value_expr_max_depth"),
+            "regression_status": regression_status,
+        },
         "all_fit": {
             "alpha": format_cell(alpha),
             "xmin": format_cell(xmin),

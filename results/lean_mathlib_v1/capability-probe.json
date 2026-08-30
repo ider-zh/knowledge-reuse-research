@@ -106,7 +106,7 @@
   "mathlib_commit": "520045ab14e26149ee970e2e617ca04b09bde5d6",
   "mathlib_tag": "v4.32.1",
   "passed": true,
-  "recorded_at": "2026-08-28T06:32:36.270235+00:00",
+  "recorded_at": "2026-08-30T15:18:23.623517+00:00",
   "schema_version": "capability-probe-v1",
   "source_range_decision": "Use semantic declaration ranges"
 }

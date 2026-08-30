@@ -1,6 +1,11 @@
 {
   "artifacts": [
     {
+      "bytes": 891,
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/expr-complexity-v2/full/manifest.json",
+      "sha256": "7b7286ae69aa8e49ea9b9aeab7e5981234d4495947ee32f82f9a1d2ed7bb4048"
+    },
+    {
       "bytes": 2310,
       "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/manifest.json",
       "sha256": "48b3d829fc578157f4010d570a27cf6a6199328b79e3196356e671d56df21a36"
@@ -13,22 +18,22 @@
     {
       "bytes": 5594,
       "path": "metrics/domain_metrics.parquet",
-      "sha256": "4c8190f2d90f7c148d9ca158fe382ce4d53e448048d5c1caa34604614aa91fe1"
+      "sha256": "bfc6309a112c322c4c046f4b1c1fb224887e30d15620618c293dca276379671a"
     },
     {
-      "bytes": 3788,
+      "bytes": 5201,
       "path": "metrics/length_binned.parquet",
-      "sha256": "f303c06efe4aa3bf34ac9c5f17cba35a10634e79f817c5e9248a82497479e910"
+      "sha256": "3bbc1126847d5c24296c746378d98914b84332ef5b7d23d5a0c66a8e42da14d3"
     },
     {
-      "bytes": 1674,
+      "bytes": 1955,
       "path": "metrics/length_correlations.parquet",
-      "sha256": "b9b2aece0a99c71935d6d3b562e1e6d1616c6930fae79033da5acdfdaea02df3"
+      "sha256": "9a7a1c704e73fe3f0659641e2d32f6361fbe831c24d18b2f3405c24345003f85"
     },
     {
-      "bytes": 11264478,
+      "bytes": 21513739,
       "path": "metrics/node_metrics.parquet",
-      "sha256": "f4f8975d9f22c14fc6a03db13d9fc15fe2026dc2ea9d36579e0fa1bbbff81512"
+      "sha256": "8a0140ad2272c01dcb7363e4c3dac3a1316f2dc788a75e3d9ef1344dd5e75c69"
     },
     {
       "bytes": 7351,
@@ -36,14 +41,19 @@
       "sha256": "4cc96bf59396a15f9e693c9038f88ac7d3b6ec2a5bbb69c0d149f047ad51a8c2"
     },
     {
-      "bytes": 4051,
+      "bytes": 4532,
       "path": "metrics/regressions.parquet",
-      "sha256": "76cc352f458eccffad3a6a8704db308b588977ae3ec3aba5ef859b633a841d3e"
+      "sha256": "ba1d00a0cc18f4fda6a7c06e8b9a34d4aee4028fcab2169c9114aa1e033d4bc7"
     },
     {
-      "bytes": 1544,
+      "bytes": 3250,
       "path": "metrics/summary.json",
-      "sha256": "8959bf6e232eda3bbcaff036211dbefc6591a1146b767ac2fea60ff894e3f7a0"
+      "sha256": "58c2a82e8eef91e85fd6cb08d0bd1cf3a9dbb38970ca5bc546bb0b497d208764"
+    },
+    {
+      "bytes": 2082,
+      "path": "metrics/value_availability.parquet",
+      "sha256": "e902f0d6971182c948960a98c8ef7084264db115b767ce456e5e4bf0786e2118"
     },
     {
       "bytes": 2794,
@@ -51,19 +61,19 @@
       "sha256": "1f6eb78939329d84e8538e239948e3f2fd8ab8c9dc72cc280db5d30e91c070b9"
     },
     {
-      "bytes": 2866,
+      "bytes": 2318,
       "path": "report/claims.json",
-      "sha256": "13d8d765a7d1f4e687ac0116a67f5cc482b6e1cb72543ef0c7abfefea38da015"
+      "sha256": "5d34127ddf79d6c02d656b56bbdf3a05d313e05864b0093dc079f4bc8aacdeb8"
     },
     {
-      "bytes": 20034,
+      "bytes": 25566,
       "path": "report/examples.json",
-      "sha256": "7b02e274f396cca8fe3346ec1f4f818198a578b70db3368613c3ddad6ebdf519"
+      "sha256": "6e77e9dbe71d7977318179312d47b4a9d67685caf8f1ed766ad23070287c4bf0"
     },
     {
       "bytes": 1003,
       "path": "run-manifest.json",
-      "sha256": "1b86309bf38474f56e2b4753ff8bfd634093ea262c696167f48782c913699510"
+      "sha256": "34222f92dc6b376efe68d3a10e54c6b2717ab0b7e0fc525d45e27b8567c56726"
     },
     {
       "bytes": 11268,
@@ -71,14 +81,14 @@
       "sha256": "b9c9f4b7e03987f15731cf322bf16d79756a0aa1fdfc8f8188360883253726aa"
     },
     {
-      "bytes": 17172,
+      "bytes": 21439,
       "path": "tables/report_examples.parquet",
-      "sha256": "373ceec1beb710d1247388ecde88a1570442a82b9f3a48a48866ba64ce99709d"
+      "sha256": "cb5861631c957cdaa03eef6611656cbe3d2b5fc58f528166fd74e028749b3fe3"
     },
     {
-      "bytes": 19667,
+      "bytes": 23815,
       "path": "tables/top_reuse.csv",
-      "sha256": "2ae2919e8eadd2a1142631f2a9c16de67471879f0247a66ef782f706072f3a97"
+      "sha256": "1f352edd3915d8e26b7a8ea08be485a6aff981c6ee0445e88b2ac94b486d3a03"
     }
   ],
   "schema_version": "report-artifact-index-v1"
