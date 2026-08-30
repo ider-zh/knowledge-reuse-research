@@ -1,9 +1,13 @@
 import polars as pl
+import pytest
 
-from knowledge_reuse.sources.lean_mathlib.normalize import null_statistics
 from knowledge_reuse.sources.lean_mathlib.commands.verify_run import (
     SemanticAccumulator,
     semantic_accumulator,
+)
+from knowledge_reuse.sources.lean_mathlib.normalize import null_statistics
+from knowledge_reuse.sources.lean_mathlib.normalize_complexity import (
+    select_graph_complexity,
 )
 
 
@@ -17,3 +21,36 @@ def test_semantic_accumulator_is_merge_order_independent() -> None:
     right = semantic_accumulator([{"record": "edge", "src": "c", "dst": "d"}])
     assert left.merge(right).digest() == right.merge(left).digest()
     assert left.merge(SemanticAccumulator()).digest() == left.digest()
+
+
+def test_complexity_aliases_follow_graph_provenance_when_metrics_agree() -> None:
+    raw = pl.DataFrame(
+        {
+            "snapshot_id": ["s", "s", "s"],
+            "name": ["generated", "generated", "ordinary"],
+            "module": ["M1", "M2", "M2"],
+            "has_value": [True, True, False],
+            "type_expr_unique_ptr_nodes": [7, 7, 2],
+        }
+    )
+    graph = pl.DataFrame(
+        {"name": ["generated", "ordinary"], "module": ["M2", "M2"]}
+    )
+    selected, alias_rows = select_graph_complexity(raw, graph)
+    assert alias_rows == 1
+    assert selected.filter(pl.col("name") == "generated")["module"][0] == "M2"
+
+
+def test_complexity_aliases_reject_metric_disagreement() -> None:
+    raw = pl.DataFrame(
+        {
+            "snapshot_id": ["s", "s"],
+            "name": ["generated", "generated"],
+            "module": ["M1", "M2"],
+            "has_value": [True, True],
+            "type_expr_unique_ptr_nodes": [7, 8],
+        }
+    )
+    graph = pl.DataFrame({"name": ["generated"], "module": ["M2"]})
+    with pytest.raises(ValueError, match="disagree"):
+        select_graph_complexity(raw, graph)

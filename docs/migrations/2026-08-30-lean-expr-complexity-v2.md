@@ -10,3 +10,9 @@ checks with unique pointer-node, DAG-arc, and maximum-depth checks. The legacy
 tree-occurrence checksum is unchanged. Consumers join the sidecar one-to-one on
 declaration name and must reject identity, value-availability, or expanded-tree
 disagreement.
+
+For generated same-name declarations observed through multiple isolated module
+imports, normalization first proves all complexity fields identical and then
+uses the canonical `(name, module)` already present in `lean-graph-v1`. The full
+v4.32.1 sidecar contains 422 such additional alias rows and zero conflicting
+aliases.

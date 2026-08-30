@@ -56,13 +56,46 @@ def file_sha256(path: pathlib.Path) -> str:
     return digest.hexdigest()
 
 
+def select_graph_complexity(
+    raw_complexity: pl.DataFrame, graph_nodes: pl.DataFrame
+) -> tuple[pl.DataFrame, int]:
+    """Select graph-canonical provenance while rejecting conflicting aliases."""
+    if raw_complexity.select("name", "module").n_unique() != raw_complexity.height:
+        raise ValueError("duplicate (name, module) records in expression-complexity sidecar")
+    metric_columns = [
+        column
+        for column in raw_complexity.columns
+        if column not in {"snapshot_id", "name", "module"}
+    ]
+    conflicting_aliases = (
+        raw_complexity.group_by("name")
+        .agg(pl.col(column).n_unique().alias(column) for column in metric_columns)
+        .filter(pl.any_horizontal(pl.col(column) > 1 for column in metric_columns))
+    )
+    if conflicting_aliases.height:
+        raise ValueError(
+            "same-name records from isolated module imports disagree on complexity"
+        )
+    complexity = (
+        graph_nodes.select("name", "module")
+        .join(raw_complexity, on=["name", "module"], how="inner", validate="1:1")
+        .select(raw_complexity.columns)
+        .sort("name")
+    )
+    if complexity.height != graph_nodes.height or set(complexity["name"]) != set(
+        graph_nodes["name"]
+    ):
+        raise ValueError("expression-complexity sidecar does not match normalized graph nodes")
+    return complexity, raw_complexity.height - complexity.height
+
+
 def normalize_complexity(run_kind: str) -> dict[str, Any]:
     snapshot = CONFIG["snapshot_id"]
     paths = sorted(complexity_raw_root(snapshot, run_kind).glob("*.jsonl.zst"))
     if not paths:
         raise FileNotFoundError("no expression-complexity raw shards")
     raw = pl.scan_ndjson(paths, schema=COMPLEXITY_RAW_SCHEMA)
-    complexity = (
+    raw_complexity = (
         raw.filter(pl.col("record") == "complexity")
         .select(
             pl.col("snapshot").alias("snapshot_id"),
@@ -79,13 +112,9 @@ def normalize_complexity(run_kind: str) -> dict[str, Any]:
             "value_expr_max_depth",
         )
         .collect(engine="streaming")
-        .sort("name")
     )
     graph_nodes = pl.read_parquet(normalized_root(snapshot, run_kind) / "nodes.parquet")
-    if complexity["name"].n_unique() != complexity.height:
-        raise ValueError("duplicate declaration names in expression-complexity sidecar")
-    if complexity.height != graph_nodes.height or set(complexity["name"]) != set(graph_nodes["name"]):
-        raise ValueError("expression-complexity sidecar does not match normalized graph nodes")
+    complexity, alias_rows = select_graph_complexity(raw_complexity, graph_nodes)
     joined = graph_nodes.select("name", "has_value", "type_expr_nodes", "value_expr_nodes").join(
         complexity,
         on="name",
@@ -124,7 +153,9 @@ def normalize_complexity(run_kind: str) -> dict[str, Any]:
             "node_identity_exact": True,
             "has_value_exact": True,
             "legacy_tree_occurrences_exact": True,
+            "same_name_alias_metrics_exact": True,
         },
+        "raw_same_name_alias_rows": alias_rows,
     }
     (output_dir / "manifest.json").write_text(
         json.dumps(manifest, indent=2, sort_keys=True) + "\n"

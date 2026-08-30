@@ -22,3 +22,9 @@ value/proof expression was exposed by the pinned environment; it is not zero.
 Type fields are always present. Normalization rejects sidecars whose declaration
 identity, `has_value`, or legacy tree-occurrence fields disagree with the
 immutable graph corpus.
+
+Some generated declarations can be emitted under more than one isolated module
+import while sharing the same global name. Normalization requires every such
+alias to have identical complexity fields, then selects the `(name, module)`
+provenance already chosen by the immutable normalized graph. It never resolves
+conflicting metrics by keeping an arbitrary row.

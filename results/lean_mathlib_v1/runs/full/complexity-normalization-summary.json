@@ -1,0 +1,29 @@
+{
+  "integrity_checks": {
+    "has_value_exact": true,
+    "legacy_tree_occurrences_exact": true,
+    "node_identity_exact": true,
+    "same_name_alias_metrics_exact": true
+  },
+  "null_counts": {
+    "has_value": 0,
+    "module": 0,
+    "name": 0,
+    "snapshot_id": 0,
+    "type_expr_dag_arcs": 0,
+    "type_expr_max_depth": 0,
+    "type_expr_tree_occurrences": 0,
+    "type_expr_unique_ptr_nodes": 0,
+    "value_expr_dag_arcs": 13115,
+    "value_expr_max_depth": 13115,
+    "value_expr_tree_occurrences": 13115,
+    "value_expr_unique_ptr_nodes": 13115
+  },
+  "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/expr-complexity-v2/full/nodes.parquet",
+  "raw_same_name_alias_rows": 422,
+  "rows": 566238,
+  "run_kind": "full",
+  "schema_version": "expr-complexity-v2",
+  "sha256": "10903f687edf662663c3c4bd6d76dfdabe41086e8bf89cfc135e7b9b930c331f",
+  "snapshot_id": "mathlib-v4.32.1"
+}
