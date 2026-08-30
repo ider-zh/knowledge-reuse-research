@@ -9,6 +9,21 @@ namespace LeanGraph.ExprStats
 
 open Lean
 
+/--
+Four complementary measurements of one elaborated Lean expression.
+
+`uniquePtrNodes` and `dagArcs` describe the expression as it is stored with sharing.
+`maxDepth` is the longest root-to-leaf path, counting both endpoints.
+`treeOccurrences` describes the hypothetical tree obtained by expanding every shared
+reference at every use site.
+-/
+structure Complexity where
+  treeOccurrences : Nat
+  uniquePtrNodes : Nat
+  dagArcs : Nat
+  maxDepth : Nat
+  deriving BEq, Repr
+
 private unsafe structure CollectState where
   visited : PtrSet Expr := mkPtrSet
   postorder : Array Expr := #[]
@@ -30,6 +45,12 @@ private unsafe def collectPostorder (expr : Expr) : StateM CollectState Unit := 
 private unsafe def cachedCount (cache : PtrMap Expr Nat) (expr : Expr) : Nat :=
   (cache.find? expr).get!
 
+private def childArcCount : Expr → Nat
+  | .app .. | .lam .. | .forallE .. => 2
+  | .letE .. => 3
+  | .mdata .. | .proj .. => 1
+  | .bvar _ | .fvar _ | .mvar _ | .sort _ | .const .. | .lit _ => 0
+
 /--
 Number of expression constructor occurrences under deterministic tree traversal.
 The first pass marks pointers before visiting children and collects the expression DAG in
@@ -37,24 +58,49 @@ postorder. The second pass evaluates every DAG node once and memoizes its exact 
 precision subtree count. This preserves tree multiplicity without recursively re-entering
 shared subgraphs.
 -/
-private unsafe def treeOccurrencesUnsafe (expr : Expr) : Nat :=
+private unsafe def analyzeUnsafe (expr : Expr) : Complexity :=
   let (_, state) := (collectPostorder expr).run {}
-  let value := Id.run do
-    let mut cache : PtrMap Expr Nat := mkPtrMap state.postorder.size
+  Id.run do
+    let mut countCache : PtrMap Expr Nat := mkPtrMap state.postorder.size
+    let mut depthCache : PtrMap Expr Nat := mkPtrMap state.postorder.size
+    let mut arcs := 0
     for current in state.postorder do
       let count := match current with
         | .bvar _ | .fvar _ | .mvar _ | .sort _ | .const .. | .lit _ => 1
-        | .app fn arg => 1 + cachedCount cache fn + cachedCount cache arg
+        | .app fn arg => 1 + cachedCount countCache fn + cachedCount countCache arg
         | .lam _ type body _ | .forallE _ type body _ =>
-          1 + cachedCount cache type + cachedCount cache body
+          1 + cachedCount countCache type + cachedCount countCache body
         | .letE _ type nested body _ =>
-          1 + cachedCount cache type + cachedCount cache nested + cachedCount cache body
-        | .mdata _ nested | .proj _ _ nested => 1 + cachedCount cache nested
-      cache := cache.insert current count
-    return cachedCount cache expr
-  value
+          1 + cachedCount countCache type + cachedCount countCache nested +
+            cachedCount countCache body
+        | .mdata _ nested | .proj _ _ nested => 1 + cachedCount countCache nested
+      let depth := match current with
+        | .bvar _ | .fvar _ | .mvar _ | .sort _ | .const .. | .lit _ => 1
+        | .app fn arg => 1 + max (cachedCount depthCache fn) (cachedCount depthCache arg)
+        | .lam _ type body _ | .forallE _ type body _ =>
+          1 + max (cachedCount depthCache type) (cachedCount depthCache body)
+        | .letE _ type nested body _ =>
+          1 + max (cachedCount depthCache type)
+            (max (cachedCount depthCache nested) (cachedCount depthCache body))
+        | .mdata _ nested | .proj _ _ nested => 1 + cachedCount depthCache nested
+      countCache := countCache.insert current count
+      depthCache := depthCache.insert current depth
+      arcs := arcs + childArcCount current
+    return {
+      treeOccurrences := cachedCount countCache expr
+      uniquePtrNodes := state.postorder.size
+      dagArcs := arcs
+      maxDepth := cachedCount depthCache expr
+    }
 
-@[implemented_by treeOccurrencesUnsafe]
-opaque treeOccurrences (expr : Expr) : Nat := 0
+@[implemented_by analyzeUnsafe]
+opaque analyze (expr : Expr) : Complexity := {
+  treeOccurrences := 0
+  uniquePtrNodes := 0
+  dagArcs := 0
+  maxDepth := 0
+}
+
+def treeOccurrences (expr : Expr) : Nat := (analyze expr).treeOccurrences
 
 end LeanGraph.ExprStats

@@ -14,10 +14,16 @@ private def sharedExpr : Nat → Expr → Expr
 def main : IO UInt32 := do
   let depth := 80
   let expr := sharedExpr depth (.const `Nat [])
-  let observed := ExprStats.treeOccurrences expr
+  let observed := ExprStats.analyze expr
   let expected := 2 ^ (depth + 1) - 1
-  if observed == expected then
-    IO.println s!"exact_tree_occurrences={observed}"
+  let expectedStats : ExprStats.Complexity := {
+    treeOccurrences := expected
+    uniquePtrNodes := depth + 1
+    dagArcs := 2 * depth
+    maxDepth := depth + 1
+  }
+  if observed == expectedStats then
+    IO.println s!"tree_occurrences={observed.treeOccurrences} unique_ptr_nodes={observed.uniquePtrNodes} dag_arcs={observed.dagArcs} max_depth={observed.maxDepth}"
     return 0
-  IO.eprintln s!"expected exact tree occurrences {expected}, observed {observed}"
+  IO.eprintln s!"expected {repr expectedStats}, observed {repr observed}"
   return 1
