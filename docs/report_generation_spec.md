@@ -39,6 +39,7 @@
 报告必须做到：
 
 - 概念设计先于统计结果；
+- 每个可具体化的核心概念先用 1–2 个真实、可回查案例建立直觉；
 - 事实、推断、限制和未来工作明确分层；
 - 所有数字可追溯到机器可读结果；
 - 所有过滤、缺失、降采样和失败都显式披露；
@@ -110,6 +111,36 @@ u → v means: u consumes, cites, calls, imports, links to, or semantically depe
 
 跨系统表格不得直接比较第 2、3 层原始数值，除非报告给出标准化定义及其局限。
 
+### 2.4 平滑的研究逻辑链
+
+每个主要概念和研究结论必须按同一条逻辑链展开：
+
+```text
+研究问题
+  → 概念定义
+  → 1–2 个真实、可核验的具体例子
+  → 操作化变量与单位
+  → 提取/计算算法
+  → 单例证据记录
+  → 总体统计或模型结果
+  → 结论等级
+  → 反例、限制或不可推出的结论
+```
+
+不得从抽象定义直接跳到全局统计图，也不得先展示相关系数，再在后文补充变量定义。读者在看到总体结果之前，必须已经能用一个真实节点和一条真实边解释该指标如何产生。
+
+章节之间必须使用短的过渡段说明因果顺序，而不是仅靠编号相邻。例如：
+
+> 上一节定义了 node 和 TYPE/VALUE edge，并用两个真实声明验证了边方向。本节据此把每个 target 收到的唯一 source 数定义为 reuse indegree，再从单节点计数扩展到全库分布。
+
+每个核心分析区块使用以下最小叙事单元：
+
+1. **Definition**：一句话和必要公式；
+2. **Concrete case**：来自当前 snapshot 的真实对象；
+3. **Computation**：输入字段、算法、复杂度与缺失规则；
+4. **Population result**：完整总体上的图、表或模型；
+5. **Interpretation**：支持什么、不支持什么。
+
 ## 3. 证据与结论契约
 
 ### 3.1 证据层级
@@ -163,6 +194,61 @@ HTML 中每条 headline finding 必须对应一个 `claim_id`。文字可本地�
 - configured corpus 的 100% 等于整个上游生态的 100%；
 - 可视化降采样后的点数是统计样本量。
 
+### 3.4 Example / exemplar evidence contract
+
+报告中的例子不是装饰性文案，而是最小可审计证据。每个真实例子必须绑定 machine-readable exemplar record，建议输出：
+
+```text
+results/<experiment_id>/runs/<run_kind>/report/examples.json
+results/<experiment_id>/runs/<run_kind>/tables/report_examples.parquet
+```
+
+最小记录结构：
+
+```json
+{
+  "example_id": "edge.value.theorem_to_theorem.01",
+  "snapshot_id": "...",
+  "concept": "VALUE edge and theorem reuse",
+  "selection_rule": "stable_hash among non-generated theorem→theorem VALUE edges",
+  "node_ids": [123, 456],
+  "native_ids": ["Source.name", "Target.name"],
+  "edge_type": "VALUE",
+  "metrics": {
+    "target_in_degree_value": 42
+  },
+  "evidence": [
+    "normalized/edges.parquet#src_id=123,dst_id=456,edge_type=VALUE",
+    "normalized/nodes.parquet#node_id=123",
+    "normalized/nodes.parquet#node_id=456"
+  ],
+  "source_locator": "source-native stable locator",
+  "explanation": "Why this record illustrates the concept.",
+  "caveat": "What this one case cannot establish."
+}
+```
+
+每个 exemplar 必须满足：
+
+- 来自本次报告绑定的同一 snapshot 和 run population；
+- native ID、node ID、edge type 与展示指标能回查到 normalized/compact artifacts；
+- selection rule 可复现，禁止仅凭作者偏好挑选；
+- 不因名称熟悉或结果极端而假装“有代表性”；
+- caption 明确它是解释概念、典型案例、边界案例还是反例；
+- 单个案例不能作为总体结论证据，必须随后连接 population result；
+- source snippet 若展示，必须记录准确 locator、版本与长度限制；
+- synthetic fixture 只能解释算法正确性，必须标为 `synthetic_fixture`，不能冒充真实语料案例。
+
+选择策略至少同时覆盖：
+
+1. **直观例子**：名称和关系较容易理解；
+2. **不同语义例子**：例如不同 edge type 或 node kind；
+3. **工作量边界**：small、median、p99/high-complexity；
+4. **缺失/不适用例子**：解释 null 为什么不是 zero；
+5. **反例或对照**：提醒读者单例不能代表总体规律。
+
+真实例子默认每个核心概念 1–2 个。超过 2 个时应放入 case-study 表格或 appendix，避免正文被案例列表淹没。
+
 ## 4. 输入产物契约
 
 ### 4.1 报告只消费 compact results
@@ -183,8 +269,10 @@ results/<experiment_id>/runs/<run_kind>/
 ├── tables/
 │   ├── top_reuse.csv
 │   ├── domain_matrix.parquet
+│   ├── report_examples.parquet
 │   └── ...
 └── report/
+    └── examples.json
 ```
 
 允许在 report generation 中进行的操作：formatting、排序、选择已计算行、有限聚合用于展示、确定性可视化降采样。
@@ -242,6 +330,8 @@ results/<experiment_id>/runs/<run_kind>/
 - reuse、dependency、complexity、domain 的操作化定义；
 - 与人类意图、使用频率、质量或重要性的区别。
 
+本章必须先给出 1–2 个真实 node，再给出 1–2 条真实 typed edge。例子需要同时展示 native name、node kind、source/module、边方向和“为何这构成复用”，让没有 source-specific 或图研究背景的读者也能手工判断关系。
+
 ### 3. 研究问题与假设
 
 - RQ-A 至 RQ-E；
@@ -265,6 +355,8 @@ results/<experiment_id>/runs/<run_kind>/
 - identity 与 deterministic ID；
 - extraction、normalization 和 deduplication 的高层流程。
 
+本章必须用一条真实 edge 逐步展示：source native object → extractor record → normalized IDs → typed edge → target indegree 增加 1。另给一条不同 edge semantic 的对照案例，避免读者把所有边理解为同一种引用。
+
 ### 6. 完整性与数据质量
 
 - expected/extracted/ok/partial/failed/excluded；
@@ -283,6 +375,8 @@ results/<experiment_id>/runs/<run_kind>/
 - 缺失机制；
 - 未实现的建议变量。
 
+本章至少展示四种工作量案例：small、median、p99/high-complexity 和 null/not-applicable。每个案例列出输入对象、关键结构、算法访问的 unique objects/arcs（若可用）、输出值和所处总体分位数。算法讲解必须包含一个可手算的小例子和一个真实高工作量例子；前者解释 recurrence，后者解释为什么需要 cache、streaming 或 sharding。
+
 ### 8. Graph Overview
 
 - node/edge counts；
@@ -290,6 +384,8 @@ results/<experiment_id>/runs/<run_kind>/
 - edge type distribution；
 - zero indegree/outdegree/isolated/self-loop；
 - degree summary、CCDF 和 rank-frequency。
+
+从前述单条边自然过渡到单节点 indegree，再扩展到全体 degree distribution。正文至少手工展开一个 target 的 2–5 条 incoming edge 样例，说明 unique consumers 如何去重；若完整 incoming list 很长，仅展示确定性选取的少量边并链接完整 compact table。
 
 ### 9. Reuse concentration
 
@@ -317,12 +413,16 @@ results/<experiment_id>/runs/<run_kind>/
 - controls、effect size、95% CI、diagnostics；
 - observational caveat。
 
+在相关和回归之前，必须并列展示两个真实节点案例：长度/复杂度相近但 reuse 不同，或 reuse 相近但复杂度不同。该对照用于建立直觉和暴露混杂，不得用两个案例替代总体模型。
+
 ### 12. Node-kind 与 edge-semantics 分析
 
 - 主要 node types；
 - 主要 source→target type 组合；
 - typed graph views；
 - 不同机制不能混合解释。
+
+每个进入 headline comparison 的主要 edge semantic 至少有一个真实例子。若某个组合没有边或数量太少，显示实际 count 和 `not_available/inconclusive`，不得用 synthetic edge 补位。
 
 ### 13. Domain/group 分析
 
@@ -333,6 +433,8 @@ results/<experiment_id>/runs/<run_kind>/
 - diversity 与 entropy proxy；
 - per-group tail/concentration；
 - taxonomy 局限。
+
+至少用两条跨 group/domain 的真实边解释 dependency matrix 的一个 cell 如何累加，并与一条 group 内部边对照。
 
 ### 14. Robustness checks
 
@@ -625,6 +727,74 @@ Lean report 至少包含：
 - `H*ref` 是 empirical operational proxy，且 `H*ref ≠ theoretical H`；
 - 模型比较未支持时，不得宣称 Zipf law。
 
+### 8.9 Lean 真实案例集
+
+Lean 正文必须包含一个由 full normalized graph 生成的最小案例集。案例不能只来自 golden fixture；fixture 用于验证 extractor，而真实案例用于帮助读者理解研究语义。
+
+| 概念 | 最少案例 | 报告必须展示 |
+|---|---:|---|
+| declaration node | 2 | 一个有 value 的 definition/theorem；一个无 value 或不同 kind 的 declaration |
+| TYPE edge | 1 | source/target type 的相关片段、constant reference、方向、两个 node kind |
+| VALUE edge | 1 | proof/definition body 的相关片段、constant reference、方向、两个 node kind |
+| reuse indegree | 1 target + 2–5 consumers | 每条 incoming edge 如何使 unique consumer count 增加，重复 typed edge 如何去重 |
+| source/type/value complexity | 至少 4 | small、median、p99/high、null/not-applicable |
+| cache algorithm | 2 | 可手算的小 Expr/DAG；真实 high-workload declaration |
+| domain matrix | 3 edges | 两条跨领域边与一条领域内边 |
+
+固定 `mathlib-v4.32.1` full graph 中已经验证存在、可作为首版候选的关系包括：
+
+```text
+constantCoeff_xInTermsOfW --VALUE--> map_pow
+padicValRat.of_nat         --TYPE-->  padicValNat
+```
+
+第一条用于解释 theorem proof/value 对 theorem 的复用；第二条用于解释 theorem statement/type 对 definition 的依赖。生成器仍必须在当前输入 artifacts 中重新验证它们，写入 node IDs、module、kind、edge type 和 checksum。若候选在未来 snapshot 不存在，必须依据版本化 selection rule 选择替代案例并记录替换原因，禁止静默保留旧文字。
+
+节点与 value/null 对照的首版候选：
+
+- `Set`：definition，可用于展示一个结构较小但高复用的真实节点；
+- `CategoryTheory.Category`：inductive，可用于解释 `has_value=false` 时 `value_expr_nodes=null`，而不是零；
+- `Semiring.toNonAssocSemiring`：definition，可同时展示 type 与 value complexity；
+- `CategoryTheory.Limits.colimitLimitToLimitColimit_surjective`：真实 high-workload theorem，用于说明 tree-occurrence 值可能远大于可见源码，以及 cache 为什么必要。
+
+上述名称是 snapshot-specific exemplar candidates，不是跨版本 contract。报告中出现的具体数值必须从本次 `node_metrics`/normalized records 读取，不能写死在模板。
+
+#### 8.9.1 Expr 缓存算法的可视化例子
+
+报告必须用一个小型结构图解释共享子表达式：
+
+```text
+        parent
+        /    \
+     shared  shared
+        |
+       leaf
+```
+
+若 `shared` 被两个 child position 引用：
+
+- pointer traversal 只展开 `shared` 一次；
+- cache 只计算 `count(shared)` 一次；
+- `count(parent)` 仍两次累加 `count(shared)`；
+- 因此缓存减少计算工作量，但 tree-occurrence 结果没有截断。
+
+这个小图可以是 `synthetic_fixture`，但旁边必须连接一个真实 mathlib high-workload declaration，展示其 name、kind、module、`type_expr_nodes`、`value_expr_nodes`、source coverage 和总体分位数。synthetic fixture 证明 recurrence 易于理解；真实 declaration 证明该算法处理的是实际研究负载。
+
+#### 8.9.2 不同工作量算法例子
+
+报告不能笼统写“算法是 O(n)”。至少区分：
+
+| 阶段 | 工作量单位 | 例子要求 | 需要报告的性能量 |
+|---|---|---|---|
+| module extraction | modules、environment loading、declarations | 一个小 module 与一个声明密集 module | wall time、decl/s、edge/s、RSS |
+| Expr complexity | unique Expr pointers U、child arcs A、tree count 位宽 | small 与 high-workload declaration | U/A（若已测量）或明确 not available、tree count、duration |
+| edge normalization | raw typed edges、unique typed edges | 有重复候选与去重后结果 | input/output rows、dedup ratio、wall time、RSS |
+| graph aggregation | nodes、edges、groups | smoke 与 full | scanned rows、wall time、peak RSS |
+| model fitting | positive n、tail n、candidate xmin | 小 population 与 all declarations | n、tail n、duration、status |
+| HTML rendering | figure points、table rows、output bytes | full statistics 与 display sample | statistical n、rendered n、wall time、bytes |
+
+若某阶段没有 per-case timing 或 U/A 指标，必须标记 `not_available`，不能用总 pipeline wall time 代替局部算法复杂度。
+
 ## 9. Source-specific 扩展模板
 
 Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 native semantics。
@@ -658,6 +828,12 @@ Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 nativ
 - standalone size 未超过配置 hard limit；
 - run kind 与所有 compact results 一致；
 - failed/partial/completeness 不会被模板条件隐藏。
+- `examples.json` 与 `report_examples.parquet` 存在，且 snapshot/run 与报告一致；
+- 每个 exemplar 的 native ID、node ID、edge 与 metrics 可在证据路径中解析；
+- 每个核心概念都有规定数量的真实例子；
+- synthetic fixture 与 real corpus example 有显式不同标签；
+- 案例选择规则确定性，未来 snapshot 的替换有记录；
+- 单例文字之后存在对应 population result，不以案例代替总体证据。
 
 ### 10.2 Semantic tests
 
@@ -668,7 +844,10 @@ Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 nativ
 - heavy-tail 结论读取 model comparison 与 bootstrap status；
 - entropy proxy 有 proxy 标签；
 - regression 同时报告 effect size 与 CI；
-- source-native complexity 单位不被标成 cross-source equivalent。
+- source-native complexity 单位不被标成 cross-source equivalent；
+- 每个主要区块遵循 definition → concrete case → computation → population result → interpretation；
+- 章节过渡明确说明前一层证据如何支持下一层分析；
+- 案例 caption 同时说明它解释什么以及不能证明什么。
 
 ### 10.3 Lean acceptance additions
 
@@ -678,7 +857,11 @@ Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 nativ
 - source metric coverage 显示 null rate；
 - tree-occurrence 算法描述与 `ExprStats.lean` fixture 一致；
 - 报告出现“缓存不等于截断”及未实现复杂度变量；
-- `--force` 只控制是否重建有效 cache，不改变 graph semantics 或 analysis population。
+- `--force` 只控制是否重建有效 cache，不改变 graph semantics 或 analysis population；
+- TYPE 与 VALUE 各有至少一个从 full graph 验证的真实 edge 案例；
+- 至少一个无 value 的 declaration 用于解释 `null ≠ 0`；
+- Expr cache 同时有手算 DAG 和真实 high-workload declaration；
+- workload 表区分 extraction、Expr、normalization、aggregation、fitting 和 rendering。
 
 ## 11. 人工评审量表
 
@@ -689,19 +872,20 @@ Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 nativ
 | 概念清晰度 | 不知道图表示什么 | 有定义但混乱 | 基本清晰 | 无需代码背景即可准确理解 |
 | 完整性透明度 | 看不出是否失败/截断 | 信息藏在附录 | 首屏可见 | 首屏结论可追溯到 audit |
 | 证据严谨性 | 图代替检验 | 有统计但过度结论 | 结论基本匹配证据 | claim/status/evidence 全绑定 |
+| 例子可核验性 | 无例子或虚构例子 | 例子真实但无法回查 | 例子有基本证据路径 | 真实案例、选择规则、artifact 与总体结果全部连接 |
 | 复杂度解释 | 单一“长度” | 多变量但算法不清 | 算法与 coverage 清楚 | tree/DAG/null/单位全部区分 |
 | 可读性 | 数据堆叠 | 能读但难导航 | 结构清楚 | 概念→证据→解释自然连贯 |
 | 跨系统复用 | 完全 source-specific | 只有口号 | core/native 分层 | 新 source 可直接按契约接入 |
 | 可复现性 | 无版本/命令 | 部分 manifest | 可重建 | checksum、claims、artifacts 可审计 |
 | 视觉可信度 | 图无单位/样本 | caption 重复标题 | 信息基本完整 | 每图说明支持与不支持什么 |
 
-建议验收门槛：每项至少 2 分，总分至少 20/24；“完整性透明度”“证据严谨性”“可复现性”必须达到 3 分。
+建议验收门槛：每项至少 2 分，总分至少 23/27；“完整性透明度”“证据严谨性”“例子可核验性”“可复现性”必须达到 3 分。
 
 ## 12. 评审后实施顺序
 
 规范确认后，按以下独立阶段实施，每阶段单独验证和提交：
 
-1. 定义 `report.toml`、claim registry 和 artifact index schema；
+1. 定义 `report.toml`、claim registry、exemplar registry 和 artifact index schema；
 2. 把通用 evidence/formatting/render helpers 移入 shared analysis；
 3. 实现 Lean source-specific report adapter；
 4. 增加 contract、semantic、determinism 和 offline tests；
@@ -722,6 +906,7 @@ Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 nativ
 4. 是否要求首版就新增 maximum Expr depth 与 unique pointer-node count，或继续标为 v2 指标；
 5. 是否需要在单个 Lean report 中加入 Wikipedia/software 的实际对比数据，还是只保留跨系统方法映射；
 6. 报告默认语言是否固定为中文，机器字段与统计术语保留英文。
+7. 是否接受“真实案例由确定性规则选择、snapshot-specific 候选只作为首版起点”，而不把案例名称永久写死在跨版本模板中。
 
 ---
 
