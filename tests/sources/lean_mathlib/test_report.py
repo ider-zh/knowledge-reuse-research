@@ -31,9 +31,16 @@ def test_report_contract_has_all_sections_and_figures() -> None:
         "95% CI（置信区间）",
         "H*ref 怎样计算",
         "稳健性检查",
+        "与 Veldhuizen 2005 的正面对照",
+        "degree_tail_alpha",
+        "beta_rank",
+        "instance 当前必须报告为 not available",
+        "五个可检验命题的明确结论",
     ):
         assert explanation in source
     assert "教学例子，不是实验数据" in source
+    assert "H*ref(d)=-Σ p_d(b) log p_d(b) / log(D)" in source
+    assert "当前不可检验" in source
 
 
 def test_points_svg_skips_missing_metrics() -> None:

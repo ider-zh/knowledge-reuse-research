@@ -105,11 +105,16 @@
   "reference_entropy_label": "H*ref empirical operational proxy; not theoretical H",
   "reuse_concentration": {
     "gini": 0.8379257154455044,
+    "gini_positive": 0.7039703429101019,
     "hhi": 0.05427843786982248,
     "nodes": 758,
+    "positive_nodes": 415,
     "top_10pct_share": 0.7729230769230769,
+    "top_10pct_share_positive": 0.715076923076923,
     "top_1pct_share": 0.5033846153846154,
+    "top_1pct_share_positive": 0.42953846153846154,
     "top_5pct_share": 0.7052307692307692,
+    "top_5pct_share_positive": 0.6436923076923077,
     "view": "ALL"
   },
   "run_kind": "smoke",
@@ -118,6 +123,14 @@
   "snapshot_id": "mathlib-v4.32.1",
   "type_edge_count": 7273,
   "value_edge_count": 10288,
+  "veldhuizen_reuse_concentration": {
+    "gini": 0.7039703429101019,
+    "nodes": 415,
+    "population": "positive unique-consumer indegree targets",
+    "top_10pct_share": 0.715076923076923,
+    "top_1pct_share": 0.42953846153846154,
+    "top_5pct_share": 0.6436923076923077
+  },
   "zero_indegree_fraction": 0.4525065963060686,
   "zero_outdegree_fraction": 0.0
 }

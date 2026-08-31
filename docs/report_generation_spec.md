@@ -105,7 +105,35 @@ u → v means: u consumes, cites, calls, imports, links to, or semantically depe
 | RQ-D | 不同边语义或节点类型是否具有不同规律？ | typed views、kind/type 子图与稳健性比较 |
 | RQ-E | 哪些结果可跨系统比较？ | core metric 与 native metric 的明确映射及不可比说明 |
 
-### 2.3 三层指标模型
+### 2.3 Veldhuizen 2005 命题对照契约
+
+Lean/mathlib 报告必须围绕 Veldhuizen 的理论对象给出五项逐条 verdict，而不是把任意网络指标当成论文复现：
+
+1. declaration 的复用 rank–frequency 是否重尾、尾部斜率是否接近 `1/r`；
+2. 正入度 declaration 的 Top 1/5/10% 与 Gini 是否表明少数组件主导复用；
+3. 来源路径领域的 rank exponent、集中度与 `H*ref` 是否不同；
+4. source、statement/type Expr 与 proof/value Expr 长度对复用的条件关联方向；
+5. 多 snapshot 数据能否支持“稳定核心 + 持续长尾”的纵向命题。
+
+报告必须严格区分：
+
+- `degree_tail_alpha`：入度概率质量尾部的幂律指数；
+- `rank_exponent_beta`：`log C(r)` 对 `log r` 的负斜率，`beta≈1` 才与 Zipf `1/r` 直接对应；
+- Veldhuizen 的理论 `H` 与由来源领域依赖目标份额计算的经验代理 `H*ref`；
+- 论文中每次复用节省的代码量 `S(n)` 与 Lean declaration 的长度/Expr 复杂度；
+- 原论文的 raw reference frequency 与本实验的 unique-consumer indegree。
+
+`H*ref(d)` 使用统一目标领域全集进行归一化：若来源领域 `d` 指向目标领域 `b` 的唯一 consumer–target pair 份额为 `p_d(b)`，目标领域全集大小为 `D`，则
+
+```text
+H*ref(d) = -Σ_b p_d(b) log p_d(b) / log D
+```
+
+TYPE/VALUE 对同一 `(src,dst)` 的重复在此处折叠一次，使 `H*ref`、领域 Gini 与 rank-frequency 使用同一个 reuse 单位。报告必须说明它是 `Veldhuizen-style empirical proxy`，不能据此估计理论 `H` 或推出 `1-H` 的可复用代码比例。
+
+如果只有一个 snapshot，第 5 项必须明确判为 `not testable`；如果 schema 没有稳定的 instance-role 字段，instance 分层必须显示 `not available` 而不是并入 definition 后假称已完成。
+
+### 2.4 三层指标模型
 
 报告必须把指标分为三层：
 
@@ -115,7 +143,7 @@ u → v means: u consumes, cites, calls, imports, links to, or semantically depe
 
 跨系统表格不得直接比较第 2、3 层原始数值，除非报告给出标准化定义及其局限。
 
-### 2.4 平滑的研究逻辑链
+### 2.5 平滑的研究逻辑链
 
 每个主要概念和研究结论必须按同一条逻辑链展开：
 
@@ -145,7 +173,7 @@ u → v means: u consumes, cites, calls, imports, links to, or semantically depe
 4. **Population result**：完整总体上的图、表或模型；
 5. **Interpretation**：支持什么、不支持什么。
 
-### 2.5 高中阶段读者可理解性契约
+### 2.6 高中阶段读者可理解性契约
 
 报告不得把“术语已经出现在表头”当作“概念已经解释”。正文以没有接触
 Lean、图论或统计建模，但具备高中代数和比例知识的读者为最低解释基线：

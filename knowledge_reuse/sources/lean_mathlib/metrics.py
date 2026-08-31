@@ -1,16 +1,16 @@
 from __future__ import annotations
 
 import argparse
+import gc
 import json
 import math
 import tomllib
-import warnings
 from typing import Any
 
 import numpy as np
 import polars as pl
+import scipy.special
 import scipy.stats
-import statsmodels.api as sm
 
 from knowledge_reuse.analysis.concentration import gini, hhi, top_share
 from knowledge_reuse.analysis.powerlaw import fit_tail
@@ -403,7 +403,10 @@ def with_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.DataFrame:
 
 
 def population_degrees(
-    nodes: pl.DataFrame, edges: pl.DataFrame, node_metrics: pl.DataFrame
+    nodes: pl.DataFrame,
+    edges: pl.DataFrame,
+    node_metrics: pl.DataFrame,
+    domain_pairs: pl.DataFrame,
 ) -> dict[str, np.ndarray]:
     node_kind = nodes.select("node_id", "kind")
     typed = edges.join(
@@ -430,11 +433,78 @@ def population_degrees(
             )
         ),
     }
-    for domain in sorted(nodes["domain"].unique().drop_nulls().to_list()):
-        populations[f"domain:{domain}"] = node_metrics.filter(pl.col("domain") == domain)[
+    for kind in sorted(nodes["kind"].unique().drop_nulls().to_list()):
+        populations[f"kind:{kind}"] = node_metrics.filter(pl.col("kind") == kind)[
             "in_degree_all"
         ].to_numpy()
+    domain_target_counts = domain_pairs.group_by("src_domain", "dst_id").agg(
+        pl.col("src_id").n_unique().alias("degree")
+    )
+    for domain in sorted(nodes["domain"].unique().drop_nulls().to_list()):
+        populations[f"domain:{domain}"] = domain_target_counts.filter(
+            pl.col("src_domain") == domain
+        )["degree"].to_numpy()
     return populations
+
+
+def fit_rank_frequency(
+    values: np.ndarray, population: str, xmin: float | None
+) -> dict[str, Any]:
+    """Fit log C(r) = intercept - beta log r on the selected positive tail.
+
+    ``beta`` is the rank--frequency exponent comparable to a Zipf ``1/r``
+    slope.  It is deliberately kept separate from the probability-mass tail
+    exponent returned by :func:`fit_tail`.
+    """
+    data = np.asarray(values, dtype=float)
+    data = data[np.isfinite(data) & (data > 0)]
+    result: dict[str, Any] = {
+        "population": population,
+        "positive_n": int(data.size),
+        "xmin": xmin,
+        "status": "insufficient_tail_observations",
+    }
+    if xmin is None:
+        return result
+    tail = np.sort(data[data >= xmin])[::-1]
+    result["tail_n"] = int(tail.size)
+    if tail.size < 20 or np.unique(tail).size < 3:
+        return result
+    ranks = np.arange(1, tail.size + 1, dtype=float)
+    fitted = scipy.stats.linregress(np.log(ranks), np.log(tail))
+    beta = float(-fitted.slope)
+    result.update(
+        {
+            "status": "ok",
+            "beta_rank": beta,
+            "intercept": float(fitted.intercept),
+            "r_squared": float(fitted.rvalue**2),
+            "slope_std_error": float(fitted.stderr),
+            "distance_from_zipf_1": abs(beta - 1.0),
+        }
+    )
+    return result
+
+
+def internal_unique_dependency_pairs(
+    nodes: pl.DataFrame, edges: pl.DataFrame
+) -> pl.DataFrame:
+    """Collapse TYPE/VALUE duplicates and attach source/target path domains."""
+    node_domain = nodes.select("node_id", "domain")
+    return (
+        edges.select("src_id", "dst_id")
+        .unique()
+        .join(
+            node_domain.rename({"node_id": "src_id", "domain": "src_domain"}),
+            on="src_id",
+            how="inner",
+        )
+        .join(
+            node_domain.rename({"node_id": "dst_id", "domain": "dst_domain"}),
+            on="dst_id",
+            how="inner",
+        )
+    )
 
 
 def fit_regression(node_metrics: pl.DataFrame, length_column: str) -> dict[str, Any]:
@@ -448,59 +518,121 @@ def fit_regression(node_metrics: pl.DataFrame, length_column: str) -> dict[str, 
         return result
     kind = frame.select(pl.col("kind").cast(pl.Categorical).to_physical()).to_numpy().ravel()
     domain = frame.select(pl.col("domain").cast(pl.Categorical).to_physical()).to_numpy().ravel()
-    kind_dummies = np.eye(int(kind.max()) + 1)[kind.astype(int)][:, 1:]
-    domain_dummies = np.eye(int(domain.max()) + 1)[domain.astype(int)][:, 1:]
+    _, kind = np.unique(kind, return_inverse=True)
+    _, domain = np.unique(domain, return_inverse=True)
+    kind_count = int(kind.max()) + 1
+    domain_count = int(domain.max()) + 1
     length = np.log1p(frame[length_column].to_numpy().astype(float))
-    design = np.column_stack((np.ones(frame.height), length, kind_dummies, domain_dummies))
     response = frame["in_degree_all"].to_numpy().astype(float)
+    parameter_count = 2 + (kind_count - 1) + (domain_count - 1)
+
+    def linear_predictor(params: np.ndarray) -> np.ndarray:
+        kind_effect = np.concatenate(([0.0], params[2 : 1 + kind_count]))
+        domain_effect = np.concatenate(([0.0], params[1 + kind_count :]))
+        return params[0] + params[1] * length + kind_effect[kind] + domain_effect[domain]
+
+    def objective(params: np.ndarray) -> tuple[float, np.ndarray]:
+        eta = linear_predictor(params)
+        # NB2 with fixed alpha=1 has log-likelihood, up to constants,
+        # y*eta - (y+1)*log(1+exp(eta)).  logaddexp is overflow-safe.
+        loss = float(np.sum((response + 1.0) * np.logaddexp(0.0, eta) - response * eta))
+        score_eta = (response + 1.0) * scipy.special.expit(eta) - response
+        gradient = np.empty(parameter_count, dtype=float)
+        gradient[0] = score_eta.sum()
+        gradient[1] = np.dot(score_eta, length)
+        gradient[2 : 1 + kind_count] = np.bincount(
+            kind, weights=score_eta, minlength=kind_count
+        )[1:]
+        gradient[1 + kind_count :] = np.bincount(
+            domain, weights=score_eta, minlength=domain_count
+        )[1:]
+        return loss, gradient
+
+    def fisher_information(weights: np.ndarray) -> np.ndarray:
+        information = np.zeros((parameter_count, parameter_count), dtype=float)
+        information[0, 0] = weights.sum()
+        information[0, 1] = information[1, 0] = np.dot(weights, length)
+        information[1, 1] = np.dot(weights, length * length)
+        kind_w = np.bincount(kind, weights=weights, minlength=kind_count)[1:]
+        kind_wx = np.bincount(
+            kind, weights=weights * length, minlength=kind_count
+        )[1:]
+        domain_w = np.bincount(domain, weights=weights, minlength=domain_count)[1:]
+        domain_wx = np.bincount(
+            domain, weights=weights * length, minlength=domain_count
+        )[1:]
+        kind_slice = slice(2, 1 + kind_count)
+        domain_slice = slice(1 + kind_count, parameter_count)
+        information[0, kind_slice] = information[kind_slice, 0] = kind_w
+        information[1, kind_slice] = information[kind_slice, 1] = kind_wx
+        information[0, domain_slice] = information[domain_slice, 0] = domain_w
+        information[1, domain_slice] = information[domain_slice, 1] = domain_wx
+        information[kind_slice, kind_slice] = np.diag(kind_w)
+        information[domain_slice, domain_slice] = np.diag(domain_w)
+        cross = np.zeros((kind_count - 1, domain_count - 1), dtype=float)
+        mask = (kind > 0) & (domain > 0)
+        np.add.at(cross, (kind[mask] - 1, domain[mask] - 1), weights[mask])
+        information[kind_slice, domain_slice] = cross
+        information[domain_slice, kind_slice] = cross.T
+        return information
+
+    initial = np.zeros(parameter_count, dtype=float)
+    initial[0] = math.log(max(response.mean(), 1e-6))
     try:
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore")
-            model = sm.NegativeBinomial(response, design).fit(disp=False, maxiter=200)
-        low, high = model.conf_int()[1]
+        params = initial
+        loss, gradient = objective(params)
+        converged = False
+        iteration = 0
+        for iteration in range(1, 61):
+            eta = linear_predictor(params)
+            mu = np.exp(np.clip(eta, -700, 700))
+            information = fisher_information(mu / (1.0 + mu))
+            ridge = max(float(np.trace(information)), 1.0) * 1e-12
+            step = np.linalg.solve(
+                information + np.eye(parameter_count) * ridge, -gradient
+            )
+            scale_factor = 1.0
+            while scale_factor >= 2**-14:
+                candidate = params + scale_factor * step
+                candidate_loss, candidate_gradient = objective(candidate)
+                if candidate_loss <= loss:
+                    break
+                scale_factor /= 2
+            if scale_factor < 2**-14:
+                break
+            params = candidate
+            relative_improvement = (loss - candidate_loss) / max(abs(loss), 1.0)
+            loss, gradient = candidate_loss, candidate_gradient
+            if (
+                np.max(np.abs(scale_factor * step)) < 1e-7
+                or relative_improvement < 1e-10
+            ):
+                converged = True
+                break
+        eta = linear_predictor(params)
+        mu = np.exp(np.clip(eta, -700, 700))
+        weights = mu / (1.0 + mu)
+        information = fisher_information(weights)
+        covariance = np.linalg.pinv(information, hermitian=True)
+        std_error = math.sqrt(max(float(covariance[1, 1]), 0.0))
+        coefficient = float(params[1])
+        z_score = coefficient / std_error if std_error else math.inf
         result.update(
             {
-                "status": "ok" if model.mle_retvals.get("converged") else "not_converged",
-                "coefficient": float(model.params[1]),
-                "std_error": float(model.bse[1]),
-                "ci_low": float(low),
-                "ci_high": float(high),
-                "p_value": float(model.pvalues[1]),
-                "alpha_dispersion": float(model.params[-1]),
+                "status": "ok_nb2_fixed_dispersion" if converged else "not_converged",
+                "coefficient": coefficient,
+                "std_error": std_error,
+                "ci_low": coefficient - 1.96 * std_error,
+                "ci_high": coefficient + 1.96 * std_error,
+                "p_value": float(2 * scipy.stats.norm.sf(abs(z_score))),
+                "alpha_dispersion": 1.0,
                 "controls": "kind+domain",
+                "optimizer_iterations": iteration,
+                "error": None if converged else "Fisher scoring did not converge",
             }
         )
     except (ValueError, np.linalg.LinAlgError) as error:
         result.update({"status": "failed", "error": str(error)})
-    finite = all(
-        math.isfinite(float(result.get(key, math.nan)))
-        for key in ("coefficient", "std_error", "ci_low", "ci_high", "p_value")
-    )
-    if result["status"] != "ok" or not finite:
-        try:
-            with warnings.catch_warnings():
-                warnings.simplefilter("ignore")
-                fallback = sm.GLM(
-                    response,
-                    design,
-                    family=sm.families.NegativeBinomial(alpha=1.0),
-                ).fit(maxiter=200)
-            low, high = fallback.conf_int()[1]
-            result.update(
-                {
-                    "status": "ok_glm_fixed_dispersion",
-                    "coefficient": float(fallback.params[1]),
-                    "std_error": float(fallback.bse[1]),
-                    "ci_low": float(low),
-                    "ci_high": float(high),
-                    "p_value": float(fallback.pvalues[1]),
-                    "alpha_dispersion": 1.0,
-                    "controls": "kind+domain",
-                    "error": None,
-                }
-            )
-        except (ValueError, np.linalg.LinAlgError) as error:
-            result.update({"status": "failed", "error": str(error)})
     return result
 
 
@@ -595,31 +727,105 @@ def analyze(run_kind: str) -> dict[str, Any]:
         ),
     ):
         values = frame["in_degree_all"].to_numpy()
+        positive = values[values > 0]
         view_metrics.append(
             {
                 "view": view,
                 "nodes": frame.height,
+                "positive_nodes": int(positive.size),
                 "gini": gini(values),
                 "hhi": hhi(values),
                 "top_1pct_share": top_share(values, 0.01),
                 "top_5pct_share": top_share(values, 0.05),
                 "top_10pct_share": top_share(values, 0.10),
+                "gini_positive": gini(positive),
+                "top_1pct_share_positive": top_share(positive, 0.01),
+                "top_5pct_share_positive": top_share(positive, 0.05),
+                "top_10pct_share_positive": top_share(positive, 0.10),
             }
-        )
+    )
     pl.DataFrame(view_metrics).write_parquet(metrics_dir / "view_metrics.parquet", compression="zstd")
 
-    populations = population_degrees(nodes, edges, node_metrics)
-    fits = pl.DataFrame([fit_tail(values, name) for name, values in populations.items()])
-    fits.write_parquet(metrics_dir / "powerlaw_fits.parquet", compression="zstd")
+    # Fit the dense kind/domain regression design before materializing the
+    # much larger source-domain dependency-pair table.
     regressions = pl.DataFrame(
         [fit_regression(node_metrics, length) for length in REGRESSION_METRICS]
     )
     regressions.write_parquet(metrics_dir / "regressions.parquet", compression="zstd")
+    stratified_rows = []
+    for stratum in ("theorem", "definition"):
+        stratum_frame = node_metrics.filter(pl.col("kind") == stratum)
+        for length in (
+            "source_tokens",
+            "type_expr_unique_ptr_nodes",
+            "value_expr_unique_ptr_nodes",
+            "value_expr_tree_occurrences",
+        ):
+            row = fit_regression(stratum_frame, length)
+            row.update({"stratum": stratum, "controls": "domain (within kind)"})
+            stratified_rows.append(row)
+    pl.DataFrame(stratified_rows).write_parquet(
+        metrics_dir / "stratified_regressions.parquet", compression="zstd"
+    )
     correlation_rows = correlations(node_metrics)
     pl.DataFrame(correlation_rows).write_parquet(
         metrics_dir / "length_correlations.parquet", compression="zstd"
     )
-    length_bins(node_metrics).write_parquet(metrics_dir / "length_binned.parquet", compression="zstd")
+    length_bins(node_metrics).write_parquet(
+        metrics_dir / "length_binned.parquet", compression="zstd"
+    )
+    gc.collect()
+    domain_pairs = internal_unique_dependency_pairs(nodes, edges)
+    populations = population_degrees(nodes, edges, node_metrics, domain_pairs)
+    fits = pl.DataFrame([fit_tail(values, name) for name, values in populations.items()])
+    fits.write_parquet(metrics_dir / "powerlaw_fits.parquet", compression="zstd")
+    fit_by_population = {
+        row["population"]: row for row in fits.iter_rows(named=True)
+    }
+    rank_fits = pl.DataFrame(
+        [
+            fit_rank_frequency(
+                values,
+                name,
+                fit_by_population[name].get("xmin"),
+            )
+            for name, values in populations.items()
+        ]
+    )
+    rank_fits.write_parquet(
+        metrics_dir / "rank_frequency_fits.parquet", compression="zstd"
+    )
+    rank_by_population = {
+        row["population"]: row for row in rank_fits.iter_rows(named=True)
+    }
+    kind_rows = []
+    for kind in sorted(nodes["kind"].unique().drop_nulls().to_list()):
+        values = node_metrics.filter(pl.col("kind") == kind)["in_degree_all"].to_numpy()
+        positive = values[values > 0]
+        population = f"kind:{kind}"
+        fit_row = fit_by_population[population]
+        rank_row = rank_by_population[population]
+        kind_rows.append(
+            {
+                "kind": kind,
+                "node_count": int(values.size),
+                "positive_node_count": int(positive.size),
+                "reuse_sum": int(values.sum()),
+                "gini_all": gini(values),
+                "gini_positive": gini(positive),
+                "top_1pct_share_positive": top_share(positive, 0.01),
+                "top_5pct_share_positive": top_share(positive, 0.05),
+                "top_10pct_share_positive": top_share(positive, 0.10),
+                "degree_tail_alpha": fit_row.get("alpha"),
+                "xmin": fit_row.get("xmin"),
+                "tail_n": fit_row.get("tail_n"),
+                "rank_exponent_beta": rank_row.get("beta_rank"),
+                "rank_r_squared": rank_row.get("r_squared"),
+            }
+        )
+    pl.DataFrame(kind_rows).write_parquet(
+        metrics_dir / "kind_reuse_metrics.parquet", compression="zstd"
+    )
     availability = (
         node_metrics.group_by("kind")
         .agg(
@@ -661,44 +867,109 @@ def analyze(run_kind: str) -> dict[str, Any]:
         .sort("src_domain", "dst_domain", "edge_type")
     )
     domain_matrix.write_parquet(tables_dir / "domain_matrix.parquet", compression="zstd")
+    domain_reuse_matrix = (
+        domain_pairs.group_by("src_domain", "dst_domain")
+        .agg(pl.len().alias("dependency_pair_count"))
+        .with_columns(
+            (
+                pl.col("dependency_pair_count")
+                / pl.col("dependency_pair_count").sum().over("src_domain")
+            ).alias("row_share")
+        )
+        .sort("src_domain", "dst_domain")
+    )
+    domain_reuse_matrix.write_parquet(
+        tables_dir / "domain_reuse_matrix.parquet", compression="zstd"
+    )
     append_domain_examples(report_examples, internal_edges, nodes, snapshot)
     pl.DataFrame(report_examples).select(EXAMPLE_COLUMNS).write_parquet(
         tables_dir / "report_examples.parquet", compression="zstd"
     )
     domain_rows = []
+    target_domain_count = domain_pairs["dst_domain"].n_unique()
     for domain in sorted(nodes["domain"].unique().drop_nulls().to_list()):
         domain_nodes = node_metrics.filter(pl.col("domain") == domain)
-        outbound = domain_matrix.filter(pl.col("src_domain") == domain)
-        probabilities = (
-            outbound.group_by("dst_domain")
-            .agg(pl.col("edge_count").sum())
-            .with_columns(pl.col("edge_count") / pl.col("edge_count").sum())
-        )["edge_count"].to_numpy()
-        entropy = float(-(probabilities * np.log(probabilities)).sum()) if probabilities.size else 0.0
-        normalized_entropy = entropy / math.log(domain_nodes.height) if domain_nodes.height > 1 else 0.0
-        values = domain_nodes["in_degree_all"].to_numpy()
+        outbound = domain_reuse_matrix.filter(pl.col("src_domain") == domain)
+        probabilities = outbound["row_share"].to_numpy()
+        entropy = (
+            float(-(probabilities * np.log(probabilities)).sum())
+            if probabilities.size
+            else 0.0
+        )
+        normalized_entropy = (
+            entropy / math.log(target_domain_count) if target_domain_count > 1 else 0.0
+        )
+        target_counts = domain_pairs.filter(pl.col("src_domain") == domain).group_by(
+            "dst_id"
+        ).agg(pl.col("src_id").n_unique().alias("degree"))
+        values = target_counts["degree"].to_numpy()
         fit_row = fits.filter(pl.col("population") == f"domain:{domain}")
+        rank_row = rank_fits.filter(pl.col("population") == f"domain:{domain}")
         internal_count = outbound.filter(pl.col("src_domain") == pl.col("dst_domain"))[
-            "edge_count"
+            "dependency_pair_count"
         ].sum()
-        total_outbound = outbound["edge_count"].sum()
+        total_outbound = outbound["dependency_pair_count"].sum()
         domain_rows.append(
             {
                 "domain": domain,
                 "node_count": domain_nodes.height,
+                "reused_target_count": target_counts.height,
                 "edge_count": int(total_outbound or 0),
                 "gini": gini(values),
                 "top_1pct_share": top_share(values, 0.01),
+                "top_5pct_share": top_share(values, 0.05),
+                "top_10pct_share": top_share(values, 0.10),
                 "internal_dependency_share": (
                     float(internal_count / total_outbound) if total_outbound else 0.0
                 ),
                 "outbound_domain_diversity": outbound["dst_domain"].n_unique(),
+                "reference_entropy_raw": entropy,
                 "reference_entropy_proxy": normalized_entropy,
+                "reference_entropy_target_domain_count": target_domain_count,
+                "effective_target_domains": math.exp(entropy),
                 "alpha": fit_row["alpha"][0] if fit_row.height else None,
                 "xmin": fit_row["xmin"][0] if fit_row.height else None,
+                "tail_n": fit_row["tail_n"][0] if fit_row.height else None,
+                "rank_exponent_beta": (
+                    rank_row["beta_rank"][0] if rank_row.height else None
+                ),
+                "rank_r_squared": (
+                    rank_row["r_squared"][0] if rank_row.height else None
+                ),
             }
         )
-    pl.DataFrame(domain_rows).write_parquet(metrics_dir / "domain_metrics.parquet", compression="zstd")
+    domain_metrics = pl.DataFrame(domain_rows)
+    domain_metrics.write_parquet(
+        metrics_dir / "domain_metrics.parquet", compression="zstd"
+    )
+    comparable_domains = domain_metrics.filter(pl.col("node_count") >= 100)
+    domain_association_rows = []
+    for left, right in (
+        ("reference_entropy_proxy", "gini"),
+        ("reference_entropy_proxy", "top_1pct_share"),
+        ("reference_entropy_proxy", "rank_exponent_beta"),
+        ("node_count", "gini"),
+        ("node_count", "reference_entropy_proxy"),
+    ):
+        coefficient, p_value = scipy.stats.spearmanr(
+            comparable_domains[left].to_numpy(),
+            comparable_domains[right].to_numpy(),
+        )
+        domain_association_rows.append(
+            {
+                "left_metric": left,
+                "right_metric": right,
+                "n": comparable_domains.height,
+                "spearman_rho": float(coefficient),
+                "p_value": float(p_value),
+            }
+        )
+    pl.DataFrame(domain_association_rows).write_parquet(
+        metrics_dir / "domain_associations.parquet", compression="zstd"
+    )
+
+    del domain_pairs, internal_edges, populations
+    gc.collect()
 
     top_reuse = node_metrics.sort("in_degree_all", "name", descending=[True, False]).head(100)
     top_reuse.write_csv(tables_dir / "top_reuse.csv")
@@ -726,6 +997,14 @@ def analyze(run_kind: str) -> dict[str, Any]:
             / nodes.height
         ),
         "reuse_concentration": view_metrics[0],
+        "veldhuizen_reuse_concentration": {
+            "population": "positive unique-consumer indegree targets",
+            "nodes": view_metrics[0]["positive_nodes"],
+            "gini": view_metrics[0]["gini_positive"],
+            "top_1pct_share": view_metrics[0]["top_1pct_share_positive"],
+            "top_5pct_share": view_metrics[0]["top_5pct_share_positive"],
+            "top_10pct_share": view_metrics[0]["top_10pct_share_positive"],
+        },
         "length_correlations": correlation_rows,
         "reference_entropy_label": "H*ref empirical operational proxy; not theoretical H",
     }

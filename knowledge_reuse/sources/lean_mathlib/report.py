@@ -43,24 +43,24 @@ TITLES = {
     "domain_scale": "图 10 · 主要领域的节点规模",
     "domain_heatmap": "图 11 · 领域间依赖份额",
     "domain_entropy": "图 12 · 领域 H*ref 操作性代理量",
-    "domain_tail": "图 13 · 领域 Gini 与尾部参数",
+    "domain_tail": "图 13 · 领域 Gini 与 Rank–Frequency 指数",
     "robustness": "图 14 · 不同声明视图的稳健性",
 }
 
 FIGURE_CAPTIONS = {
     "kind_counts": "按 Lean 声明种类统计。定理占主体，但构造器、归纳类型和递归器仍作为独立节点保留。",
     "indegree_ccdf": "仅使用正入度节点；双对数坐标用于观察尾部，曲线形状本身不构成幂律证据。",
-    "rank_frequency": "声明按总入度降序排列；绘图时确定性降采样，不改变用于统计检验的完整数据。",
+    "rank_frequency": "声明按总入度降序排列；同时显示同一尾部上的估计斜率与 1/r 参照线。",
     "tail_overlay": "经验 CCDF 与估计幂律尾部的诊断性叠加；模型优劣以似然比较而非视觉判断为准。",
     "source_length": "仅绘制存在源码范围的声明；这里的 Token 是明确规则的源码代理量，不是 Lean lexer token。",
     "type_length": "类型表达式实际共享 DAG 的唯一指针节点数；散点仅为可视化降采样。",
     "value_length": "仅绘制具有定义体或证明体的声明；null 不被替换为零。",
     "length_binned": "Value 展开倍数 T/U 的对数分箱，展示每箱复用入度中位数及四分位数。",
-    "lorenz": "横轴为声明累计比例，纵轴为收到的复用边累计比例；对角线代表完全均匀。",
+    "lorenz": "横轴为正入度声明累计比例，纵轴为收到的 unique-consumer reuse 累计比例；对角线代表完全均匀。",
     "domain_scale": "领域由模块路径映射得到；它是可复现的工程分组，不等同于数学本体分类。",
-    "domain_heatmap": "行是依赖发起领域，列是被依赖领域；颜色表示行内依赖份额。",
-    "domain_entropy": "H*ref 是跨领域引用多样性的经验操作性代理，不是理论信息熵 H。",
-    "domain_tail": "仅包含可估计尾部参数的领域；缺失 alpha 不被替换为零。",
+    "domain_heatmap": "行是依赖发起领域，列是被依赖领域；TYPE/VALUE 重合 pair 折叠一次，颜色表示行内份额。",
+    "domain_entropy": "H*ref 以统一目标领域全集归一化；它是经验代理，不是理论信息熵 H。",
+    "domain_tail": "横轴为领域内复用集中度，纵轴为该来源领域使用组件的 rank–frequency 尾部斜率。",
     "robustness": "比较 ALL、去生成声明、定理、定义及用户可见近似等预注册视图。",
 }
 
@@ -302,12 +302,37 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
 
 
 def build_claim_registry(
-    summary: dict[str, Any], quality: dict[str, Any], fits: pl.DataFrame
+    summary: dict[str, Any],
+    quality: dict[str, Any],
+    fits: pl.DataFrame,
+    rank_fits: pl.DataFrame,
+    domains: pl.DataFrame,
+    regressions: pl.DataFrame,
 ) -> dict[str, Any]:
     all_fit = fits.filter(pl.col("population") == "all_declarations").row(
         0, named=True
     )
     complete = quality["passed"] and quality["extraction_completeness"] == 1
+    all_rank = rank_fits.filter(pl.col("population") == "all_declarations").row(
+        0, named=True
+    )
+    theorem_rank = rank_fits.filter(pl.col("population") == "kind:theorem").row(
+        0, named=True
+    )
+    definition_rank = rank_fits.filter(
+        pl.col("population") == "kind:definition"
+    ).row(0, named=True)
+    algebra_rows = domains.filter(pl.col("domain") == "Algebra")
+    number_theory_rows = domains.filter(pl.col("domain") == "NumberTheory")
+    domain_comparison_available = bool(algebra_rows.height and number_theory_rows.height)
+    algebra = algebra_rows.row(0, named=True) if algebra_rows.height else None
+    number_theory = (
+        number_theory_rows.row(0, named=True) if number_theory_rows.height else None
+    )
+    token_regression = regressions.filter(
+        pl.col("length_metric") == "source_tokens"
+    ).row(0, named=True)
+    concentration = summary["veldhuizen_reuse_concentration"]
     return {
         "schema_version": "report-claims-v1",
         "snapshot_id": summary["snapshot_id"],
@@ -325,41 +350,79 @@ def build_claim_registry(
                 "caveat": "配置排除项和 mathlib 外部 universe 不属于该总体。",
             },
             {
-                "claim_id": "reuse.concentration",
+                "claim_id": "veldhuizen.rank_frequency",
                 "status": "supported",
                 "text": (
-                    f"复用高度集中：Top 1% 承接 "
-                    f"{summary['reuse_concentration']['top_1pct_share']:.1%} 的唯一入边，"
-                    f"Gini={summary['reuse_concentration']['gini']:.3f}。"
+                    f"复用 rank–frequency 明显重尾，但全体尾部 βrank={all_rank['beta_rank']:.3f} "
+                    f"并非严格 1/r；theorem βrank={theorem_rank['beta_rank']:.3f} 接近 1，"
+                    f"definition βrank={definition_rank['beta_rank']:.3f} 更陡。"
                 ),
                 "evidence": [
-                    "metrics/summary.json#/reuse_concentration",
-                    "metrics/view_metrics.parquet",
+                    "metrics/rank_frequency_fits.parquet",
+                    "metrics/powerlaw_fits.parquet",
                 ],
-                "scope": "ALL internal declarations",
-                "caveat": "入度集中不等于数学重要性或人的引用意图。",
-            },
-            {
-                "claim_id": "tail.model_comparison",
-                "status": "inconclusive",
-                "text": (
-                    "入度分布具有重尾，但替代模型比较不支持仅凭图形宣称"
-                    "纯幂律或 Zipf 定律。"
+                "scope": f"positive indegree tail selected at xmin={all_rank['xmin']}; tail_n={all_rank['tail_n']:,}",
+                "caveat": (
+                    "纯 power law 在相对模型比较中不占优；βrank 是描述性 log–log 斜率；"
+                    f"absolute bootstrap={all_fit['bootstrap_status']}。"
                 ),
-                "evidence": ["metrics/powerlaw_fits.parquet#population=all_declarations"],
-                "scope": f"positive indegree population; tail_n={all_fit['tail_n']:,}",
-                "caveat": f"goodness-of-fit bootstrap: {all_fit['bootstrap_status']}",
             },
             {
-                "claim_id": "complexity.association",
+                "claim_id": "veldhuizen.concentration",
+                "status": "supported",
+                "text": (
+                    f"少数组件主导复用：在 {concentration['nodes']:,} 个正入度声明中，"
+                    f"Top 1/5/10% 分别承接 {concentration['top_1pct_share']:.1%}/"
+                    f"{concentration['top_5pct_share']:.1%}/{concentration['top_10pct_share']:.1%}，"
+                    f"Gini={concentration['gini']:.3f}。"
+                ),
+                "evidence": ["metrics/summary.json#/veldhuizen_reuse_concentration"],
+                "scope": "positive unique-consumer indegree targets",
+                "caveat": "unique consumer breadth 不是同一声明内的 raw occurrence 次数。",
+            },
+            {
+                "claim_id": "veldhuizen.domain_heterogeneity",
+                "status": "exploratory" if domain_comparison_available else "inconclusive",
+                "text": (
+                    (
+                        "路径领域具有不同复用结构："
+                        f"Algebra H*ref={algebra['reference_entropy_proxy']:.3f}, Gini={algebra['gini']:.3f}；"
+                        f"NumberTheory H*ref={number_theory['reference_entropy_proxy']:.3f}, "
+                        f"Gini={number_theory['gini']:.3f}。"
+                    )
+                    if domain_comparison_available
+                    else "smoke corpus 不含完成 Algebra/NumberTheory 对照所需的领域总体。"
+                ),
+                "evidence": [
+                    "metrics/domain_metrics.parquet",
+                    "metrics/domain_associations.parquet",
+                ],
+                "scope": "source path-domain unique dependency-pair profiles",
+                "caveat": "H*ref 不是理论 H；领域规模与 Gini 强相关，不能据此断言领域具有内在固定复用潜力。",
+            },
+            {
+                "claim_id": "veldhuizen.complexity_association",
                 "status": "exploratory",
-                "text": "源码、DAG、深度、展开树与依赖广度对复用呈现不同的关联强度，结论依赖复杂度定义与控制项。",
+                "text": (
+                    "长度与复用的结论依赖口径：源码 Token 的未控制相关为正，"
+                    f"但控制 kind/domain 后 βlength={token_regression['coefficient']:.3f}，"
+                    "且 Type/Value 多层 Expr 系数均为负。"
+                ),
                 "evidence": [
                     "metrics/length_correlations.parquet",
                     "metrics/regressions.parquet",
+                    "metrics/stratified_regressions.parquet",
                 ],
                 "scope": "source/type/value metrics with available observations",
-                "caveat": "观察性关联不是因果效应。",
+                "caveat": "这不是论文中的 S(n)；固定离散度模型的观察性关联不是因果效应。",
+            },
+            {
+                "claim_id": "veldhuizen.longitudinal_growth",
+                "status": "inconclusive",
+                "text": "当前只有 mathlib v4.32.1 一个 snapshot，无法检验稳定核心与持续长尾的纵向命题。",
+                "evidence": ["metrics/summary.json#/snapshot_id"],
+                "scope": "single snapshot",
+                "caveat": "单个横截面不能替代多个 commit 上的同口径追踪。",
             },
         ],
     }
@@ -406,7 +469,7 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <style>{{ css|safe }}</style></head><body>
 <header><p class="eyebrow">KNOWLEDGE REUSE RESEARCH · LEAN / MATHLIB V1</p>
 <h1>形式化知识如何被复用？</h1>
-<p class="dek">从真实声明与语义边出发，逐步建立可审计的图统计、复杂度分析和研究结论</p>
+<p class="dek">围绕 Veldhuizen 2005 的可检验命题，判断形式化数学知识是否呈现类似软件库的复用规律</p>
 <div class="status {{ 'ok' if quality.passed else 'bad' }}">
 <b>{{ '完整图构建成功' if quality.extraction_completeness == 1 and quality.passed else '构建未通过完整性门禁' }}</b>
 <span>{{ quality.extracted_module_count }}/{{ quality.expected_module_count }} 模块 · {{ manifest.mathlib_tag }} · {{ manifest.mathlib_commit[:12] }}</span></div>
@@ -424,12 +487,14 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <li><a href="#s9">集中度</a></li><li><a href="#s10">重尾检验</a></li>
 <li><a href="#s11">复杂度与复用</a></li><li><a href="#s12">声明/边类型</a></li>
 <li><a href="#s13">领域</a></li><li><a href="#s14">稳健性</a></li>
-<li><a href="#s15">跨系统</a></li><li><a href="#s16">结论</a></li>
+<li><a href="#s15">论文对照</a></li><li><a href="#s16">明确结论</a></li>
 <li><a href="#s17">附录</a></li>
 </ol></nav><main>
 
 <section id="s1"><h2>1. 执行摘要</h2>
 <p>本报告研究一个简单问题：<b>在大型形式化数学库中，哪些知识被许多其他知识反复使用，这种复用是否集中，以及知识单元的复杂度是否与复用有关？</b>如果你没有学过 Lean、图论或统计学，可以先把 mathlib 想成一本由几十万条“定义与定理卡片”组成、且每张卡片都会列出自己依赖哪些卡片的数字百科全书。</p>
+<div class="answer"><b>一句话结论：</b>mathlib 确实呈现“少数基础声明承担大多数复用、其余声明形成长尾”的软件库式结构，但<b>全体 declaration 不能被判为严格 Zipf 1/r</b>：全体尾部 rank 指数为 β={{ veldhuizen.all_beta }}，theorem 尾部 β={{ veldhuizen.theorem_beta }} 最接近 1，而 definition 为 β={{ veldhuizen.definition_beta }}。因此，与 Veldhuizen 2005 的关系是<b>部分经验一致</b>，不是对其理论模型的完整验证。</div>
+<div class="grid three"><article><h3>命题 1–2：分布与集中</h3><p>{{ veldhuizen.positive_nodes|fmt }} 个正入度声明中，Top 1/5/10% 承接 {{ veldhuizen.top_1 }}% / {{ veldhuizen.top_5 }}% / {{ veldhuizen.top_10 }}%，Gini={{ veldhuizen.gini }}。集中核心得到强支持；严格全体 Zipf 不成立。</p></article><article><h3>命题 3：领域差异</h3><p>Algebra 的 H*ref={{ veldhuizen.algebra_h }}、Gini={{ veldhuizen.algebra_gini }}；NumberTheory 分别为 {{ veldhuizen.number_theory_h }}、{{ veldhuizen.number_theory_gini }}。领域结构不同，但 H*ref 与 Gini 在全部领域中没有稳定单调关系。</p></article><article><h3>命题 4–5：大小与增长</h3><p>控制 kind/domain 后，多种长度系数为负，支持“较短声明更易高复用”的条件关联；但这不是 S(n)，也不是因果。只有一个 snapshot，长期“稳定核心 + 持续长尾”目前不可检验。</p></article></div>
 <div class="grid three"><article><h3>先看什么</h3><p>第 2–7 节回答“研究对象和变量是什么”；第 8–14 节回答“完整数据呈现什么规律”；第 15–17 节回答“怎样解释、比较和回查证据”。</p></article><article><h3>数字怎样读</h3><p>正文先给日常解释和手算例子，再给真实 mathlib 数据。标为“教学例子”的内容只帮助理解，不是实验样本。</p></article><article><h3>结论有多确定</h3><p><code>fact</code> 是数据直接给出的事实；<code>supported</code> 是方法支持的结论；<code>exploratory</code> 是值得继续检验的观察；<code>inconclusive</code> 表示证据还不足。</p></article></div>
 <p>以下结论来自机器可读 claim registry。每条结论都标明证据等级、适用总体和不能推出的内容。</p>
 {% for claim in claims.claims %}<article class="claim {{ claim.status }}" id="{{ claim.claim_id }}">
@@ -460,14 +525,16 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <div class="callout"><b>解释边界</b> 语义常量引用不是人的引用意图。自动生成代码、类型类、强制转换和 elaborator 插入项都属于机器可复现的依赖事实，但不应直接解释为作者有意识的“引用”。</div></section>
 
 <section id="s3"><h2>3. 研究问题与判断路径</h2>
-<p>前一节定义了研究中的“卡片、内容和引用”。现在把总问题拆成五个可以由数据回答的小问题。表中的缩写只是路线图；Gini、CCDF、Spearman、负二项模型和 H*ref 都会在首次真正使用前解释，不要求读者现在已经了解。</p>
-<table><thead><tr><th>RQ</th><th>问题</th><th>总体与方法</th><th>允许的结论</th></tr></thead><tbody>
-<tr><td>A</td><td>复用是否集中/重尾？</td><td>ALL/TYPE/VALUE；Gini、CCDF、模型比较</td><td>集中度可 supported；幂律必须经过比较</td></tr>
-<tr><td>B</td><td>不同层次复杂度与复用关系？</td><td>source、DAG、depth、tree expansion、constant breadth；Spearman、分箱、NB GLM</td><td>比较指标敏感性；观察性关联不作因果解释</td></tr>
-<tr><td>C</td><td>领域是否异质？</td><td>路径领域；matrix、Gini、tail、H*ref</td><td>比较工程 taxonomy，不推断数学本体</td></tr>
-<tr><td>D</td><td>边/节点语义是否不同？</td><td>kind 与 TYPE/VALUE 子图</td><td>分层描述，不混合机制</td></tr>
-<tr><td>E</td><td>能否跨系统比较？</td><td>core graph projection</td><td>比较 core metric，不混同 native units</td></tr>
-</tbody></table><p class="bridge">要回答这些问题，必须先冻结“研究的是哪一版、哪些文件”，否则今天和明天得到的节点集合可能不同。所以下一节先定义 Corpus 与 Snapshot。</p></section>
+<p>Veldhuizen 2005 不是泛泛地说“网络可能重尾”。论文先把组件按使用频率排序，并讨论接近 <code>1/r</code> 的 Zipf 形状；再用理论熵参数 H 解释不同 problem domain 的复用上限，并区分复用频率、每次复用节省的代码量 S(n) 与 library incompleteness。本实验把这些对象逐项操作化，不能测的项目也必须给出 verdict。</p>
+<table><thead><tr><th>命题</th><th>Veldhuizen 对象</th><th>Lean 可观测量</th><th>本报告判断规则</th></tr></thead><tbody>
+<tr><td>P1 核心</td><td>组件使用频率与 Zipf-like 1/r</td><td>unique-consumer indegree 的 C(r)；βrank；候选尾部模型</td><td>βrank≈1 只说明斜率相似；纯幂律还必须通过模型比较</td></tr>
+<tr><td>P2 核心</td><td>少数组件主导复用</td><td>正入度节点 Top 1/5/10%、Gini、Lorenz</td><td>集中结论不依赖严格 1/r 是否成立</td></tr>
+<tr><td>P3 核心</td><td>reuse potential 依赖 problem domain</td><td>来源路径领域的 βrank、Gini、Top-k 与 H*ref</td><td>只称 Veldhuizen-style empirical consistency；H*ref≠理论 H</td></tr>
+<tr><td>P4 扩展</td><td>论文的 S(n) 是每次复用节省量</td><td>source、statement/type Expr、proof/value Expr 大小与复用</td><td>报告 βlength，但不得把 declaration length 当作 S(n)</td></tr>
+<tr><td>P5 纵向</td><td>library incompleteness / 持续扩展</td><td>多个 commit 的 |Vt|、|Et| 与 C_t(r)</td><td>单一 snapshot 一律判为不可检验</td></tr>
+</tbody></table>
+<div class="callout"><b>与原论文数据的关键差别：</b>原论文统计 Unix object 中的组件 reference frequency；本图只能稳定得到“有多少不同 declaration 使用目标”的 unique-consumer breadth。同一 proof 内重复十次仍计一个 consumer。因此本实验是知识复用广度的对应实验，不是 raw relocation occurrence 的逐项复刻。</div>
+<p class="bridge">要回答这些命题，必须先冻结“研究的是哪一版、哪些文件”，否则今天和明天得到的节点集合可能不同。所以下一节先定义 Corpus 与 Snapshot。</p></section>
 
 <section id="s4"><h2>4. 语料（Corpus）与快照（Snapshot）</h2>
 <p><b>Corpus（语料总体）</b>是本次研究允许进入样本的全部 module，可以类比为“这次统计选择了书中的哪些章节”。<b>Snapshot（快照）</b>是把软件版本冻结在某个时刻，可以类比为指定“教材第几版”。固定二者后，报告中的 100% 才有明确分母。</p>
@@ -530,15 +597,19 @@ A 使用 B，C 也使用 B：     A ──→ B ←── C
 <p>该 target 的完整 ALL indegree 为 {{ reuse_target_degree|fmt }}；表中 5 行只是解释计数规则，不是统计样本。</p>
 <h3>怎样读下面两张分布图</h3><ul><li><b>CCDF（互补累积分布）</b>在横轴取一个入度 x，纵轴回答“有多大比例的节点入度至少为 x”。例如 100 个节点中有 20 个入度至少为 10，则该点是 (10, 0.20)。</li><li><b>Rank–Frequency（排名—频数）</b>先按入度从高到低排序：横轴是第几名，纵轴是该名次的入度。它直观显示头部是否只有少数超高复用节点。</li><li><b>log 坐标</b>把 1、10、100、1000 这样的倍数间隔画成等距，便于同时看小值和大值；它不会把相关性或幂律自动“证明”出来。</li></ul>
 <div class="grid figures">{{ figs.indegree_ccdf|safe }}{{ figs.rank_frequency|safe }}</div>
-<p>从一个 target 的入度扩展到全部 {{ summary.declaration_count|fmt }} 个节点，得到 CCDF 与 rank-frequency：{{ (summary.zero_indegree_fraction*100)|round(2) }}% 入度为零，完全孤立比例 {{ (summary.isolated_fraction*100)|round(4) }}%。</p>
+<p><b>图 2（CCDF）的数据现象：</b>曲线横跨多个数量级且缓慢下降，说明高入度节点虽少但真实存在；{{ (summary.zero_indegree_fraction*100)|round(2) }}% 节点入度为零，所以重尾分析只对 {{ veldhuizen.positive_nodes|fmt }} 个正入度目标成立。CCDF 证明“尾部很长”，不决定尾部一定是哪种分布。</p>
+<p><b>图 3（Rank–Frequency）的直接检验：</b>蓝线是完整正入度排序，橙线是在 <code>xmin={{ all_fit.xmin }}</code> 以上 {{ veldhuizen.all_tail_n|fmt }} 个尾部节点拟合的 <code>C(r)∝r^-β</code>，绿线是斜率恰为 1 的参照。估计 β={{ veldhuizen.all_beta }}：它与 1 同属相近数量级，但下降明显更陡，所以全体 mathlib 只能称 <b>heavy-tailed / broadly Zipf-like</b>，不能称严格 <code>1/r</code>。第 12 节将显示 theorem β={{ veldhuizen.theorem_beta }}，比混合总体更接近 1。</p>
+<p class="note">图中的高 R² 主要说明所选尾部在 log–log 坐标下接近直线；rank 点由同一排序共同产生，并非独立样本，因此普通 OLS 标准误不能当作完整的幂律检验。模型胜负仍看第 10 节的分布似然比较。</p>
 <p class="bridge">分布图说明复用差异很大，但还没有回答“差异集中到什么程度”。下一节用 Top share、Gini、HHI 和 Lorenz 曲线把这种不均匀压缩成可比较的数字。</p></section>
 
 <section id="s9"><h2>9. 复用集中度</h2>
 <p>“集中”是问：全部复用关系是否主要流向少量节点。四个指标从不同角度回答：</p><ul><li><b>Top 1% share</b>：入度最高的 1% 节点合计获得全部复用入边的比例；Top 5% 和 10% 同理。</li><li><b>Gini 系数</b>：0 表示每个节点收到同样多的复用，越接近 1 越不均匀。</li><li><b>HHI</b>：先算每个节点占全部复用的份额，再把份额平方后相加；四个节点完全均分时 HHI=0.25，全部集中于一个节点时 HHI=1。</li><li><b>Lorenz 曲线</b>：把节点从低复用排到高复用，看“前 x% 节点累计得到多少复用”；曲线离均等对角线越远，分布越集中。</li></ul>
 <div class="callout"><b>可手算的边界例子：</b>四个节点入度都是 [1,1,1,1] 时，Gini=0，Top 25% share=25%；若是 [0,0,0,4]，Top 25% share=100%，Gini=0.75。这个教学例子说明 Gini 越大意味着越不均匀，但有限样本即使极端集中也不一定恰好等于 1。</div>
-<div class="hero-stats compact"><div><strong>{{ summary.reuse_concentration.gini|round(3) }}</strong><span>Gini</span></div><div><strong>{{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}%</strong><span>Top 1%</span></div><div><strong>{{ (summary.reuse_concentration.top_5pct_share*100)|round(1) }}%</strong><span>Top 5%</span></div><div><strong>{{ (summary.reuse_concentration.top_10pct_share*100)|round(1) }}%</strong><span>Top 10%</span></div></div>
+<p>为了直接对应“所有被依赖的 components”，本节的主结论以正入度目标为分母；第 14 节另给包含零入度节点的图论稳健性视图。</p>
+<div class="hero-stats compact"><div><strong>{{ veldhuizen.gini }}</strong><span>正入度 Gini</span></div><div><strong>{{ veldhuizen.top_1 }}%</strong><span>Top 1%</span></div><div><strong>{{ veldhuizen.top_5 }}%</strong><span>Top 5%</span></div><div><strong>{{ veldhuizen.top_10 }}%</strong><span>Top 10%</span></div></div>
 {{ figs.lorenz|safe }}
-<p>Gini={{ summary.reuse_concentration.gini|round(3) }}，且 Top 1% 节点承接 {{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}% 的复用入边，说明形式化库的复用不是均匀分散的：少数声明承接了大部分依赖。但集中度不自动等价于“数学重要性”，更不代表教学价值或证明难度。</p>
+<p><b>图 9（Lorenz）的数据现象：</b>曲线在大部分横轴范围紧贴底部，直到最后少量声明才快速上升；数值上 Gini={{ veldhuizen.gini }}，Top 1% 已承接 {{ veldhuizen.top_1 }}%，Top 5% 承接 {{ veldhuizen.top_5 }}%。这对 Veldhuizen 的“few components dominate reuse”命题构成强而且不依赖严格 Zipf 的支持。</p>
+<p><b>实际含义：</b>高复用头部确实以基础结构为主，例如 <code>DFunLike.coe</code>、<code>Set</code>、结构继承投影以及 <code>CategoryTheory.Category</code>。它们把共同概念集中在少数接口中，可视为知识表示的共享基础设施；但入度仍不等于数学重要性、教学价值或证明难度。</p>
 <p class="bridge">集中度证明“头部很强”，却不能告诉我们整条尾部最像哪种数学分布。下一节比较多个候选模型，避免仅凭双对数图看起来像直线就宣布幂律。</p></section>
 
 <section id="s10"><h2>10. 重尾模型比较</h2>
@@ -547,14 +618,17 @@ A 使用 B，C 也使用 B：     A ──→ B ←── C
 <h3>拟合表怎样读</h3><table><thead><tr><th>字段</th><th>高中阶段可用的读法</th></tr></thead><tbody>
 <tr><td>n / tail_n</td><td>总体有效节点数 / 真正进入尾部拟合的节点数</td></tr>
 <tr><td>xmin</td><td>从哪个最小入度开始称为“尾部”；更小的值不参与该尾部模型</td></tr>
-<tr><td>alpha</td><td>幂律尾部下降快慢的参数；不能直接解释为知识质量</td></tr>
+<tr><td>degree_tail_alpha</td><td>入度“取某个值的概率”怎样衰减；这是分布指数，不是排名曲线斜率</td></tr>
+<tr><td>beta_rank</td><td><code>C(r)∝r^-β</code> 的排名斜率；β=1 才直接对应 Veldhuizen 图中的 1/r</td></tr>
+<tr><td>R²</td><td>所选 rank 尾部在 log–log 图上有多接近直线；高 R² 仍不能替代分布模型检验</td></tr>
 <tr><td>KS</td><td>经验分布与拟合曲线的最大距离；同一总体中越小通常越贴近，但不能单独决定模型胜负</td></tr>
 <tr><td>R</td><td>对数似然差：正值偏向 power law，负值偏向对照模型</td></tr>
 <tr><td>p</td><td>若两个模型实际同样合适，出现当前这么大差异的相对意外程度；较小只支持“有差异”，不证明模型永远正确</td></tr>
 </tbody></table>
 {{ figs.tail_overlay|safe }}
 {{ fits_table|safe }}
-<p>全体正入度声明的拟合参数为 alpha={{ all_fit.alpha }}, xmin={{ all_fit.xmin }}, KS={{ all_fit.ks }}。相对 lognormal 与 truncated power law 的对数似然比为负且达到显著性，说明替代模型在当前比较中更受支持。因此正确结论是“存在重尾和强集中”，而不是“已证实 Zipf 定律”。</p>
+<p><b>图 4 与拟合表的合并结论：</b>全体入度分布的 <code>degree_tail_alpha={{ all_fit.alpha }}</code>、<code>xmin={{ all_fit.xmin }}</code>、KS={{ all_fit.ks }}；同一尾部的 <code>beta_rank={{ veldhuizen.all_beta }}</code>。前者回答“入度概率怎样衰减”，后者才回答“第 r 名怎样衰减”，所以不能把 1.778 误写成 Veldhuizen 的 rank 指数。</p>
+<p>经验 CCDF 与幂律线视觉接近，但 power law 相对 lognormal 和 truncated power law 的对数似然比均为负且差异显著，表示两个替代模型更受支持。theorem 的 βrank={{ veldhuizen.theorem_beta }} 接近 1，只能形成<b>类别限定的 Zipf-like 证据</b>；全体 βrank={{ veldhuizen.all_beta }} 与 definition βrank={{ veldhuizen.definition_beta }} 表明混合所有 kind 会掩盖结构差异。</p>
 <p class="note"><b>相对比较与绝对检验不同：</b>R/p 回答“两个候选模型谁更好”，bootstrap goodness-of-fit 回答“最佳候选本身是否足够像真实数据”。当前 bootstrap 状态为 <code>{{ all_fit.bootstrap_status }}</code>，所以不能报告绝对拟合优度 p 值，也不能宣称普适 Zipf 定律。</p>
 <p class="bridge">重尾分析研究的是“复用入度如何分布”。下一节回到每个节点自身，把源码与 Expr 的多层复杂度同复用入度逐一比较。</p></section>
 
@@ -563,6 +637,10 @@ A 使用 B，C 也使用 B：     A ──→ B ←── C
 {{ complexity_compare_table|safe }}
 <h3>从散点到模型：为什么需要四步</h3><ol class="steps"><li><b>散点图</b>把一个 declaration 画成一个点，先观察是否有明显形状；log 坐标让数量级差异可见。</li><li><b>对数分箱</b>把复杂度相近的节点分组，比较每组复用的中位数和四分位范围，避免只盯着极端点。</li><li><b>Spearman 秩相关</b>只比较两个变量的高低排序是否同步，不要求关系是一条直线。</li><li><b>计数回归</b>在同时考虑 kind 和 domain 后，估计复杂度变化与期望入度的关联。</li></ol>
 <div class="grid figures">{{ figs.source_length|safe }}{{ figs.type_length|safe }}{{ figs.value_length|safe }}{{ figs.length_binned|safe }}</div>
+<p><b>图 5（源码 Token）：</b>点云非常分散，没有“越长就必然越高复用”的窄带；未控制 Spearman ρ={{ complexity_analysis.source_token_rho }} 是弱正相关。它主要反映不同 kind/domain 混合后的排序，不能单独回答同类声明中长度效应。</p>
+<p><b>图 6（statement/type DAG U）：</b>高复用点更多出现在较小 U 区域，但仍有大量低复用小对象；这对应弱负秩相关，而非确定性规则。一个短 type 只是更可能处于基础接口位置，并不保证高复用。</p>
+<p><b>图 7（proof/value DAG U）：</b>整体点云近乎水平铺开，未控制相关接近零；这说明大型证明项并不天然更常被引用。控制类别和领域后才出现负系数，提示总体混合掩盖了条件关系。</p>
+<p><b>图 8（展开倍数 T/U 分箱）：</b>中位复用线大部分接近低值，四分位线也没有随展开倍数稳定上升；因此巨大的共享展开不是“高复用工作量”的代理。T/U 描述表达式共享形态，不等于 declaration 对外提供的复用价值。</p>
 <h3>秩相关</h3>{{ correlations_table|safe }}
 <p><b>Spearman ρ 怎样读：</b>范围是 -1 到 1。接近 1 表示复杂度排名越高，复用排名通常也越高；接近 -1 表示一个升高时另一个通常降低；接近 0 表示没有明显的单调排序关系。ρ 不说明因果，也可能受 kind、domain 等第三个变量影响。</p>
 <p><b>实际结果：</b>源码 Token 代理量与复用的未控制秩相关为 ρ={{ complexity_analysis.source_token_rho }}；Type 的 U/A/D/T/T÷U 指标均为弱负相关（ρ 范围 {{ complexity_analysis.type_rho_min }} 至 {{ complexity_analysis.type_rho_max }}）；Value/Proof 的对应指标接近零（ρ 范围 {{ complexity_analysis.value_rho_min }} 至 {{ complexity_analysis.value_rho_max }}）。因此，极大的展开树 T 并不对应极高复用。</p>
@@ -570,52 +648,71 @@ A 使用 B，C 也使用 B：     A ──→ B ←── C
 <p><b>为什么用负二项 GLM？</b>入度是 0、1、2……这样的计数，而且少量节点特别大，波动远大于普通平均值模型所假设的程度。负二项广义线性模型（GLM）专门处理这种过度分散的计数。<code>log1p(x)=log(1+x)</code>，先加 1 是为了让 x=0 也能进入对数计算。</p>
 <p><b>“控制 kind + domain”</b>类似比较学习时间与成绩时，先尽量在同年级、同课程的学生之间比较；它减少构成差异，但仍不能排除所有隐藏因素。<b>95% CI（置信区间）</b>表示在模型假设下估计的不确定范围；<b>p value</b>衡量零效应假设下当前结果的意外程度。样本极大时很小的效应也会有极小 p 值，所以本报告优先读效应大小与 CI，而不是把 <code>p=0.0</code> 当成“绝对真理”——0.0 只是显示精度下的舍入。</p>
 <p>模型使用 <code>log1p(complexity)</code> 并控制 kind + domain。表中的“复杂度翻倍变化”把抽象系数转换为期望复用的相对变化。所有结果都是观察性关联，不是“复杂度导致复用”的因果效应。</p>
-<p><b>控制后的读法：</b>在同 kind、同 domain 的比较口径下，Token 翻倍对应期望复用变化 {{ complexity_analysis.source_token_double }}%；Value DAG 唯一节点 U 翻倍为 {{ complexity_analysis.value_u_double }}%；Value 展开树 T 翻倍为 {{ complexity_analysis.value_t_double }}%；Value 最大深度 D 翻倍为 {{ complexity_analysis.value_d_double }}%。T 的效应幅度小于 U 与 D，再次说明展开计数不能代替实际结构或深度。</p>
-<p class="note">模型诊断：{{ complexity_analysis.regression_status }}。自由估计 dispersion 的拟合未产生全部有限估计时，分析器使用预先声明的 α=1 Negative Binomial GLM；因此置信区间是在该固定离散度模型下的条件结果，结论等级保持 exploratory。</p>
+<p><b>控制后的主结论：</b>Token 系数 βlength={{ complexity_analysis.token_beta }}，95% CI [{{ complexity_analysis.token_ci_low }}, {{ complexity_analysis.token_ci_high }}]；Token 翻倍对应期望复用变化 {{ complexity_analysis.source_token_double }}%。Value DAG U 翻倍为 {{ complexity_analysis.value_u_double }}%，Value 展开树 T 为 {{ complexity_analysis.value_t_double }}%，Value 最大深度 D 为 {{ complexity_analysis.value_d_double }}%。所有方向为负，但幅度依复杂度定义不同。</p>
+<h3>theorem 与 definition 内部分层</h3>{{ stratified_regressions_table|safe }}
+<p>分层后方向仍为负：theorem 内 Token 翻倍约 {{ complexity_analysis.theorem_token_double }}%，definition 内约 {{ complexity_analysis.definition_token_double }}%；Value DAG U 翻倍分别约 {{ complexity_analysis.theorem_value_u_double }}% 与 {{ complexity_analysis.definition_value_u_double }}%。因此数据更支持“在同领域、同类声明中，较短和较基础的对象更容易成为高复用组件”，但 definition 的关联明显更强，不能用一个系数概括所有 node。</p>
+<div class="callout"><b>与 Veldhuizen 的边界：</b>这里的 βlength 研究 declaration 自身长度与 consumer breadth。论文的 S(n) 是“第 n 个组件每次被复用时节省多少代码”。本数据没有反事实地计算“若删除该 declaration，每个使用者要多写多少”，所以不能说验证了 S(n)。</div>
+<p class="note">模型诊断：{{ complexity_analysis.regression_status }}。模型使用预先声明的 α=1 Negative Binomial GLM；置信区间是在固定离散度模型下的条件结果。源码仅覆盖有可靠 range 的节点，且年代、API 层级、自动推理机制仍可能混杂，因此结论等级保持 exploratory。</p>
 <div class="callout"><b>如何读多层结果：</b>若 T 的关联明显强于 U/A/D，可能是共享展开倍数在起作用；若 U 与 A 接近而 D 很弱，可能是总体结构规模而非最长嵌套链相关；若源码 Token 与 Expr 指标方向不同，说明短源码也可能精化成复杂对象。必须以表中实际系数、区间和 n 为准。</div>
 <p class="bridge">复杂度模型已经控制 kind 和 domain，但不同 kind 与不同边类型本身仍有独立语义。下一节把这些类别重新展开，防止把自动生成基础设施与人工定理混成一种复用。</p></section>
 
 <section id="s12"><h2>12. 声明种类（Node kind）与边语义</h2>
 {{ figs.kind_counts|safe }}{{ kind_table|safe }}
+<p><b>图 1（kind 构成）：</b>theorem 占 {{ theorem_share }}% 节点，因此“全体曲线”在节点数量上主要受 theorem 影响；但 definition 的复用总量与集中度远高于 theorem，说明节点多不等于承担的基础设施复用多。必须同时读构成图和下表，不能只看柱高。</p>
+<h3>按 kind 的 Veldhuizen 指标</h3>{{ kind_reuse_table|safe }}
+<p><b>分层结论：</b>theorem 的 βrank={{ veldhuizen.theorem_beta }}、正入度 Gini={{ veldhuizen.theorem_gini }}、Top 1%={{ veldhuizen.theorem_top_1 }}%，最接近 1/r；definition 的 βrank={{ veldhuizen.definition_beta }}、Gini={{ veldhuizen.definition_gini }}、Top 1%={{ veldhuizen.definition_top_1 }}%，尾部更陡且复用更集中；constructor 的 βrank={{ veldhuizen.constructor_beta }} 也接近 1，但总体小得多。由此可见，全体 β={{ veldhuizen.all_beta }} 是不同生成机制的混合值。</p>
 <p><b>kind</b> 是 declaration 的生成类别，不是质量评分。theorem 表示命题及证明；definition/opaque 表示概念或实现；inductive 定义数据类型；constructor 构造该类型的值；recursor 提供按构造规则处理该类型的方法。定理占 {{ theorem_share }}% 节点，但数量多不自动表示它们承担最多基础设施复用。</p>
+<div class="callout"><b>instance 当前必须报告为 not available，而不是 0：</b>Lean 环境把许多 instance 存成 definition/opaque，并通过 type-class attribute 标记；当前 graph schema 只有 ConstantInfo kind，没有独立 <code>is_instance</code> 字段。因此本报告不能给出可信的 instance-only β、Gini 或 Top-k，也不会把 definition 结果冒充 instance 结果。这是本轮 Veldhuizen 分层比较尚未满足的一项观测限制。</div>
 <p>前述 VALUE theorem→theorem 最接近“证明使用引理”，TYPE theorem→definition 则表示命题陈述依赖某个概念。definition→definition 更像软件实现依赖，自动插入的类型类与强制转换又是另一种机制。因此同样一条入边，在不同 kind/edge 组合下不能完全作同一种人类意图解释。</p>
 <p><b>generated</b> 是名称模式识别出的构造器辅助项、递归器、注入定理等系统性声明；<b>internal</b> 是私有或辅助命名空间中的声明。它们真实参与 Lean 检查，所以保留在底图；报告只在明确命名的派生视图中排除它们。</p>
 <p class="bridge">Kind 描述“知识卡片是什么”。另一个可能改变规律的因素是“它属于哪个数学领域”。下一节按 module 路径构造可复现的领域标签并统计领域间箭头。</p></section>
 
 <section id="s13"><h2>13. 领域结构与 H*ref</h2>
 <p>领域标签来自 module 的高层路径，例如 <code>Mathlib.Algebra...</code> 归入 Algebra。它像按书架位置分类：规则清楚、可以重复得到同样结果，但一条定理可能跨越多个主题，所以它不是严格的数学本体分类。</p>
-<p><b>领域依赖矩阵</b>的每一行是发出依赖的 source domain，每一列是收到依赖的 target domain；每条内部 typed edge 使对应 cell 加 1。某行的 row share 是该来源领域全部外发边中，指向某目标领域的比例。下面用两条跨领域边和一条领域内边展示累加规则。</p>{{ domain_examples_table|safe }}
-<h3>H*ref 怎样计算</h3><p>对来源领域 d，先把它的边按目标领域 b 分组，令 <code>p(b)=指向 b 的边数 / d 的全部外发边数</code>。然后计算 <code>-Σ p(b) log p(b)</code>，再除以 <code>log(Nd)</code>；Nd 是来源领域的节点数。本报告把结果记作 H*ref。</p>
-<div class="callout"><b>教学例子：</b>若某领域 100 条边全指向 Algebra，则只有一个比例 p=1，H*ref 的分子为 0；若 50 条指向 Algebra、50 条指向 Topology，则两个比例都是 0.5，分子为 <code>-2×0.5×log(0.5)=log(2)</code>。在相同 Nd 下，第二种依赖来源更分散，所以 H*ref 更高。</div>
+<p><b>领域依赖矩阵</b>的每一行是发出依赖的 source domain，每一列是收到依赖的 target domain。为了与 C_i 的 unique-consumer 单位一致，同一 `(src,dst)` 同时有 TYPE/VALUE 时先折叠一次，再使对应 cell 加 1。某行的 row share 是该来源领域全部唯一 dependency pairs 中指向某目标领域的比例。</p>{{ domain_examples_table|safe }}
+<h3>Veldhuizen-style H*ref 怎样计算</h3><p>对来源领域 d，令 <code>p_d(b)=d 指向目标领域 b 的唯一 dependency pairs / d 的全部内部 dependency pairs</code>。当前共有 D={{ domain_analysis.target_domain_count }} 个可观测目标领域，定义 <code>H*ref(d)=-Σ p_d(b) log p_d(b) / log(D)</code>。统一分母使不同规模领域落在 0 到 1：接近 0 表示依赖集中在少数目标领域，接近 1 表示在 D 个领域间更均匀。</p>
+<div class="callout"><b>教学例子：</b>若 100 个 pairs 全指向 Algebra，则只有 p=1，分子为 0，H*ref=0；若 50 个指向 Algebra、50 个指向 Topology，分子为 <code>log(2)</code>，所以 H*ref=<code>log(2)/log({{ domain_analysis.target_domain_count }})≈{{ domain_analysis.two_target_h }}</code>。它衡量“目标领域分散度”，不是一个 declaration 内部有多复杂。</div>
 <div class="grid figures">{{ figs.domain_scale|safe }}{{ figs.domain_heatmap|safe }}{{ figs.domain_entropy|safe }}{{ figs.domain_tail|safe }}</div>
+<p><b>图 10（领域规模）：</b>Algebra、CategoryTheory、Analysis、Topology 等来源领域规模差异很大；规模本身与 Gini 的 Spearman ρ={{ veldhuizen.size_gini_rho }}（p={{ veldhuizen.size_gini_p }}），所以不能把所有 Gini 差异都归因于领域语义。</p>
+<p><b>图 11（依赖矩阵）：</b>CategoryTheory 与 Algebra 的行内对角块较强，分别有大量依赖留在本领域；Analysis、Topology、NumberTheory 的依赖则更明显地流向其他基础领域。它直观解释了为什么前两者 H*ref 较低，但颜色是依赖份额，不是数学相似度。</p>
+<p><b>图 12（H*ref）：</b>Algebra={{ veldhuizen.algebra_h }}，而 NumberTheory={{ veldhuizen.number_theory_h }}；对应的有效目标领域数约为 <code>exp(Hraw)</code>，前者约 2.78，后者约 5.73。这个成对比较与“Algebra 共享抽象更集中、NumberTheory 跨领域依赖更分散”的解释一致。</p>
+<p><b>图 13（Gini 与 βrank）：</b>各领域没有落在单一点上，表明复用尾部确实异质。但 H*ref 与 Gini 在节点数至少 100 的领域中只有 ρ={{ veldhuizen.entropy_gini_rho }}（p={{ veldhuizen.entropy_gini_p }}），没有显著单调关系；因此不能从 Algebra/NumberTheory 这一对例子推广成“H*ref 越低，Gini 必然越高”的普遍定律。</p>
 {{ domain_table|safe }}
-<div class="callout"><b>H*ref 的解释边界：</b>它是按“目标领域份额”构造的经验代理，并使用来源领域节点数缩放；不是标准 0–1 归一化熵，不等于理论 H，也不能直接解释为领域的内在复杂度。它只适合在本报告统一规则下比较依赖较集中还是较分散。</div>
+<h3>领域指标间关联审计</h3>{{ domain_associations_table|safe }}
+<div class="callout"><b>H*ref 的解释边界：</b>它是按目标领域份额构造的 0–1 经验代理，适合在本报告统一规则下比较依赖较集中还是较分散；它不等于 Veldhuizen 对程序分布定义的理论 H，不能推出 <code>1-H</code> 的代码可复用比例，也不能证明“reuse potential 是领域的内在常数”。本数据只支持路径领域结构存在差异，与论文命题经验相容。</div>
 <p class="bridge">领域与 kind 都可能改变结果。最后还要问：如果去掉系统生成节点或只看定理，集中度结论是否仍存在？这就是稳健性检查。</p></section>
 
 <section id="s14"><h2>14. 稳健性视图</h2>
 <p><b>稳健性检查</b>是把同一个问题换几种合理的样本范围再算一次。如果结论只在某一种筛选下成立，就应缩小结论范围；如果多个视图方向一致，结论就不太可能由单一类别偶然制造。</p>
 <ul><li><b>ALL</b>：全部内部 declaration。</li><li><b>NO_GENERATED</b>：排除名称模式识别的系统生成声明。</li><li><b>THEOREM_ONLY / DEF_ONLY</b>：分别只看 theorem 或 definition/opaque。</li><li><b>THEOREM_AND_DEF</b>：只保留最主要的数学结论与定义。</li><li><b>USER_FACING_APPROX</b>：同时排除 generated 与 internal，近似面向普通库使用者的声明集合。</li></ul>
 {{ figs.robustness|safe }}{{ views_table|safe }}
-<p>ALL 的 Gini={{ robustness_analysis.all_gini }}，NO_GENERATED 为 {{ robustness_analysis.no_generated_gini }}，THEOREM_ONLY 为 {{ robustness_analysis.theorem_gini }}，DEF_ONLY 为 {{ robustness_analysis.definition_gini }}。所有视图仍表现出明显不均匀，但 theorem-only 的集中度低于 definition-only，说明“高度集中”具有稳健性，而具体强度依赖节点类型。</p>
+<p><b>图 14 的结果：</b>这里保留零入度节点，用来检查完整图口径。ALL 的 Gini={{ robustness_analysis.all_gini }}，NO_GENERATED 为 {{ robustness_analysis.no_generated_gini }}，THEOREM_ONLY 为 {{ robustness_analysis.theorem_gini }}，DEF_ONLY 为 {{ robustness_analysis.definition_gini }}。排除 generated 后集中度没有消失，所以“少数节点承担大部分复用”不是只由自动生成声明造成；但 theorem-only 明显低于 definition-only，再次证明 kind 混合会改变强度。</p>
 <p class="note">稳健性一致不等于没有偏差：名称启发式可能无法识别所有生成声明，USER_FACING_APPROX 也不是人工数学重要性标签。它只回答预注册视图下结论是否改变。</p>
 <p class="bridge">至此 Lean 内部分析完成。下一节只比较各系统共同的“节点—边—入度”语法，不把 Lean Expr、Wikipedia 文本和软件 AST 的原始复杂度误当成同一种单位。</p></section>
 
-<section id="s15"><h2>15. 跨系统解释</h2>
-<p>跨系统比较的关键不是让对象长得一样，而是先对齐问题：一个知识单元被多少不同来源直接使用？在 Lean 中来源是 declaration，在 Wikipedia 中可以是页面，在软件中可以是函数或 package。</p>
-<table><thead><tr><th>通用概念</th><th>Lean</th><th>Wikipedia</th><th>Software</th></tr></thead><tbody>
-<tr><td>node</td><td>declaration</td><td>page/article</td><td>固定粒度的 function/module/package</td></tr>
-<tr><td>edge</td><td>TYPE/VALUE reference</td><td>hyperlink/citation</td><td>call/import/dependency</td></tr>
-<tr><td>reuse</td><td>unique consumer indegree</td><td>unique linking pages</td><td>unique callers/dependents</td></tr>
-<tr><td>native complexity</td><td>source proxy；Expr U/A/D/T；unique constants</td><td>wikitext/token/link/section structure</td><td>source token；AST/call depth/cyclomatic structure</td></tr>
-</tbody></table><p><b>可以直接对齐的量</b>包括节点数、唯一来源入度、Top share、Gini 和 rank-frequency，因为它们都基于“有多少不同来源指向目标”。<b>不能直接对齐的原值</b>包括 Lean Expr U、Wikipedia wikitext bytes 和软件 AST nodes：它们的单位和生成机制不同。跨系统时应分别在系统内部标准化或比较效应方向，而不是说“100 个 Expr 节点等于 100 个 AST 节点”。</p>
-<div class="callout"><b>统一例子：</b>若一个 Lean 定义被 20 个 declaration 使用、一个 Wikipedia 页面被 20 个不同页面链接、一个软件函数被 20 个不同函数调用，它们的 unique indegree 都是 20；但这并不意味着三者具有相同复杂度、质量或社会影响。</div>
-<p class="bridge">最后把五个研究问题逐一收束，并明确哪些是数据事实、哪些仍只是探索性解释。</p></section>
+<section id="s15"><h2>15. 与 Veldhuizen 2005 的正面对照</h2>
+<p>论文 <i>Software Libraries and Their Reuse: Entropy, Kolmogorov Complexity, and Zipf's Law</i> 的理论起点是：组件引用需要编码，组件复用率受到约束；在最大熵解释下，经验使用频率可能靠近 Zipf <code>1/r</code>。论文的定理 4.1 给出比简单 <code>1/r</code> 更严格的渐近上界，而 <code>λ(n)≈1/n</code> 是随后关于库演化和最大熵的解释及 Unix 数据观察，不能把两者写成同一个已证明等式。</p>
+<table><thead><tr><th>论文对象</th><th>Lean 对应量</th><th>当前数值</th><th>明确 verdict</th></tr></thead><tbody>
+<tr><td>component reuse frequency / Zipf-like 1/r</td><td>正入度 declaration 的 C(r)，βrank</td><td>ALL {{ veldhuizen.all_beta }}；theorem {{ veldhuizen.theorem_beta }}；definition {{ veldhuizen.definition_beta }}</td><td><b>部分支持</b>：重尾成立，theorem 接近 1/r；全体与 definition 不是严格 1/r</td></tr>
+<tr><td>few components dominate reuse</td><td>正入度 Top-k / Gini</td><td>Top 1/5/10={{ veldhuizen.top_1 }}%/{{ veldhuizen.top_5 }}%/{{ veldhuizen.top_10 }}%；Gini={{ veldhuizen.gini }}</td><td><b>支持</b>：少数基础 declaration 主导复用</td></tr>
+<tr><td>reuse potential differs by domain</td><td>来源路径领域 βrank、Gini、H*ref</td><td>Algebra H*={{ veldhuizen.algebra_h }}；NumberTheory H*={{ veldhuizen.number_theory_h }}</td><td><b>经验相容</b>：领域有差异；不足以证明理论 H 或内在因果</td></tr>
+<tr><td>S(n): code saved per component use</td><td>本报告仅有 declaration size</td><td>Token βlength={{ complexity_analysis.token_beta }}；多层 Expr 条件系数为负</td><td><b>扩展性观察</b>：较短对象条件上更高复用；没有测量 S(n)</td></tr>
+<tr><td>Library Incompleteness / vocabulary growth</td><td>多个 mathlib commit 的 Vt、Et、C_t(r)</td><td>只有 {{ summary.snapshot_id }}</td><td><b>不可检验</b>：不能从单一横截面声称稳定核心或持续长尾</td></tr>
+</tbody></table>
+<h3>为什么只能说“经验对应”</h3><ul><li>Unix 数据是共享对象中的 reference frequency；Lean 主指标是 unique consumer declaration breadth，不保留同一 Expr 内 occurrence multiplicity。</li><li>论文 H 建立在 problem domain 的程序概率分布及渐近熵上；H*ref 只是一次快照中目标领域份额的标准化熵。</li><li>论文 S(n) 是一次复用的代码节省；Lean source/Expr length 是被复用对象自身大小，两者没有等号。</li><li>论文 incompleteness 是带前提的理论结果；历史图只能检验与“稳定核心 + 新增长尾”是否经验相容，不能证明该定理。</li></ul>
+<p>这套操作化仍可用于后续 Wikipedia 与软件图：先统一比较 unique indegree、Top-k、Gini 与 βrank，再保留各系统自己的复杂度单位。它们可以回答“结构是否相似”，不能让 Lean Expr U、wikitext bytes 与软件 AST nodes 直接互换。</p>
+<p class="note">论文来源：Todd L. Veldhuizen, 2005, arXiv:cs/0508023v3，<a href="https://arxiv.org/abs/cs/0508023v3">摘要与版本页面</a>。</p>
+<p class="bridge">最后不再给模糊的“可能相关”，而是按五个命题逐项给出支持、部分支持、探索性支持或不可检验。</p></section>
 
-<section id="s16"><h2>16. 解释、局限与结论</h2>
-<h3>逐项回答研究问题</h3><ol class="steps"><li><b>RQ-A：复用是否集中或重尾？</b>是，集中结论得到支持：ALL Gini={{ summary.reuse_concentration.gini|round(3) }}，Top 1% share={{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}%。分布具有重尾，但 lognormal 与 truncated power law 在当前相对比较中优于纯 power law，加上绝对 bootstrap 尚不可用，所以“普适 Zipf 定律”仍属 inconclusive。</li><li><b>RQ-B：复杂度与复用有什么关系？</b>关系依赖定义。源码 Token 的未控制 ρ={{ complexity_analysis.source_token_rho }}；Type 结构指标为弱负相关，Value 结构指标接近零。控制 kind/domain 后系数均为负，但模型使用固定 dispersion，故结论保持 exploratory，不能解释为复杂度导致低复用。</li><li><b>RQ-C：领域是否异质？</b>是。在节点数至少 100 的 {{ domain_analysis.domain_count }} 个路径领域中，Gini 从 {{ domain_analysis.gini_min }} 到 {{ domain_analysis.gini_max }}，依赖矩阵和 H*ref 也不同；但范围仍受领域规模影响，路径标签也只是可复现代理，不是严格数学分类。</li><li><b>RQ-D：节点与边语义是否不同？</b>是。theorem-only 与 definition-only 的集中度明显不同，TYPE 与 VALUE 分别描述陈述依赖和证明/实现依赖，不能混成一种人类引用。</li><li><b>RQ-E：能否跨系统比较？</b>图的 core 指标可以比较，native complexity 原值不能直接比较。本报告只完成 Lean 数据分析；Wikipedia 与软件的实证比较必须等待各自 adapter 产生同等级证据。</li></ol>
-<div class="grid"><article><h3>这份报告可以支持什么</h3><p>在固定 mathlib v4.32.1、configured corpus 和 declaration-level 图上，复用高度集中且具有长尾；节点种类、领域和复杂度定义会改变关联强度；展开树 T 与实际 DAG U/D 不能互相替代。</p></article><article><h3>这份报告不能推出什么</h3><p>入度不等于数学质量、教学价值或人的引用意图；观察性关联不是因果；单一 snapshot 不能证明历史规律；路径领域不是数学本体；pointer U 不是跨 Lean 版本不变的语义量。</p></article></div>
-<h3>主要不确定性</h3><ul><li>源码范围只有 {{ ((1-quality.null_rates.source_bytes)*100)|round(2) }}% 节点可观测，因此 source complexity 的总体与 Expr complexity 不同。</li><li>Value null 集中于 inductive/constructor/recursor；相关分析明确排除，但 kind 构成仍影响总体解释。</li><li>回归控制了 kind/domain，却仍可能遗漏年代、API 层级、自动推理机制等变量。</li><li>重尾模型只有相对比较，没有完成绝对 goodness-of-fit bootstrap。</li><li>本报告是一个版本的横截面，不说明复用随版本如何演化。</li></ul>
-<p>下一阶段可实现拟合优度 bootstrap与跨版本比较；Wikipedia 与开源软件图应使用各自 adapter 和本地复杂度单位，再通过同一 core graph contract 比较。</p></section>
+<section id="s16"><h2>16. 五个可检验命题的明确结论</h2>
+<article class="verdict"><h3>P1 · declaration reuse 是否 Zipf / heavy-tail？——重尾：是；严格全体 Zipf：否；theorem-only：接近</h3><p>全体正入度 declaration 的尾部 βrank={{ veldhuizen.all_beta }}，不是 1；theorem βrank={{ veldhuizen.theorem_beta }} 最接近 1，definition βrank={{ veldhuizen.definition_beta }}。同时 lognormal 与 truncated power law 相对纯 power law 更受支持。因此可以说 mathlib 复用具有长尾，theorem reuse 与 Veldhuizen 的 1/r 观察相似；不能说整个 mathlib 已验证统一 Zipf 定律。</p></article>
+<article class="verdict"><h3>P2 · 是否由少数基础组件主导？——支持，而且证据很强</h3><p>{{ veldhuizen.positive_nodes|fmt }} 个被至少一个内部 declaration 使用的目标中，Top 1/5/10% 承接 {{ veldhuizen.top_1 }}% / {{ veldhuizen.top_5 }}% / {{ veldhuizen.top_10 }}%，Gini={{ veldhuizen.gini }}。definition 的 Top 1%={{ veldhuizen.definition_top_1 }}%，theorem 为 {{ veldhuizen.theorem_top_1 }}%。结论是：少数定义、结构投影、归纳基础与核心定理构成高复用基础设施；这种集中在排除 generated 后仍存在。</p></article>
+<article class="verdict exploratory"><h3>P3 · reuse potential 是否随数学领域变化？——领域异质性得到支持；理论命题只获经验相容</h3><p>节点数至少 100 的 {{ domain_analysis.domain_count }} 个来源路径领域中，Gini={{ domain_analysis.gini_min }}–{{ domain_analysis.gini_max }}，H*ref={{ domain_analysis.h_min }}–{{ domain_analysis.h_max }}，βrank={{ domain_analysis.rank_beta_min }}–{{ domain_analysis.rank_beta_max }}。Algebra 的 H*ref={{ veldhuizen.algebra_h }}、Top 1%={{ veldhuizen.algebra_top_1 }}%，NumberTheory 为 {{ veldhuizen.number_theory_h }}、{{ veldhuizen.number_theory_top_1 }}%，与“Algebra 依赖较集中、NumberTheory 依赖目标更分散”的成对解释一致。但跨全部领域 H*ref 与 Gini 的 ρ={{ veldhuizen.entropy_gini_rho }}、p={{ veldhuizen.entropy_gini_p }}，不支持简单普遍的单调关系；规模效应也很强。因此只能说领域结构不同，与 Veldhuizen 命题经验相容，不能说估计了理论 H。</p></article>
+<article class="verdict exploratory"><h3>P4 · declaration 大小与复用是否有关？——控制后为负，支持“较短组件更易复用”的条件关联</h3><p>源码 Token 未控制 ρ={{ complexity_analysis.source_token_rho }}，但控制 kind/domain 后 βlength={{ complexity_analysis.token_beta }}，翻倍对应期望入度 {{ complexity_analysis.source_token_double }}%；Type 与 Value 的 U/A/D/T/T÷U 系数也全部为负。theorem 与 definition 内部分层仍为负，且 definition 更强。这个结论有研究价值，但只是观察性关联；长度不是 S(n)，不能解释为“短导致复用”或“节省了同样多代码”。</p></article>
+<article class="verdict inconclusive"><h3>P5 · library 扩张是否形成稳定核心 + 持续长尾？——当前不可检验</h3><p>本报告只有 <code>{{ summary.snapshot_id }}</code> 一个横截面，没有多个 commit 上同口径的 V、E、rank 曲线与核心节点留存率。任何关于长期稳定核心、长尾新增速度或 library incompleteness 的经验结论都将越过证据；需要至少三个时间点并固定 extractor/schema 后再检验。</p></article>
+<div class="answer"><b>最终研究回答：</b>形式化数学知识在“少数组件主导复用”和“长尾结构”上与软件库表现出强相似性；其中 theorem 的 rank 尾部最接近 Veldhuizen 的 1/r。与此同时，kind 与领域差异足够大，使“mathlib 服从一个统一 Zipf 定律”成为错误的过度概括。最准确的表述是：<b>Lean/mathlib 对 Veldhuizen 的集中复用观察提供强支持，对 Zipf 与领域命题提供分层、有限的经验支持，对 S(n) 与 library incompleteness 尚未完成直接检验。</b></div>
+<h3>决定结论强度的限制</h3><ul><li>主复用量是 unique consumer breadth，不是同一 proof/body 内的 occurrence frequency。</li><li>instance role 尚不可观测；当前 definition 层不能替代 instance-only 结论。</li><li>源码范围覆盖 {{ ((1-quality.null_rates.source_bytes)*100)|round(2) }}%，Value null 按 kind 非随机分布；缺失没有补零。</li><li>rank β 是所选尾部的描述性斜率，纯 power law 的绝对 goodness-of-fit bootstrap 尚未实现。</li><li>回归为固定离散度条件模型，仍可能遗漏声明年代、API 层级和自动推理机制。</li><li>单 snapshot 不能回答历史增长。</li></ul>
+<p>下一轮若要提升论文级证据，优先级依次为：补充稳定的 <code>is_instance</code> 角色；实现尾部拟合优度 bootstrap；冻结多个 mathlib commits 做纵向图；最后再与 Unix/software、Wikipedia 在相同 unique-consumer 口径下比较。</p></section>
 
 <section id="s17"><h2>17. 附录：证据索引</h2>
 <p>以下表格供研究人员从报告结论回到机器可读证据。<b>manifest</b> 像数据的版本说明书；<b>SHA-256</b> 像文件指纹，只要文件内容改变，指纹几乎必然改变。普通读者不需要逐项检查，reviewer 可以用它确认报告引用的是同一份数据。</p>
@@ -688,15 +785,23 @@ def generate(run_kind: str) -> dict[str, Any]:
     manifest = run_manifest(run_kind)
     nodes = pl.read_parquet(metrics / "node_metrics.parquet")
     fits = pl.read_parquet(metrics / "powerlaw_fits.parquet")
+    rank_fits = pl.read_parquet(metrics / "rank_frequency_fits.parquet")
+    kind_reuse = pl.read_parquet(metrics / "kind_reuse_metrics.parquet")
     regressions = pl.read_parquet(metrics / "regressions.parquet")
+    stratified_regressions = pl.read_parquet(
+        metrics / "stratified_regressions.parquet"
+    )
     domains = pl.read_parquet(metrics / "domain_metrics.parquet")
-    matrix = pl.read_parquet(tables / "domain_matrix.parquet")
+    domain_associations = pl.read_parquet(metrics / "domain_associations.parquet")
+    domain_reuse_matrix = pl.read_parquet(tables / "domain_reuse_matrix.parquet")
     views = pl.read_parquet(metrics / "view_metrics.parquet")
     bins = pl.read_parquet(metrics / "length_binned.parquet")
     value_availability = pl.read_parquet(metrics / "value_availability.parquet")
     examples_path = tables / "report_examples.parquet"
     examples = pl.read_parquet(examples_path)
-    claims = build_claim_registry(summary, quality, fits)
+    claims = build_claim_registry(
+        summary, quality, fits, rank_fits, domains, regressions
+    )
     claims_path = report / "claims.json"
     examples_json_path = report / "examples.json"
     claims_path.write_text(json.dumps(claims, indent=2, sort_keys=True) + "\n")
@@ -721,14 +826,19 @@ def generate(run_kind: str) -> dict[str, Any]:
         metrics / "data_quality.json",
         metrics / "node_metrics.parquet",
         metrics / "powerlaw_fits.parquet",
+        metrics / "rank_frequency_fits.parquet",
+        metrics / "kind_reuse_metrics.parquet",
         metrics / "regressions.parquet",
+        metrics / "stratified_regressions.parquet",
         metrics / "domain_metrics.parquet",
+        metrics / "domain_associations.parquet",
         metrics / "view_metrics.parquet",
         metrics / "length_binned.parquet",
         metrics / "length_correlations.parquet",
         metrics / "value_availability.parquet",
         tables / "top_reuse.csv",
         tables / "domain_matrix.parquet",
+        tables / "domain_reuse_matrix.parquet",
         examples_path,
         claims_path,
         examples_json_path,
@@ -820,12 +930,13 @@ def generate(run_kind: str) -> dict[str, Any]:
     )
 
     degree = sorted(nodes["in_degree_all"].to_list(), reverse=True)
+    rank_degree = [value for value in degree if value > 0]
     positive = sorted([value for value in degree if value > 0])
     ccdf_x = sorted(set(positive))
     ccdf_y = [
         sum(value >= x for value in positive) / len(positive) for x in ccdf_x
     ] if positive else []
-    lorenz_values = sorted(degree)
+    lorenz_values = positive
     total = sum(lorenz_values) or 1
     cumulative = [0.0]
     for value in lorenz_values:
@@ -836,6 +947,7 @@ def generate(run_kind: str) -> dict[str, Any]:
     kind_counts = sorted(summary["declaration_counts_by_kind"].items())
     top_domains = domains.sort("node_count", descending=True).head(14)
     all_fit = fits.filter(pl.col("population") == "all_declarations")
+    all_rank = rank_fits.filter(pl.col("population") == "all_declarations")
     alpha = (
         float(all_fit["alpha"][0])
         if all_fit.height and all_fit["alpha"][0] is not None
@@ -848,6 +960,16 @@ def generate(run_kind: str) -> dict[str, Any]:
     )
     tail_x = [float(x) for x in ccdf_x if x >= xmin]
     tail_y = [(x / xmin) ** (1 - alpha) for x in tail_x]
+    rank_tail_n = int(all_rank["tail_n"][0])
+    rank_tail_x = list(range(1, rank_tail_n + 1))
+    rank_tail_y = [
+        math.exp(float(all_rank["intercept"][0]))
+        * rank ** (-float(all_rank["beta_rank"][0]))
+        for rank in rank_tail_x
+    ]
+    rank_mid = max(1, rank_tail_n // 2)
+    zipf_scale = rank_tail_y[rank_mid - 1] * rank_mid
+    zipf_y = [zipf_scale / rank for rank in rank_tail_x]
     binned = bins.filter(
         pl.col("length_metric") == "value_expr_expansion_factor"
     ).sort(
@@ -870,7 +992,11 @@ def generate(run_kind: str) -> dict[str, Any]:
         ),
         "rank_frequency": line_svg(
             TITLES["rank_frequency"],
-            [("all", list(range(1, len(degree) + 1)), degree)],
+            [
+                ("empirical", list(range(1, len(rank_degree) + 1)), rank_degree),
+                ("tail fit", rank_tail_x, rank_tail_y),
+                ("Zipf 1/r", rank_tail_x, zipf_y),
+            ],
             "rank (log)",
             "indegree (log)",
             True,
@@ -929,7 +1055,7 @@ def generate(run_kind: str) -> dict[str, Any]:
             top_domains["node_count"].to_list(),
             "nodes",
         ),
-        "domain_heatmap": heatmap_svg(matrix),
+        "domain_heatmap": heatmap_svg(domain_reuse_matrix),
         "domain_entropy": bar_svg(
             TITLES["domain_entropy"],
             top_domains["domain"].to_list(),
@@ -939,9 +1065,9 @@ def generate(run_kind: str) -> dict[str, Any]:
         "domain_tail": points_svg(
             TITLES["domain_tail"],
             domains["gini"].to_list(),
-            domains["alpha"].to_list(),
+            domains["rank_exponent_beta"].to_list(),
             "Gini",
-            "tail alpha",
+            "rank exponent beta",
             False,
             False,
         ),
@@ -972,17 +1098,17 @@ def generate(run_kind: str) -> dict[str, Any]:
     figure_samples = {
         "kind_counts": f"population=ALL；n_total={nodes.height:,}；使用完整统计。",
         "indegree_ccdf": f"population=positive indegree；n_valid={len(positive):,}；折线显示≤700点。",
-        "rank_frequency": f"n_total={nodes.height:,}；n_positive={len(positive):,}；折线显示≤700点。",
+        "rank_frequency": f"n_positive={len(positive):,}；tail_n={rank_tail_n:,}；每条折线显示≤700点。",
         "tail_overlay": f"population=indegree≥xmin；tail_n={all_fit['tail_n'][0]:,}；折线显示≤700点。",
         "source_length": f"n_total={nodes.height:,}；metric n_valid={source_valid:,}；positive plotted population={source_plotted:,}；显示≤1,600点。",
         "type_length": f"n_total=n_valid={nodes.height:,}；positive plotted population={type_plotted:,}；显示≤1,600点。",
         "value_length": f"n_total={nodes.height:,}；metric n_valid={value_valid:,}；positive plotted population={value_plotted:,}；显示≤1,600点。",
         "length_binned": f"value expansion n_valid={value_valid:,}；分箱统计使用全部有效值。",
-        "lorenz": f"population=ALL；n_total={nodes.height:,}；折线显示≤700点。",
+        "lorenz": f"population=positive indegree targets；n={len(positive):,}；折线显示≤700点。",
         "domain_scale": f"population=top domains；展示 {top_domains.height} 个领域。",
-        "domain_heatmap": f"population=internal typed edges；n={matrix['edge_count'].sum():,}。",
+        "domain_heatmap": f"population=internal unique dependency pairs；n={domain_reuse_matrix['dependency_pair_count'].sum():,}。",
         "domain_entropy": f"population=top domains；展示 {top_domains.height} 个领域。",
-        "domain_tail": f"population=domains with fitted alpha；n_valid={domains['alpha'].drop_nulls().len()}。",
+        "domain_tail": f"population=domains with fitted rank exponent；n_valid={domains['rank_exponent_beta'].drop_nulls().len()}。",
         "robustness": f"population=registered views；n_views={views.height}。",
     }
     local = {
@@ -1032,6 +1158,35 @@ def generate(run_kind: str) -> dict[str, Any]:
     regression_by_metric = {
         row["length_metric"]: row for row in regressions.iter_rows(named=True)
     }
+    rank_by_population = {
+        row["population"]: row for row in rank_fits.iter_rows(named=True)
+    }
+    kind_reuse_by_name = {
+        row["kind"]: row for row in kind_reuse.iter_rows(named=True)
+    }
+    domain_by_name = {
+        row["domain"]: row for row in domains.iter_rows(named=True)
+    }
+    domain_association_by_pair = {
+        (row["left_metric"], row["right_metric"]): row
+        for row in domain_associations.iter_rows(named=True)
+    }
+    stratified_by_key = {
+        (row["stratum"], row["length_metric"]): row
+        for row in stratified_regressions.iter_rows(named=True)
+    }
+
+    def formatted_metric(row: dict[str, Any] | None, key: str) -> str:
+        if row is None:
+            return "—"
+        value = row.get(key)
+        return f"{value:.3f}" if value is not None and math.isfinite(value) else "—"
+
+    def formatted_percent(row: dict[str, Any] | None, key: str) -> str:
+        if row is None:
+            return "—"
+        value = row.get(key)
+        return f"{value * 100:.1f}" if value is not None and math.isfinite(value) else "—"
     type_rhos = [
         correlation_by_metric[f"type_expr_{suffix}"]
         for suffix in (
@@ -1057,6 +1212,10 @@ def generate(run_kind: str) -> dict[str, Any]:
         coefficient = regression_by_metric[metric]["coefficient"]
         return f"{(math.exp(coefficient * math.log(2)) - 1) * 100:.1f}"
 
+    def stratified_doubling(stratum: str, metric: str) -> str:
+        coefficient = stratified_by_key[(stratum, metric)]["coefficient"]
+        return f"{(math.exp(coefficient * math.log(2)) - 1) * 100:.1f}"
+
     status_counts = regressions.group_by("status").len().sort("status")
     regression_status = "；".join(
         f"{row['len']}/{regressions.height} 为 {row['status']}"
@@ -1064,6 +1223,25 @@ def generate(run_kind: str) -> dict[str, Any]:
     )
     view_by_name = {row["view"]: row for row in views.iter_rows(named=True)}
     comparable_domains = domains.filter(pl.col("node_count") >= 100)
+    target_domain_count = int(domains["reference_entropy_target_domain_count"][0])
+    positive_concentration = summary["veldhuizen_reuse_concentration"]
+    entropy_gini = domain_association_by_pair[("reference_entropy_proxy", "gini")]
+    size_gini = domain_association_by_pair[("node_count", "gini")]
+    rank_report = fits.join(
+        rank_fits.select(
+            "population",
+            "beta_rank",
+            "r_squared",
+            "distance_from_zipf_1",
+        ),
+        on="population",
+        how="left",
+    )
+    stratified_report = stratified_regressions.with_columns(
+        (((pl.col("coefficient") * math.log(2)).exp() - 1) * 100).alias(
+            "复杂度翻倍变化 %"
+        )
+    )
     context = {
         "css": CSS,
         "quality": quality,
@@ -1084,6 +1262,75 @@ def generate(run_kind: str) -> dict[str, Any]:
             "value_t_double": doubling_change("value_expr_tree_occurrences"),
             "value_d_double": doubling_change("value_expr_max_depth"),
             "regression_status": regression_status,
+            "token_beta": f"{regression_by_metric['source_tokens']['coefficient']:.3f}",
+            "token_ci_low": f"{regression_by_metric['source_tokens']['ci_low']:.3f}",
+            "token_ci_high": f"{regression_by_metric['source_tokens']['ci_high']:.3f}",
+            "theorem_token_double": stratified_doubling("theorem", "source_tokens"),
+            "definition_token_double": stratified_doubling("definition", "source_tokens"),
+            "theorem_value_u_double": stratified_doubling(
+                "theorem", "value_expr_unique_ptr_nodes"
+            ),
+            "definition_value_u_double": stratified_doubling(
+                "definition", "value_expr_unique_ptr_nodes"
+            ),
+        },
+        "veldhuizen": {
+            "positive_nodes": positive_concentration["nodes"],
+            "gini": f"{positive_concentration['gini']:.3f}",
+            "top_1": f"{positive_concentration['top_1pct_share'] * 100:.1f}",
+            "top_5": f"{positive_concentration['top_5pct_share'] * 100:.1f}",
+            "top_10": f"{positive_concentration['top_10pct_share'] * 100:.1f}",
+            "all_beta": formatted_metric(
+                rank_by_population.get("all_declarations"), "beta_rank"
+            ),
+            "all_tail_n": rank_by_population["all_declarations"]["tail_n"],
+            "theorem_beta": formatted_metric(
+                rank_by_population.get("kind:theorem"), "beta_rank"
+            ),
+            "definition_beta": formatted_metric(
+                rank_by_population.get("kind:definition"), "beta_rank"
+            ),
+            "constructor_beta": formatted_metric(
+                rank_by_population.get("kind:constructor"), "beta_rank"
+            ),
+            "theorem_gini": formatted_metric(
+                kind_reuse_by_name.get("theorem"), "gini_positive"
+            ),
+            "definition_gini": formatted_metric(
+                kind_reuse_by_name.get("definition"), "gini_positive"
+            ),
+            "theorem_top_1": formatted_percent(
+                kind_reuse_by_name.get("theorem"), "top_1pct_share_positive"
+            ),
+            "definition_top_1": formatted_percent(
+                kind_reuse_by_name.get("definition"), "top_1pct_share_positive"
+            ),
+            "algebra_h": formatted_metric(
+                domain_by_name.get("Algebra"), "reference_entropy_proxy"
+            ),
+            "algebra_gini": formatted_metric(domain_by_name.get("Algebra"), "gini"),
+            "algebra_top_1": formatted_percent(
+                domain_by_name.get("Algebra"), "top_1pct_share"
+            ),
+            "algebra_beta": formatted_metric(
+                domain_by_name.get("Algebra"), "rank_exponent_beta"
+            ),
+            "number_theory_h": formatted_metric(
+                domain_by_name.get("NumberTheory"), "reference_entropy_proxy"
+            ),
+            "number_theory_gini": formatted_metric(
+                domain_by_name.get("NumberTheory"), "gini"
+            ),
+            "number_theory_top_1": formatted_percent(
+                domain_by_name.get("NumberTheory"), "top_1pct_share"
+            ),
+            "number_theory_beta": formatted_metric(
+                domain_by_name.get("NumberTheory"), "rank_exponent_beta"
+            ),
+            "entropy_gini_rho": f"{entropy_gini['spearman_rho']:.3f}",
+            "entropy_gini_p": f"{entropy_gini['p_value']:.3f}",
+            "size_gini_rho": f"{size_gini['spearman_rho']:.3f}",
+            "size_gini_p": f"{size_gini['p_value']:.2g}",
         },
         "robustness_analysis": {
             "all_gini": f"{view_by_name['ALL']['gini']:.3f}",
@@ -1093,8 +1340,14 @@ def generate(run_kind: str) -> dict[str, Any]:
         },
         "domain_analysis": {
             "domain_count": comparable_domains.height,
+            "target_domain_count": target_domain_count,
+            "two_target_h": f"{math.log(2) / math.log(target_domain_count):.3f}",
             "gini_min": f"{comparable_domains['gini'].min():.3f}",
             "gini_max": f"{comparable_domains['gini'].max():.3f}",
+            "h_min": f"{comparable_domains['reference_entropy_proxy'].min():.3f}",
+            "h_max": f"{comparable_domains['reference_entropy_proxy'].max():.3f}",
+            "rank_beta_min": f"{comparable_domains['rank_exponent_beta'].min():.3f}",
+            "rank_beta_max": f"{comparable_domains['rank_exponent_beta'].max():.3f}",
         },
         "all_fit": {
             "alpha": format_cell(alpha),
@@ -1222,12 +1475,15 @@ def generate(run_kind: str) -> dict[str, Any]:
         "correlations_table": render_table(correlations, 10),
         "kind_table": render_table(kind_stats, 10),
         "fits_table": render_table(
-            fits.select(
+            rank_report.select(
                 "population",
                 "n",
                 "tail_n",
                 "xmin",
-                "alpha",
+                pl.col("alpha").alias("degree_tail_alpha"),
+                "beta_rank",
+                "r_squared",
+                "distance_from_zipf_1",
                 "ks",
                 "powerlaw_vs_lognormal_r",
                 "powerlaw_vs_lognormal_p",
@@ -1238,6 +1494,22 @@ def generate(run_kind: str) -> dict[str, Any]:
             40,
         ),
         "regressions_table": render_table(regression_report, 10),
+        "stratified_regressions_table": render_table(
+            stratified_report.select(
+                "stratum",
+                pl.col("length_metric").alias("变量"),
+                "n",
+                pl.col("coefficient").alias("beta"),
+                pl.col("ci_low").alias("95% CI low"),
+                pl.col("ci_high").alias("95% CI high"),
+                "复杂度翻倍变化 %",
+                "controls",
+                "status",
+            ),
+            20,
+        ),
+        "kind_reuse_table": render_table(kind_reuse, 20),
+        "domain_associations_table": render_table(domain_associations, 20),
         "domain_table": render_table(
             domains.sort("node_count", descending=True), 30
         ),

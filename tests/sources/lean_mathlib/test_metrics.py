@@ -1,6 +1,12 @@
+import numpy as np
 import polars as pl
 
-from knowledge_reuse.sources.lean_mathlib.metrics import build_report_examples
+from knowledge_reuse.sources.lean_mathlib.metrics import (
+    build_report_examples,
+    fit_regression,
+    fit_rank_frequency,
+    internal_unique_dependency_pairs,
+)
 
 
 def _node(node_id: int, name: str, kind: str = "theorem", has_value: bool = True) -> dict:
@@ -63,3 +69,56 @@ def test_report_examples_bind_real_type_value_and_null_cases() -> None:
         "::CategoryTheory.Category"
     )
     assert sum(row["concept"] == "reuse indegree" for row in examples) == 2
+
+
+def test_rank_frequency_fit_recovers_zipf_slope() -> None:
+    ranks = np.arange(1, 2_001, dtype=float)
+    counts = 10_000 / ranks
+
+    result = fit_rank_frequency(counts, "fixture", xmin=float(counts.min()))
+
+    assert result["status"] == "ok"
+    assert abs(result["beta_rank"] - 1.0) < 1e-10
+    assert result["r_squared"] > 0.999999
+    assert result["tail_n"] == 2_000
+
+
+def test_internal_dependency_pairs_collapse_type_value_duplicates() -> None:
+    nodes = pl.DataFrame(
+        {
+            "node_id": [1, 2, 3],
+            "domain": ["Algebra", "Topology", "Topology"],
+        }
+    )
+    edges = pl.DataFrame(
+        {
+            "src_id": [1, 1, 1],
+            "dst_id": [2, 2, 3],
+            "edge_type": ["TYPE", "VALUE", "TYPE"],
+        }
+    )
+
+    pairs = internal_unique_dependency_pairs(nodes, edges)
+
+    assert pairs.height == 2
+    assert pairs.select("src_domain").unique().item() == "Algebra"
+    assert pairs.select("dst_domain").unique().item() == "Topology"
+
+
+def test_memory_efficient_negative_binomial_uses_all_rows() -> None:
+    length = np.arange(1, 401)
+    frame = pl.DataFrame(
+        {
+            "source_tokens": length,
+            "in_degree_all": np.maximum(1, (800 / np.sqrt(length)).astype(int)),
+            "kind": ["definition"] * len(length),
+            "domain": ["Test"] * len(length),
+        }
+    )
+
+    result = fit_regression(frame, "source_tokens")
+
+    assert result["status"] == "ok_nb2_fixed_dispersion"
+    assert result["n"] == len(length)
+    assert result["coefficient"] < 0
+    assert result["ci_high"] < 0
