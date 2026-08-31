@@ -418,18 +418,20 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 </div></header>
 <nav><b>报告目录</b><ol>
 <li><a href="#s1">执行摘要</a></li><li><a href="#s2">概念设计</a></li>
-<li><a href="#s3">研究问题</a></li><li><a href="#s4">Corpus</a></li>
+<li><a href="#s3">研究问题</a></li><li><a href="#s4">语料与版本</a></li>
 <li><a href="#s5">图语义</a></li><li><a href="#s6">完整性</a></li>
 <li><a href="#s7">复杂度</a></li><li><a href="#s8">图统计</a></li>
 <li><a href="#s9">集中度</a></li><li><a href="#s10">重尾检验</a></li>
-<li><a href="#s11">复杂度与复用</a></li><li><a href="#s12">Kind/Edge</a></li>
+<li><a href="#s11">复杂度与复用</a></li><li><a href="#s12">声明/边类型</a></li>
 <li><a href="#s13">领域</a></li><li><a href="#s14">稳健性</a></li>
 <li><a href="#s15">跨系统</a></li><li><a href="#s16">结论</a></li>
 <li><a href="#s17">附录</a></li>
 </ol></nav><main>
 
 <section id="s1"><h2>1. 执行摘要</h2>
-<p>以下结论来自机器可读 claim registry。每条结论都标明证据等级、总体范围和限制。</p>
+<p>本报告研究一个简单问题：<b>在大型形式化数学库中，哪些知识被许多其他知识反复使用，这种复用是否集中，以及知识单元的复杂度是否与复用有关？</b>如果你没有学过 Lean、图论或统计学，可以先把 mathlib 想成一本由几十万条“定义与定理卡片”组成、且每张卡片都会列出自己依赖哪些卡片的数字百科全书。</p>
+<div class="grid three"><article><h3>先看什么</h3><p>第 2–7 节回答“研究对象和变量是什么”；第 8–14 节回答“完整数据呈现什么规律”；第 15–17 节回答“怎样解释、比较和回查证据”。</p></article><article><h3>数字怎样读</h3><p>正文先给日常解释和手算例子，再给真实 mathlib 数据。标为“教学例子”的内容只帮助理解，不是实验样本。</p></article><article><h3>结论有多确定</h3><p><code>fact</code> 是数据直接给出的事实；<code>supported</code> 是方法支持的结论；<code>exploratory</code> 是值得继续检验的观察；<code>inconclusive</code> 表示证据还不足。</p></article></div>
+<p>以下结论来自机器可读 claim registry。每条结论都标明证据等级、适用总体和不能推出的内容。</p>
 {% for claim in claims.claims %}<article class="claim {{ claim.status }}" id="{{ claim.claim_id }}">
 <div><span class="badge">{{ claim.status }}</span><b>{{ claim.text }}</b></div>
 <p><strong>范围：</strong>{{ claim.scope }}　<strong>限制：</strong>{{ claim.caveat }}</p>
@@ -437,42 +439,63 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <p class="bridge">下面不直接跳到总体图形。我们先用真实 mathlib declaration 建立 node、value 和 reuse 的直觉，再说明这些单例如何扩展成全库统计。</p></section>
 
 <section id="s2"><h2>2. 概念设计与研究对象</h2>
-<p>研究对象是 <em>mathlib 中已 elaboration 的形式化知识单元及其直接语义依赖</em>。Lean 把一条定理、定义、公理、归纳类型、构造器或递归器登记为一个有完整名称的 declaration；本研究把配置语料内的每个 declaration 作为一个 node。Node 不是源码中的一行，也不是表达式树中的一个小括号。</p>
+<p><b>Lean</b> 是一种让计算机检查数学定义和证明是否正确的语言，<b>mathlib</b> 是用 Lean 编写的大型数学库。人写下的 Lean 源码常包含省略写法；Lean 会把它翻译成类型信息完整、计算机可以逐项检查的内部表达式，这一步叫做<b>精化（elaboration）</b>。本研究分析精化后的结果，而不是只数源码中肉眼可见的名字。</p>
+<p>Lean 把一条定理、定义、公理、归纳类型、构造器或递归器登记为一个带完整名称的<b>声明（declaration）</b>。本研究把配置语料内的每个 declaration 作为图中的一个<b>节点（node）</b>。因此 Node 不是源码中的一行，也不是表达式里的一个小括号，而是一张可以被别的声明引用的完整“知识卡片”。</p>
+<div class="callout"><b>教学例子，不是实验数据：</b><code>def double (n : Nat) : Nat := n + n</code> 是一个 declaration。它的 <b>type</b> 可直观读作“输入一个自然数，输出一个自然数”；它的 <b>value</b> 是“把 n 与自己相加”的具体实现。对 theorem 而言，type 是待证明的命题，value 则是供 Lean 检查的证明项。</div>
 <div class="grid"><article><h3>Node 有什么</h3><p>每个 node 一定有 <b>name</b>、<b>kind</b> 和 <b>type</b>。type 说明“它是什么”；如果环境还公开定义体或证明体，则另有 <b>value</b>，说明“它怎样被构造或证明”。源码范围是附加观测，缺失不会删除 node。</p></article>
-<article><h3>Node value 为什么会是 null</h3><p>判定规则只有一个：固定环境的 <code>getDeclarationValue?</code> 返回 none 时，<code>has_value=false</code>，全部 value-complexity 记为 null。null 表示“没有可观测 value”，不是“复杂度为零”。归纳类型和构造器等常出现这种情况；实际分布见下表。</p></article>
+<article><h3>Node value 为什么会是 null</h3><p>有些声明只通过“类型与构造规则”存在，并没有普通定义体或证明体可读取。程序的正式判定是：<code>getDeclarationValue?</code> 返回 none 时记 <code>has_value=false</code>，全部 value-complexity 记为 null。null 表示“这里没有可观测对象”，不是“测得复杂度为零”。</p></article>
 <article><h3>Reuse 是什么</h3><p>若 A 的 elaborated type 或 value 包含常量 B，则 A → B。B 的入度统计有多少不同声明复用它；A 的出度描述自身直接依赖负担。</p></article>
-<article><h3>Complexity 是什么</h3><p>复杂度不是一个数字。本研究分别观察源码表面规模、表达式 DAG 的实际结构、最大嵌套深度、共享内容完全展开后的规模，以及引用了多少不同常量。它们回答不同问题，不能互相替代。</p></article></div>
+<article><h3>Complexity 是什么</h3><p>复杂度不是一个数字。本研究分别观察源码表面规模、内部表达式实际保存的结构、最大嵌套深度、共享内容完全展开后的规模，以及引用了多少种不同常量。第 7 节会逐一手算。</p></article></div>
+<h3>最少术语表</h3><table><thead><tr><th>术语</th><th>可以先怎样理解</th><th>本研究怎样使用</th></tr></thead><tbody>
+<tr><td>module</td><td>一个 Lean 源文件及其导入单元，类似书中的一章</td><td>记录来源，并由高层路径派生领域标签</td></tr>
+<tr><td>declaration / node</td><td>一张有名字、可被引用的知识卡片</td><td>图的基本节点</td></tr>
+<tr><td>theorem</td><td>一个命题连同可检查的证明</td><td>type 是命题，value 是证明项</td></tr>
+<tr><td>definition / opaque</td><td>概念、函数或构造的定义</td><td>type 是接口，value 是实现</td></tr>
+<tr><td>inductive / constructor / recursor</td><td>定义一种数据、构造该数据、按规则使用该数据</td><td>都是真实节点，但通常没有可读 value</td></tr>
+<tr><td>Expr</td><td>Lean 精化后用于表示 type 或 value 的内部表达式</td><td>用于计算第 7 节的结构复杂度</td></tr>
+</tbody></table>
 <h3>Value 可观测性按声明类型分布</h3>{{ value_availability_table|safe }}
 <p class="callout"><b>null 对复用实验的影响：</b>该 node 仍进入总体图；它的 type 边、别人指向它的入边和复用入度都可分析。只有它自身的 VALUE 出边与 value/proof 复杂度不可观测，因此相关分析按有效样本数排除，而不是补 0。若某类 node 的 null 比例很高，跨 kind 比较必须分层或控制 kind。</p>
 <h3>真实节点证据</h3>{{ node_examples_table|safe }}
 <div class="callout"><b>解释边界</b> 语义常量引用不是人的引用意图。自动生成代码、类型类、强制转换和 elaborator 插入项都属于机器可复现的依赖事实，但不应直接解释为作者有意识的“引用”。</div></section>
 
 <section id="s3"><h2>3. 研究问题与判断路径</h2>
+<p>前一节定义了研究中的“卡片、内容和引用”。现在把总问题拆成五个可以由数据回答的小问题。表中的缩写只是路线图；Gini、CCDF、Spearman、负二项模型和 H*ref 都会在首次真正使用前解释，不要求读者现在已经了解。</p>
 <table><thead><tr><th>RQ</th><th>问题</th><th>总体与方法</th><th>允许的结论</th></tr></thead><tbody>
 <tr><td>A</td><td>复用是否集中/重尾？</td><td>ALL/TYPE/VALUE；Gini、CCDF、模型比较</td><td>集中度可 supported；幂律必须经过比较</td></tr>
 <tr><td>B</td><td>不同层次复杂度与复用关系？</td><td>source、DAG、depth、tree expansion、constant breadth；Spearman、分箱、NB GLM</td><td>比较指标敏感性；观察性关联不作因果解释</td></tr>
 <tr><td>C</td><td>领域是否异质？</td><td>路径领域；matrix、Gini、tail、H*ref</td><td>比较工程 taxonomy，不推断数学本体</td></tr>
 <tr><td>D</td><td>边/节点语义是否不同？</td><td>kind 与 TYPE/VALUE 子图</td><td>分层描述，不混合机制</td></tr>
 <tr><td>E</td><td>能否跨系统比较？</td><td>core graph projection</td><td>比较 core metric，不混同 native units</td></tr>
-</tbody></table></section>
+</tbody></table><p class="bridge">要回答这些问题，必须先冻结“研究的是哪一版、哪些文件”，否则今天和明天得到的节点集合可能不同。所以下一节先定义 Corpus 与 Snapshot。</p></section>
 
-<section id="s4"><h2>4. Corpus 与 Snapshot</h2>
-<p>本报告绑定 <code>{{ manifest.mathlib_tag }}</code>、完整 commit <code>{{ manifest.mathlib_commit }}</code> 和 toolchain <code>{{ manifest.lean_toolchain }}</code>。总体由 <code>{{ config.corpus_glob }}</code> 与版本化 exclusions 共同定义。</p>
+<section id="s4"><h2>4. 语料（Corpus）与快照（Snapshot）</h2>
+<p><b>Corpus（语料总体）</b>是本次研究允许进入样本的全部 module，可以类比为“这次统计选择了书中的哪些章节”。<b>Snapshot（快照）</b>是把软件版本冻结在某个时刻，可以类比为指定“教材第几版”。固定二者后，报告中的 100% 才有明确分母。</p>
+<p>本报告绑定 mathlib 标签 <code>{{ manifest.mathlib_tag }}</code>、完整 commit <code>{{ manifest.mathlib_commit }}</code> 和 Lean toolchain <code>{{ manifest.lean_toolchain }}</code>。标签便于人阅读，commit 精确指定代码内容，toolchain 指定用哪一版 Lean 解释这些内容。总体由 <code>{{ config.corpus_glob }}</code> 与版本化 exclusions 共同定义。</p>
 <h3>配置化排除规则</h3>{{ exclusions_table|safe }}
-<p class="note">“100% 完整”只指 configured corpus；不包含排除目录、其他 Lean package 或历史版本。</p></section>
+<p class="note">“100% 完整”只指 configured corpus；不包含排除目录、其他 Lean package 或历史版本。它不是“整个数学知识世界的 100%”。</p>
+<p class="bridge">总体固定后，下一步才可以定义每一条引用怎样变成有方向、有类型的图边。</p></section>
 
-<section id="s5"><h2>5. 图构建语义：从真实边到 Graph</h2>
-<p>定义 <code>G=(V,E)</code>，方向固定为 <code>consumer → dependency</code>。TYPE 表示 target constant 出现在 type/statement；VALUE 表示它出现在 definition body 或 proof。</p>
+<section id="s5"><h2>5. 图构建语义：从真实边到完整图</h2>
+<p><b>图（graph）</b>由节点集合 V 和边集合 E 组成，写作 <code>G=(V,E)</code>。这里的边带箭头，所以是<b>有向图</b>。方向固定为 <code>使用者 consumer → 被使用者 dependency</code>：如果 A 使用 B，就画 A→B。这个方向容易画反，但它有一个好处——越多箭头指向 B，B 就被越多声明复用。</p>
+<pre class="dag">教学例子，不是实验数据：
+A 使用 B，C 也使用 B：     A ──→ B ←── C
+因此 B 有 2 个不同使用者，复用入度为 2；A 和 C 各发出 1 条依赖边。</pre>
+<p>边还分两种语义：<b>TYPE</b> 表示目标常量出现在声明的 type/statement 中，也就是“表达这句话需要什么”；<b>VALUE</b> 表示目标常量出现在 definition body 或 proof 中，也就是“实现或证明它需要什么”。</p>
 <h3>两个不同语义的真实关系</h3>{{ edge_examples_table|safe }}
 <div class="grid"><article><h3>TYPE 示例如何进入图</h3><p><code>padicValRat.of_nat</code> 的 elaborated type 包含 <code>padicValNat</code>，因此规范化为一条 theorem→definition TYPE edge。</p></article><article><h3>VALUE 示例如何进入图</h3><p><code>constantCoeff_xInTermsOfW</code> 的 proof/value 包含 <code>map_pow</code>，因此规范化为 theorem→theorem VALUE edge。</p></article></div>
-<p class="bridge">单条边只证明一个依赖实例存在。将所有 declaration 的常量引用按相同规则提取、确定性编号并对 `(src,dst,type)` 去重，才得到用于总体分析的完整图。</p></section>
+<h3>“唯一类型化边”怎样计数</h3><p>若 A 的同一个 proof 中出现 B 十次，主图的 `(A,B,VALUE)` 仍只计 1 条，因为主问题是“有多少不同 declaration 使用 B”，不是“一个 proof 重复写了多少次”。但如果 B 同时出现在 A 的 type 和 value 中，则保留一条 TYPE 和一条 VALUE；它们说明两种不同机制。若 B 位于 configured corpus 之外，B 仍登记为 external target，避免让 A 的依赖凭空消失。</p>
+<p class="bridge">单条真实边只能说明一个案例存在。将全部 declaration 按同一规则提取、编号和去重，才能统计总体；下一节先确认这个总体实际观测了多少。</p></section>
 
 <section id="s6"><h2>6. 研究范围与观测完整性</h2>
 <div class="answer"><b>本报告覆盖配置语料的全部 {{ quality.expected_module_count|fmt }} 个模块。</b>共观测 {{ summary.declaration_count|fmt }} 个内部 declaration、{{ quality.external_node_count|fmt }} 个语料外依赖目标和 {{ summary.edge_count|fmt }} 条唯一类型化边。</div>
-<p>“完整”只针对第 4 节定义的固定 snapshot 与 configured corpus。语料外常量作为 external target 保留；源码范围和 value 的缺失保持 null。后续每个复杂度统计都报告非空样本数与覆盖率，使读者能区分“零”与“未观测”。</p></section>
+<p><b>内部节点</b>是 Corpus 内有完整 declaration 记录的节点；<b>外部目标</b>是被内部声明引用、但不属于本次 Corpus 的名字。外部目标只帮助保留边界依赖，不进入内部节点的复杂度总体。</p>
+<p>“完整”只针对第 4 节定义的固定 snapshot 与 configured corpus，并表示每个预期 module 都有成功观测记录；它不表示每个字段都必然非空，也不表示统计解释必然正确。源码范围覆盖率为 {{ ((1-quality.null_rates.source_bytes)*100)|round(2) }}%，value/proof 覆盖率为 {{ ((1-quality.null_rates.value_expr_nodes)*100)|round(2) }}%。缺失保持 null，后续表格同时报告 <code>n_valid</code>（有值的样本数）和总体数。</p>
+<div class="callout"><b>三个容易混淆的状态：</b><code>0</code> 表示“测量过，结果就是零”；<code>null</code> 表示“这里没有可用于该指标的观测”；<code>external</code> 表示“名字真实存在于依赖边中，但不属于本次内部总体”。</div>
+<p class="bridge">确认分母和缺失规则以后，下面才能安全地比较节点“有多复杂”；否则 null 很容易被误当成一个特别简单的零值。</p></section>
 
 <section id="s7"><h2>7. 节点长度与复杂度变量</h2>
-<p>一个 node 的 type 与可观测 value/proof 各自都是 Lean Expr。下面把“复杂度”拆成可以独立计算、独立解释的层次。</p>
+<p>一个 node 的 type 与可观测 value/proof 各自都是 Lean Expr。Expr 可以想成由“函数应用、变量、常量、函数输入、局部定义”等积木拼成的结构。不同声明可能源码一样长，却拼出大小和深度完全不同的 Expr，所以本研究把“复杂度”拆成可以独立计算、独立解释的层次。</p>
 <h3>7.1 源码表面复杂度：bytes、lines 与 Token 代理量</h3>
 <p><b>bytes</b> 是声明源码片段的 UTF-8 字节数；<b>lines</b> 是覆盖的源码行数。<b>Token 代理量</b>采用确定性正则规则：以 ASCII 英文字母或下划线开头、后接 ASCII 英文字母、数字、下划线或撇号的连续串算 1 个；连续数字算 1 个；其余每个非空白字符各算 1 个；空格和换行不计。</p>
 <pre>theorem addOne (n : Nat) : n + 1 = Nat.succ n := by rfl
@@ -480,7 +503,8 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
   Nat | . | succ | n | : | = | by | rfl     （共 20 个）</pre>
 <p class="note">因此 <code>:=</code> 算两个、<code>Nat.succ</code> 算三个。它是便于跨声明复现的源码词法代理，不是 Lean lexer 的精确 token；注释或字符串内部字符仍按同一规则计数。报告据此只讨论“表面规模”，不把它冒充证明语义复杂度。</p>
 <h3>7.2 表达式结构复杂度：U、A、D、T</h3>
-<p>令 <code>children(x)</code> 是 Expr x 的直接子表达式位置。对根表达式 E：</p>
+<p><b>树（tree）</b>要求每个子结构只有一个上级；<b>DAG（directed acyclic graph，有向无环图）</b>允许两个上级指向同一个共享子结构，但沿箭头不会绕回原点。Lean 可以共享同一个 Expr 对象，所以“实际保存的 DAG”与“把每次引用都复制一份后的树”大小可能差很多。</p>
+<p>令 <code>children(x)</code> 是 Expr x 的直接子表达式位置，E 是整个 type 或 value 的根：</p>
 <ul><li><b>唯一 DAG 节点 U</b>：从 E 可到达的不同 Expr 对象个数，近似回答“实际存了多少结构”。</li><li><b>DAG arcs A</b>：所有唯一节点的 child position 总数；同一 child 被引用两次就有两条 arc。</li><li><b>最大深度 D</b>：叶子深度为 1；非叶子为 <code>1 + max(child depth)</code>，回答“最长嵌套链有多深”。</li><li><b>展开树出现次数 T</b>：叶子为 1；非叶子为 <code>1 + sum(T(child))</code>。共享 child 每被引用一次就贡献一次，回答“若把共享完全展开，树有多大”。</li><li><b>展开倍数 T/U</b>：比较概念展开规模与实际共享结构；越大表示共享重复越强。</li></ul>
 <h3>可手算的共享 DAG</h3><pre class="dag">        parent
         /    \\
@@ -488,72 +512,114 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
         |
        leaf</pre>
 <p>这里只有 3 个不同对象，所以 U=3；parent 有两个 child position，shared 有一个，所以 A=3；最长路径 parent→shared→leaf，所以 D=3；完全展开时 parent 计 1，两个 shared 分支各计 2，所以 T=5，展开倍数 T/U=5/3。这个例子说明 T 很大时可能主要反映重复展开，而 U、A、D 描述的是另外三种结构性质。</p>
-<p>计算时先遍历每个唯一节点及其 arcs，再按上述递推式汇总，所以时间复杂度为 <code>O(U+A)</code>、辅助空间为 <code>O(U)</code>。这是算法定义，不把 T 解释成实际运行时间。</p>
+<p>计算时先遍历每个唯一节点及其 arcs，再按上述递推式汇总，所以时间复杂度为 <code>O(U+A)</code>、辅助空间为 <code>O(U)</code>。直观地说：实际保存的每块积木和每条连接大致各检查一次；即使 T 大得惊人，也不需要真的复制出 T 个对象。因此 T 是“概念展开规模”，不是实际运行秒数或内存量。</p>
 <p class="note">U 是固定 Lean 版本与载入环境中的指针共享测量，适合本 snapshot 内比较；跨 Lean 版本时必须重新测量，不能把它当成永恒不变的语义属性。</p>
 <h3>7.3 依赖广度</h3><p><b>unique constants</b> 统计 type 或 value 中出现了多少个不同的命名常量。重复调用同一常量只计一次，所以它衡量依赖“种类”的广度，不衡量调用次数。</p>
 <h3>真实节点复杂度：从 small 到 high</h3>{{ complexity_examples_table|safe }}
 <p><code>CategoryTheory.Limits.colimitLimitToLimitColimit_surjective</code> 的 value 展开树 T 为 {{ high_example.value_expr_tree_occurrences|fmt }}，但实际 DAG 唯一节点 U 为 {{ high_example.value_expr_unique_ptr_nodes|fmt }}，展开倍数为 {{ high_example.value_expr_expansion_factor|round(2) }}。三个数回答不同问题，不能单独称为“工作量”。</p>
-<h3>全部测量变量、覆盖率与分布</h3>{{ complexity_table|safe }}</section>
+<h3>全部测量变量、覆盖率与分布</h3>
+<p>表中的<b>中位数</b>把样本分成一半较小、一半较大；<b>P90</b> 表示 90% 的有效样本不超过该值；<b>P99</b> 表示 99% 不超过该值。最大值只描述最极端的一个对象，不能代表典型节点。Value 行的样本数较少，是因为第 2、6 节所述的 null 被排除，而不是补成零。</p>
+{{ complexity_table|safe }}
+<p class="bridge">复杂度描述每张知识卡片自身。下一节换一个角度：不看卡片有多大，而数有多少箭头进入或离开它，从而定义复用与依赖负担。</p></section>
 
 <section id="s8"><h2>8. 图总体统计</h2>
+<p><b>入度（indegree）</b>是指向一个节点的不同来源数，在本研究中是主复用指标；<b>出度（outdegree）</b>是该节点指向的不同依赖数，可理解为直接依赖负担。入度为零表示 Corpus 内没有别的内部声明直接指向它；入度和出度都为零才叫<b>孤立节点</b>。<b>自环</b>是一个节点直接指向自己。</p>
+<div class="callout"><b>教学例子：</b>若 A→B、C→B、B→D，则 B 的入度为 2（A、C 使用它），出度为 1（它依赖 D）。A 的出度为 1。即使 A 在同一 proof 中重复使用 B，主复用入度仍只把 A 算作一个来源。</div>
 <div class="metric-table">{{ graph_table|safe }}</div>
 <h3>从 incoming edges 到 reuse indegree</h3><p>下面是目标 <code>DFunLike.coe</code> 的 5 条确定性展示边。相同 source 的 TYPE 与 VALUE 是两条 typed edges，但 ALL unique consumer 只计一次。</p>{{ reuse_examples_table|safe }}
 <p>该 target 的完整 ALL indegree 为 {{ reuse_target_degree|fmt }}；表中 5 行只是解释计数规则，不是统计样本。</p>
+<h3>怎样读下面两张分布图</h3><ul><li><b>CCDF（互补累积分布）</b>在横轴取一个入度 x，纵轴回答“有多大比例的节点入度至少为 x”。例如 100 个节点中有 20 个入度至少为 10，则该点是 (10, 0.20)。</li><li><b>Rank–Frequency（排名—频数）</b>先按入度从高到低排序：横轴是第几名，纵轴是该名次的入度。它直观显示头部是否只有少数超高复用节点。</li><li><b>log 坐标</b>把 1、10、100、1000 这样的倍数间隔画成等距，便于同时看小值和大值；它不会把相关性或幂律自动“证明”出来。</li></ul>
 <div class="grid figures">{{ figs.indegree_ccdf|safe }}{{ figs.rank_frequency|safe }}</div>
-<p class="bridge">从一个 target 的入度扩展到全部 {{ summary.declaration_count|fmt }} 个节点，得到 CCDF 与 rank-frequency：{{ (summary.zero_indegree_fraction*100)|round(2) }}% 入度为零，完全孤立比例 {{ (summary.isolated_fraction*100)|round(4) }}%。</p></section>
+<p>从一个 target 的入度扩展到全部 {{ summary.declaration_count|fmt }} 个节点，得到 CCDF 与 rank-frequency：{{ (summary.zero_indegree_fraction*100)|round(2) }}% 入度为零，完全孤立比例 {{ (summary.isolated_fraction*100)|round(4) }}%。</p>
+<p class="bridge">分布图说明复用差异很大，但还没有回答“差异集中到什么程度”。下一节用 Top share、Gini、HHI 和 Lorenz 曲线把这种不均匀压缩成可比较的数字。</p></section>
 
 <section id="s9"><h2>9. 复用集中度</h2>
+<p>“集中”是问：全部复用关系是否主要流向少量节点。四个指标从不同角度回答：</p><ul><li><b>Top 1% share</b>：入度最高的 1% 节点合计获得全部复用入边的比例；Top 5% 和 10% 同理。</li><li><b>Gini 系数</b>：0 表示每个节点收到同样多的复用，越接近 1 越不均匀。</li><li><b>HHI</b>：先算每个节点占全部复用的份额，再把份额平方后相加；四个节点完全均分时 HHI=0.25，全部集中于一个节点时 HHI=1。</li><li><b>Lorenz 曲线</b>：把节点从低复用排到高复用，看“前 x% 节点累计得到多少复用”；曲线离均等对角线越远，分布越集中。</li></ul>
+<div class="callout"><b>可手算的边界例子：</b>四个节点入度都是 [1,1,1,1] 时，Gini=0，Top 25% share=25%；若是 [0,0,0,4]，Top 25% share=100%，Gini=0.75。这个教学例子说明 Gini 越大意味着越不均匀，但有限样本即使极端集中也不一定恰好等于 1。</div>
 <div class="hero-stats compact"><div><strong>{{ summary.reuse_concentration.gini|round(3) }}</strong><span>Gini</span></div><div><strong>{{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}%</strong><span>Top 1%</span></div><div><strong>{{ (summary.reuse_concentration.top_5pct_share*100)|round(1) }}%</strong><span>Top 5%</span></div><div><strong>{{ (summary.reuse_concentration.top_10pct_share*100)|round(1) }}%</strong><span>Top 10%</span></div></div>
 {{ figs.lorenz|safe }}
-<p>高 Gini 与陡峭 Lorenz 曲线共同表明，形式化库的复用不是均匀分散的：少数基础声明承接了大部分依赖。但集中度不自动等价于“重要性”，更不代表教学价值或证明难度。</p></section>
+<p>Gini={{ summary.reuse_concentration.gini|round(3) }}，且 Top 1% 节点承接 {{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}% 的复用入边，说明形式化库的复用不是均匀分散的：少数声明承接了大部分依赖。但集中度不自动等价于“数学重要性”，更不代表教学价值或证明难度。</p>
+<p class="bridge">集中度证明“头部很强”，却不能告诉我们整条尾部最像哪种数学分布。下一节比较多个候选模型，避免仅凭双对数图看起来像直线就宣布幂律。</p></section>
 
 <section id="s10"><h2>10. 重尾模型比较</h2>
+<p><b>重尾（heavy tail）</b>表示“大多数值不大，但极大的值虽然少见，却比钟形分布所预期的更常出现”。学校规模是一个直观类比：大多数学校人数有限，极少数学校特别大。重尾只是形状描述，不等于已经证明某个具体公式。</p>
+<p>本研究比较三种候选形状：<b>power law（幂律）</b>的尾部按幂次缓慢下降；<b>lognormal（对数正态）</b>表示取对数后近似钟形；<b>truncated power law（截尾幂律）</b>在幂律之外再加入高值衰减。它们都可能在双对数图上看起来近似直线，所以必须用数值比较。</p>
+<h3>拟合表怎样读</h3><table><thead><tr><th>字段</th><th>高中阶段可用的读法</th></tr></thead><tbody>
+<tr><td>n / tail_n</td><td>总体有效节点数 / 真正进入尾部拟合的节点数</td></tr>
+<tr><td>xmin</td><td>从哪个最小入度开始称为“尾部”；更小的值不参与该尾部模型</td></tr>
+<tr><td>alpha</td><td>幂律尾部下降快慢的参数；不能直接解释为知识质量</td></tr>
+<tr><td>KS</td><td>经验分布与拟合曲线的最大距离；同一总体中越小通常越贴近，但不能单独决定模型胜负</td></tr>
+<tr><td>R</td><td>对数似然差：正值偏向 power law，负值偏向对照模型</td></tr>
+<tr><td>p</td><td>若两个模型实际同样合适，出现当前这么大差异的相对意外程度；较小只支持“有差异”，不证明模型永远正确</td></tr>
+</tbody></table>
 {{ figs.tail_overlay|safe }}
 {{ fits_table|safe }}
 <p>全体正入度声明的拟合参数为 alpha={{ all_fit.alpha }}, xmin={{ all_fit.xmin }}, KS={{ all_fit.ks }}。相对 lognormal 与 truncated power law 的对数似然比为负且达到显著性，说明替代模型在当前比较中更受支持。因此正确结论是“存在重尾和强集中”，而不是“已证实 Zipf 定律”。</p>
-<p class="note">bootstrap 状态为 <code>{{ all_fit.bootstrap_status }}</code>，所以不能报告基于 bootstrap 的绝对拟合优度 p 值。</p></section>
+<p class="note"><b>相对比较与绝对检验不同：</b>R/p 回答“两个候选模型谁更好”，bootstrap goodness-of-fit 回答“最佳候选本身是否足够像真实数据”。当前 bootstrap 状态为 <code>{{ all_fit.bootstrap_status }}</code>，所以不能报告绝对拟合优度 p 值，也不能宣称普适 Zipf 定律。</p>
+<p class="bridge">重尾分析研究的是“复用入度如何分布”。下一节回到每个节点自身，把源码与 Expr 的多层复杂度同复用入度逐一比较。</p></section>
 
 <section id="s11"><h2>11. 长度/复杂度与复用</h2>
 <p>本节不寻找一个“正确的复杂度数字”，而是比较结论对复杂度定义是否敏感。结构很小的 <code>Set</code> 可以有很高复用，展开树巨大的 theorem 也不一定成为最高复用节点，因此必须进行总体统计并控制 kind/domain。</p>
 {{ complexity_compare_table|safe }}
+<h3>从散点到模型：为什么需要四步</h3><ol class="steps"><li><b>散点图</b>把一个 declaration 画成一个点，先观察是否有明显形状；log 坐标让数量级差异可见。</li><li><b>对数分箱</b>把复杂度相近的节点分组，比较每组复用的中位数和四分位范围，避免只盯着极端点。</li><li><b>Spearman 秩相关</b>只比较两个变量的高低排序是否同步，不要求关系是一条直线。</li><li><b>计数回归</b>在同时考虑 kind 和 domain 后，估计复杂度变化与期望入度的关联。</li></ol>
 <div class="grid figures">{{ figs.source_length|safe }}{{ figs.type_length|safe }}{{ figs.value_length|safe }}{{ figs.length_binned|safe }}</div>
 <h3>秩相关</h3>{{ correlations_table|safe }}
+<p><b>Spearman ρ 怎样读：</b>范围是 -1 到 1。接近 1 表示复杂度排名越高，复用排名通常也越高；接近 -1 表示一个升高时另一个通常降低；接近 0 表示没有明显的单调排序关系。ρ 不说明因果，也可能受 kind、domain 等第三个变量影响。</p>
 <p><b>实际结果：</b>源码 Token 代理量与复用的未控制秩相关为 ρ={{ complexity_analysis.source_token_rho }}；Type 的 U/A/D/T/T÷U 指标均为弱负相关（ρ 范围 {{ complexity_analysis.type_rho_min }} 至 {{ complexity_analysis.type_rho_max }}）；Value/Proof 的对应指标接近零（ρ 范围 {{ complexity_analysis.value_rho_min }} 至 {{ complexity_analysis.value_rho_max }}）。因此，极大的展开树 T 并不对应极高复用。</p>
 <h3>控制声明类型与领域后的负二项 GLM</h3>{{ regressions_table|safe }}
-<p>Spearman rho 比较排序关系，不要求线性；对数分箱检查趋势是否被少量极端值推动。负二项模型以复用入度为计数响应，使用 <code>log1p(complexity)</code> 并控制 kind + domain。表中的“复杂度翻倍变化”是期望复用的相对变化。所有结果都是观察性关联，不是“复杂度导致复用”的因果效应。</p>
+<p><b>为什么用负二项 GLM？</b>入度是 0、1、2……这样的计数，而且少量节点特别大，波动远大于普通平均值模型所假设的程度。负二项广义线性模型（GLM）专门处理这种过度分散的计数。<code>log1p(x)=log(1+x)</code>，先加 1 是为了让 x=0 也能进入对数计算。</p>
+<p><b>“控制 kind + domain”</b>类似比较学习时间与成绩时，先尽量在同年级、同课程的学生之间比较；它减少构成差异，但仍不能排除所有隐藏因素。<b>95% CI（置信区间）</b>表示在模型假设下估计的不确定范围；<b>p value</b>衡量零效应假设下当前结果的意外程度。样本极大时很小的效应也会有极小 p 值，所以本报告优先读效应大小与 CI，而不是把 <code>p=0.0</code> 当成“绝对真理”——0.0 只是显示精度下的舍入。</p>
+<p>模型使用 <code>log1p(complexity)</code> 并控制 kind + domain。表中的“复杂度翻倍变化”把抽象系数转换为期望复用的相对变化。所有结果都是观察性关联，不是“复杂度导致复用”的因果效应。</p>
 <p><b>控制后的读法：</b>在同 kind、同 domain 的比较口径下，Token 翻倍对应期望复用变化 {{ complexity_analysis.source_token_double }}%；Value DAG 唯一节点 U 翻倍为 {{ complexity_analysis.value_u_double }}%；Value 展开树 T 翻倍为 {{ complexity_analysis.value_t_double }}%；Value 最大深度 D 翻倍为 {{ complexity_analysis.value_d_double }}%。T 的效应幅度小于 U 与 D，再次说明展开计数不能代替实际结构或深度。</p>
 <p class="note">模型诊断：{{ complexity_analysis.regression_status }}。自由估计 dispersion 的拟合未产生全部有限估计时，分析器使用预先声明的 α=1 Negative Binomial GLM；因此置信区间是在该固定离散度模型下的条件结果，结论等级保持 exploratory。</p>
-<div class="callout"><b>如何读多层结果：</b>若 T 的关联明显强于 U/A/D，可能是共享展开倍数在起作用；若 U 与 A 接近而 D 很弱，可能是总体结构规模而非最长嵌套链相关；若源码 Token 与 Expr 指标方向不同，说明短源码也可能 elaboration 成复杂对象。必须以表中实际系数、区间和 n 为准。</div></section>
+<div class="callout"><b>如何读多层结果：</b>若 T 的关联明显强于 U/A/D，可能是共享展开倍数在起作用；若 U 与 A 接近而 D 很弱，可能是总体结构规模而非最长嵌套链相关；若源码 Token 与 Expr 指标方向不同，说明短源码也可能精化成复杂对象。必须以表中实际系数、区间和 n 为准。</div>
+<p class="bridge">复杂度模型已经控制 kind 和 domain，但不同 kind 与不同边类型本身仍有独立语义。下一节把这些类别重新展开，防止把自动生成基础设施与人工定理混成一种复用。</p></section>
 
-<section id="s12"><h2>12. Node kind 与 Edge semantics</h2>
+<section id="s12"><h2>12. 声明种类（Node kind）与边语义</h2>
 {{ figs.kind_counts|safe }}{{ kind_table|safe }}
-<p>定理占 {{ theorem_share }}% 节点。前述 VALUE theorem→theorem 与 TYPE theorem→definition 说明不同边机制必须分层；拟合总体也分别包含 theorem-only、definition-only、TYPE、VALUE、theorem→theorem 和 theorem→definition。</p>
-<p>完整 extraction 保留 generated/internal declarations；kind 只用于派生视图和控制变量，不改写底图。</p></section>
+<p><b>kind</b> 是 declaration 的生成类别，不是质量评分。theorem 表示命题及证明；definition/opaque 表示概念或实现；inductive 定义数据类型；constructor 构造该类型的值；recursor 提供按构造规则处理该类型的方法。定理占 {{ theorem_share }}% 节点，但数量多不自动表示它们承担最多基础设施复用。</p>
+<p>前述 VALUE theorem→theorem 最接近“证明使用引理”，TYPE theorem→definition 则表示命题陈述依赖某个概念。definition→definition 更像软件实现依赖，自动插入的类型类与强制转换又是另一种机制。因此同样一条入边，在不同 kind/edge 组合下不能完全作同一种人类意图解释。</p>
+<p><b>generated</b> 是名称模式识别出的构造器辅助项、递归器、注入定理等系统性声明；<b>internal</b> 是私有或辅助命名空间中的声明。它们真实参与 Lean 检查，所以保留在底图；报告只在明确命名的派生视图中排除它们。</p>
+<p class="bridge">Kind 描述“知识卡片是什么”。另一个可能改变规律的因素是“它属于哪个数学领域”。下一节按 module 路径构造可复现的领域标签并统计领域间箭头。</p></section>
 
 <section id="s13"><h2>13. 领域结构与 H*ref</h2>
-<p>每条 src_domain→dst_domain 边使 dependency matrix 对应 cell 加 1。下面用两条跨领域边和一条领域内边展示累加规则。</p>{{ domain_examples_table|safe }}
+<p>领域标签来自 module 的高层路径，例如 <code>Mathlib.Algebra...</code> 归入 Algebra。它像按书架位置分类：规则清楚、可以重复得到同样结果，但一条定理可能跨越多个主题，所以它不是严格的数学本体分类。</p>
+<p><b>领域依赖矩阵</b>的每一行是发出依赖的 source domain，每一列是收到依赖的 target domain；每条内部 typed edge 使对应 cell 加 1。某行的 row share 是该来源领域全部外发边中，指向某目标领域的比例。下面用两条跨领域边和一条领域内边展示累加规则。</p>{{ domain_examples_table|safe }}
+<h3>H*ref 怎样计算</h3><p>对来源领域 d，先把它的边按目标领域 b 分组，令 <code>p(b)=指向 b 的边数 / d 的全部外发边数</code>。然后计算 <code>-Σ p(b) log p(b)</code>，再除以 <code>log(Nd)</code>；Nd 是来源领域的节点数。本报告把结果记作 H*ref。</p>
+<div class="callout"><b>教学例子：</b>若某领域 100 条边全指向 Algebra，则只有一个比例 p=1，H*ref 的分子为 0；若 50 条指向 Algebra、50 条指向 Topology，则两个比例都是 0.5，分子为 <code>-2×0.5×log(0.5)=log(2)</code>。在相同 Nd 下，第二种依赖来源更分散，所以 H*ref 更高。</div>
 <div class="grid figures">{{ figs.domain_scale|safe }}{{ figs.domain_heatmap|safe }}{{ figs.domain_entropy|safe }}{{ figs.domain_tail|safe }}</div>
 {{ domain_table|safe }}
-<div class="callout"><b>H*ref 的含义：</b>它是领域依赖分布的经验操作性代理，用来比较跨领域引用的分散程度；它不等于理论 H，也不能直接解释为领域的内在复杂度。</div></section>
+<div class="callout"><b>H*ref 的解释边界：</b>它是按“目标领域份额”构造的经验代理，并使用来源领域节点数缩放；不是标准 0–1 归一化熵，不等于理论 H，也不能直接解释为领域的内在复杂度。它只适合在本报告统一规则下比较依赖较集中还是较分散。</div>
+<p class="bridge">领域与 kind 都可能改变结果。最后还要问：如果去掉系统生成节点或只看定理，集中度结论是否仍存在？这就是稳健性检查。</p></section>
 
 <section id="s14"><h2>14. 稳健性视图</h2>
+<p><b>稳健性检查</b>是把同一个问题换几种合理的样本范围再算一次。如果结论只在某一种筛选下成立，就应缩小结论范围；如果多个视图方向一致，结论就不太可能由单一类别偶然制造。</p>
+<ul><li><b>ALL</b>：全部内部 declaration。</li><li><b>NO_GENERATED</b>：排除名称模式识别的系统生成声明。</li><li><b>THEOREM_ONLY / DEF_ONLY</b>：分别只看 theorem 或 definition/opaque。</li><li><b>THEOREM_AND_DEF</b>：只保留最主要的数学结论与定义。</li><li><b>USER_FACING_APPROX</b>：同时排除 generated 与 internal，近似面向普通库使用者的声明集合。</li></ul>
 {{ figs.robustness|safe }}{{ views_table|safe }}
-<p>ALL、NO_GENERATED、THEOREM_ONLY、DEFINITION_ONLY、THEOREM_AND_DEFINITION 与 USER_FACING_APPROX 使用同一不可变底图重建。若去掉生成声明后集中度仍然很高，就说明主要结论不是单由 compiler-generated 节点制造。</p></section>
+<p>ALL 的 Gini={{ robustness_analysis.all_gini }}，NO_GENERATED 为 {{ robustness_analysis.no_generated_gini }}，THEOREM_ONLY 为 {{ robustness_analysis.theorem_gini }}，DEF_ONLY 为 {{ robustness_analysis.definition_gini }}。所有视图仍表现出明显不均匀，但 theorem-only 的集中度低于 definition-only，说明“高度集中”具有稳健性，而具体强度依赖节点类型。</p>
+<p class="note">稳健性一致不等于没有偏差：名称启发式可能无法识别所有生成声明，USER_FACING_APPROX 也不是人工数学重要性标签。它只回答预注册视图下结论是否改变。</p>
+<p class="bridge">至此 Lean 内部分析完成。下一节只比较各系统共同的“节点—边—入度”语法，不把 Lean Expr、Wikipedia 文本和软件 AST 的原始复杂度误当成同一种单位。</p></section>
 
 <section id="s15"><h2>15. 跨系统解释</h2>
+<p>跨系统比较的关键不是让对象长得一样，而是先对齐问题：一个知识单元被多少不同来源直接使用？在 Lean 中来源是 declaration，在 Wikipedia 中可以是页面，在软件中可以是函数或 package。</p>
 <table><thead><tr><th>通用概念</th><th>Lean</th><th>Wikipedia</th><th>Software</th></tr></thead><tbody>
 <tr><td>node</td><td>declaration</td><td>page/article</td><td>固定粒度的 function/module/package</td></tr>
 <tr><td>edge</td><td>TYPE/VALUE reference</td><td>hyperlink/citation</td><td>call/import/dependency</td></tr>
 <tr><td>reuse</td><td>unique consumer indegree</td><td>unique linking pages</td><td>unique callers/dependents</td></tr>
 <tr><td>native complexity</td><td>source proxy；Expr U/A/D/T；unique constants</td><td>wikitext/token/link/section structure</td><td>source token；AST/call depth/cyclomatic structure</td></tr>
-</tbody></table><p>indegree、Gini、rank-frequency 可通过 core projection 比较；Expr nodes、wikitext bytes 与 AST nodes 不是等价单位，不能直接比较原值。</p></section>
+</tbody></table><p><b>可以直接对齐的量</b>包括节点数、唯一来源入度、Top share、Gini 和 rank-frequency，因为它们都基于“有多少不同来源指向目标”。<b>不能直接对齐的原值</b>包括 Lean Expr U、Wikipedia wikitext bytes 和软件 AST nodes：它们的单位和生成机制不同。跨系统时应分别在系统内部标准化或比较效应方向，而不是说“100 个 Expr 节点等于 100 个 AST 节点”。</p>
+<div class="callout"><b>统一例子：</b>若一个 Lean 定义被 20 个 declaration 使用、一个 Wikipedia 页面被 20 个不同页面链接、一个软件函数被 20 个不同函数调用，它们的 unique indegree 都是 20；但这并不意味着三者具有相同复杂度、质量或社会影响。</div>
+<p class="bridge">最后把五个研究问题逐一收束，并明确哪些是数据事实、哪些仍只是探索性解释。</p></section>
 
 <section id="s16"><h2>16. 解释、局限与结论</h2>
-<div class="grid"><article><h3>可以说什么</h3><p>在固定 mathlib v4.32.1 快照和声明级语义图上，复用高度集中、分布具有重尾，领域与声明种类存在明显异质性；不同复杂度层次与复用的关联必须分别报告。</p></article><article><h3>不能说什么</h3><p>不能由入度推断人的引用意图、数学深度或因果重要性；不能把路径领域当成本体；不能把尚未 bootstrap 的尾部拟合表述为已验证的普适定律。</p></article></div>
-<p>下一阶段可实现拟合优度 bootstrap，并在保持同一图契约下进行跨版本比较。Wikipedia 与开源软件图应使用各自 adapter 和本地复杂度单位，再通过 indegree、集中度等 core metric 比较。</p></section>
+<h3>逐项回答研究问题</h3><ol class="steps"><li><b>RQ-A：复用是否集中或重尾？</b>是，集中结论得到支持：ALL Gini={{ summary.reuse_concentration.gini|round(3) }}，Top 1% share={{ (summary.reuse_concentration.top_1pct_share*100)|round(1) }}%。分布具有重尾，但 lognormal 与 truncated power law 在当前相对比较中优于纯 power law，加上绝对 bootstrap 尚不可用，所以“普适 Zipf 定律”仍属 inconclusive。</li><li><b>RQ-B：复杂度与复用有什么关系？</b>关系依赖定义。源码 Token 的未控制 ρ={{ complexity_analysis.source_token_rho }}；Type 结构指标为弱负相关，Value 结构指标接近零。控制 kind/domain 后系数均为负，但模型使用固定 dispersion，故结论保持 exploratory，不能解释为复杂度导致低复用。</li><li><b>RQ-C：领域是否异质？</b>是。在节点数至少 100 的 {{ domain_analysis.domain_count }} 个路径领域中，Gini 从 {{ domain_analysis.gini_min }} 到 {{ domain_analysis.gini_max }}，依赖矩阵和 H*ref 也不同；但范围仍受领域规模影响，路径标签也只是可复现代理，不是严格数学分类。</li><li><b>RQ-D：节点与边语义是否不同？</b>是。theorem-only 与 definition-only 的集中度明显不同，TYPE 与 VALUE 分别描述陈述依赖和证明/实现依赖，不能混成一种人类引用。</li><li><b>RQ-E：能否跨系统比较？</b>图的 core 指标可以比较，native complexity 原值不能直接比较。本报告只完成 Lean 数据分析；Wikipedia 与软件的实证比较必须等待各自 adapter 产生同等级证据。</li></ol>
+<div class="grid"><article><h3>这份报告可以支持什么</h3><p>在固定 mathlib v4.32.1、configured corpus 和 declaration-level 图上，复用高度集中且具有长尾；节点种类、领域和复杂度定义会改变关联强度；展开树 T 与实际 DAG U/D 不能互相替代。</p></article><article><h3>这份报告不能推出什么</h3><p>入度不等于数学质量、教学价值或人的引用意图；观察性关联不是因果；单一 snapshot 不能证明历史规律；路径领域不是数学本体；pointer U 不是跨 Lean 版本不变的语义量。</p></article></div>
+<h3>主要不确定性</h3><ul><li>源码范围只有 {{ ((1-quality.null_rates.source_bytes)*100)|round(2) }}% 节点可观测，因此 source complexity 的总体与 Expr complexity 不同。</li><li>Value null 集中于 inductive/constructor/recursor；相关分析明确排除，但 kind 构成仍影响总体解释。</li><li>回归控制了 kind/domain，却仍可能遗漏年代、API 层级、自动推理机制等变量。</li><li>重尾模型只有相对比较，没有完成绝对 goodness-of-fit bootstrap。</li><li>本报告是一个版本的横截面，不说明复用随版本如何演化。</li></ul>
+<p>下一阶段可实现拟合优度 bootstrap与跨版本比较；Wikipedia 与开源软件图应使用各自 adapter 和本地复杂度单位，再通过同一 core graph contract 比较。</p></section>
 
 <section id="s17"><h2>17. 附录：证据索引</h2>
-<p>以下表格供研究人员从报告结论回到机器可读证据。复现命令、运行性能与执行日志保留在仓库文档和结果目录，不进入研究叙事。</p>
+<p>以下表格供研究人员从报告结论回到机器可读证据。<b>manifest</b> 像数据的版本说明书；<b>SHA-256</b> 像文件指纹，只要文件内容改变，指纹几乎必然改变。普通读者不需要逐项检查，reviewer 可以用它确认报告引用的是同一份数据。</p>
+<p>复现命令、运行性能与执行日志保留在仓库文档和结果目录，不进入研究叙事。</p>
 <h3>研究数据版本</h3>{{ manifest_table|safe }}
 <h3>核心证据 artifacts</h3>{{ artifact_table|safe }}
 <h3>复用最高的声明</h3>{{ top_table|safe }}
@@ -996,6 +1062,8 @@ def generate(run_kind: str) -> dict[str, Any]:
         f"{row['len']}/{regressions.height} 为 {row['status']}"
         for row in status_counts.iter_rows(named=True)
     )
+    view_by_name = {row["view"]: row for row in views.iter_rows(named=True)}
+    comparable_domains = domains.filter(pl.col("node_count") >= 100)
     context = {
         "css": CSS,
         "quality": quality,
@@ -1016,6 +1084,17 @@ def generate(run_kind: str) -> dict[str, Any]:
             "value_t_double": doubling_change("value_expr_tree_occurrences"),
             "value_d_double": doubling_change("value_expr_max_depth"),
             "regression_status": regression_status,
+        },
+        "robustness_analysis": {
+            "all_gini": f"{view_by_name['ALL']['gini']:.3f}",
+            "no_generated_gini": f"{view_by_name['NO_GENERATED']['gini']:.3f}",
+            "theorem_gini": f"{view_by_name['THEOREM_ONLY']['gini']:.3f}",
+            "definition_gini": f"{view_by_name['DEF_ONLY']['gini']:.3f}",
+        },
+        "domain_analysis": {
+            "domain_count": comparable_domains.height,
+            "gini_min": f"{comparable_domains['gini'].min():.3f}",
+            "gini_max": f"{comparable_domains['gini'].max():.3f}",
         },
         "all_fit": {
             "alpha": format_cell(alpha),

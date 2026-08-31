@@ -1,15 +1,15 @@
 {
-  "artifact_index_sha256": "f607af39ed7f826cef2ec072b369bda4256d2ac73711751e2ccc1eae4ecf7bed",
+  "artifact_index_sha256": "9da11883dde61feb4ee79159d16eafef4c7d4ff282446c120f0d1123e3439ed0",
   "claim_count": 4,
   "claim_registry_sha256": "5d34127ddf79d6c02d656b56bbdf3a05d313e05864b0093dc079f4bc8aacdeb8",
   "example_count": 14,
   "examples_sha256": "6e77e9dbe71d7977318179312d47b4a9d67685caf8f1ed766ad23070287c4bf0",
   "figure_count": 14,
-  "index_sha256": "5a61148870a9ded07c2995abb905a705d069b91c73123bc06e998026011b86f2",
+  "index_sha256": "45490885cf981a46917c5674e8039be54bf7cebf39473a8ef4b65bd883ab149e",
   "remote_dependencies": 0,
   "run_kind": "full",
   "schema_version": "report-manifest-v1",
   "section_count": 17,
-  "standalone_bytes": 502789,
-  "standalone_sha256": "5f1e3b3e02606122d32b425c17de3a90189776964932b35fdc838ecd0ec3bc36"
+  "standalone_bytes": 523385,
+  "standalone_sha256": "52ddc65ffe75810fa87d121401ec52e4128db728c5541f9585654749ea8487fe"
 }

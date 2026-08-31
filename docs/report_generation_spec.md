@@ -145,6 +145,28 @@ u → v means: u consumes, cites, calls, imports, links to, or semantically depe
 4. **Population result**：完整总体上的图、表或模型；
 5. **Interpretation**：支持什么、不支持什么。
 
+### 2.5 高中阶段读者可理解性契约
+
+报告不得把“术语已经出现在表头”当作“概念已经解释”。正文以没有接触
+Lean、图论或统计建模，但具备高中代数和比例知识的读者为最低解释基线：
+
+- source-specific 术语（如 elaboration、declaration、Expr、TYPE/VALUE）
+  首次出现时先用日常语言解释，再给正式名称；
+- 图论术语（有向边、入度、出度、CCDF、rank-frequency）先用 3–5 个节点
+  的可手算例子解释计数方向；
+- 集中度指标至少给出“完全均匀”和“全部集中于一个节点”两个边界例子；
+- 每个缩写（DAG、CCDF、HHI、GLM、CI）首次出现时写出全称或中文含义；
+- 每个统计方法先回答“它比较什么、数值范围怎样读、为什么在这里使用”，
+  然后才展示结果；
+- `log1p`、percentile、coefficient、confidence interval、p value、control
+  等词必须给出一句无需统计课程背景的解释；
+- 章节结尾应说明上一节的结果为什么导向下一节，不能只依赖目录编号；
+- 真实总体数字与教学用 toy example 必须明确区分，避免读者把手算例子
+  误当实验数据。
+
+数学定义不能被比喻替代；推荐顺序是“日常类比 → 正式定义 → 手算例子 →
+真实数据 → 解释边界”。
+
 ## 3. 证据与结论契约
 
 ### 3.1 证据层级

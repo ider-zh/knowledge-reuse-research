@@ -19,7 +19,21 @@ def test_report_contract_has_all_sections_and_figures() -> None:
     assert '.fill_null(0)' not in source
     assert "report-claims-v1" in source
     assert "report-examples-v1" in source
-    assert "从真实边到 Graph" in source
+    assert "从真实边到完整图" in source
+    for explanation in (
+        "精化（elaboration）",
+        "有向图",
+        "CCDF（互补累积分布）",
+        "Gini 系数",
+        "重尾（heavy tail）",
+        "Spearman ρ 怎样读",
+        "为什么用负二项 GLM",
+        "95% CI（置信区间）",
+        "H*ref 怎样计算",
+        "稳健性检查",
+    ):
+        assert explanation in source
+    assert "教学例子，不是实验数据" in source
 
 
 def test_points_svg_skips_missing_metrics() -> None:
