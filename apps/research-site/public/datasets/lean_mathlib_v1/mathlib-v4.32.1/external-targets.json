@@ -1,0 +1,1807 @@
+{
+  "population_count": 10805,
+  "published_count": 200,
+  "rows": [
+    {
+      "dst_id": 162835,
+      "name": "Eq",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 307351,
+      "typed_edge_count": 529571,
+      "unique_consumer_count": 369674,
+      "value_edge_count": 222220
+    },
+    {
+      "dst_id": 322905,
+      "name": "OfNat.ofNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 116834,
+      "typed_edge_count": 259608,
+      "unique_consumer_count": 158181,
+      "value_edge_count": 142774
+    },
+    {
+      "dst_id": 538706,
+      "name": "congrArg",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 461,
+      "typed_edge_count": 136907,
+      "unique_consumer_count": 136487,
+      "value_edge_count": 136446
+    },
+    {
+      "dst_id": 309810,
+      "name": "Nat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 100766,
+      "typed_edge_count": 215112,
+      "unique_consumer_count": 123687,
+      "value_edge_count": 114346
+    },
+    {
+      "dst_id": 288218,
+      "name": "Membership.mem",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 84125,
+      "typed_edge_count": 192569,
+      "unique_consumer_count": 117320,
+      "value_edge_count": 108444
+    },
+    {
+      "dst_id": 162865,
+      "name": "Eq.refl",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 577,
+      "typed_edge_count": 117724,
+      "unique_consumer_count": 117154,
+      "value_edge_count": 117147
+    },
+    {
+      "dst_id": 548769,
+      "name": "id",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2654,
+      "typed_edge_count": 111388,
+      "unique_consumer_count": 109357,
+      "value_edge_count": 108734
+    },
+    {
+      "dst_id": 162874,
+      "name": "Eq.trans",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 309,
+      "typed_edge_count": 88812,
+      "unique_consumer_count": 88536,
+      "value_edge_count": 88503
+    },
+    {
+      "dst_id": 232796,
+      "name": "LE.le",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 61314,
+      "typed_edge_count": 134874,
+      "unique_consumer_count": 83764,
+      "value_edge_count": 73560
+    },
+    {
+      "dst_id": 448814,
+      "name": "Zero.toOfNat0",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 55360,
+      "typed_edge_count": 126254,
+      "unique_consumer_count": 79868,
+      "value_edge_count": 70894
+    },
+    {
+      "dst_id": 162851,
+      "name": "Eq.mpr",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 155,
+      "typed_edge_count": 79159,
+      "unique_consumer_count": 79033,
+      "value_edge_count": 79004
+    },
+    {
+      "dst_id": 429715,
+      "name": "True",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5998,
+      "typed_edge_count": 77687,
+      "unique_consumer_count": 76385,
+      "value_edge_count": 71689
+    },
+    {
+      "dst_id": 162872,
+      "name": "Eq.symm",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 950,
+      "typed_edge_count": 76224,
+      "unique_consumer_count": 75420,
+      "value_edge_count": 75274
+    },
+    {
+      "dst_id": 201157,
+      "name": "HAdd.hAdd",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 51135,
+      "typed_edge_count": 113576,
+      "unique_consumer_count": 73178,
+      "value_edge_count": 62441
+    },
+    {
+      "dst_id": 551909,
+      "name": "instHAdd",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 51132,
+      "typed_edge_count": 113566,
+      "unique_consumer_count": 73171,
+      "value_edge_count": 62434
+    },
+    {
+      "dst_id": 553548,
+      "name": "instOfNatNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 45886,
+      "typed_edge_count": 112635,
+      "unique_consumer_count": 71474,
+      "value_edge_count": 66749
+    },
+    {
+      "dst_id": 568611,
+      "name": "propext",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 36,
+      "typed_edge_count": 69440,
+      "unique_consumer_count": 69407,
+      "value_edge_count": 69404
+    },
+    {
+      "dst_id": 566810,
+      "name": "of_eq_true",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 106,
+      "typed_edge_count": 69366,
+      "unique_consumer_count": 69267,
+      "value_edge_count": 69260
+    },
+    {
+      "dst_id": 538709,
+      "name": "congrFun'",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 110,
+      "typed_edge_count": 64776,
+      "unique_consumer_count": 64673,
+      "value_edge_count": 64666
+    },
+    {
+      "dst_id": 201190,
+      "name": "HMul.hMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 37815,
+      "typed_edge_count": 84611,
+      "unique_consumer_count": 56103,
+      "value_edge_count": 46796
+    },
+    {
+      "dst_id": 551916,
+      "name": "instHMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 37202,
+      "typed_edge_count": 83549,
+      "unique_consumer_count": 55575,
+      "value_edge_count": 46347
+    },
+    {
+      "dst_id": 32332,
+      "name": "And",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 29543,
+      "typed_edge_count": 80331,
+      "unique_consumer_count": 54212,
+      "value_edge_count": 50788
+    },
+    {
+      "dst_id": 542944,
+      "name": "eq_self",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 90,
+      "typed_edge_count": 49917,
+      "unique_consumer_count": 49833,
+      "value_edge_count": 49827
+    },
+    {
+      "dst_id": 214382,
+      "name": "Iff",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 38215,
+      "typed_edge_count": 63551,
+      "unique_consumer_count": 45518,
+      "value_edge_count": 25336
+    },
+    {
+      "dst_id": 323146,
+      "name": "One.toOfNat1",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 28489,
+      "typed_edge_count": 68281,
+      "unique_consumer_count": 44824,
+      "value_edge_count": 39792
+    },
+    {
+      "dst_id": 167820,
+      "name": "Exists",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 24521,
+      "typed_edge_count": 64768,
+      "unique_consumer_count": 43946,
+      "value_edge_count": 40247
+    },
+    {
+      "dst_id": 320075,
+      "name": "Not",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 15742,
+      "typed_edge_count": 57014,
+      "unique_consumer_count": 43590,
+      "value_edge_count": 41272
+    },
+    {
+      "dst_id": 538705,
+      "name": "congr",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 61,
+      "typed_edge_count": 43616,
+      "unique_consumer_count": 43560,
+      "value_edge_count": 43555
+    },
+    {
+      "dst_id": 233044,
+      "name": "LT.lt",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 28614,
+      "typed_edge_count": 66984,
+      "unique_consumer_count": 41540,
+      "value_edge_count": 38370
+    },
+    {
+      "dst_id": 569140,
+      "name": "rfl",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 973,
+      "typed_edge_count": 39893,
+      "unique_consumer_count": 38987,
+      "value_edge_count": 38920
+    },
+    {
+      "dst_id": 417073,
+      "name": "Subtype",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 29979,
+      "typed_edge_count": 64476,
+      "unique_consumer_count": 37604,
+      "value_edge_count": 34497
+    },
+    {
+      "dst_id": 162850,
+      "name": "Eq.mp",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 49,
+      "typed_edge_count": 36764,
+      "unique_consumer_count": 36719,
+      "value_edge_count": 36715
+    },
+    {
+      "dst_id": 354230,
+      "name": "Prod",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 25932,
+      "typed_edge_count": 56855,
+      "unique_consumer_count": 33411,
+      "value_edge_count": 30923
+    },
+    {
+      "dst_id": 215998,
+      "name": "Int",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 23985,
+      "typed_edge_count": 54693,
+      "unique_consumer_count": 33172,
+      "value_edge_count": 30708
+    },
+    {
+      "dst_id": 162855,
+      "name": "Eq.ndrec",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2410,
+      "typed_edge_count": 35453,
+      "unique_consumer_count": 33081,
+      "value_edge_count": 33043
+    },
+    {
+      "dst_id": 549837,
+      "name": "instAddNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 21306,
+      "typed_edge_count": 50164,
+      "unique_consumer_count": 31874,
+      "value_edge_count": 28858
+    },
+    {
+      "dst_id": 201380,
+      "name": "HSMul.hSMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 22175,
+      "typed_edge_count": 47520,
+      "unique_consumer_count": 31371,
+      "value_edge_count": 25345
+    },
+    {
+      "dst_id": 551920,
+      "name": "instHSMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 22165,
+      "typed_edge_count": 47504,
+      "unique_consumer_count": 31366,
+      "value_edge_count": 25339
+    },
+    {
+      "dst_id": 315173,
+      "name": "Ne",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 20604,
+      "typed_edge_count": 48288,
+      "unique_consumer_count": 30106,
+      "value_edge_count": 27684
+    },
+    {
+      "dst_id": 417333,
+      "name": "Subtype.val",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 17531,
+      "typed_edge_count": 42554,
+      "unique_consumer_count": 28108,
+      "value_edge_count": 25023
+    },
+    {
+      "dst_id": 201420,
+      "name": "HSub.hSub",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 16179,
+      "typed_edge_count": 40089,
+      "unique_consumer_count": 26414,
+      "value_edge_count": 23910
+    },
+    {
+      "dst_id": 551924,
+      "name": "instHSub",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 16179,
+      "typed_edge_count": 40089,
+      "unique_consumer_count": 26414,
+      "value_edge_count": 23910
+    },
+    {
+      "dst_id": 315245,
+      "name": "Neg.neg",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 12725,
+      "typed_edge_count": 35100,
+      "unique_consumer_count": 25393,
+      "value_edge_count": 22375
+    },
+    {
+      "dst_id": 201377,
+      "name": "HPow.hPow",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 17209,
+      "typed_edge_count": 38684,
+      "unique_consumer_count": 24309,
+      "value_edge_count": 21475
+    },
+    {
+      "dst_id": 551919,
+      "name": "instHPow",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 17209,
+      "typed_edge_count": 38684,
+      "unique_consumer_count": 24309,
+      "value_edge_count": 21475
+    },
+    {
+      "dst_id": 168626,
+      "name": "False",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4412,
+      "typed_edge_count": 25217,
+      "unique_consumer_count": 24126,
+      "value_edge_count": 20805
+    },
+    {
+      "dst_id": 167830,
+      "name": "Exists.intro",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5695,
+      "typed_edge_count": 29764,
+      "unique_consumer_count": 24114,
+      "value_edge_count": 24069
+    },
+    {
+      "dst_id": 167821,
+      "name": "Exists.casesOn",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6,
+      "typed_edge_count": 22788,
+      "unique_consumer_count": 22782,
+      "value_edge_count": 22782
+    },
+    {
+      "dst_id": 545751,
+      "name": "funext",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 48,
+      "typed_edge_count": 22573,
+      "unique_consumer_count": 22527,
+      "value_edge_count": 22525
+    },
+    {
+      "dst_id": 173821,
+      "name": "Fin",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 17468,
+      "typed_edge_count": 36842,
+      "unique_consumer_count": 20575,
+      "value_edge_count": 19374
+    },
+    {
+      "dst_id": 32340,
+      "name": "And.intro",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3669,
+      "typed_edge_count": 24173,
+      "unique_consumer_count": 20540,
+      "value_edge_count": 20504
+    },
+    {
+      "dst_id": 152241,
+      "name": "DecidableEq",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 20279,
+      "typed_edge_count": 40398,
+      "unique_consumer_count": 20463,
+      "value_edge_count": 20119
+    },
+    {
+      "dst_id": 37560,
+      "name": "Bool",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4703,
+      "typed_edge_count": 24161,
+      "unique_consumer_count": 19877,
+      "value_edge_count": 19458
+    },
+    {
+      "dst_id": 214391,
+      "name": "Iff.mpr",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 591,
+      "typed_edge_count": 19818,
+      "unique_consumer_count": 19319,
+      "value_edge_count": 19227
+    },
+    {
+      "dst_id": 324846,
+      "name": "Or",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6140,
+      "typed_edge_count": 23610,
+      "unique_consumer_count": 18339,
+      "value_edge_count": 17470
+    },
+    {
+      "dst_id": 311194,
+      "name": "Nat.cast",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 11250,
+      "typed_edge_count": 26615,
+      "unique_consumer_count": 17897,
+      "value_edge_count": 15365
+    },
+    {
+      "dst_id": 201168,
+      "name": "HEq",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4830,
+      "typed_edge_count": 22339,
+      "unique_consumer_count": 17548,
+      "value_edge_count": 17509
+    },
+    {
+      "dst_id": 545420,
+      "name": "forall_congr",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 11,
+      "typed_edge_count": 17154,
+      "unique_consumer_count": 17144,
+      "value_edge_count": 17143
+    },
+    {
+      "dst_id": 355078,
+      "name": "Prod.mk",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8913,
+      "typed_edge_count": 23719,
+      "unique_consumer_count": 16603,
+      "value_edge_count": 14806
+    },
+    {
+      "dst_id": 250346,
+      "name": "List",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 12742,
+      "typed_edge_count": 28001,
+      "unique_consumer_count": 16070,
+      "value_edge_count": 15259
+    },
+    {
+      "dst_id": 354449,
+      "name": "Prod.fst",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8218,
+      "typed_edge_count": 21928,
+      "unique_consumer_count": 15711,
+      "value_edge_count": 13710
+    },
+    {
+      "dst_id": 355366,
+      "name": "Prod.snd",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8208,
+      "typed_edge_count": 21839,
+      "unique_consumer_count": 15660,
+      "value_edge_count": 13631
+    },
+    {
+      "dst_id": 214390,
+      "name": "Iff.mp",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 420,
+      "typed_edge_count": 15725,
+      "unique_consumer_count": 15356,
+      "value_edge_count": 15305
+    },
+    {
+      "dst_id": 253943,
+      "name": "List.nil",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6334,
+      "typed_edge_count": 21005,
+      "unique_consumer_count": 15174,
+      "value_edge_count": 14671
+    },
+    {
+      "dst_id": 162863,
+      "name": "Eq.rec",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 490,
+      "typed_edge_count": 15570,
+      "unique_consumer_count": 15169,
+      "value_edge_count": 15080
+    },
+    {
+      "dst_id": 417237,
+      "name": "Subtype.mk",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6868,
+      "typed_edge_count": 20541,
+      "unique_consumer_count": 14880,
+      "value_edge_count": 13673
+    },
+    {
+      "dst_id": 542967,
+      "name": "eq_true",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3,
+      "typed_edge_count": 14875,
+      "unique_consumer_count": 14872,
+      "value_edge_count": 14872
+    },
+    {
+      "dst_id": 553545,
+      "name": "instOfNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7092,
+      "typed_edge_count": 20830,
+      "unique_consumer_count": 14691,
+      "value_edge_count": 13738
+    },
+    {
+      "dst_id": 32333,
+      "name": "And.casesOn",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7,
+      "typed_edge_count": 14628,
+      "unique_consumer_count": 14623,
+      "value_edge_count": 14621
+    },
+    {
+      "dst_id": 37811,
+      "name": "Bool.true",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1195,
+      "typed_edge_count": 15522,
+      "unique_consumer_count": 14492,
+      "value_edge_count": 14327
+    },
+    {
+      "dst_id": 196432,
+      "name": "Function.comp",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7159,
+      "typed_edge_count": 19565,
+      "unique_consumer_count": 14377,
+      "value_edge_count": 12406
+    },
+    {
+      "dst_id": 251749,
+      "name": "List.cons",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6519,
+      "typed_edge_count": 20323,
+      "unique_consumer_count": 14331,
+      "value_edge_count": 13804
+    },
+    {
+      "dst_id": 219378,
+      "name": "Inv.inv",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7961,
+      "typed_edge_count": 20194,
+      "unique_consumer_count": 14049,
+      "value_edge_count": 12233
+    },
+    {
+      "dst_id": 400903,
+      "name": "Singleton.singleton",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8904,
+      "typed_edge_count": 21492,
+      "unique_consumer_count": 13639,
+      "value_edge_count": 12588
+    },
+    {
+      "dst_id": 214389,
+      "name": "Iff.intro",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 15,
+      "typed_edge_count": 13480,
+      "unique_consumer_count": 13465,
+      "value_edge_count": 13465
+    },
+    {
+      "dst_id": 552658,
+      "name": "instLENat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8498,
+      "typed_edge_count": 20832,
+      "unique_consumer_count": 13120,
+      "value_edge_count": 12334
+    },
+    {
+      "dst_id": 552668,
+      "name": "instLTNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8258,
+      "typed_edge_count": 20417,
+      "unique_consumer_count": 13060,
+      "value_edge_count": 12159
+    },
+    {
+      "dst_id": 201172,
+      "name": "HEq.refl",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 23,
+      "typed_edge_count": 13036,
+      "unique_consumer_count": 13013,
+      "value_edge_count": 13013
+    },
+    {
+      "dst_id": 237724,
+      "name": "Lean.Name.mkStr1",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2485,
+      "typed_edge_count": 15147,
+      "unique_consumer_count": 12793,
+      "value_edge_count": 12662
+    },
+    {
+      "dst_id": 558447,
+      "name": "ite",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2441,
+      "typed_edge_count": 13951,
+      "unique_consumer_count": 12205,
+      "value_edge_count": 11510
+    },
+    {
+      "dst_id": 201167,
+      "name": "HDiv.hDiv",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7762,
+      "typed_edge_count": 18472,
+      "unique_consumer_count": 12012,
+      "value_edge_count": 10710
+    },
+    {
+      "dst_id": 551913,
+      "name": "instHDiv",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7762,
+      "typed_edge_count": 18472,
+      "unique_consumer_count": 12012,
+      "value_edge_count": 10710
+    },
+    {
+      "dst_id": 542758,
+      "name": "eq_false",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 16,
+      "typed_edge_count": 11925,
+      "unique_consumer_count": 11909,
+      "value_edge_count": 11909
+    },
+    {
+      "dst_id": 435516,
+      "name": "Unit",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5983,
+      "typed_edge_count": 17036,
+      "unique_consumer_count": 11891,
+      "value_edge_count": 11053
+    },
+    {
+      "dst_id": 312870,
+      "name": "Nat.instNeZeroSucc",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6370,
+      "typed_edge_count": 17470,
+      "unique_consumer_count": 11788,
+      "value_edge_count": 11100
+    },
+    {
+      "dst_id": 542856,
+      "name": "eq_of_heq",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8,
+      "typed_edge_count": 10918,
+      "unique_consumer_count": 10911,
+      "value_edge_count": 10910
+    },
+    {
+      "dst_id": 549299,
+      "name": "inferInstance",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1788,
+      "typed_edge_count": 12099,
+      "unique_consumer_count": 10515,
+      "value_edge_count": 10311
+    },
+    {
+      "dst_id": 554147,
+      "name": "instSMulOfMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 7458,
+      "typed_edge_count": 15968,
+      "unique_consumer_count": 10466,
+      "value_edge_count": 8510
+    },
+    {
+      "dst_id": 535982,
+      "name": "autoParam",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8508,
+      "typed_edge_count": 12574,
+      "unique_consumer_count": 9474,
+      "value_edge_count": 4066
+    },
+    {
+      "dst_id": 548842,
+      "name": "iff_self",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1,
+      "typed_edge_count": 9361,
+      "unique_consumer_count": 9360,
+      "value_edge_count": 9360
+    },
+    {
+      "dst_id": 541811,
+      "name": "dite",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1373,
+      "typed_edge_count": 10039,
+      "unique_consumer_count": 9165,
+      "value_edge_count": 8666
+    },
+    {
+      "dst_id": 553281,
+      "name": "instNatCastInt",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4055,
+      "typed_edge_count": 11770,
+      "unique_consumer_count": 9153,
+      "value_edge_count": 7715
+    },
+    {
+      "dst_id": 216996,
+      "name": "Int.instAdd",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4387,
+      "typed_edge_count": 13212,
+      "unique_consumer_count": 9112,
+      "value_edge_count": 8825
+    },
+    {
+      "dst_id": 318163,
+      "name": "Nonempty",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6438,
+      "typed_edge_count": 14572,
+      "unique_consumer_count": 8905,
+      "value_edge_count": 8134
+    },
+    {
+      "dst_id": 448809,
+      "name": "Zero",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 8454,
+      "typed_edge_count": 16812,
+      "unique_consumer_count": 8889,
+      "value_edge_count": 8358
+    },
+    {
+      "dst_id": 314792,
+      "name": "Nat.succ",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5311,
+      "typed_edge_count": 12654,
+      "unique_consumer_count": 8845,
+      "value_edge_count": 7343
+    },
+    {
+      "dst_id": 548994,
+      "name": "implies_congr",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5,
+      "typed_edge_count": 8779,
+      "unique_consumer_count": 8775,
+      "value_edge_count": 8774
+    },
+    {
+      "dst_id": 324475,
+      "name": "Option",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5886,
+      "typed_edge_count": 14066,
+      "unique_consumer_count": 8741,
+      "value_edge_count": 8180
+    },
+    {
+      "dst_id": 324850,
+      "name": "Or.casesOn",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2,
+      "typed_edge_count": 8741,
+      "unique_consumer_count": 8739,
+      "value_edge_count": 8739
+    },
+    {
+      "dst_id": 124829,
+      "name": "Classical.byContradiction",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1,
+      "typed_edge_count": 8581,
+      "unique_consumer_count": 8580,
+      "value_edge_count": 8580
+    },
+    {
+      "dst_id": 238487,
+      "name": "Lean.Syntax",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4527,
+      "typed_edge_count": 12907,
+      "unique_consumer_count": 8414,
+      "value_edge_count": 8380
+    },
+    {
+      "dst_id": 217100,
+      "name": "Int.instNegInt",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1706,
+      "typed_edge_count": 9863,
+      "unique_consumer_count": 8353,
+      "value_edge_count": 8157
+    },
+    {
+      "dst_id": 124884,
+      "name": "Classical.propDecidable",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1347,
+      "typed_edge_count": 9259,
+      "unique_consumer_count": 8309,
+      "value_edge_count": 7912
+    },
+    {
+      "dst_id": 237727,
+      "name": "Lean.Name.mkStr4",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 385,
+      "typed_edge_count": 8581,
+      "unique_consumer_count": 8212,
+      "value_edge_count": 8196
+    },
+    {
+      "dst_id": 218092,
+      "name": "Inter.inter",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4591,
+      "typed_edge_count": 11297,
+      "unique_consumer_count": 7786,
+      "value_edge_count": 6706
+    },
+    {
+      "dst_id": 214401,
+      "name": "Iff.rfl",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6,
+      "typed_edge_count": 7707,
+      "unique_consumer_count": 7703,
+      "value_edge_count": 7701
+    },
+    {
+      "dst_id": 274727,
+      "name": "Max.max",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5041,
+      "typed_edge_count": 11456,
+      "unique_consumer_count": 7628,
+      "value_edge_count": 6415
+    },
+    {
+      "dst_id": 333986,
+      "name": "PUnit",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2740,
+      "typed_edge_count": 10118,
+      "unique_consumer_count": 7580,
+      "value_edge_count": 7378
+    },
+    {
+      "dst_id": 32341,
+      "name": "And.left",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 200,
+      "typed_edge_count": 7470,
+      "unique_consumer_count": 7304,
+      "value_edge_count": 7270
+    },
+    {
+      "dst_id": 289803,
+      "name": "Min.min",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4770,
+      "typed_edge_count": 10910,
+      "unique_consumer_count": 7210,
+      "value_edge_count": 6140
+    },
+    {
+      "dst_id": 162838,
+      "name": "Eq.casesOn",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4,
+      "typed_edge_count": 7152,
+      "unique_consumer_count": 7148,
+      "value_edge_count": 7148
+    },
+    {
+      "dst_id": 32348,
+      "name": "And.right",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 200,
+      "typed_edge_count": 7312,
+      "unique_consumer_count": 7143,
+      "value_edge_count": 7112
+    },
+    {
+      "dst_id": 162672,
+      "name": "EmptyCollection.emptyCollection",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3508,
+      "typed_edge_count": 9987,
+      "unique_consumer_count": 7119,
+      "value_edge_count": 6479
+    },
+    {
+      "dst_id": 37659,
+      "name": "Bool.false",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 561,
+      "typed_edge_count": 7538,
+      "unique_consumer_count": 7100,
+      "value_edge_count": 6977
+    },
+    {
+      "dst_id": 324798,
+      "name": "Option.some",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3397,
+      "typed_edge_count": 9930,
+      "unique_consumer_count": 6870,
+      "value_edge_count": 6533
+    },
+    {
+      "dst_id": 237725,
+      "name": "Lean.Name.mkStr2",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1391,
+      "typed_edge_count": 8172,
+      "unique_consumer_count": 6862,
+      "value_edge_count": 6781
+    },
+    {
+      "dst_id": 195084,
+      "name": "Function.Injective",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5465,
+      "typed_edge_count": 10366,
+      "unique_consumer_count": 6854,
+      "value_edge_count": 4901
+    },
+    {
+      "dst_id": 357369,
+      "name": "Pure.pure",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 608,
+      "typed_edge_count": 7171,
+      "unique_consumer_count": 6699,
+      "value_edge_count": 6563
+    },
+    {
+      "dst_id": 237674,
+      "name": "Lean.Name",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1843,
+      "typed_edge_count": 8245,
+      "unique_consumer_count": 6566,
+      "value_edge_count": 6402
+    },
+    {
+      "dst_id": 299315,
+      "name": "Mul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6023,
+      "typed_edge_count": 11927,
+      "unique_consumer_count": 6402,
+      "value_edge_count": 5904
+    },
+    {
+      "dst_id": 37339,
+      "name": "Bind.bind",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 194,
+      "typed_edge_count": 6195,
+      "unique_consumer_count": 6079,
+      "value_edge_count": 6001
+    },
+    {
+      "dst_id": 295555,
+      "name": "Monad.toBind",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 189,
+      "typed_edge_count": 6181,
+      "unique_consumer_count": 6068,
+      "value_edge_count": 5992
+    },
+    {
+      "dst_id": 32943,
+      "name": "Applicative.toPure",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 261,
+      "typed_edge_count": 6191,
+      "unique_consumer_count": 6003,
+      "value_edge_count": 5930
+    },
+    {
+      "dst_id": 554359,
+      "name": "instSubNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3078,
+      "typed_edge_count": 8501,
+      "unique_consumer_count": 5788,
+      "value_edge_count": 5423
+    },
+    {
+      "dst_id": 168628,
+      "name": "False.elim",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 94,
+      "typed_edge_count": 5701,
+      "unique_consumer_count": 5620,
+      "value_edge_count": 5607
+    },
+    {
+      "dst_id": 542398,
+      "name": "eagerReduce",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2,
+      "typed_edge_count": 5614,
+      "unique_consumer_count": 5612,
+      "value_edge_count": 5612
+    },
+    {
+      "dst_id": 1419,
+      "name": "Add",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5479,
+      "typed_edge_count": 10589,
+      "unique_consumer_count": 5601,
+      "value_edge_count": 5110
+    },
+    {
+      "dst_id": 238328,
+      "name": "Lean.RArray.leaf",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1,
+      "typed_edge_count": 5543,
+      "unique_consumer_count": 5542,
+      "value_edge_count": 5542
+    },
+    {
+      "dst_id": 551072,
+      "name": "instDecidableEqBool",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 168,
+      "typed_edge_count": 5639,
+      "unique_consumer_count": 5509,
+      "value_edge_count": 5471
+    },
+    {
+      "dst_id": 363794,
+      "name": "ReaderT.instApplicativeOfMonad",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 20,
+      "typed_edge_count": 5302,
+      "unique_consumer_count": 5287,
+      "value_edge_count": 5282
+    },
+    {
+      "dst_id": 324753,
+      "name": "Option.none",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1874,
+      "typed_edge_count": 6820,
+      "unique_consumer_count": 5217,
+      "value_edge_count": 4946
+    },
+    {
+      "dst_id": 236051,
+      "name": "Lean.Grind.intro_with_eq",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 5176,
+      "unique_consumer_count": 5176,
+      "value_edge_count": 5176
+    },
+    {
+      "dst_id": 417297,
+      "name": "Subtype.property",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 913,
+      "typed_edge_count": 5901,
+      "unique_consumer_count": 5114,
+      "value_edge_count": 4988
+    },
+    {
+      "dst_id": 376538,
+      "name": "SMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4880,
+      "typed_edge_count": 9422,
+      "unique_consumer_count": 5065,
+      "value_edge_count": 4542
+    },
+    {
+      "dst_id": 435520,
+      "name": "Unit.unit",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 678,
+      "typed_edge_count": 5211,
+      "unique_consumer_count": 5051,
+      "value_edge_count": 4533
+    },
+    {
+      "dst_id": 566101,
+      "name": "not_false_eq_true",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 17,
+      "typed_edge_count": 5051,
+      "unique_consumer_count": 5034,
+      "value_edge_count": 5034
+    },
+    {
+      "dst_id": 435121,
+      "name": "Union.union",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2971,
+      "typed_edge_count": 7124,
+      "unique_consumer_count": 4969,
+      "value_edge_count": 4153
+    },
+    {
+      "dst_id": 394401,
+      "name": "Sigma",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3740,
+      "typed_edge_count": 8315,
+      "unique_consumer_count": 4916,
+      "value_edge_count": 4575
+    },
+    {
+      "dst_id": 548997,
+      "name": "implies_true",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3,
+      "typed_edge_count": 4848,
+      "unique_consumer_count": 4845,
+      "value_edge_count": 4845
+    },
+    {
+      "dst_id": 235287,
+      "name": "Lean.Expr",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3315,
+      "typed_edge_count": 7831,
+      "unique_consumer_count": 4833,
+      "value_edge_count": 4516
+    },
+    {
+      "dst_id": 417432,
+      "name": "Sum",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4139,
+      "typed_edge_count": 8591,
+      "unique_consumer_count": 4773,
+      "value_edge_count": 4452
+    },
+    {
+      "dst_id": 238573,
+      "name": "Lean.Syntax.node",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 62,
+      "typed_edge_count": 4680,
+      "unique_consumer_count": 4621,
+      "value_edge_count": 4618
+    },
+    {
+      "dst_id": 215996,
+      "name": "Insert.insert",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2972,
+      "typed_edge_count": 7153,
+      "unique_consumer_count": 4581,
+      "value_edge_count": 4181
+    },
+    {
+      "dst_id": 232792,
+      "name": "LE",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4011,
+      "typed_edge_count": 8288,
+      "unique_consumer_count": 4559,
+      "value_edge_count": 4277
+    },
+    {
+      "dst_id": 553214,
+      "name": "instMulNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2415,
+      "typed_edge_count": 6730,
+      "unique_consumer_count": 4542,
+      "value_edge_count": 4315
+    },
+    {
+      "dst_id": 238594,
+      "name": "Lean.SyntaxNodeKind",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 492,
+      "typed_edge_count": 4961,
+      "unique_consumer_count": 4496,
+      "value_edge_count": 4469
+    },
+    {
+      "dst_id": 429717,
+      "name": "True.intro",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 62,
+      "typed_edge_count": 4496,
+      "unique_consumer_count": 4435,
+      "value_edge_count": 4434
+    },
+    {
+      "dst_id": 238327,
+      "name": "Lean.RArray.branch",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1,
+      "typed_edge_count": 4406,
+      "unique_consumer_count": 4405,
+      "value_edge_count": 4405
+    },
+    {
+      "dst_id": 34131,
+      "name": "Array.push",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 17,
+      "typed_edge_count": 4361,
+      "unique_consumer_count": 4346,
+      "value_edge_count": 4344
+    },
+    {
+      "dst_id": 551178,
+      "name": "instDecidableEqNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1508,
+      "typed_edge_count": 5575,
+      "unique_consumer_count": 4265,
+      "value_edge_count": 4067
+    },
+    {
+      "dst_id": 196065,
+      "name": "Function.Surjective",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3176,
+      "typed_edge_count": 6703,
+      "unique_consumer_count": 4221,
+      "value_edge_count": 3527
+    },
+    {
+      "dst_id": 362368,
+      "name": "Rat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3203,
+      "typed_edge_count": 7169,
+      "unique_consumer_count": 4202,
+      "value_edge_count": 3966
+    },
+    {
+      "dst_id": 538708,
+      "name": "congrFun",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 10,
+      "typed_edge_count": 4191,
+      "unique_consumer_count": 4183,
+      "value_edge_count": 4181
+    },
+    {
+      "dst_id": 159019,
+      "name": "Dvd.dvd",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2867,
+      "typed_edge_count": 6656,
+      "unique_consumer_count": 4138,
+      "value_edge_count": 3789
+    },
+    {
+      "dst_id": 34048,
+      "name": "Array.empty",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 4100,
+      "unique_consumer_count": 4100,
+      "value_edge_count": 4100
+    },
+    {
+      "dst_id": 363798,
+      "name": "ReaderT.instMonadExceptOf",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 4080,
+      "unique_consumer_count": 4080,
+      "value_edge_count": 4080
+    },
+    {
+      "dst_id": 238961,
+      "name": "Lean.mkAtom",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 4071,
+      "unique_consumer_count": 4071,
+      "value_edge_count": 4071
+    },
+    {
+      "dst_id": 217074,
+      "name": "Int.instLEInt",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1313,
+      "typed_edge_count": 5275,
+      "unique_consumer_count": 4063,
+      "value_edge_count": 3962
+    },
+    {
+      "dst_id": 238430,
+      "name": "Lean.SourceInfo.none",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3,
+      "typed_edge_count": 4063,
+      "unique_consumer_count": 4060,
+      "value_edge_count": 4060
+    },
+    {
+      "dst_id": 315161,
+      "name": "NatCast.natCast",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1169,
+      "typed_edge_count": 4741,
+      "unique_consumer_count": 4050,
+      "value_edge_count": 3572
+    },
+    {
+      "dst_id": 253248,
+      "name": "List.length",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3007,
+      "typed_edge_count": 6844,
+      "unique_consumer_count": 4044,
+      "value_edge_count": 3837
+    },
+    {
+      "dst_id": 405725,
+      "name": "String",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 745,
+      "typed_edge_count": 4652,
+      "unique_consumer_count": 3980,
+      "value_edge_count": 3907
+    },
+    {
+      "dst_id": 238607,
+      "name": "Lean.TSyntax.mk",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 6,
+      "typed_edge_count": 3945,
+      "unique_consumer_count": 3942,
+      "value_edge_count": 3939
+    },
+    {
+      "dst_id": 376353,
+      "name": "SDiff.sdiff",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2692,
+      "typed_edge_count": 5722,
+      "unique_consumer_count": 3905,
+      "value_edge_count": 3030
+    },
+    {
+      "dst_id": 400971,
+      "name": "SizeOf",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3890,
+      "typed_edge_count": 7297,
+      "unique_consumer_count": 3890,
+      "value_edge_count": 3407
+    },
+    {
+      "dst_id": 363797,
+      "name": "ReaderT.instMonad",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3,
+      "typed_edge_count": 3822,
+      "unique_consumer_count": 3819,
+      "value_edge_count": 3819
+    },
+    {
+      "dst_id": 238423,
+      "name": "Lean.SourceInfo",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 91,
+      "typed_edge_count": 3871,
+      "unique_consumer_count": 3783,
+      "value_edge_count": 3780
+    },
+    {
+      "dst_id": 238608,
+      "name": "Lean.TSyntax.raw",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5,
+      "typed_edge_count": 3775,
+      "unique_consumer_count": 3773,
+      "value_edge_count": 3770
+    },
+    {
+      "dst_id": 238326,
+      "name": "Lean.RArray",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3751,
+      "unique_consumer_count": 3751,
+      "value_edge_count": 3751
+    },
+    {
+      "dst_id": 236159,
+      "name": "Lean.Level",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2861,
+      "typed_edge_count": 6437,
+      "unique_consumer_count": 3719,
+      "value_edge_count": 3576
+    },
+    {
+      "dst_id": 236420,
+      "name": "Lean.MacroScope",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5,
+      "typed_edge_count": 3670,
+      "unique_consumer_count": 3668,
+      "value_edge_count": 3665
+    },
+    {
+      "dst_id": 237662,
+      "name": "Lean.MonadQuotation.getContext",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5,
+      "typed_edge_count": 3663,
+      "unique_consumer_count": 3661,
+      "value_edge_count": 3658
+    },
+    {
+      "dst_id": 237663,
+      "name": "Lean.MonadQuotation.getCurrMacroScope",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5,
+      "typed_edge_count": 3663,
+      "unique_consumer_count": 3661,
+      "value_edge_count": 3658
+    },
+    {
+      "dst_id": 237668,
+      "name": "Lean.MonadRef.mkInfoFromRefPos",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 5,
+      "typed_edge_count": 3663,
+      "unique_consumer_count": 3661,
+      "value_edge_count": 3658
+    },
+    {
+      "dst_id": 216306,
+      "name": "Int.cast",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2218,
+      "typed_edge_count": 5512,
+      "unique_consumer_count": 3615,
+      "value_edge_count": 3294
+    },
+    {
+      "dst_id": 238563,
+      "name": "Lean.Syntax.isOfKind",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3568,
+      "unique_consumer_count": 3568,
+      "value_edge_count": 3568
+    },
+    {
+      "dst_id": 174775,
+      "name": "Fin.instOfNat",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2125,
+      "typed_edge_count": 5315,
+      "unique_consumer_count": 3556,
+      "value_edge_count": 3190
+    },
+    {
+      "dst_id": 253035,
+      "name": "List.instMembership",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2561,
+      "typed_edge_count": 5897,
+      "unique_consumer_count": 3507,
+      "value_edge_count": 3336
+    },
+    {
+      "dst_id": 238595,
+      "name": "Lean.TSyntax",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 373,
+      "typed_edge_count": 3748,
+      "unique_consumer_count": 3397,
+      "value_edge_count": 3375
+    },
+    {
+      "dst_id": 217095,
+      "name": "Int.instMul",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 863,
+      "typed_edge_count": 4129,
+      "unique_consumer_count": 3373,
+      "value_edge_count": 3266
+    },
+    {
+      "dst_id": 216021,
+      "name": "Int.Linear.Expr.var",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3359,
+      "unique_consumer_count": 3359,
+      "value_edge_count": 3359
+    },
+    {
+      "dst_id": 400973,
+      "name": "SizeOf.sizeOf",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1973,
+      "typed_edge_count": 4894,
+      "unique_consumer_count": 3357,
+      "value_edge_count": 2921
+    },
+    {
+      "dst_id": 553108,
+      "name": "instMonadExceptOfMonadExceptOf",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4,
+      "typed_edge_count": 3339,
+      "unique_consumer_count": 3335,
+      "value_edge_count": 3335
+    },
+    {
+      "dst_id": 318173,
+      "name": "Nonempty.intro",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 587,
+      "typed_edge_count": 3891,
+      "unique_consumer_count": 3316,
+      "value_edge_count": 3304
+    },
+    {
+      "dst_id": 237675,
+      "name": "Lean.Name.anonymous",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 318,
+      "typed_edge_count": 3628,
+      "unique_consumer_count": 3315,
+      "value_edge_count": 3310
+    },
+    {
+      "dst_id": 238525,
+      "name": "Lean.Syntax.getArg",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3308,
+      "unique_consumer_count": 3308,
+      "value_edge_count": 3308
+    },
+    {
+      "dst_id": 315212,
+      "name": "NeZero",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 3077,
+      "typed_edge_count": 6030,
+      "unique_consumer_count": 3265,
+      "value_edge_count": 2953
+    },
+    {
+      "dst_id": 394588,
+      "name": "Sigma.mk",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1856,
+      "typed_edge_count": 4777,
+      "unique_consumer_count": 3253,
+      "value_edge_count": 2921
+    },
+    {
+      "dst_id": 216024,
+      "name": "Int.Linear.Poly.num",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3226,
+      "unique_consumer_count": 3226,
+      "value_edge_count": 3226
+    },
+    {
+      "dst_id": 548224,
+      "name": "heq_of_eq",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 4,
+      "typed_edge_count": 3204,
+      "unique_consumer_count": 3200,
+      "value_edge_count": 3200
+    },
+    {
+      "dst_id": 295590,
+      "name": "MonadExcept.throw",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2,
+      "typed_edge_count": 3188,
+      "unique_consumer_count": 3186,
+      "value_edge_count": 3186
+    },
+    {
+      "dst_id": 162465,
+      "name": "EStateM.instMonad",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3174,
+      "unique_consumer_count": 3174,
+      "value_edge_count": 3174
+    },
+    {
+      "dst_id": 162461,
+      "name": "EStateM",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3173,
+      "unique_consumer_count": 3173,
+      "value_edge_count": 3173
+    },
+    {
+      "dst_id": 162466,
+      "name": "EStateM.instMonadExceptOfOfBacktrackable",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3162,
+      "unique_consumer_count": 3162,
+      "value_edge_count": 3162
+    },
+    {
+      "dst_id": 162467,
+      "name": "EStateM.nonBacktrackable",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3162,
+      "unique_consumer_count": 3162,
+      "value_edge_count": 3162
+    },
+    {
+      "dst_id": 394506,
+      "name": "Sigma.fst",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 1909,
+      "typed_edge_count": 4704,
+      "unique_consumer_count": 3121,
+      "value_edge_count": 2795
+    },
+    {
+      "dst_id": 216023,
+      "name": "Int.Linear.Poly.add",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 0,
+      "typed_edge_count": 3099,
+      "unique_consumer_count": 3099,
+      "value_edge_count": 3099
+    },
+    {
+      "dst_id": 538711,
+      "name": "congr_arg",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 124,
+      "typed_edge_count": 3193,
+      "unique_consumer_count": 3082,
+      "value_edge_count": 3069
+    },
+    {
+      "dst_id": 235367,
+      "name": "Lean.Expr.const",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 2383,
+      "typed_edge_count": 5348,
+      "unique_consumer_count": 3079,
+      "value_edge_count": 2965
+    },
+    {
+      "dst_id": 428929,
+      "name": "Trans.trans",
+      "sample_reason": "外部目标按 unique consumers 排名前 200",
+      "type_edge_count": 43,
+      "typed_edge_count": 3073,
+      "unique_consumer_count": 3050,
+      "value_edge_count": 3030
+    }
+  ],
+  "schema_version": "research-site-external-sample-v1"
+}

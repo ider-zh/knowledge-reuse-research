@@ -16,6 +16,7 @@ experiment binds one source snapshot to configuration, hypotheses, and results.
     knowledge_reuse/analysis/            shared metrics and reports
         ↓
     experiments/<experiment_id>/         hypotheses and run notes
+    apps/research-site/                   compact public evidence and static UI
         ↓
     data/<source>/<snapshot>/            large rebuildable facts
     results/<experiment_id>/runs/<run>/  compact auditable run results
@@ -41,6 +42,13 @@ and shard plans remains directly under `results/<experiment_id>/`.
 Source packages own their operational code. Root-level commands stay thin and
 dispatch into a source package; source-specific scripts, SQL, fixtures, and
 schemas must not be added to shared root directories.
+
+The research site is a presentation boundary, not another analysis engine. A
+source-owned exporter may publish small, checksummed JSON under
+`apps/research-site/public/datasets/<experiment>/<snapshot>/`. These files must
+state the full population count, the published sample count, and the sampling
+rule. The browser must not recompute headline findings or receive the complete
+raw/normalized graph.
 
 ## Cross-system invariants
 

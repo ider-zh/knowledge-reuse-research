@@ -1,0 +1,29 @@
+{
+  "experiment_id": "lean_mathlib_v1",
+  "files": {
+    "domain-edge-samples.json": {
+      "bytes": 789905,
+      "sha256": "4aad2f4b98048b25d2b087ba573f732e0546547163cfcbdb1623d8432f602111"
+    },
+    "external-targets.json": {
+      "bytes": 54267,
+      "sha256": "899abfdf13868f906c96af8bfd9ab44bbd22d19789de5fd0d96b676467d7b1b5"
+    },
+    "nodes.json": {
+      "bytes": 166582,
+      "sha256": "c8b30980410db4962abe411f1ad7baef5ed1bf54be9a8e9e7d0bf34527deb98f"
+    },
+    "overview.json": {
+      "bytes": 101756,
+      "sha256": "3528a50ff299dd50a8b0942204cc2c1c75352a2f6ffa659cfc5f56e2cd5998e9"
+    },
+    "typed-edge-samples.json": {
+      "bytes": 1163787,
+      "sha256": "5baa9bdb4a2e2b9996f90b45311156c50ec4f45e79a6229397651c7ca475549c"
+    }
+  },
+  "run_kind": "full",
+  "schema_version": "research-site-data-manifest-v1",
+  "snapshot_id": "mathlib-v4.32.1",
+  "source_id": "lean_mathlib"
+}

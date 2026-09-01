@@ -63,4 +63,11 @@ report-smoke:
 report:
     uv run python -m knowledge_reuse.sources.lean_mathlib.report
 
+site-data:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.export_site
+
+site-build:
+    pnpm --dir apps/research-site install --frozen-lockfile
+    pnpm --dir apps/research-site run build
+
 all: bootstrap probe golden inventory extract normalize validate analyze report
