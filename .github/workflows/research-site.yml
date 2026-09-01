@@ -1,0 +1,63 @@
+name: Research site
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - "apps/research-site/**"
+      - ".github/workflows/research-site.yml"
+  pull_request:
+    paths:
+      - "apps/research-site/**"
+      - ".github/workflows/research-site.yml"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: apps/research-site
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/research-site/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm run build
+
+  deploy:
+    if: github.event_name == 'push' && github.ref == 'refs/heads/main' && vars.CLOUDFLARE_DEPLOY_ENABLED == 'true'
+    needs: build
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      deployments: write
+    steps:
+      - uses: actions/checkout@v6
+      - uses: pnpm/action-setup@v4
+        with:
+          version: 10
+      - uses: actions/setup-node@v6
+        with:
+          node-version: 22
+          cache: pnpm
+          cache-dependency-path: apps/research-site/pnpm-lock.yaml
+      - run: pnpm install --frozen-lockfile
+        working-directory: apps/research-site
+      - run: pnpm run build
+        working-directory: apps/research-site
+      - uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy apps/research-site/dist --project-name=knowledge-reuse-observatory
+          gitHubToken: ${{ secrets.GITHUB_TOKEN }}
