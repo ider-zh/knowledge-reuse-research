@@ -1,5 +1,5 @@
 {
-  "artifact_index_sha256": "189f4b32b9f742c8f68900373ac6be578a37ae287ef2708f2b3b082e33c97ad0",
+  "artifact_index_sha256": "44137ddf4184e1946192030a9bf8955209e22758cf9a6c70faa3080a6e3580b4",
   "audit_status": "graph_complete_provenance_incomplete",
   "claim_count": 7,
   "claim_registry_sha256": "9763edea70c963a761bded9445796ae92a11076447b7ba0bf54d39456102df52",
@@ -7,12 +7,12 @@
   "examples_sha256": "d1a6016981e2f6dd875caaf96b48a89913c316a62ebc8f1454b71b016824b99e",
   "figure_count": 15,
   "graph_complete": true,
-  "index_sha256": "a31e139bdc0c560603de60cbce28c6a1c2b158b9c0c40dd18788aca80e03fea3",
+  "index_sha256": "93e28162bee986984bfb6d899cf7cac6034e84d92c0ff0909f77dcc1261f5a07",
   "provenance_complete": false,
   "remote_dependencies": 0,
   "run_kind": "full",
   "schema_version": "report-manifest-v1",
   "section_count": 17,
-  "standalone_bytes": 579056,
-  "standalone_sha256": "21786490e46e36c0301e90e315ebfdab831fbea4fdafeb105cc8e3aa59ef2ee1"
+  "standalone_bytes": 581080,
+  "standalone_sha256": "547972238676c1415a291d5dc390cfbfcd0d0291b0ee4839a7085ad9fb7e9174"
 }
