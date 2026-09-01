@@ -2,6 +2,7 @@ import numpy as np
 import polars as pl
 
 from knowledge_reuse.sources.lean_mathlib.metrics import (
+    append_domain_examples,
     build_report_examples,
     fit_regression,
     fit_rank_frequency,
@@ -52,10 +53,34 @@ def test_report_examples_bind_real_type_value_and_null_cases() -> None:
     nodes = pl.DataFrame(rows)
     edges = pl.DataFrame(
         [
-            {"snapshot_id": "test", "src_id": 5, "dst_id": 6, "edge_type": "VALUE", "multiplicity": None},
-            {"snapshot_id": "test", "src_id": 7, "dst_id": 8, "edge_type": "TYPE", "multiplicity": None},
-            {"snapshot_id": "test", "src_id": 5, "dst_id": 9, "edge_type": "TYPE", "multiplicity": None},
-            {"snapshot_id": "test", "src_id": 7, "dst_id": 9, "edge_type": "VALUE", "multiplicity": None},
+            {
+                "snapshot_id": "test",
+                "src_id": 5,
+                "dst_id": 6,
+                "edge_type": "VALUE",
+                "multiplicity": None,
+            },
+            {
+                "snapshot_id": "test",
+                "src_id": 7,
+                "dst_id": 8,
+                "edge_type": "TYPE",
+                "multiplicity": None,
+            },
+            {
+                "snapshot_id": "test",
+                "src_id": 5,
+                "dst_id": 9,
+                "edge_type": "TYPE",
+                "multiplicity": None,
+            },
+            {
+                "snapshot_id": "test",
+                "src_id": 7,
+                "dst_id": 9,
+                "edge_type": "VALUE",
+                "multiplicity": None,
+            },
         ]
     )
 
@@ -65,9 +90,7 @@ def test_report_examples_bind_real_type_value_and_null_cases() -> None:
     assert by_id["edge.value.theorem_to_theorem"]["edge_type"] == "VALUE"
     assert by_id["edge.type.theorem_to_definition"]["edge_type"] == "TYPE"
     assert by_id["node.no_value"]["value_expr_nodes"] is None
-    assert by_id["node.no_value"]["source_locator"].endswith(
-        "::CategoryTheory.Category"
-    )
+    assert by_id["node.no_value"]["source_locator"].endswith("::CategoryTheory.Category")
     assert sum(row["concept"] == "reuse indegree" for row in examples) == 2
 
 
@@ -105,6 +128,35 @@ def test_internal_dependency_pairs_collapse_type_value_duplicates() -> None:
     assert pairs.select("dst_domain").unique().item() == "Topology"
 
 
+def test_domain_examples_use_sorted_unique_pairs() -> None:
+    nodes = pl.DataFrame(
+        [
+            _node(1, "A", "definition"),
+            {**_node(2, "B", "definition"), "domain": "Other"},
+            {**_node(3, "C", "definition"), "domain": "Other"},
+        ]
+    )
+    edges = pl.DataFrame(
+        {
+            "src_id": [1, 1, 1, 1],
+            "dst_id": [3, 2, 2, 1],
+            "edge_type": ["VALUE", "VALUE", "TYPE", "TYPE"],
+        }
+    )
+    pairs = internal_unique_dependency_pairs(nodes, edges)
+    examples: list[dict] = []
+
+    append_domain_examples(examples, pairs, edges, nodes, "test")
+
+    assert [(row["src_id"], row["dst_id"]) for row in examples] == [
+        (1, 2),
+        (1, 3),
+        (1, 1),
+    ]
+    assert examples[0]["edge_type"] == "TYPE+VALUE"
+    assert "仍只增加 1" in examples[0]["explanation"]
+
+
 def test_memory_efficient_negative_binomial_uses_all_rows() -> None:
     length = np.arange(1, 401)
     frame = pl.DataFrame(
@@ -122,3 +174,8 @@ def test_memory_efficient_negative_binomial_uses_all_rows() -> None:
     assert result["n"] == len(length)
     assert result["coefficient"] < 0
     assert result["ci_high"] < 0
+    assert result["standard_error_type"] == "HC1_sandwich"
+    assert result["model_std_error"] > 0
+    assert result["pearson_dispersion"] > 0
+    assert result["effect_reference_value"] == 200.5
+    assert result["doubling_effect_pct_at_reference"] < 0
