@@ -4,11 +4,23 @@
       "caveat": "\u914d\u7f6e\u6392\u9664\u9879\u548c mathlib \u5916\u90e8 universe \u4e0d\u5c5e\u4e8e\u8be5\u603b\u4f53\u3002",
       "claim_id": "completeness.configured_corpus",
       "evidence": [
-        "metrics/data_quality.json"
+        "metrics/data_quality.json",
+        "results/lean_mathlib_v1/capability-probe.json",
+        "results/lean_mathlib_v1/golden-test.json"
       ],
       "scope": "configured Mathlib corpus",
       "status": "fact",
       "text": "\u914d\u7f6e\u5185 7 \u4e2a\u6a21\u5757\u5168\u90e8\u6210\u529f\u63d0\u53d6\uff0c\u6ca1\u6709\u5931\u8d25\u3001partial \u6216\u9759\u9ed8\u7a7a\u7ed3\u679c\u3002"
+    },
+    {
+      "caveat": "\u8fd9\u4e0d\u5426\u5b9a\u56fe\u5b8c\u6574\u6027\u95e8\u7981\uff0c\u4f46\u4f1a\u963b\u6b62\u628a\u5386\u53f2 raw \u6570\u636e\u58f0\u660e\u4e3a\u4ee3\u7801\u7ea7\u5b8c\u5168\u53ef\u8ffd\u6eaf\u3002",
+      "claim_id": "provenance.extractor_revision",
+      "evidence": [
+        "run-manifest.json"
+      ],
+      "scope": "extractor-code provenance audit",
+      "status": "inconclusive",
+      "text": "\u8be5\u5386\u53f2 raw manifest \u672a\u8bb0\u5f55\u5b9e\u9645\u63d0\u53d6\u4ee3\u7801 revision\uff1b\u5f53\u524d\u6e90\u7801\u54c8\u5e0c\u53ea\u80fd\u63cf\u8ff0\u5f53\u524d\u5b9e\u73b0\uff0c\u4e0d\u80fd\u5012\u63a8\u5f53\u65f6 extractor\u3002"
     },
     {
       "caveat": "\u7eaf power law \u5728\u76f8\u5bf9\u6a21\u578b\u6bd4\u8f83\u4e2d\u4e0d\u5360\u4f18\uff1b\u03b2rank \u662f\u63cf\u8ff0\u6027 log\u2013log \u659c\u7387\uff1babsolute bootstrap=not_implemented_v1\u3002",
@@ -19,7 +31,7 @@
       ],
       "scope": "positive indegree tail selected at xmin=2.0; tail_n=106",
       "status": "supported",
-      "text": "\u590d\u7528 rank\u2013frequency \u660e\u663e\u91cd\u5c3e\uff0c\u4f46\u5168\u4f53\u5c3e\u90e8 \u03b2rank=1.152 \u5e76\u975e\u4e25\u683c 1/r\uff1btheorem \u03b2rank=0.503 \u63a5\u8fd1 1\uff0cdefinition \u03b2rank=1.608 \u66f4\u9661\u3002"
+      "text": "\u590d\u7528 rank\u2013frequency \u5448\u7ecf\u9a8c\u5bbd\u5c3e\uff0c\u4f46\u5168\u4f53\u5c3e\u90e8 \u03b2rank=1.152 \u4e0d\u652f\u6301\u4e25\u683c 1/r\uff1btheorem \u03b2rank=0.503 \u5728\u63cf\u8ff0\u4e0a\u63a5\u8fd1 1\uff0cdefinition \u03b2rank=1.608 \u66f4\u9661\u3002"
     },
     {
       "caveat": "unique consumer breadth \u4e0d\u662f\u540c\u4e00\u58f0\u660e\u5185\u7684 raw occurrence \u6b21\u6570\u3002",
