@@ -291,14 +291,16 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
     commit = subprocess.run(
         ["git", "rev-parse", "HEAD"], cwd=ROOT, text=True, capture_output=True, check=True
     ).stdout.strip()
-    dirty = bool(
-        subprocess.run(
-            ["git", "status", "--porcelain", "--untracked-files=no"],
-            cwd=ROOT,
-            text=True,
-            capture_output=True,
-            check=True,
-        ).stdout.strip()
+    tracked_changes = subprocess.run(
+        ["git", "status", "--porcelain", "--untracked-files=no"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.splitlines()
+    dirty = any(
+        not line[3:].startswith("results/lean_mathlib_v1/")
+        for line in tracked_changes
     )
     mathlib = ROOT / "vendor" / "mathlib4"
     mathlib_commit = subprocess.run(
