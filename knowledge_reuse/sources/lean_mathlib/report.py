@@ -298,10 +298,7 @@ def run_manifest(run_kind: str) -> dict[str, Any]:
         capture_output=True,
         check=True,
     ).stdout.splitlines()
-    dirty = any(
-        not line[3:].startswith("results/lean_mathlib_v1/")
-        for line in tracked_changes
-    )
+    dirty = any(not line[3:].startswith("results/lean_mathlib_v1/") for line in tracked_changes)
     mathlib = ROOT / "vendor" / "mathlib4"
     mathlib_commit = subprocess.run(
         ["git", "rev-parse", "HEAD"],
@@ -770,6 +767,26 @@ A 使用 B，C 也使用 B：     A ──→ B ←── C
 
 <section id="s13"><h2>13. 领域结构与 H*ref</h2>
 <p>领域标签来自 module 的高层路径，例如 <code>Mathlib.Algebra...</code> 归入 Algebra。它像按书架位置分类：规则清楚、可以重复得到同样结果，但一条定理可能跨越多个主题，所以它不是严格的数学本体分类。</p>
+<h3>13.1 领域标签的确定算法</h3>
+<pre>domain_from_module(module):
+  parts = module.split(".")
+  if parts[0] == "Mathlib" and len(parts) &gt; 1:
+    return parts[1]
+  return parts[0]
+
+Mathlib.Algebra.Group.Basic       → Algebra
+Mathlib.NumberTheory.Padics       → NumberTheory
+Mathlib.Topology.Category.TopCat  → Topology</pre>
+<p>因此领域不是从 declaration 名称、证明内容或机器学习模型推断的，而是由所属 module 的 repository 路径确定。这个规则保证同一 snapshot 重算得到相同标签，但代价是跨主题 declaration 仍只能继承其文件所在的一个路径领域。</p>
+<h3>13.2 跨领域 edge 怎样进入矩阵</h3>
+<ol class="steps"><li>从完整 typed graph 取边 <code>(src_id,dst_id,edge_type)</code>，方向保持为 consumer/source → dependency/target。</li><li>只保留 source 与 target 都能连接到 configured corpus 内部 node 的边。显式 external target 没有可靠 module/domain，因此不进入领域矩阵，也不被武断地分到 <code>Other</code>。</li><li>把相同 <code>(src_id,dst_id)</code> 的 TYPE/VALUE 行折叠为一个 unique dependency pair。若 A 的 type 和 proof 都使用 B，领域矩阵只让 A 所在领域到 B 所在领域的 cell 加 1。</li><li>为 pair 两端附加路径领域，并按 <code>(src_domain,dst_domain)</code> 分组计数。同领域 pair 进入矩阵对角线；跨领域 pair 原样进入非对角 cell，不会被删除或重新归属。</li></ol>
+<pre>P = DISTINCT (src_id, dst_id)
+    FROM typed_edges
+    WHERE src_id ∈ internal_nodes AND dst_id ∈ internal_nodes
+
+M[a,b] = |{(s,t) ∈ P : domain(s)=a 且 domain(t)=b}|
+row_share[a,b] = M[a,b] / Σ_c M[a,c]</pre>
+<p>全图共有 {{ summary.all_unique_pair_count|fmt }} 个 ALL unique source–target pairs；其中 {{ domain_analysis.internal_pair_count|fmt }} 个两端都在内部语料中，构成本节领域矩阵总体。差额包含指向 external target 的真实边界依赖：它们仍保留在全图统计中，只是不参与需要两端领域标签的矩阵。</p>
 <p><b>领域依赖矩阵</b>的每一行是发出依赖的 source domain，每一列是收到依赖的 target domain。为了与 C_i 的 unique-consumer 单位一致，同一 `(src,dst)` 同时有 TYPE/VALUE 时先折叠一次，再使对应 cell 加 1。某行的 row share 是该来源领域全部唯一 dependency pairs 中指向某目标领域的比例。</p>{{ domain_examples_table|safe }}
 <h3>Veldhuizen-style H*ref 怎样计算</h3><p>对来源领域 d，令 <code>p_d(b)=d 指向目标领域 b 的唯一 dependency pairs / d 的全部内部 dependency pairs</code>。当前共有 D={{ domain_analysis.target_domain_count }} 个可观测目标领域，定义 <code>H*ref(d)=-Σ p_d(b) log p_d(b) / log(D)</code>。统一分母使不同规模领域落在 0 到 1：接近 0 表示依赖集中在少数目标领域，接近 1 表示在 D 个领域间更均匀。</p>
 <div class="callout"><b>教学例子：</b>若 100 个 pairs 全指向 Algebra，则只有 p=1，分子为 0，H*ref=0；若 50 个指向 Algebra、50 个指向 Topology，分子为 <code>log(2)</code>，所以 H*ref=<code>log(2)/log({{ domain_analysis.target_domain_count }})≈{{ domain_analysis.two_target_h }}</code>。它衡量“目标领域分散度”，不是一个 declaration 内部有多复杂。</div>
@@ -1455,6 +1472,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         },
         "domain_analysis": {
             "domain_count": comparable_domains.height,
+            "internal_pair_count": int(domain_reuse_matrix["dependency_pair_count"].sum()),
             "target_domain_count": target_domain_count,
             "two_target_h": f"{math.log(2) / math.log(target_domain_count):.3f}",
             "gini_min": f"{comparable_domains['gini'].min():.3f}",
