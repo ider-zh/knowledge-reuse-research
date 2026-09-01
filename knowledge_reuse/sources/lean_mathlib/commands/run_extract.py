@@ -60,7 +60,11 @@ def module_plan_sha256(modules: list[str]) -> str:
     return hashlib.sha256(("\n".join(modules) + "\n").encode()).hexdigest()
 
 
-def valid_cached_shard(path: pathlib.Path, expected_plan_sha256: str) -> str | None:
+def valid_cached_shard(
+    path: pathlib.Path,
+    expected_plan_sha256: str,
+    expected_extractor_sha256: str | None = None,
+) -> str | None:
     checksum_path = path.with_suffix(path.suffix + ".sha256")
     if not path.is_file() or not checksum_path.is_file():
         return None
@@ -70,6 +74,11 @@ def valid_cached_shard(path: pathlib.Path, expected_plan_sha256: str) -> str | N
         return None
     content_sha256 = sidecar.get("sha256")
     if sidecar.get("module_plan_sha256") != expected_plan_sha256:
+        return None
+    if (
+        expected_extractor_sha256 is not None
+        and sidecar.get("extractor_sha256") != expected_extractor_sha256
+    ):
         return None
     return content_sha256 if file_sha256(path) == content_sha256 else None
 
@@ -85,7 +94,9 @@ def read_cached_shard_metadata(path: pathlib.Path) -> tuple[int, list[dict[str, 
                     try:
                         row = json.loads(line)
                     except json.JSONDecodeError as error:
-                        raise ValueError(f"invalid cached shard {path}, line {line_number}: {error}") from error
+                        raise ValueError(
+                            f"invalid cached shard {path}, line {line_number}: {error}"
+                        ) from error
                     record_count += 1
                     if row.get("record") == "audit":
                         audits.append(row)
@@ -137,24 +148,26 @@ def run_module(
     log_dir: pathlib.Path,
     extractor: pathlib.Path = EXTRACTOR,
 ) -> tuple[list[dict[str, Any]], dict[str, Any]]:
-    rows, audits, complete = run_modules(
-        snapshot, [module], log_dir / f"{module}.log", extractor
-    )
+    rows, audits, complete = run_modules(snapshot, [module], log_dir / f"{module}.log", extractor)
     if complete:
         return rows, audits[0]
-    audit = audits[0] if len(audits) == 1 else {
-        "record": "audit",
-        "snapshot": snapshot,
-        "module": module,
-        "status": "failed",
-        "decl_count": sum(row.get("record") == "node" for row in rows),
-        "edge_count": sum(row.get("record") == "edge" for row in rows),
-        "warning_count": 0,
-        "error": f"expected one successful audit record, found {len(audits)}",
-        "duration_seconds": 0.0,
-        "return_code": 1,
-        "parse_error_count": 0,
-    }
+    audit = (
+        audits[0]
+        if len(audits) == 1
+        else {
+            "record": "audit",
+            "snapshot": snapshot,
+            "module": module,
+            "status": "failed",
+            "decl_count": sum(row.get("record") == "node" for row in rows),
+            "edge_count": sum(row.get("record") == "edge" for row in rows),
+            "warning_count": 0,
+            "error": f"expected one successful audit record, found {len(audits)}",
+            "duration_seconds": 0.0,
+            "return_code": 1,
+            "parse_error_count": 0,
+        }
+    )
     if audit not in rows:
         rows.append(audit)
     return rows, audit
@@ -171,7 +184,8 @@ def write_shard(
     started = time.perf_counter()
     target = raw_dir / f"{shard['id']}.jsonl.zst"
     plan_sha256 = module_plan_sha256(shard["modules"])
-    if not force and (checksum := valid_cached_shard(target, plan_sha256)):
+    extractor_sha256 = file_sha256(extractor)
+    if not force and (checksum := valid_cached_shard(target, plan_sha256, extractor_sha256)):
         record_count, audits = read_cached_shard_metadata(target)
         expected_modules = set(shard["modules"])
         observed_modules = {str(audit.get("module")) for audit in audits}
@@ -226,14 +240,24 @@ def write_shard(
         with zstandard.ZstdCompressor(level=6).stream_writer(tmp, closefd=False) as writer:
             for row in rows:
                 writer.write(
-                    json.dumps(row, ensure_ascii=False, sort_keys=True, separators=(",", ":")).encode()
+                    json.dumps(
+                        row, ensure_ascii=False, sort_keys=True, separators=(",", ":")
+                    ).encode()
                     + b"\n"
                 )
                 record_count += 1
     temp_path.replace(target)
     checksum = file_sha256(target)
     target.with_suffix(target.suffix + ".sha256").write_text(
-        json.dumps({"sha256": checksum, "module_plan_sha256": plan_sha256}, sort_keys=True) + "\n"
+        json.dumps(
+            {
+                "sha256": checksum,
+                "module_plan_sha256": plan_sha256,
+                "extractor_sha256": extractor_sha256,
+            },
+            sort_keys=True,
+        )
+        + "\n"
     )
     statuses = {audit["status"] for audit in audits}
     status = "ok" if statuses == {"ok"} else "partial" if "ok" in statuses else "failed"
@@ -275,6 +299,23 @@ def main() -> int:
     if not INVENTORY_PATH.exists() or not PLAN_PATH.exists():
         raise SystemExit("missing inventory/shard plan; run inventory and make_shards first")
     subprocess.run([LAKE, "build", "lean-graph-extract"], cwd=ROOT, check=True)
+    extractor_sha256 = file_sha256(EXTRACTOR)
+    extractor_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
+    repository_dirty = bool(
+        subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.strip()
+    )
     snapshot = config["snapshot_id"]
     run_kind = "smoke" if args.smoke else "full"
     raw_dir = raw_root(snapshot, run_kind)
@@ -304,6 +345,10 @@ def main() -> int:
         "schema_version": "raw-manifest-v1",
         "snapshot_id": snapshot,
         "run_kind": run_kind,
+        "extractor_commit": extractor_commit,
+        "extractor_repository_dirty": repository_dirty,
+        "extractor_sha256": extractor_sha256,
+        "config_sha256": file_sha256(CONFIG_PATH),
         "worker_count": workers,
         "started_at": started_at.isoformat(),
         "finished_at": finished_at.isoformat(),

@@ -14,11 +14,13 @@ from knowledge_reuse.sources.lean_mathlib.commands.run_extract import (
     LAKE,
     RUNNER_CONFIG,
     ShardResult,
+    file_sha256,
     select_shards,
     write_shard,
 )
 from knowledge_reuse.sources.lean_mathlib.layout import (
     COMPLEXITY_SCHEMA_VERSION,
+    CONFIG_PATH,
     ROOT,
     audit_root,
     complexity_raw_root,
@@ -30,6 +32,23 @@ EXTRACTOR = ROOT / ".lake" / "build" / "bin" / "lean-graph-complexity"
 
 def run_complexity(smoke: bool, workers: int, force: bool) -> dict[str, object]:
     subprocess.run([LAKE, "build", "lean-graph-complexity"], cwd=ROOT, check=True)
+    extractor_sha256 = file_sha256(EXTRACTOR)
+    extractor_commit = subprocess.run(
+        ["git", "rev-parse", "HEAD"],
+        cwd=ROOT,
+        text=True,
+        capture_output=True,
+        check=True,
+    ).stdout.strip()
+    repository_dirty = bool(
+        subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=no"],
+            cwd=ROOT,
+            text=True,
+            capture_output=True,
+            check=True,
+        ).stdout.strip()
+    )
     snapshot = RUNNER_CONFIG["snapshot_id"]
     run_kind = "smoke" if smoke else "full"
     raw_dir = complexity_raw_root(snapshot, run_kind)
@@ -64,6 +83,10 @@ def run_complexity(smoke: bool, workers: int, force: bool) -> dict[str, object]:
         "schema_version": COMPLEXITY_SCHEMA_VERSION,
         "snapshot_id": snapshot,
         "run_kind": run_kind,
+        "extractor_commit": extractor_commit,
+        "extractor_repository_dirty": repository_dirty,
+        "extractor_sha256": extractor_sha256,
+        "config_sha256": file_sha256(CONFIG_PATH),
         "worker_count": workers,
         "started_at": started_at.isoformat(),
         "finished_at": datetime.datetime.now(datetime.UTC).isoformat(),
@@ -82,9 +105,7 @@ def run_complexity(smoke: bool, workers: int, force: bool) -> dict[str, object]:
         "shards": [result.__dict__ | {"module_audits": None} for result in results],
     }
     raw_dir.mkdir(parents=True, exist_ok=True)
-    (raw_dir / "manifest.json").write_text(
-        json.dumps(manifest, indent=2, sort_keys=True) + "\n"
-    )
+    (raw_dir / "manifest.json").write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     result_path = run_results_root(run_kind) / "complexity-extraction-summary.json"
     result_path.write_text(json.dumps(manifest, indent=2, sort_keys=True) + "\n")
     failed = manifest["status_counts"]["failed"] + manifest["status_counts"]["partial"]

@@ -15,10 +15,19 @@ def test_cached_shard_requires_matching_checksum(tmp_path) -> None:
     shard.write_bytes(b"content")
     checksum = hashlib.sha256(b"content").hexdigest()
     plan = module_plan_sha256(["Mathlib.Test"])
+    extractor = hashlib.sha256(b"extractor").hexdigest()
     shard.with_suffix(".zst.sha256").write_text(
-        json.dumps({"sha256": checksum, "module_plan_sha256": plan})
+        json.dumps(
+            {
+                "sha256": checksum,
+                "module_plan_sha256": plan,
+                "extractor_sha256": extractor,
+            }
+        )
     )
     assert valid_cached_shard(shard, plan) == checksum
+    assert valid_cached_shard(shard, plan, extractor) == checksum
+    assert valid_cached_shard(shard, plan, "different") is None
     assert valid_cached_shard(shard, module_plan_sha256(["Mathlib.Other"])) is None
     shard.write_bytes(b"changed")
     assert valid_cached_shard(shard, plan) is None
