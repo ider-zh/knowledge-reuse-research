@@ -179,13 +179,16 @@ TYPE/VALUE 对同一 `(src,dst)` 的重复在此处折叠一次，使 `H*ref`、
 Lean、图论或统计建模，但具备高中代数和比例知识的读者为最低解释基线：
 
 - source-specific 术语（如 elaboration、declaration、Expr、TYPE/VALUE）
-  首次出现时先用日常语言解释，再给正式名称；
+  首次出现时先用日常语言解释，再给正式名称；若术语由 source 定义，还必须
+  链接 source 的官方语言参考、源码定义或版本固定文档；
 - 图论术语（有向边、入度、出度、CCDF、rank-frequency）先用 3–5 个节点
   的可手算例子解释计数方向；
 - 集中度指标至少给出“完全均匀”和“全部集中于一个节点”两个边界例子；
 - 每个缩写（DAG、CCDF、HHI、GLM、CI）首次出现时写出全称或中文含义；
 - 每个统计方法先回答“它比较什么、数值范围怎样读、为什么在这里使用”，
   然后才展示结果；
+- 首次给出符号或统计量（如 `β`、Gini、`H*ref`、`xmin`、KS）时，必须在
+  数字之前直接给出定义、取值/方向怎样读及适用总体；不得要求读者向后寻找上下文；
 - `log1p`、percentile、coefficient、confidence interval、p value、control
   等词必须给出一句无需统计课程背景的解释；
 - 章节结尾应说明上一节的结果为什么导向下一节，不能只依赖目录编号；
@@ -339,7 +342,8 @@ results/<experiment_id>/runs/<run_kind>/
 
 - `source_id`、`snapshot_id`、`experiment_id`、`run_kind`；
 - upstream version/revision；
-- extractor/normalizer/analyzer/report generator revision；
+- extractor/normalizer/analyzer/report generator revision；工作树非 clean 时可用精确
+  source/binary SHA-256 绑定实现，但不得用当前 revision 倒推历史未记录的 extractor；
 - config hash 与 raw manifest hash；
 - schema versions；
 - 研究报告正文绑定 source/snapshot/schema/revision/checksum；started/finished
@@ -472,6 +476,8 @@ null，以及缺失如何进入或退出分析？** 工程上的截断防护、�
 - Spearman；
 - Negative Binomial 或有解释的替代 count model；
 - controls、effect size、95% CI、diagnostics；
+- 若模型使用 `log1p(x)`，所谓“翻倍效应”必须注明参考值 `x`，并使用
+  `log1p(2x)-log1p(x)` 计算；不得把它写成与 baseline 无关的常数；
 - observational caveat。
 
 在相关和回归之前，必须并列展示两个真实节点案例：长度/复杂度相近但 reuse 不同，或 reuse 相近但复杂度不同。该对照用于建立直觉和暴露混杂，不得用两个案例替代总体模型。
@@ -917,12 +923,13 @@ Wikipedia 与 software 报告继承相同章节和证据契约，仅替换 nativ
 - TYPE、VALUE 和 ALL 数量一致性通过；
 - source metric coverage 显示 null rate；
 - tree-occurrence 算法描述与 `ExprStats.lean` fixture 一致；
-- 报告出现“缓存不等于截断”及未实现复杂度变量；
-- `--force` 只控制是否重建有效 cache，不改变 graph semantics 或 analysis population；
+- machine audit/测试验证 cache 命中不改变 graph semantics 或 analysis population；
+  cache、重试、force 等工程运行轨迹不进入研究正文；
 - TYPE 与 VALUE 各有至少一个从 full graph 验证的真实 edge 案例；
 - 至少一个无 value 的 declaration 用于解释 `null ≠ 0`；
 - Expr cache 同时有手算 DAG 和真实 high-workload declaration；
-- workload 表区分 extraction、Expr、normalization、aggregation、fitting 和 rendering。
+- 正文解释 Expr 递推算法与渐进复杂度，但不展示 extraction/cache/retry/rendering
+  等工程 workload tracking；这些信息仅保留在 machine audit。
 
 ## 11. 人工评审量表
 
