@@ -107,6 +107,28 @@ function NodeDiagram({ item }: { item: ConstructionCase }) {
           </dl>
         </article>
       ))}
+      <aside className="node-schema-guide" aria-label="节点字段定义">
+        <h5>这些字段怎样理解？</h5>
+        <dl>
+          <div>
+            <dt>kind</dt>
+            <dd>Lean 环境记录的声明类别，例如 definition、theorem 或 constructor。</dd>
+          </div>
+          <div>
+            <dt>node id</dt>
+            <dd>该快照规范化图中的稳定整数标识；它用于连接边，不表示顺序或复杂度。</dd>
+          </div>
+          <div>
+            <dt>type Expr</dt>
+            <dd>声明的类型或命题经 Lean 精化后形成的内部表达式。数值是概念展开 Expr tree 中的构造节点出现次数。</dd>
+          </div>
+          <div>
+            <dt>value Expr</dt>
+            <dd>定义体或证明项经精化后的内部表达式，采用同一计数方法；null 表示该 value 不可观测，不表示复杂度为零。</dd>
+          </div>
+        </dl>
+        <p>因此，Set 的 type Expr=3、value Expr=5，表示它的精化类型树含 3 个表达式构造出现，定义体树含 5 个；两者都不是源码 Token 数或依赖边数。</p>
+      </aside>
     </div>
   );
 }
