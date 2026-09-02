@@ -40,7 +40,7 @@ export default function ReuseDistributionChart() {
           <h2>复用分布是否接近 1/r？</h2>
         </div>
         <p>
-          横轴是复用排名 r，纵轴是被不同 declaration 使用的次数 C(r)。两轴均为对数刻度；若经验曲线与 Zipf 参考线平行，指数 β 就接近 1。
+          横轴是复用排名 r，纵轴 C(r) 是 `.ilean` SOURCE 图中直接引用目标的不同 consumer declaration 数。两轴均为对数刻度；若经验曲线与 Zipf 参考线平行，指数 β 接近 1。
         </p>
       </div>
 
@@ -91,7 +91,7 @@ export default function ReuseDistributionChart() {
                   domain={[1, "auto"]}
                   allowDataOverflow
                   tickFormatter={compactTick}
-                  label={{ value: "C(r) unique consumers（log）", angle: -90, position: "insideLeft", fontSize: 14 }}
+                  label={{ value: "C(r) direct SOURCE consumers（log）", angle: -90, position: "insideLeft", fontSize: 14 }}
                   tick={{ fontSize: 13 }}
                 />
                 <Tooltip

@@ -46,38 +46,43 @@ function App() {
       <main id="top">
         <section className="hero">
           <div className="hero-copy">
-            <p className="eyebrow">LEAN 4 / MATHLIB v4.32.1 · FULL GRAPH</p>
+            <p className="eyebrow">LEAN 4 / MATHLIB v4.32.1 · .ILEAN SOURCE GRAPH</p>
             <h1>形式化知识<br />复用观测站</h1>
             <p className="hero-dek">
-              本研究把 mathlib 中的声明视为节点，把类型和证明中对其他声明的引用视为有向边。完整图用于计算总体规律；本页通过统计图、概念说明和真实源码案例解释研究发现。
+              本研究把 mathlib 中的 declaration 视为节点，把 Lean 在 `.ilean` 中解析到具体目标的源码引用视为有向边。完整图用于计算复用分布；本页通过统计图与固定版本源码案例呈现证据。
             </p>
           </div>
           <aside className="concept-card">
             <p className="eyebrow">GRAPH SEMANTICS</p>
             <b>consumer declaration</b><span>→</span><b>referenced declaration</b>
-            <p>边来自精化后的证明与类型表达式；import 只负责装载环境。</p>
+            <p>每个不同源码位置贡献一次 occurrence；同一 pair 的位置数成为 multiplicity。import 关系不直接成为边。</p>
           </aside>
         </section>
 
         <section className="metric-grid" aria-label="图规模指标">
-          <MetricCard number={metrics.internal_declarations} label="内部 declaration" detail="配置语料内的完整节点" onClick={() => open("nodes")} />
-          <MetricCard number={metrics.external_targets} label="显式 external targets" detail="保留边界依赖，不伪造领域" onClick={() => open("external")} />
-          <MetricCard number={metrics.typed_edges} label="唯一 typed edges" detail="TYPE 与 VALUE 分开计数" onClick={() => open("typed")} />
-          <MetricCard number={metrics.unique_dependency_pairs} label="ALL dependency pairs" detail="TYPE/VALUE 对同一 pair 折叠" onClick={() => open("edges")} />
-          <MetricCard
-            number={metrics.constant_occurrences}
-            label="展开 Expr tree 常量次数"
-            detail={`精确值 ${format.format(metrics.constant_occurrences)}；不是运行时调用量`}
-            onClick={() => open("typed")}
-          />
+          <MetricCard number={metrics.internal_declarations} label="内部 declaration" detail="Environment 中的研究节点" onClick={() => open("nodes")} />
+          <MetricCard number={metrics.external_targets} label="显式 external targets" detail="保留边界目标与 module hints" onClick={() => open("external")} />
+          <MetricCard number={metrics.source_pairs} label="SOURCE pairs" detail="不同 consumer → target 对" onClick={() => open("source")} />
+          <MetricCard number={metrics.source_occurrences} label="源码引用 occurrence" detail="不同 resolved LSP source ranges" onClick={() => open("source")} />
+          <MetricCard number={metrics.repeated_pairs} label="重复引用 pairs" detail="multiplicity 大于 1" onClick={() => open("source")} />
+          <MetricCard number={metrics.self_loop_pairs} label="SOURCE self-loops" detail="递归或自引用源码位置" onClick={() => open("source")} />
         </section>
+
+        <aside className="attribution-boundary">
+          <b>Declaration edge 的归属边界</b>
+          <p>
+            `.ilean` 中另有 {format.format(metrics.unparented_usages)} 个位置没有 parent declaration，
+            {format.format(metrics.unresolved_parent_usages)} 个位置的 parent label 不在 Environment 节点集中。
+            两类记录均独立保存，不进入 declaration→declaration 图。
+          </p>
+        </aside>
 
         <GraphConstruction />
 
         <section id="findings" className="section-block findings">
           <div className="section-heading">
             <div><p className="eyebrow">VELDHUIZEN-STYLE FINDINGS</p><h2>先给结论，再打开证据</h2></div>
-            <p>每条结论保留 scope、caveat 和机器证据路径。supported 不等于证明，exploratory 不等于无价值。</p>
+            <p>每条结论给出分析总体、限制和机器证据路径。supported 表示证据支持经验命题，不表示证明了严格分布定律。</p>
           </div>
           <div className="claim-grid">
             {overview.claims.map((claim) => <ClaimCard key={claim.claim_id} claim={claim} />)}
@@ -99,7 +104,7 @@ function App() {
         <section id="methods" className="section-block methods">
           <div className="section-heading">
             <div><p className="eyebrow">PUBLICATION CONTRACT</p><h2>完整计算，有限发布</h2></div>
-            <p>网页是证据入口，不是原始数据仓库。每个公开 JSON 都有 population count、published count、schema 和 checksum。</p>
+            <p>网页发布可审阅的局部样本和完整总体的派生统计；每个 JSON 均记录总体数、发布数、schema 与 checksum。</p>
           </div>
           <div className="method-grid">
             {Object.entries(overview.sampling_policy).map(([key, value]) => (
@@ -114,7 +119,7 @@ function App() {
 
       <footer>
         <p>Knowledge Reuse Research · snapshot {overview.snapshot_id}</p>
-        <p>Cloudflare-ready static build · no browser access to full raw graph</p>
+        <p>{overview.graph_schema_version} · direct resolved source references</p>
       </footer>
 
       <Explorer selection={explorer} onClose={() => setExplorer({ kind: null })} />

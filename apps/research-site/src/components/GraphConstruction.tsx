@@ -14,7 +14,7 @@ export default function GraphConstruction() {
   const [data, setData] = useState<ConstructionCases | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [mode, setMode] = useState<"nodes" | "edges">("edges");
-  const [caseId, setCaseId] = useState("edge.type-value");
+  const [caseId, setCaseId] = useState("edge.dfunlike");
 
   useEffect(() => {
     loadConstructionCases()
@@ -30,14 +30,14 @@ export default function GraphConstruction() {
 
   const switchMode = (next: "nodes" | "edges") => {
     setMode(next);
-    setCaseId(next === "nodes" ? "node.definition" : "edge.type-value");
+    setCaseId(next === "nodes" ? "node.definition" : "edge.dfunlike");
   };
 
   return (
     <section id="construction" className="section-block construction-section">
       <div className="section-heading">
         <div><p className="eyebrow">SOURCE → SEMANTIC GRAPH</p><h2>一段 Lean 代码怎样成为节点和边</h2></div>
-        <p>图不是由 import 关系推断。抽取器读取环境中的 declaration，再分别遍历精化后的 TYPE 与 VALUE Expr；重复常量引用保存为边权。</p>
+        <p>节点来自 Lean Environment；边来自 `.ilean` 中已经解析到全局常量的源码位置。不同位置不被折叠，聚合后成为 SOURCE multiplicity。</p>
       </div>
 
       {error && <p className="error">{error}</p>}
@@ -54,14 +54,14 @@ export default function GraphConstruction() {
             ))}
           </div>
 
-          <section className="expr-mechanism" aria-label="Expr 抽取机制">
+          <section className="expr-mechanism" aria-label=".ilean SOURCE edge 抽取机制">
             <header>
-              <div><p className="eyebrow">EXTRACTION MECHANISM</p><h3>从 Lean Environment 读取并遍历精化后的 Expr</h3></div>
-              <a href={data.expr_extraction.official_expr_url} target="_blank" rel="noreferrer">Lean v4.32.1 Expr 定义 ↗</a>
+              <div><p className="eyebrow">EXTRACTION MECHANISM</p><h3>Lean 怎样把源码 identifier 写入 `.ilean` reference index</h3></div>
+              <a href={data.edge_extraction.steps[0].url} target="_blank" rel="noreferrer">Lean v4.32.1 实现证据 ↗</a>
             </header>
-            <p>{data.expr_extraction.source_text_role}</p>
+            <p>{data.edge_extraction.mechanism}</p>
             <div className="expr-mechanism-grid">
-              {data.expr_extraction.steps.map((step, index) => (
+              {data.edge_extraction.steps.map((step, index) => (
                 <article key={step.step}>
                   <span>{String(index + 1).padStart(2, "0")}</span>
                   <h4>{step.step}</h4>
@@ -71,7 +71,7 @@ export default function GraphConstruction() {
                 </article>
               ))}
             </div>
-            <aside><b>缓存怎样保留重复引用？</b><p>{data.expr_extraction.cache}</p></aside>
+            <aside><b>module 字段怎样解释？</b><p>{data.edge_extraction.module_hint}</p></aside>
           </section>
 
           <div className="construction-note">
@@ -106,6 +106,8 @@ export default function GraphConstruction() {
                 </div>
                 <div className="graph-panel">
                   {selected.edges ? <EdgeDiagram edges={selected.edges} /> : <NodeDiagram item={selected} />}
+                  {selected.source_locations && <SourceLocations item={selected} />}
+                  {selected.aggregate && <TargetAggregate aggregate={selected.aggregate} />}
                 </div>
               </div>
               {selected.interpretation && <p className="case-interpretation"><b>研究解释：</b>{selected.interpretation}</p>}
@@ -218,18 +220,17 @@ function EdgeDiagram({ edges }: { edges: ConstructionEdge[] }) {
   const selfLoop = edges.every((edge) => edge.is_self_loop);
   return (
     <div className="edge-output">
-      <svg viewBox="0 0 780 270" role="img" aria-label={`${first.src_name} 到 ${first.dst_name} 的类型化语义边`}>
+      <svg viewBox="0 0 780 270" role="img" aria-label={`${first.src_name} 到 ${first.dst_name} 的 SOURCE 边`}>
         <defs>
-          <marker id="arrow-type" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#20495f" /></marker>
-          <marker id="arrow-value" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#c07a2b" /></marker>
+          <marker id="arrow-source" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto"><path d="M0,0 L0,6 L9,3 z" fill="#1f6b53" /></marker>
         </defs>
         {selfLoop ? (
           <>
             <rect x="220" y="105" width="340" height="90" rx="10" className="graph-node" />
             <text x="390" y="145" textAnchor="middle" className="node-name">{shortName(first.src_name)}</text>
             <text x="390" y="170" textAnchor="middle" className="node-kind">{first.src_kind}</text>
-            <path d="M485 106 C610 8 655 210 555 176" className="edge-value" markerEnd="url(#arrow-value)" />
-            <text x="610" y="70" textAnchor="middle" className="edge-label">VALUE × {first.multiplicity}</text>
+            <path d="M485 106 C610 8 655 210 555 176" className="edge-source" markerEnd="url(#arrow-source)" />
+            <text x="610" y="70" textAnchor="middle" className="edge-label source">SOURCE × {first.multiplicity}</text>
           </>
         ) : (
           <>
@@ -240,12 +241,11 @@ function EdgeDiagram({ edges }: { edges: ConstructionEdge[] }) {
             <text x="605" y="133" textAnchor="middle" className="node-name">{shortName(first.dst_name)}</text>
             <text x="605" y="160" textAnchor="middle" className="node-kind">dependency · {first.dst_kind}</text>
             {edges.map((edge, index) => {
-              const type = edge.edge_type.toLowerCase();
               const y = edges.length === 1 ? 139 : index === 0 ? 116 : 162;
               return (
                 <g key={`${edge.edge_type}-${edge.dst_id}`}>
-                  <path d={`M315 ${y} C365 ${y - 22} 415 ${y - 22} 465 ${y}`} className={`edge-${type}`} markerEnd={`url(#arrow-${type})`} />
-                  <text x="390" y={y - 23} textAnchor="middle" className={`edge-label ${type}`}>{edge.edge_type} × {edge.multiplicity}</text>
+                  <path d={`M315 ${y} C365 ${y - 22} 415 ${y - 22} 465 ${y}`} className="edge-source" markerEnd="url(#arrow-source)" />
+                  <text x="390" y={y - 23} textAnchor="middle" className="edge-label source">SOURCE × {edge.multiplicity}</text>
                 </g>
               );
             })}
@@ -253,9 +253,35 @@ function EdgeDiagram({ edges }: { edges: ConstructionEdge[] }) {
         )}
       </svg>
       <div className="edge-ledger">
-        {edges.map((edge) => <span key={`${edge.edge_type}-${edge.dst_id}`} className={edge.edge_type.toLowerCase()}><b>{edge.edge_type}</b> multiplicity {format.format(edge.multiplicity)}</span>)}
+        {edges.map((edge) => <span key={`${edge.edge_type}-${edge.dst_id}`} className="source"><b>{edge.edge_type}</b> source occurrences {format.format(edge.multiplicity)}</span>)}
       </div>
     </div>
+  );
+}
+
+function SourceLocations({ item }: { item: ConstructionCase }) {
+  return (
+    <section className="source-locations">
+      <header><b>RESOLVED SOURCE LOCATIONS</b><span>展示 {item.published_location_count} / {item.edges?.[0].multiplicity}</span></header>
+      <ol>
+        {item.source_locations?.map((location) => (
+          <li key={`${location.line}:${location.start_character}:${location.end_character}`}>
+            <code>L{location.line}:{location.start_character}–{location.end_character}</code>
+          </li>
+        ))}
+      </ol>
+    </section>
+  );
+}
+
+function TargetAggregate({ aggregate }: { aggregate: NonNullable<ConstructionCase["aggregate"]> }) {
+  return (
+    <dl className="target-aggregate">
+      <div><dt>目标总 occurrence</dt><dd>{format.format(aggregate.target_source_occurrences)}</dd></div>
+      <div><dt>直接 consumers</dt><dd>{format.format(aggregate.target_unique_consumers)}</dd></div>
+      <div><dt>来源 modules</dt><dd>{format.format(aggregate.source_modules)}</dd></div>
+      <div><dt>独立保存的 private context</dt><dd>{format.format(aggregate.excluded_private_context_locations)}</dd></div>
+    </dl>
   );
 }
 

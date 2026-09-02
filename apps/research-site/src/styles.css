@@ -37,7 +37,7 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .concept-card > span { margin: 8px 0; color: #78c7a4; font-size: 25px; }
 .concept-card > p:last-child { margin: 22px 0 0; color: #c9ded4; font-size: 14px; line-height: 1.7; }
 
-.metric-grid { display: grid; grid-template-columns: repeat(5,1fr); border: solid var(--ink); border-width: 1px 0; }
+.metric-grid { display: grid; grid-template-columns: repeat(6,1fr); border: solid var(--ink); border-width: 1px 0; }
 .metric-card { min-width: 0; padding: 26px 22px 24px; border: 0; border-right: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; transition: background .2s, transform .2s; }
 .metric-card:last-child { border-right: 0; }
 .metric-card:hover { background: var(--card); transform: translateY(-4px); }
@@ -46,6 +46,9 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .metric-card b, .metric-card small { display: block; }
 .metric-card small { margin-top: 7px; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .metric-link { color: var(--green); font: 500 13px/1 "DM Mono", monospace; letter-spacing: .06em; }
+.attribution-boundary { display: grid; grid-template-columns: 260px 1fr; gap: 24px; padding: 20px 22px; border-bottom: 1px solid var(--line); background: #f5e8d6; }
+.attribution-boundary b { color: var(--green-dark); font: 700 16px "Noto Serif SC", serif; }
+.attribution-boundary p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
 
 .section-block { padding: 100px 0 30px; }
 .section-heading { display: grid; grid-template-columns: 1.2fr .8fr; gap: 80px; align-items: end; margin-bottom: 34px; }
@@ -227,16 +230,28 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .graph-node.target { fill: #f5e8d6; }
 .node-name { fill: #17231d; font: 700 18px "DM Mono", monospace; }
 .node-kind { fill: #667069; font: 500 16px "DM Mono", monospace; }
-.edge-type, .edge-value { fill: none; stroke-width: 3; }
+.edge-type, .edge-value, .edge-source { fill: none; stroke-width: 3; }
 .edge-type { stroke: var(--blue); }
 .edge-value { stroke: var(--gold); }
+.edge-source { stroke: var(--green); }
 .edge-label { fill: var(--ink); font: 700 15px "DM Mono", monospace; }
 .edge-label.type { fill: var(--blue); }
 .edge-label.value { fill: #9b5b16; }
+.edge-label.source { fill: var(--green-dark); }
 .edge-ledger { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
 .edge-ledger span { padding: 8px 10px; border: 1px solid currentColor; font: 13px "DM Mono", monospace; }
 .edge-ledger .type { color: var(--blue); }
 .edge-ledger .value { color: #9b5b16; }
+.edge-ledger .source { color: var(--green-dark); }
+.source-locations { margin-top: 18px; border: 1px solid var(--line); background: white; }
+.source-locations header { display: flex; justify-content: space-between; gap: 16px; padding: 11px 13px; border-bottom: 1px solid var(--line); font: 13px "DM Mono", monospace; }
+.source-locations header span { color: var(--muted); }
+.source-locations ol { max-height: 180px; margin: 0; padding: 10px 14px 10px 40px; overflow: auto; }
+.source-locations li { padding: 4px 0; font-size: 14px; }
+.target-aggregate { display: grid; grid-template-columns: 1fr 1fr; gap: 1px; margin: 16px 0 0; background: var(--line); border: 1px solid var(--line); }
+.target-aggregate div { padding: 12px; background: #edf3ef; }
+.target-aggregate dt { color: var(--muted); font-size: 13px; }
+.target-aggregate dd { margin: 4px 0 0; font: 700 18px "DM Mono", monospace; }
 .case-interpretation { margin: 18px 0 0; padding: 16px 18px; border-left: 4px solid var(--gold); background: #f5e8d6; line-height: 1.75; }
 
 .table-scroll { width: 100%; overflow: auto; }
@@ -281,8 +296,8 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .hero, .section-heading { grid-template-columns: 1fr; }
   .hero { min-height: auto; }
   .concept-card { align-self: auto; margin: 0; }
-  .metric-grid { grid-template-columns: 1fr 1fr; }
-  .metric-card:nth-child(2) { border-right: 0; }
+  .metric-grid { grid-template-columns: repeat(3,1fr); }
+  .metric-card:nth-child(3n) { border-right: 0; }
   .claim-card, .claim-card:nth-child(1), .claim-card:nth-child(2) { grid-column: span 6; }
   .algorithm-grid, .method-grid, .construction-pipeline { grid-template-columns: 1fr 1fr; }
   .expr-mechanism-grid { grid-template-columns: 1fr 1fr; }
@@ -303,6 +318,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .hero { padding-top: 60px; }
   .hero h1 { font-size: 54px; }
   .metric-grid, .chart-grid, .algorithm-grid, .method-grid { grid-template-columns: 1fr; }
+  .attribution-boundary { grid-template-columns: 1fr; }
   .distribution-tabs { overflow-x: auto; }
   .distribution-tabs button { min-width: 150px; }
   .distribution-summary { grid-template-columns: 1fr; }

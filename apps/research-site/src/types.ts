@@ -1,9 +1,12 @@
 export type HeadlineMetrics = {
   internal_declarations: number;
   external_targets: number;
-  typed_edges: number;
-  unique_dependency_pairs: number;
-  constant_occurrences: number;
+  source_pairs: number;
+  source_occurrences: number;
+  repeated_pairs: number;
+  self_loop_pairs: number;
+  unparented_usages: number;
+  unresolved_parent_usages: number;
 };
 
 export type DomainMetric = {
@@ -43,12 +46,12 @@ export type Overview = {
   snapshot_id: string;
   run_kind: string;
   headline_metrics: HeadlineMetrics;
+  graph_schema_version: string;
   domain_algorithm: Record<string, string>;
   sampling_policy: Record<string, string>;
   claims: Claim[];
   domains: DomainMetric[];
   domain_matrix: DomainMatrixRow[];
-  kind_metrics: Record<string, string | number | null>[];
 };
 
 export type NodeSample = {
@@ -62,10 +65,10 @@ export type NodeSample = {
   type_expr_unique_ptr_nodes: number;
   value_expr_unique_ptr_nodes: number | null;
   value_expr_tree_occurrences: number | null;
-  in_degree_all: number;
-  in_degree_type: number;
-  in_degree_value: number;
-  out_degree_all: number;
+  in_degree_source: number;
+  in_occurrences_source: number;
+  out_degree_source: number;
+  out_occurrences_source: number;
   sample_reason: string;
 };
 
@@ -73,9 +76,10 @@ export type ExternalTargetSample = {
   dst_id: number;
   name: string;
   unique_consumer_count: number;
-  typed_edge_count: number;
-  type_edge_count: number;
-  value_edge_count: number;
+  source_pair_count: number;
+  source_occurrence_count: number;
+  target_module_hints: string[];
+  target_module_hint_count: number;
   sample_reason: string;
 };
 
@@ -90,13 +94,14 @@ export type DomainEdgeSample = {
   dst_domain: string;
   src_kind: string;
   dst_kind: string;
-  edge_types: string;
+  edge_type: "SOURCE";
+  multiplicity: number;
   cell_rank: number;
   is_cross_domain: boolean;
   sample_reason: string;
 };
 
-export type TypedEdgeSample = {
+export type SourceEdgeSample = {
   src_id: number;
   dst_id: number;
   src_name: string;
@@ -107,10 +112,11 @@ export type TypedEdgeSample = {
   dst_domain: string;
   src_kind: string;
   dst_kind: string;
-  edge_type: "TYPE" | "VALUE";
+  edge_type: "SOURCE";
   multiplicity: number;
   group_rank: number;
   is_external_target: boolean;
+  is_self_loop: boolean;
   sample_reason: string;
 };
 
@@ -139,7 +145,7 @@ export type ConstructionEdge = {
   dst_id: number;
   dst_name: string;
   dst_kind: string;
-  edge_type: "TYPE" | "VALUE";
+  edge_type: "SOURCE";
   multiplicity: number;
   is_self_loop: boolean;
 };
@@ -186,6 +192,14 @@ export type ConstructionCase = {
   code: string;
   nodes?: ConstructionNode[];
   edges?: ConstructionEdge[];
+  source_locations?: { line: number; start_character: number; end_character: number }[];
+  published_location_count?: number;
+  aggregate?: {
+    target_source_occurrences: number;
+    target_unique_consumers: number;
+    source_modules: number;
+    excluded_private_context_locations: number;
+  } | null;
   expr_breakdown?: ExprBreakdown;
   interpretation?: string;
 };
@@ -195,9 +209,8 @@ export type ConstructionCases = {
   snapshot_id: string;
   edge_direction: string;
   occurrence_unit: string;
-  expr_extraction: {
+  edge_extraction: {
     mechanism: string;
-    source_text_role: string;
     steps: {
       step: string;
       code: string;
@@ -205,8 +218,7 @@ export type ConstructionCases = {
       evidence: string;
       url: string;
     }[];
-    cache: string;
-    official_expr_url: string;
+    module_hint: string;
   };
   stages: { stage: string; description: string }[];
   node_cases: ConstructionCase[];
@@ -241,4 +253,4 @@ export type RankFrequencyDistribution = {
   series: RankFrequencySeries[];
 };
 
-export type ExplorerKind = "nodes" | "external" | "typed" | "edges" | null;
+export type ExplorerKind = "nodes" | "external" | "source" | "edges" | null;

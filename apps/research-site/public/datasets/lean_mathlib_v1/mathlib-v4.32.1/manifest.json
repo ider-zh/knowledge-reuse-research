@@ -2,36 +2,37 @@
   "experiment_id": "lean_mathlib_v1",
   "files": {
     "construction-cases.json": {
-      "bytes": 16434,
-      "sha256": "cb3dca207c7748e08d3f57d0a201367b183f95eed8eca6dc6fb190e11ed8fe06"
+      "bytes": 17360,
+      "sha256": "f64703011e783521bc7713a23cde1506c2ba8a5ce120b352ec31178cceb30eda"
     },
     "domain-edge-samples.json": {
-      "bytes": 789905,
-      "sha256": "67916b436027eda3cae514bde84353752b37248806bee09265837e5b407f353a"
+      "bytes": 770013,
+      "sha256": "07f7893586551704283974db38ab2f48f8a76ef358db9ec4081f4182cd8b0b14"
     },
     "external-targets.json": {
-      "bytes": 54267,
-      "sha256": "899abfdf13868f906c96af8bfd9ab44bbd22d19789de5fd0d96b676467d7b1b5"
+      "bytes": 70469,
+      "sha256": "b7f3bf8d79ef99595597c1f972d54d79b0db524693270a0b69d524544be8304b"
     },
     "nodes.json": {
-      "bytes": 166582,
-      "sha256": "c8b30980410db4962abe411f1ad7baef5ed1bf54be9a8e9e7d0bf34527deb98f"
+      "bytes": 168108,
+      "sha256": "600d81525978476f503dac773abbc767c4eefc5b3d35ac5fd5754d81c3afb11e"
     },
     "overview.json": {
-      "bytes": 100662,
-      "sha256": "c3c60be415c117834923676a4d9a5a2978ac70939266eb64ecda6065b8176408"
+      "bytes": 97502,
+      "sha256": "ba50b741f7011148c66c28e5f0217e5c4a52802bf2c572e628a5aa7653832fa7"
     },
     "reuse-rank-frequency.json": {
-      "bytes": 114646,
-      "sha256": "2b8941b84501b5ba0ca3898aa0ed66b7d51ee63a8c78f40b2c6a9a5f97672f3a"
+      "bytes": 111570,
+      "sha256": "6957a25944cedce92c278519839cf5464c1b9a323e01b84daabf22488691ef8e"
     },
-    "typed-edge-samples.json": {
-      "bytes": 1158868,
-      "sha256": "317691a8b164729d1136d5fe13adbb64a368cd46cef1a84c0816009c07943f44"
+    "source-edge-samples.json": {
+      "bytes": 8502,
+      "sha256": "9e15b9aacf465894cd1664c20b353abb35de33cd175053bb744c689782867c6e"
     }
   },
+  "graph_schema_version": "lean-source-graph-v1",
   "run_kind": "full",
-  "schema_version": "research-site-data-manifest-v1",
+  "schema_version": "research-site-data-manifest-v2",
   "snapshot_id": "mathlib-v4.32.1",
   "source_id": "lean_mathlib"
 }

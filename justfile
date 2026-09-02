@@ -51,6 +51,12 @@ source-graph-smoke:
 source-graph:
     uv run python -m knowledge_reuse.sources.lean_mathlib.ilean_graph
 
+source-graph-analyze-smoke:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.source_graph_metrics --smoke
+
+source-graph-analyze:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.source_graph_metrics
+
 validate:
     uv run python -m knowledge_reuse.sources.lean_mathlib.commands.verify_run
 
@@ -69,7 +75,7 @@ report-smoke:
 report:
     uv run python -m knowledge_reuse.sources.lean_mathlib.report
 
-site-data:
+site-data: source-graph-analyze
     uv run python -m knowledge_reuse.sources.lean_mathlib.export_site
 
 site-build:

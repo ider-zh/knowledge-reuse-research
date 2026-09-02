@@ -6,7 +6,7 @@ import type {
   Overview,
   RankFrequencyDistribution,
   SamplePayload,
-  TypedEdgeSample,
+  SourceEdgeSample,
 } from "./types";
 
 const ROOT = "/datasets/lean_mathlib_v1/mathlib-v4.32.1";
@@ -25,8 +25,8 @@ export const loadExternalTargets = () =>
   loadJson<SamplePayload<ExternalTargetSample>>("external-targets.json");
 export const loadDomainEdges = () =>
   loadJson<SamplePayload<DomainEdgeSample>>("domain-edge-samples.json");
-export const loadTypedEdges = () =>
-  loadJson<SamplePayload<TypedEdgeSample>>("typed-edge-samples.json");
+export const loadSourceEdges = () =>
+  loadJson<SamplePayload<SourceEdgeSample>>("source-edge-samples.json");
 export const loadConstructionCases = () => loadJson<ConstructionCases>("construction-cases.json");
 export const loadRankFrequency = () =>
   loadJson<RankFrequencyDistribution>("reuse-rank-frequency.json");

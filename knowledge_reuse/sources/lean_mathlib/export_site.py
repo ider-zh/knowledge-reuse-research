@@ -1,4 +1,4 @@
-"""Export a compact, explainable public dataset for the research site."""
+"""Export compact public evidence for the Lean source-reference graph."""
 
 from __future__ import annotations
 
@@ -7,6 +7,7 @@ import hashlib
 import json
 import math
 import pathlib
+import tomllib
 from typing import Any
 
 import polars as pl
@@ -14,9 +15,12 @@ import polars as pl
 from knowledge_reuse.sources.lean_mathlib.construction_cases import build_construction_cases
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
+    ROOT,
     normalized_root,
     run_results_root,
+    source_graph_normalized_root,
 )
+from knowledge_reuse.sources.lean_mathlib.source_graph_metrics import metrics_root
 
 
 NODE_COLUMNS = [
@@ -29,10 +33,10 @@ NODE_COLUMNS = [
     "type_expr_unique_ptr_nodes",
     "value_expr_unique_ptr_nodes",
     "value_expr_tree_occurrences",
-    "in_degree_all",
-    "in_degree_type",
-    "in_degree_value",
-    "out_degree_all",
+    "in_degree_source",
+    "in_occurrences_source",
+    "out_degree_source",
+    "out_occurrences_source",
 ]
 
 
@@ -49,25 +53,27 @@ def write_json(path: pathlib.Path, payload: Any) -> None:
 
 
 def public_node_sample(nodes: pl.DataFrame) -> pl.DataFrame:
-    """Purposefully sample interpretable nodes; this is not a random sample."""
-
     selected = []
     for reason, frame in (
         (
-            "全库复用入度前 120",
-            nodes.sort("in_degree_all", "name", descending=[True, False]).head(120),
+            "SOURCE 复用入度前 120",
+            nodes.sort("in_degree_source", "name", descending=[True, False]).head(120),
         ),
         (
-            "每个路径领域复用入度前 5",
-            nodes.sort("domain", "in_degree_all", "name", descending=[False, True, False])
+            "每个路径领域 SOURCE 复用入度前 5",
+            nodes.sort("domain", "in_degree_source", "name", descending=[False, True, False])
             .group_by("domain", maintain_order=True)
             .head(5),
         ),
         (
-            "Value 展开树规模前 60",
+            "Value Expr 展开复杂度前 60（辅助节点属性）",
             nodes.drop_nulls("value_expr_tree_occurrences")
             .sort("value_expr_tree_occurrences", "name", descending=[True, False])
             .head(60),
+        ),
+        (
+            "固定方法案例：DFunLike.coe",
+            nodes.filter(pl.col("name") == "DFunLike.coe"),
         ),
     ):
         selected.append(
@@ -75,102 +81,49 @@ def public_node_sample(nodes: pl.DataFrame) -> pl.DataFrame:
                 pl.lit(reason).alias("sample_reason")
             )
         )
-
-    combined = pl.concat(selected)
     return (
-        combined.group_by("node_id")
+        pl.concat(selected)
+        .group_by("node_id")
         .agg(
             *[pl.col(column).first() for column in NODE_COLUMNS],
             pl.col("sample_reason").unique().sort().str.join("；"),
         )
-        .sort("in_degree_all", "name", descending=[True, False])
+        .sort("in_degree_source", "name", descending=[True, False])
     )
 
 
 def external_target_sample(
     edges: pl.DataFrame, external_nodes: pl.DataFrame, limit: int = 200
 ) -> pl.DataFrame:
-    """Return the most frequently referenced explicit external targets."""
-
     return (
         edges.join(
-            external_nodes.select("node_id", "name"),
+            external_nodes.select(
+                "node_id", "name", "target_module_hints", "target_module_hint_count"
+            ),
             left_on="dst_id",
             right_on="node_id",
             how="inner",
         )
-        .group_by("dst_id", "name")
+        .group_by("dst_id", "name", "target_module_hints", "target_module_hint_count")
         .agg(
             pl.col("src_id").n_unique().alias("unique_consumer_count"),
-            pl.len().alias("typed_edge_count"),
-            (pl.col("edge_type") == "TYPE").sum().alias("type_edge_count"),
-            (pl.col("edge_type") == "VALUE").sum().alias("value_edge_count"),
+            pl.len().alias("source_pair_count"),
+            pl.col("multiplicity").sum().alias("source_occurrence_count"),
         )
         .sort("unique_consumer_count", "name", descending=[True, False])
         .head(limit)
-        .with_columns(pl.lit(f"外部目标按 unique consumers 排名前 {limit}").alias("sample_reason"))
-    )
-
-
-def domain_edge_sample(edges: pl.DataFrame, nodes: pl.DataFrame, per_cell: int = 3) -> pl.DataFrame:
-    """Keep deterministic examples for every observed internal domain cell."""
-
-    identities = nodes.select("node_id", "name", "module", "domain", "kind")
-    pairs = edges.group_by("src_id", "dst_id").agg(
-        pl.col("edge_type").unique().sort().str.join("+").alias("edge_types")
-    )
-    enriched = (
-        pairs.join(
-            identities.rename(
-                {
-                    "node_id": "src_id",
-                    "name": "src_name",
-                    "module": "src_module",
-                    "domain": "src_domain",
-                    "kind": "src_kind",
-                }
-            ),
-            on="src_id",
-            how="inner",
-        )
-        .join(
-            identities.rename(
-                {
-                    "node_id": "dst_id",
-                    "name": "dst_name",
-                    "module": "dst_module",
-                    "domain": "dst_domain",
-                    "kind": "dst_kind",
-                }
-            ),
-            on="dst_id",
-            how="inner",
-        )
-        .sort("src_domain", "dst_domain", "src_name", "dst_name")
-        .with_columns(pl.int_range(pl.len()).over("src_domain", "dst_domain").alias("cell_rank"))
-        .filter(pl.col("cell_rank") < per_cell)
         .with_columns(
-            (pl.col("src_domain") != pl.col("dst_domain")).alias("is_cross_domain"),
-            pl.lit(
-                f"每个非空 source-domain → target-domain cell 按完整名称排序取前 {per_cell} 个唯一 pair"
-            ).alias("sample_reason"),
+            pl.lit(f"外部目标按 SOURCE unique consumers 排名前 {limit}").alias(
+                "sample_reason"
+            )
         )
     )
-    return enriched
 
 
-def typed_edge_sample(
-    edges: pl.DataFrame,
-    nodes: pl.DataFrame,
-    external_nodes: pl.DataFrame,
-    per_group: int = 2,
-) -> pl.DataFrame:
-    """Keep typed-edge examples for internal and external target groups."""
-
-    identities = nodes.select("node_id", "name", "module", "domain", "kind")
-    targets = pl.concat(
+def target_identities(nodes: pl.DataFrame, external_nodes: pl.DataFrame) -> pl.DataFrame:
+    return pl.concat(
         [
-            identities,
+            nodes.select("node_id", "name", "module", "domain", "kind"),
             external_nodes.select("node_id", "name").with_columns(
                 pl.lit(None, dtype=pl.String).alias("module"),
                 pl.lit("EXTERNAL").alias("domain"),
@@ -178,6 +131,13 @@ def typed_edge_sample(
             ),
         ]
     )
+
+
+def enrich_edges(
+    edges: pl.DataFrame, nodes: pl.DataFrame, external_nodes: pl.DataFrame
+) -> pl.DataFrame:
+    identities = nodes.select("node_id", "name", "module", "domain", "kind")
+    targets = target_identities(nodes, external_nodes)
     return (
         edges.join(
             identities.rename(
@@ -205,23 +165,67 @@ def typed_edge_sample(
             on="dst_id",
             how="inner",
         )
-        .sort("edge_type", "src_domain", "dst_domain", "src_name", "dst_name")
+    )
+
+
+def domain_edge_sample(
+    edges: pl.DataFrame,
+    nodes: pl.DataFrame,
+    external_nodes: pl.DataFrame,
+    per_cell: int = 3,
+) -> pl.DataFrame:
+    return (
+        enrich_edges(edges, nodes, external_nodes)
+        .filter(pl.col("dst_domain") != "EXTERNAL")
+        .sort("src_domain", "dst_domain", "src_name", "dst_name")
         .with_columns(
-            pl.int_range(pl.len()).over("edge_type", "src_domain", "dst_domain").alias("group_rank")
+            pl.int_range(pl.len()).over("src_domain", "dst_domain").alias("cell_rank")
         )
-        .filter(pl.col("group_rank") < per_group)
+        .filter(pl.col("cell_rank") < per_cell)
         .with_columns(
-            (pl.col("dst_domain") == "EXTERNAL").alias("is_external_target"),
+            (pl.col("src_domain") != pl.col("dst_domain")).alias("is_cross_domain"),
             pl.lit(
-                f"每个 edge_type × source domain × target domain 分组按完整名称排序取前 {per_group} 条"
+                f"每个非空 source-domain → target-domain cell 按完整名称取前 {per_cell} 个 SOURCE pair"
             ).alias("sample_reason"),
         )
     )
 
 
-def logarithmic_ranks(population_size: int, limit: int = 280) -> list[int]:
-    """Choose deterministic display ranks without changing the fitted population."""
+def source_edge_sample(
+    edges: pl.DataFrame,
+    nodes: pl.DataFrame,
+    external_nodes: pl.DataFrame,
+    per_group: int = 4,
+) -> pl.DataFrame:
+    return (
+        enrich_edges(edges, nodes, external_nodes)
+        .with_columns(
+            (pl.col("dst_domain") == "EXTERNAL").alias("is_external_target"),
+            (pl.col("src_id") == pl.col("dst_id")).alias("is_self_loop"),
+        )
+        .sort(
+            "is_self_loop",
+            "is_external_target",
+            "multiplicity",
+            "src_name",
+            "dst_name",
+            descending=[False, False, True, False, False],
+        )
+        .with_columns(
+            pl.int_range(pl.len())
+            .over("is_self_loop", "is_external_target")
+            .alias("group_rank")
+        )
+        .filter(pl.col("group_rank") < per_group)
+        .with_columns(
+            pl.lit(
+                f"按 self-loop × external 分组展示 multiplicity 最高的 {per_group} 个 SOURCE pair"
+            ).alias("sample_reason")
+        )
+    )
 
+
+def logarithmic_ranks(population_size: int, limit: int = 280) -> list[int]:
     if population_size < 1:
         return []
     if population_size <= limit:
@@ -239,10 +243,8 @@ def logarithmic_ranks(population_size: int, limit: int = 280) -> list[int]:
 
 
 def rank_frequency_distribution(
-    nodes: pl.DataFrame, rank_fits: pl.DataFrame
+    nodes: pl.DataFrame, rank_fits: pl.DataFrame, snapshot: str
 ) -> dict[str, Any]:
-    """Publish compact display curves computed from complete reuse populations."""
-
     populations = (
         ("all_declarations", "全部 declaration", None),
         ("kind:theorem", "theorem", "theorem"),
@@ -252,31 +254,31 @@ def rank_frequency_distribution(
     for population, label, kind in populations:
         selected = nodes if kind is None else nodes.filter(pl.col("kind") == kind)
         degrees = (
-            selected.filter(pl.col("in_degree_all") > 0)
-            .sort("in_degree_all", descending=True)["in_degree_all"]
+            selected.filter(pl.col("in_degree_source") > 0)
+            .sort("in_degree_source", descending=True)["in_degree_source"]
             .to_list()
         )
         fit_rows = rank_fits.filter(pl.col("population") == population)
         if fit_rows.height != 1:
-            raise ValueError(f"expected one rank-frequency fit for {population}")
+            raise ValueError(f"expected one source rank-frequency fit for {population}")
         fit = fit_rows.row(0, named=True)
         if fit["status"] != "ok":
-            raise ValueError(f"rank-frequency fit unavailable for {population}")
+            raise ValueError(f"source rank-frequency fit unavailable for {population}")
         beta = float(fit["beta_rank"])
         intercept = float(fit["intercept"])
         tail_n = int(fit["tail_n"])
-        points = []
         display_ranks = sorted({*logarithmic_ranks(len(degrees)), tail_n})
-        for rank in display_ranks:
-            in_tail = rank <= tail_n
-            points.append(
-                {
-                    "rank": rank,
-                    "empirical_degree": degrees[rank - 1],
-                    "fitted_degree": math.exp(intercept) * rank ** (-beta) if in_tail else None,
-                    "zipf_degree": math.exp(intercept) / rank if in_tail else None,
-                }
-            )
+        points = [
+            {
+                "rank": rank,
+                "empirical_degree": degrees[rank - 1],
+                "fitted_degree": (
+                    math.exp(intercept) * rank ** (-beta) if rank <= tail_n else None
+                ),
+                "zipf_degree": math.exp(intercept) / rank if rank <= tail_n else None,
+            }
+            for rank in display_ranks
+        ]
         series.append(
             {
                 "population": population,
@@ -287,131 +289,429 @@ def rank_frequency_distribution(
                 "beta_rank": beta,
                 "r_squared": fit["r_squared"],
                 "display_sampling": (
-                    f"完整排序的 {len(degrees):,} 个正入度节点中，按对数间隔显示 "
-                    f"{len(points):,} 个 rank；拟合使用全部 {tail_n:,} 个选定高复用区间观测。"
+                    f"完整排序的 {len(degrees):,} 个正 SOURCE 入度节点中按对数间隔显示 "
+                    f"{len(points):,} 个 rank；拟合使用全部 {tail_n:,} 个尾部观测。"
                 ),
                 "points": points,
             }
         )
     return {
-        "schema_version": "research-site-rank-frequency-v1",
-        "snapshot_id": "mathlib-v4.32.1",
-        "reuse_unit": "distinct non-self consumer declarations",
-        "rank_definition": "positive indegree sorted descending; rank 1 is most reused",
+        "schema_version": "research-site-source-rank-frequency-v1",
+        "snapshot_id": snapshot,
+        "reuse_unit": "distinct direct non-self consumer declarations in `.ilean` SOURCE graph",
+        "rank_definition": "positive SOURCE indegree sorted descending; rank 1 is most reused",
         "reference_definition": "Zipf reference C(r)=exp(fitted intercept)/r",
         "series": series,
     }
-def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
-    import tomllib
 
+
+def source_url(source_file: str, line: int) -> str:
+    return f"https://github.com/leanprover-community/mathlib4/blob/v4.32.1/{source_file}#L{line}"
+
+
+def source_excerpt(source_file: str, zero_based_line: int, radius: int = 3) -> tuple[int, int, str]:
+    lines = (ROOT / "vendor" / "mathlib4" / source_file).read_text().splitlines()
+    start = max(0, zero_based_line - radius)
+    end = min(len(lines), zero_based_line + radius + 1)
+    return start + 1, end, "\n".join(lines[start:end])
+
+
+def build_source_edge_case(
+    case_id: str,
+    title: str,
+    summary: str,
+    src_name: str,
+    dst_name: str,
+    nodes: pl.DataFrame,
+    external_nodes: pl.DataFrame,
+    edges: pl.DataFrame,
+    usages: pl.DataFrame,
+    aggregate: dict[str, Any] | None = None,
+) -> dict[str, Any]:
+    identities = target_identities(nodes, external_nodes)
+    src = identities.filter(pl.col("name") == src_name).row(0, named=True)
+    dst = identities.filter(pl.col("name") == dst_name).row(0, named=True)
+    edge = edges.filter(
+        (pl.col("src_id") == src["node_id"]) & (pl.col("dst_id") == dst["node_id"])
+    ).row(0, named=True)
+    locations = usages.filter(
+        (pl.col("src_id") == src["node_id"]) & (pl.col("dst_id") == dst["node_id"])
+    ).sort("start_line", "start_character")
+    source_file = nodes.filter(pl.col("node_id") == src["node_id"]).item(0, "source_file")
+    first_line = int(locations.item(0, "start_line"))
+    start_line, end_line, code = source_excerpt(source_file, first_line)
+    location_rows = [
+        {
+            "line": int(row["start_line"]) + 1,
+            "start_character": int(row["start_character"]),
+            "end_character": int(row["end_character"]),
+        }
+        for row in locations.head(10).iter_rows(named=True)
+    ]
+    return {
+        "case_id": case_id,
+        "title": title,
+        "summary": summary,
+        "source_file": source_file,
+        "start_line": start_line,
+        "end_line": end_line,
+        "source_url": source_url(source_file, first_line + 1),
+        "code": code,
+        "edges": [
+            {
+                "src_id": src["node_id"],
+                "src_name": src["name"],
+                "src_kind": src["kind"],
+                "dst_id": dst["node_id"],
+                "dst_name": dst["name"],
+                "dst_kind": dst["kind"],
+                "edge_type": "SOURCE",
+                "multiplicity": edge["multiplicity"],
+                "is_self_loop": src["node_id"] == dst["node_id"],
+            }
+        ],
+        "source_locations": location_rows,
+        "published_location_count": len(location_rows),
+        "aggregate": aggregate,
+        "interpretation": (
+            "每个不同源码位置贡献一次 occurrence；相同 source-target 的位置聚合为 "
+            "multiplicity。网页最多展示前 10 个位置，边权来自完整位置集合。"
+        ),
+    }
+
+
+def construction_cases(
+    snapshot: str,
+    nodes: pl.DataFrame,
+    external_nodes: pl.DataFrame,
+    edges: pl.DataFrame,
+    usages: pl.DataFrame,
+    unresolved_parent_usages: pl.DataFrame,
+) -> dict[str, Any]:
+    old_root = normalized_root(snapshot, "full")
+    old_nodes = pl.read_parquet(old_root / "nodes.parquet")
+    old_edges = pl.read_parquet(old_root / "edges.parquet")
+    old = build_construction_cases(old_nodes, old_edges)
+    source_ids = dict(nodes.select("name", "node_id").iter_rows())
+    for case in old["node_cases"]:
+        for node in case.get("nodes", []):
+            node["node_id"] = source_ids[node["name"]]
+
+    dfunlike_id = nodes.filter(pl.col("name") == "DFunLike.coe").item(0, "node_id")
+    dfunlike_edges = edges.filter(pl.col("dst_id") == dfunlike_id)
+    dfunlike_usages = usages.filter(pl.col("dst_id") == dfunlike_id)
+    dfunlike_unresolved = unresolved_parent_usages.filter(
+        pl.col("target_decl") == "DFunLike.coe"
+    )
+    cases = [
+        build_source_edge_case(
+            "edge.dfunlike",
+            "DFunLike.coe：局部 pair 与完整目标入度",
+            "局部 pair 展示同一 consumer 中两个源码位置；目标汇总来自完整 `.ilean` 图。",
+            "AlgEquiv.instFunLike",
+            "DFunLike.coe",
+            nodes,
+            external_nodes,
+            edges,
+            usages,
+            {
+                "target_source_occurrences": int(dfunlike_edges["multiplicity"].sum()),
+                "target_unique_consumers": dfunlike_edges["src_id"].n_unique(),
+                "source_modules": dfunlike_usages["module"].n_unique(),
+                "excluded_private_context_locations": dfunlike_unresolved.height,
+            },
+        ),
+        build_source_edge_case(
+            "edge.repeated",
+            "同一 declaration pair 的 71 个源码位置",
+            "一个 theorem 在其源码范围内多次引用同一 definition；位置不折叠为一条无权边。",
+            "Algebra.FormallySmooth.of_surjective_of_ker_eq_map_of_flat",
+            "Algebra.Extension.Ring",
+            nodes,
+            external_nodes,
+            edges,
+            usages,
+        ),
+        build_source_edge_case(
+            "edge.self-loop",
+            "递归声明形成 SOURCE self-loop",
+            "声明正文中的递归名称由 `.ilean` 解析回该声明自身，因而保留 self-loop。",
+            "CategoryTheory.FreeMonoidalCategory.HomEquiv",
+            "CategoryTheory.FreeMonoidalCategory.HomEquiv",
+            nodes,
+            external_nodes,
+            edges,
+            usages,
+        ),
+    ]
+    return {
+        "schema_version": "lean-source-construction-cases-v1",
+        "snapshot_id": snapshot,
+        "edge_direction": "consumer declaration → resolved target declaration",
+        "occurrence_unit": "one distinct `.ilean` resolved LSP source range",
+        "edge_extraction": {
+            "mechanism": (
+                "Lean writes resolved identifier references and their source ranges from elaborator "
+                "InfoTrees into `.ilean`; the graph reads constant references with parent declaration labels."
+            ),
+            "steps": [
+                {
+                    "step": "收集精化信息",
+                    "code": "findReferences text trees",
+                    "detail": "Lean 遍历 InfoTree，只保留具有源码 range 的原始 identifier 信息。",
+                    "evidence": "Lean References.lean · findReferences",
+                    "url": "https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Server/References.lean#L257-L268",
+                },
+                {
+                    "step": "解析全局常量",
+                    "code": "Expr.const n → RefIdent.const module name",
+                    "detail": "精化后的常量名称成为目标；局部 free variable 不成为 declaration target。",
+                    "evidence": "Lean References.lean · identOf",
+                    "url": "https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Server/References.lean#L231-L255",
+                },
+                {
+                    "step": "写入 .ilean",
+                    "code": "Ilean { module, references, decls }",
+                    "detail": "编译前端把 reference index 以 JSON 形式写入版本 5 `.ilean` 文件。",
+                    "evidence": "Lean Frontend.lean · ilean writer",
+                    "url": "https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Elab/Frontend.lean#L357-L368",
+                },
+                {
+                    "step": "聚合 SOURCE edge",
+                    "code": "GROUP BY (parent_decl, target_decl)",
+                    "detail": "不同 source ranges 全部保留；pair 的 multiplicity 等于其位置数。",
+                    "evidence": "项目 schema · lean-source-graph-v1",
+                    "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/schemas/lean_mathlib/lean-source-graph-v1.md",
+                },
+            ],
+            "module_hint": (
+                "`.ilean` constant key 的 module 字段通常来自 Environment module index；索引缺失时 "
+                "Lean 回退到当前模块，因此它只是 hint，不参与 node identity。"
+            ),
+        },
+        "stages": [
+            {"stage": "Lean source", "description": "声明与证明源码提供 identifier 的实际位置。"},
+            {"stage": "Elaborator InfoTree", "description": "Lean 把表面语法解析为带目标名称的精化信息。"},
+            {"stage": ".ilean reference index", "description": "保存 resolved constant、父声明和 LSP range。"},
+            {"stage": "SOURCE multigraph", "description": "同一 pair 的不同位置保留为 multiplicity。"},
+            {"stage": "Research metrics", "description": "直接入度衡量复用广度，occurrence 衡量源码引用次数。"},
+        ],
+        "node_cases": old["node_cases"],
+        "edge_cases": cases,
+    }
+
+
+def claims(
+    summary: dict[str, Any],
+    ranks: pl.DataFrame,
+    powerlaw_fits: pl.DataFrame,
+    domains: pl.DataFrame,
+) -> list[dict[str, Any]]:
+    rank = {row["population"]: row for row in ranks.iter_rows(named=True)}
+    powerlaw = {
+        row["population"]: row for row in powerlaw_fits.iter_rows(named=True)
+    }
+    concentration = summary["reuse_concentration"]
+    domain = {row["domain"]: row for row in domains.iter_rows(named=True)}
+    return [
+        {
+            "claim_id": "veldhuizen.rank_frequency",
+            "status": "supported",
+            "text": (
+                "`.ilean` 直接复用呈宽尾 rank–frequency，但不支持严格 Zipf 1/r："
+                f"全体尾部 β={rank['all_declarations']['beta_rank']:.3f}，theorem "
+                f"β={rank['kind:theorem']['beta_rank']:.3f}，definition "
+                f"β={rank['kind:definition']['beta_rank']:.3f}。"
+            ),
+            "scope": (
+                "直接、非 self-loop、不同 consumer declaration 的 SOURCE 入度；"
+                f"全体拟合尾部 n={rank['all_declarations']['tail_n']:,}，"
+                f"xmin={rank['all_declarations']['xmin']:.0f}。"
+            ),
+            "caveat": (
+                "β<1 表示比 1/r 下降更慢；高 R² 是描述性贴合。全体尾部的纯 power law "
+                f"相对 lognormal 的归一化对数似然比为 "
+                f"{powerlaw['all_declarations']['powerlaw_vs_lognormal_r']:.3f}（负值偏向 lognormal），"
+                "因此不能宣称严格 power law。"
+            ),
+            "evidence": [
+                "source_graph_metrics/rank_frequency_fits.parquet",
+                "source_graph_metrics/powerlaw_fits.parquet",
+            ],
+        },
+        {
+            "claim_id": "veldhuizen.concentration",
+            "status": "supported",
+            "text": (
+                f"在 {summary['positive_reused_target_count']:,} 个正入度 declaration 中，"
+                f"Top 1/5/10% 承接 {concentration['top_1pct_share']:.1%}/"
+                f"{concentration['top_5pct_share']:.1%}/"
+                f"{concentration['top_10pct_share']:.1%} 的 unique-consumer 复用，"
+                f"Gini={concentration['gini']:.3f}。"
+            ),
+            "scope": "正 SOURCE 入度的内部 declaration；self-loop 不计作被其他声明复用。",
+            "caveat": "unique-consumer breadth 与同一 consumer 内出现多少次是两个不同指标。",
+            "evidence": ["source_graph_metrics/summary.json#/reuse_concentration"],
+        },
+        {
+            "claim_id": "veldhuizen.domain_heterogeneity",
+            "status": "exploratory",
+            "text": (
+                "路径领域呈现不同引用分布："
+                f"Algebra H*ref={domain['Algebra']['reference_entropy_proxy']:.3f}, "
+                f"Gini={domain['Algebra']['gini']:.3f}；NumberTheory "
+                f"H*ref={domain['NumberTheory']['reference_entropy_proxy']:.3f}, "
+                f"Gini={domain['NumberTheory']['gini']:.3f}。"
+            ),
+            "scope": "两端均为内部 declaration 的直接 SOURCE pairs，按 source module 路径领域分组。",
+            "caveat": "领域是 repository taxonomy；H*ref 是经验代理，不是 Veldhuizen 理论 H。",
+            "evidence": ["source_graph_metrics/domain_metrics.parquet"],
+        },
+        {
+            "claim_id": "source.occurrence_semantics",
+            "status": "fact",
+            "text": (
+                f"{summary['source_pair_count']:,} 个 SOURCE pairs 对应 "
+                f"{summary['source_occurrence_count']:,} 个源码位置；"
+                f"{summary['repeated_pair_count']:,} 个 pair 的 multiplicity 大于 1。"
+            ),
+            "scope": "能够映射为 Environment declaration → resolved target 的 `.ilean` locations。",
+            "caveat": "这是源码 identifier 引用，不是运行时调用次数，也不是 Expr DAG 展开路径数。",
+            "evidence": ["runs/full/source-graph-summary.json"],
+        },
+    ]
+
+
+def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     config = tomllib.loads(CONFIG_PATH.read_text())
     snapshot = config["snapshot_id"]
-    run_dir = run_results_root(run_kind)
-    metrics_dir = run_dir / "metrics"
-    tables_dir = run_dir / "tables"
-    normalized_dir = normalized_root(snapshot, run_kind)
+    graph_root = source_graph_normalized_root(snapshot, run_kind)
+    derived_root = metrics_root(run_kind)
     output.mkdir(parents=True, exist_ok=True)
 
-    summary = json.loads((metrics_dir / "summary.json").read_text())
-    quality = json.loads((metrics_dir / "data_quality.json").read_text())
-    claims = json.loads((run_dir / "report" / "claims.json").read_text())
-    nodes = pl.read_parquet(metrics_dir / "node_metrics.parquet")
-    normalized_nodes = pl.read_parquet(normalized_dir / "nodes.parquet")
-    edges = pl.read_parquet(normalized_dir / "edges.parquet")
-    external_nodes = pl.read_parquet(normalized_dir / "external_nodes.parquet")
-    domains = pl.read_parquet(metrics_dir / "domain_metrics.parquet").sort(
+    summary = json.loads((derived_root / "summary.json").read_text())
+    source_nodes = pl.read_parquet(derived_root / "node_metrics.parquet")
+    legacy_metrics = pl.read_parquet(run_results_root(run_kind) / "metrics/node_metrics.parquet")
+    nodes = source_nodes.join(
+        legacy_metrics.select(
+            "name",
+            "type_expr_unique_ptr_nodes",
+            "value_expr_unique_ptr_nodes",
+            "value_expr_tree_occurrences",
+        ),
+        on="name",
+        how="left",
+        validate="1:1",
+    )
+    edges = pl.read_parquet(graph_root / "edges.parquet")
+    usages = pl.read_parquet(graph_root / "usages.parquet")
+    unresolved_parent_usages = pl.read_parquet(
+        graph_root / "unresolved_parent_usages.parquet"
+    )
+    external_nodes = pl.read_parquet(graph_root / "external_nodes.parquet")
+    domains = pl.read_parquet(derived_root / "domain_metrics.parquet").sort(
         "node_count", descending=True
     )
-    domain_matrix = pl.read_parquet(tables_dir / "domain_reuse_matrix.parquet").sort(
+    domain_matrix = pl.read_parquet(derived_root / "domain_matrix.parquet").sort(
         "src_domain", "dependency_pair_count", "dst_domain", descending=[False, True, False]
     )
-    kind_metrics = pl.read_parquet(metrics_dir / "kind_reuse_metrics.parquet").sort(
-        "node_count", descending=True
-    )
-    rank_fits = pl.read_parquet(metrics_dir / "rank_frequency_fits.parquet")
+    rank_fits = pl.read_parquet(derived_root / "rank_frequency_fits.parquet")
+    powerlaw_fits = pl.read_parquet(derived_root / "powerlaw_fits.parquet")
 
     node_sample = public_node_sample(nodes)
     external_sample = external_target_sample(edges, external_nodes)
-    edge_sample = domain_edge_sample(edges, normalized_nodes)
-    typed_sample = typed_edge_sample(edges, normalized_nodes, external_nodes)
-    construction_cases = build_construction_cases(normalized_nodes, edges)
-    rank_frequency = rank_frequency_distribution(nodes, rank_fits)
+    edge_sample = domain_edge_sample(edges, source_nodes, external_nodes)
+    source_sample = source_edge_sample(edges, source_nodes, external_nodes)
+    construction = construction_cases(
+        snapshot,
+        source_nodes,
+        external_nodes,
+        edges,
+        usages,
+        unresolved_parent_usages,
+    )
+    rank_frequency = rank_frequency_distribution(nodes, rank_fits, snapshot)
+    report_claims = claims(summary, rank_fits, powerlaw_fits, domains)
 
     files = {
         "overview.json": {
-            "schema_version": "research-site-overview-v1",
+            "schema_version": "research-site-source-overview-v1",
+            "graph_schema_version": "lean-source-graph-v1",
             "snapshot_id": snapshot,
             "run_kind": run_kind,
             "headline_metrics": {
-                "internal_declarations": summary["declaration_count"],
-                "external_targets": quality["external_node_count"],
-                "typed_edges": summary["edge_count"],
-                "unique_dependency_pairs": summary["all_unique_pair_count"],
-                "constant_occurrences": summary["constant_occurrence_count"],
+                "internal_declarations": summary["internal_declaration_count"],
+                "external_targets": summary["external_target_count"],
+                "source_pairs": summary["source_pair_count"],
+                "source_occurrences": summary["source_occurrence_count"],
+                "repeated_pairs": summary["repeated_pair_count"],
+                "self_loop_pairs": summary["self_loop_pair_count"],
+                "unparented_usages": summary["unparented_usage_count"],
+                "unresolved_parent_usages": summary["unresolved_parent_usage_count"],
             },
             "domain_algorithm": {
                 "classification": "Mathlib.X... → X；非 Mathlib module → 第一段",
-                "edge_direction": "consumer/source domain → dependency/target domain",
-                "population": "两端均为 configured corpus 内部 declaration 的 edges",
-                "pair_unit": "同一 (src_id,dst_id) 的 TYPE/VALUE 先折叠为一个 dependency pair",
-                "cell_count": "按 (src_domain,dst_domain) 分组计算唯一 pair 数",
-                "row_share": "cell_count / 同一 src_domain 发出的全部内部唯一 pair",
-                "external_policy": "external target 没有可靠 module/domain，不进入领域矩阵，也不被分配 Other",
+                "edge_direction": "consumer/source domain → resolved target domain",
+                "population": "两端均为 Environment 内部 declaration 的直接 SOURCE pairs；排除 self-loop",
+                "pair_unit": "一个不同 (src_id,dst_id)；同一 pair 的多个源码位置不重复增加 pair count",
+                "cell_count": "按 (src_domain,dst_domain) 分组计算 SOURCE pair 数",
+                "row_share": "cell pair count / 同一 src_domain 发出的全部内部 SOURCE pairs",
+                "external_policy": "external target 没有可靠 domain，不进入领域矩阵；其全部 module hints 单独保留",
             },
             "sampling_policy": {
-                "nodes": "目的性样本：复用头部、各领域头部、Value 展开极值；不是随机代表性样本",
-                "external_targets": "按 unique consumer count 取前 200",
-                "domain_edges": "每个非空领域 cell 按完整 source/target 名排序取前 3 个唯一 pair",
-                "typed_edges": "每个 TYPE/VALUE × 来源领域 × 目标领域分组按完整名称取前 2 条；保留 EXTERNAL 组",
-                "warning": "站点样本用于解释和局部核查；总体结论只读取完整 derived metrics",
+                "nodes": "目的性样本：SOURCE 复用头部、各领域头部与 Expr 复杂度极值；不是随机代表性样本",
+                "external_targets": "按 SOURCE unique consumer count 取前 200",
+                "domain_edges": "每个非空领域 cell 按完整 source/target 名取前 3 个 SOURCE pair",
+                "source_edges": "按 self-loop × external 分组发布 multiplicity 最高的 4 个 pair",
+                "warning": "局部表用于解释和核查；Zipf、集中度与领域结论来自完整 source graph metrics",
             },
-            "claims": claims["claims"],
+            "claims": report_claims,
             "domains": domains.to_dicts(),
             "domain_matrix": domain_matrix.to_dicts(),
-            "kind_metrics": kind_metrics.to_dicts(),
         },
         "nodes.json": {
-            "schema_version": "research-site-node-sample-v1",
-            "population_count": summary["declaration_count"],
+            "schema_version": "research-site-source-node-sample-v1",
+            "population_count": summary["internal_declaration_count"],
             "published_count": node_sample.height,
             "rows": node_sample.to_dicts(),
         },
         "external-targets.json": {
-            "schema_version": "research-site-external-sample-v1",
-            "population_count": quality["external_node_count"],
+            "schema_version": "research-site-source-external-sample-v1",
+            "population_count": summary["external_target_count"],
             "published_count": external_sample.height,
             "rows": external_sample.to_dicts(),
         },
         "domain-edge-samples.json": {
-            "schema_version": "research-site-domain-edge-sample-v1",
-            "population_count": summary["all_unique_pair_count"],
+            "schema_version": "research-site-source-domain-edge-sample-v1",
+            "population_count": summary["source_pair_count"],
             "internal_population_count": int(domain_matrix["dependency_pair_count"].sum()),
             "published_count": edge_sample.height,
             "rows": edge_sample.to_dicts(),
         },
-        "typed-edge-samples.json": {
-            "schema_version": "research-site-typed-edge-sample-v1",
-            "population_count": summary["edge_count"],
-            "published_count": typed_sample.height,
-            "rows": typed_sample.to_dicts(),
+        "source-edge-samples.json": {
+            "schema_version": "research-site-source-edge-sample-v1",
+            "population_count": summary["source_pair_count"],
+            "published_count": source_sample.height,
+            "rows": source_sample.to_dicts(),
         },
-        "construction-cases.json": construction_cases,
+        "construction-cases.json": construction,
         "reuse-rank-frequency.json": rank_frequency,
     }
+    legacy_path = output / "typed-edge-samples.json"
+    if legacy_path.exists():
+        legacy_path.unlink()
     for name, payload in files.items():
         write_json(output / name, payload)
 
     manifest = {
-        "schema_version": "research-site-data-manifest-v1",
+        "schema_version": "research-site-data-manifest-v2",
         "source_id": "lean_mathlib",
         "experiment_id": "lean_mathlib_v1",
+        "graph_schema_version": "lean-source-graph-v1",
         "snapshot_id": snapshot,
         "run_kind": run_kind,
         "files": {
-            name: {
-                "bytes": (output / name).stat().st_size,
-                "sha256": sha256(output / name),
-            }
+            name: {"bytes": (output / name).stat().st_size, "sha256": sha256(output / name)}
             for name in files
         },
     }
@@ -424,7 +724,9 @@ def main() -> int:
     parser.add_argument(
         "--output",
         type=pathlib.Path,
-        default=pathlib.Path("apps/research-site/public/datasets/lean_mathlib_v1/mathlib-v4.32.1"),
+        default=pathlib.Path(
+            "apps/research-site/public/datasets/lean_mathlib_v1/mathlib-v4.32.1"
+        ),
     )
     parser.add_argument("--smoke", action="store_true")
     args = parser.parse_args()

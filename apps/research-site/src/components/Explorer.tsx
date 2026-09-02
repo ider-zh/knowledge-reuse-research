@@ -4,7 +4,7 @@ import {
   loadDomainEdges,
   loadExternalTargets,
   loadNodes,
-  loadTypedEdges,
+  loadSourceEdges,
   mathlibModuleUrl,
 } from "../data";
 import type {
@@ -13,7 +13,7 @@ import type {
   ExternalTargetSample,
   NodeSample,
   SamplePayload,
-  TypedEdgeSample,
+  SourceEdgeSample,
 } from "../types";
 import { DataTable, type Column } from "./DataTable";
 
@@ -44,9 +44,9 @@ const nodeColumns: Column<NodeSample>[] = [
   },
   { id: "domain", label: "领域", value: (row) => row.domain },
   { id: "kind", label: "kind", value: (row) => row.kind },
-  { id: "in_degree_all", label: "ALL 入度（并集）", value: (row) => row.in_degree_all, align: "right" },
-  { id: "type", label: "TYPE 入度", value: (row) => row.in_degree_type, align: "right" },
-  { id: "value", label: "VALUE 入度", value: (row) => row.in_degree_value, align: "right" },
+  { id: "source_degree", label: "SOURCE 直接入度", value: (row) => row.in_degree_source, align: "right" },
+  { id: "source_occurrences", label: "入向 occurrence", value: (row) => row.in_occurrences_source, align: "right" },
+  { id: "out_degree", label: "SOURCE 出度", value: (row) => row.out_degree_source, align: "right" },
   { id: "tokens", label: "Token", value: (row) => row.source_tokens, align: "right" },
   {
     id: "tree",
@@ -66,16 +66,25 @@ const externalColumns: Column<ExternalTargetSample>[] = [
     value: (row) => row.unique_consumer_count,
     align: "right",
   },
-  { id: "typed", label: "typed edges", value: (row) => row.typed_edge_count, align: "right" },
-  { id: "type", label: "TYPE", value: (row) => row.type_edge_count, align: "right" },
-  { id: "value", label: "VALUE", value: (row) => row.value_edge_count, align: "right" },
+  { id: "pairs", label: "SOURCE pairs", value: (row) => row.source_pair_count, align: "right" },
+  { id: "occurrences", label: "source occurrences", value: (row) => row.source_occurrence_count, align: "right" },
+  {
+    id: "module_hints",
+    label: "module hints",
+    value: (row) => row.target_module_hints.join(" · "),
+    render: (row) => {
+      const shown = row.target_module_hints.slice(0, 3).join(" · ");
+      const remaining = row.target_module_hint_count - Math.min(3, row.target_module_hint_count);
+      return remaining > 0 ? `${shown} · 另 ${remaining} 项` : shown;
+    },
+  },
   { id: "reason", label: "为何发布", value: (row) => row.sample_reason },
 ];
 
 const edgeColumns: Column<DomainEdgeSample>[] = [
   { id: "src", label: "consumer/source", value: (row) => row.src_name },
   { id: "src_domain", label: "来源领域", value: (row) => row.src_domain },
-  { id: "types", label: "TYPE / VALUE", value: (row) => row.edge_types },
+  { id: "multiplicity", label: "SOURCE occurrences", value: (row) => row.multiplicity, align: "right" },
   { id: "dst", label: "dependency/target", value: (row) => row.dst_name },
   { id: "dst_domain", label: "目标领域", value: (row) => row.dst_domain },
   {
@@ -92,13 +101,13 @@ const edgeColumns: Column<DomainEdgeSample>[] = [
   { id: "dst_kind", label: "dst kind", value: (row) => row.dst_kind },
 ];
 
-const typedEdgeColumns: Column<TypedEdgeSample>[] = [
+const sourceEdgeColumns: Column<SourceEdgeSample>[] = [
   { id: "src", label: "consumer/source", value: (row) => row.src_name },
   { id: "src_domain", label: "来源领域", value: (row) => row.src_domain },
   { id: "edge_type", label: "edge type", value: (row) => row.edge_type },
   { id: "dst", label: "dependency/target", value: (row) => row.dst_name },
   { id: "dst_domain", label: "目标领域", value: (row) => row.dst_domain },
-  { id: "multiplicity", label: "raw multiplicity", value: (row) => row.multiplicity, align: "right" },
+  { id: "multiplicity", label: "source occurrences", value: (row) => row.multiplicity, align: "right" },
   {
     id: "src_module",
     label: "source module ↗",
@@ -110,39 +119,37 @@ const typedEdgeColumns: Column<TypedEdgeSample>[] = [
     ),
   },
   { id: "external", label: "external?", value: (row) => row.is_external_target },
+  { id: "self_loop", label: "self-loop?", value: (row) => row.is_self_loop },
   { id: "reason", label: "为何发布", value: (row) => row.sample_reason },
 ];
 
 function NodeDegreeGuide({ rows }: { rows: NodeSample[] }) {
   const example = rows.find((row) => row.name === "DFunLike.coe");
-  const overlap = example
-    ? example.in_degree_type + example.in_degree_value - example.in_degree_all
-    : null;
 
   return (
     <aside className="degree-guide" aria-labelledby="degree-guide-title">
       <header>
-        <p className="eyebrow">EDGE TYPE &amp; REUSE INDEGREE</p>
-        <h3 id="degree-guide-title">TYPE、VALUE 与 ALL 入度统计 consumer 集合，不能直接相加</h3>
+        <p className="eyebrow">DIRECT INDEGREE &amp; SOURCE OCCURRENCES</p>
+        <h3 id="degree-guide-title">复用广度与源码引用次数是两个不同统计量</h3>
       </header>
       <div className="degree-guide-grid">
         <article>
-          <b>TYPE edge · A → B</b>
-          <p>B 出现在 A 精化后的声明类型或定理命题中，表示“表达 A 的接口或命题需要 B”。TYPE 入度是这类不同 A 的数量。</p>
+          <b>SOURCE pair · A → B</b>
+          <p>只要 `.ilean` 在 A 的源码范围中把 identifier 解析为 B，就存在一个直接 pair。这里不增加间接依赖。</p>
         </article>
         <article>
-          <b>VALUE edge · A → B</b>
-          <p>B 出现在 A 精化后的定义体或证明项中，表示“实现或证明 A 需要 B”。VALUE 入度是这类不同 A 的数量。</p>
+          <b>直接入度</b>
+          <p>引用 B 的不同 declaration A 的数量。一个 A 无论出现 B 一次还是十次，都只为 B 的直接入度贡献 1。</p>
         </article>
         <article>
-          <b>ALL reuse indegree</b>
-          <p><code>|TYPE consumers ∪ VALUE consumers|</code>。同一 A 若在两层都引用 B，在 ALL 中仍只贡献一个 consumer；重复出现次数不改变入度，self-loop 也不计入复用入度。</p>
+          <b>入向 occurrence</b>
+          <p>所有 A→B pair 的 multiplicity 之和，即解析到 B 的不同源码位置数。self-loop 单独保留，但不计作“被其他声明复用”。</p>
         </article>
       </div>
-      {example && overlap !== null && (
+      {example && (
         <p className="degree-example">
           <b>表中算例 · DFunLike.coe：</b>
-          TYPE {number(example.in_degree_type)} + VALUE {number(example.in_degree_value)} − 两层共有 {number(overlap)} = ALL {number(example.in_degree_all)}。
+          直接入度 {number(example.in_degree_source)}，入向 occurrence {number(example.in_occurrences_source)}。后者较大，是因为部分 consumer 在不同源码位置重复引用它。
         </p>
       )}
     </aside>
@@ -163,8 +170,8 @@ export default function Explorer({ selection, onClose }: Props) {
         ? loadNodes
         : selection.kind === "external"
           ? loadExternalTargets
-          : selection.kind === "typed"
-            ? loadTypedEdges
+          : selection.kind === "source"
+            ? loadSourceEdges
             : loadDomainEdges;
     loader()
       .then((value) => {
@@ -182,8 +189,8 @@ export default function Explorer({ selection, onClose }: Props) {
   const titles = {
     nodes: "内部 declaration · 公开目的性样本",
     external: "显式外部目标 · 高复用头部样本",
-    typed: "唯一 typed edges · 分层真实样本",
-    edges: "领域 dependency pairs · 每格真实样本",
+    source: "SOURCE pairs · 重复引用与 self-loop 样本",
+    edges: "领域 SOURCE pairs · 每格真实样本",
   };
   const filteredEdges =
     selection.kind === "edges" && payload
@@ -224,7 +231,7 @@ export default function Explorer({ selection, onClose }: Props) {
             <DataTable
               rows={payload.rows as NodeSample[]}
               columns={nodeColumns}
-              initialSort="in_degree_all"
+              initialSort="source_degree"
             />
           </>
         )}
@@ -235,12 +242,11 @@ export default function Explorer({ selection, onClose }: Props) {
             initialSort="consumers"
           />
         )}
-        {payload && selection.kind === "typed" && (
+        {payload && selection.kind === "source" && (
           <DataTable
-            rows={payload.rows as TypedEdgeSample[]}
-            columns={typedEdgeColumns}
-            initialSort="src_domain"
-            initialDescending={false}
+            rows={payload.rows as SourceEdgeSample[]}
+            columns={sourceEdgeColumns}
+            initialSort="multiplicity"
           />
         )}
         {payload && selection.kind === "edges" && (

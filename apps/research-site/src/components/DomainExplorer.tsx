@@ -81,7 +81,7 @@ export default function DomainExplorer({ overview, onOpenCell }: Props) {
           </div>
           {sourceMetric && <DomainFacts metric={sourceMetric} />}
           <p className="microcopy">
-            点击任一目标领域，可查看该 cell 发布的 3 个真实 dependency pair。颜色只表示本行份额，不表示数学相似度。
+            点击任一目标领域，可查看该 cell 发布的 3 个真实 SOURCE pair。颜色只表示本行份额，不表示数学相似度。
           </p>
         </aside>
 
@@ -146,7 +146,7 @@ function DomainMatrixTable({
     <div className="matrix-ledger">
       <div>
         <h3>跨领域 ledger</h3>
-        <p>完整保存所有非空 cell；默认显示 pair count 最大的 80 项。</p>
+        <p>完整保存所有非空 SOURCE cells；默认显示 pair count 最大的 80 项。</p>
       </div>
       <input value={query} onChange={(event) => setQuery(event.target.value)} placeholder="筛选领域名称…" />
       <div className="table-scroll">

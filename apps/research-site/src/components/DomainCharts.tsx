@@ -32,7 +32,7 @@ export default function DomainCharts({ overview }: { overview: Overview }) {
           <p className="eyebrow">DOMAIN CONTEXT</p>
           <h2>领域差异先受规模影响</h2>
         </div>
-        <p>路径领域不是等大的实验组；规模、H*ref 与 Gini 必须并排阅读。</p>
+        <p>路径领域不是等大的实验组；SOURCE pair 的规模、H*ref 与 Gini 必须并排阅读。</p>
       </div>
       <div className="chart-grid">
         <figure>
