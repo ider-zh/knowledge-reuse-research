@@ -316,19 +316,51 @@ def source_excerpt(source_file: str, zero_based_line: int, radius: int = 3) -> t
     return start + 1, end, "\n".join(lines[start:end])
 
 
+def probable_variable_continuation(lines: list[str], line_index: int) -> bool:
+    """Recognize a multiline binder whose nearest command head is `variable`."""
+
+    for previous in range(line_index - 1, max(-1, line_index - 16), -1):
+        text = lines[previous].strip()
+        if not text or text.startswith(("--", "/-")):
+            continue
+        if text.startswith(("variable ", "variables ")):
+            return True
+        if text.startswith(
+            (
+                "set_option ", "omit ", "include ", "section ", "namespace ",
+                "open ", "attribute ", "alias ", "def ", "theorem ", "lemma ",
+                "instance ", "example ", "structure ", "class ", "inductive ",
+                "abbrev ", "opaque ", "@[", "local ",
+            )
+        ):
+            return False
+    return False
+
+
 def attribution_boundary(
     unparented_usages: pl.DataFrame,
     unresolved_parent_usages: pl.DataFrame,
     environment_names: set[str],
     ilean_root: pathlib.Path,
+    source_root: pathlib.Path | None = None,
 ) -> dict[str, Any]:
     """Audit which source-side `.ilean` locations can name a declaration."""
 
+    source_root = source_root or ilean_root.parents[3]
     range_counts = {
         "outside_declaration_range": 0,
         "unique_declaration_range": 0,
         "unique_environment_declaration": 0,
         "overlapping_declaration_ranges": 0,
+    }
+    outside_context_counts = {
+        "explicit_variable": 0,
+        "probable_variable_continuation": 0,
+        "option_or_attribute_header": 0,
+        "attribute_command": 0,
+        "alias_command": 0,
+        "namespace_syntax_or_scope_command": 0,
+        "other_command_or_continuation": 0,
     }
     for frame in unparented_usages.sort("module").partition_by("module", maintain_order=True):
         module = frame.item(0, "module")
@@ -341,6 +373,8 @@ def attribution_boundary(
             and len(bounds) >= 4
             and all(isinstance(value, int) for value in bounds[:4])
         ]
+        source_path = source_root.joinpath(*module.split(".")).with_suffix(".lean")
+        source_lines = source_path.read_text().splitlines()
         for row in frame.iter_rows(named=True):
             start = (row["start_line"], row["start_character"])
             end = (row["end_line"], row["end_character"])
@@ -351,6 +385,31 @@ def attribution_boundary(
             ]
             if not containing:
                 range_counts["outside_declaration_range"] += 1
+                line_index = row["start_line"]
+                text = source_lines[line_index].strip()
+                if text.startswith(("variable ", "variables ")):
+                    category = "explicit_variable"
+                elif text.startswith(("[", "{", "(", "⦃")) and probable_variable_continuation(
+                    source_lines, line_index
+                ):
+                    category = "probable_variable_continuation"
+                elif text.startswith(("set_option ", "@[")):
+                    category = "option_or_attribute_header"
+                elif text.startswith("attribute "):
+                    category = "attribute_command"
+                elif text.startswith("alias "):
+                    category = "alias_command"
+                elif text.startswith(
+                    (
+                        "open ", "namespace ", "section ", "end ", "export ",
+                        "notation", "infix", "prefix", "postfix", "macro", "syntax",
+                        "scoped", "include ", "omit ", "local ", "universe ",
+                    )
+                ):
+                    category = "namespace_syntax_or_scope_command"
+                else:
+                    category = "other_command_or_continuation"
+                outside_context_counts[category] += 1
             elif len(containing) == 1:
                 range_counts["unique_declaration_range"] += 1
                 if containing[0] in environment_names:
@@ -365,6 +424,10 @@ def attribution_boundary(
         parent.str.starts_with("_private.") & ~is_example
     ).height
     other_count = unresolved_parent_usages.height - example_count - private_count
+    variable_context_count = (
+        outside_context_counts["explicit_variable"]
+        + outside_context_counts["probable_variable_continuation"]
+    )
     return {
         "primary_graph_rule": (
             "只有 `.ilean` 已解析目标且 parent label 对应持久 Environment declaration "
@@ -379,6 +442,20 @@ def attribution_boundary(
             " parent declaration label，或经过单独验证的唯一 declaration 范围归属。"
         ),
         "unparented": {"total": unparented_usages.height, **range_counts},
+        "outside_declaration_profile": {
+            "population": range_counts["outside_declaration_range"],
+            "variable_context_count": variable_context_count,
+            "variable_context_share": (
+                variable_context_count / range_counts["outside_declaration_range"]
+                if range_counts["outside_declaration_range"]
+                else 0.0
+            ),
+            "classification_note": (
+                "显式 variable 按当前行命令头直接识别；多行 binder 根据向前最多 15 行的最近命令头"
+                "归为高可信近似，其余类别按当前源码行前缀划分。"
+            ),
+            "categories": outside_context_counts,
+        },
         "parent_not_in_environment": {
             "total": unresolved_parent_usages.height,
             "example_context": example_count,

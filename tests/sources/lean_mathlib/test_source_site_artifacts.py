@@ -62,6 +62,10 @@ def test_public_attribution_boundary_partitions_source_contexts() -> None:
         "private_or_eval_context": 109,
         "total": 2252,
     }
+    profile = boundary["outside_declaration_profile"]
+    assert profile["population"] == 107586
+    assert profile["variable_context_count"] == 80439
+    assert sum(profile["categories"].values()) == profile["population"]
 
 
 def test_public_manifest_checksums_every_published_payload() -> None:

@@ -231,6 +231,21 @@ export type ConstructionCases = {
       unique_environment_declaration: number;
       overlapping_declaration_ranges: number;
     };
+    outside_declaration_profile: {
+      population: number;
+      variable_context_count: number;
+      variable_context_share: number;
+      classification_note: string;
+      categories: {
+        explicit_variable: number;
+        probable_variable_continuation: number;
+        option_or_attribute_header: number;
+        attribute_command: number;
+        alias_command: number;
+        namespace_syntax_or_scope_command: number;
+        other_command_or_continuation: number;
+      };
+    };
     parent_not_in_environment: {
       total: number;
       example_context: number;

@@ -31,6 +31,21 @@
         "url": "https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Server/References.lean#L205-L217"
       }
     ],
+    "outside_declaration_profile": {
+      "categories": {
+        "alias_command": 2603,
+        "attribute_command": 3563,
+        "explicit_variable": 62994,
+        "namespace_syntax_or_scope_command": 2772,
+        "option_or_attribute_header": 13713,
+        "other_command_or_continuation": 4496,
+        "probable_variable_continuation": 17445
+      },
+      "classification_note": "显式 variable 按当前行命令头直接识别；多行 binder 根据向前最多 15 行的最近命令头归为高可信近似，其余类别按当前源码行前缀划分。",
+      "population": 107586,
+      "variable_context_count": 80439,
+      "variable_context_share": 0.7476716301377503
+    },
     "parent_not_in_environment": {
       "example_context": 2090,
       "metaprogram_or_external_context": 53,

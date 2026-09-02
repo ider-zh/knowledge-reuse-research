@@ -27,6 +27,10 @@ def test_attribution_boundary_distinguishes_declarations_from_source_contexts(
             }
         )
     )
+    source_path = tmp_path / "Mathlib" / "Fixture.lean"
+    source_lines = [""] * 21
+    source_lines[5] = "variable [FixtureClass α]"
+    source_path.write_text("\n".join(source_lines))
     unparented = pl.DataFrame(
         {
             "module": ["Mathlib.Fixture", "Mathlib.Fixture", "Mathlib.Fixture"],
@@ -48,7 +52,11 @@ def test_attribution_boundary_distinguishes_declarations_from_source_contexts(
     )
 
     result = attribution_boundary(
-        unparented, unresolved, {"Fixture.outer", "Fixture.inner"}, tmp_path
+        unparented,
+        unresolved,
+        {"Fixture.outer", "Fixture.inner"},
+        tmp_path,
+        tmp_path,
     )
 
     assert result["unparented"] == {
@@ -58,6 +66,8 @@ def test_attribution_boundary_distinguishes_declarations_from_source_contexts(
         "unique_environment_declaration": 1,
         "overlapping_declaration_ranges": 1,
     }
+    assert result["outside_declaration_profile"]["variable_context_count"] == 1
+    assert result["outside_declaration_profile"]["variable_context_share"] == 1.0
     assert result["parent_not_in_environment"] == {
         "total": 4,
         "example_context": 2,

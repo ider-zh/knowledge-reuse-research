@@ -9,6 +9,7 @@ import type {
 } from "../types";
 
 const format = new Intl.NumberFormat("en-US");
+const percent = new Intl.NumberFormat("zh-CN", { style: "percent", maximumFractionDigits: 1 });
 
 export default function GraphConstruction() {
   const [data, setData] = useState<ConstructionCases | null>(null);
@@ -124,6 +125,20 @@ export default function GraphConstruction() {
 function AttributionBoundary({ boundary }: { boundary: ConstructionCases["attribution_boundary"] }) {
   const unparented = boundary.unparented;
   const unresolved = boundary.parent_not_in_environment;
+  const profile = boundary.outside_declaration_profile;
+  const explained = profile.variable_context_count
+    + profile.categories.option_or_attribute_header
+    + profile.categories.attribute_command
+    + profile.categories.alias_command
+    + profile.categories.namespace_syntax_or_scope_command;
+  const profileRows = [
+    ["variable 与多行 binder", profile.variable_context_count],
+    ["set_option / attribute header", profile.categories.option_or_attribute_header],
+    ["attribute command", profile.categories.attribute_command],
+    ["alias command", profile.categories.alias_command],
+    ["namespace、syntax 与 scope", profile.categories.namespace_syntax_or_scope_command],
+    ["其他命令或多行上下文", profile.population - explained],
+  ] as const;
   return (
     <section className="attribution-method" aria-labelledby="attribution-method-title">
       <header>
@@ -174,6 +189,30 @@ function AttributionBoundary({ boundary }: { boundary: ConstructionCases["attrib
           <p>这些 label 描述精化上下文，并不必然对应本研究语料中的持久 declaration；把它们并入节点集会改变“复用组件”的定义。</p>
         </article>
       </div>
+
+      <section className="outside-profile" aria-labelledby="outside-profile-title">
+        <header>
+          <div>
+            <span>主要发现</span>
+            <h4 id="outside-profile-title">声明范围外的位置主要来自共享的 variable 上下文</h4>
+          </div>
+          <strong>{format.format(profile.variable_context_count)}<small>{percent.format(profile.variable_context_share)}</small></strong>
+        </header>
+        <p>
+          这些 identifier 已被 Lean 解析到确定的全局常量，但所在的 `variable` 命令服务于后续多个声明，
+          自身不是持久 declaration。把一次模块级引用复制给相邻 theorem 会人为增加边和 occurrence。
+        </p>
+        <div className="outside-profile-bars">
+          {profileRows.map(([label, value]) => (
+            <div key={label}>
+              <span>{label}</span>
+              <i><b style={{ width: `${(value / profile.population) * 100}%` }} /></i>
+              <strong>{format.format(value)}</strong>
+            </div>
+          ))}
+        </div>
+        <small>{profile.classification_note}</small>
+      </section>
 
       <aside className="context-policy"><b>完整性原则</b><p>{boundary.context_policy}</p></aside>
 
