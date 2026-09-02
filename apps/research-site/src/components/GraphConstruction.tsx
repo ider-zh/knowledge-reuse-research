@@ -260,5 +260,5 @@ function EdgeDiagram({ edges }: { edges: ConstructionEdge[] }) {
 }
 
 function shortName(name: string) {
-  return name.length > 34 ? `${name.slice(0, 31)}…` : name;
+  return name.length > 25 ? `${name.slice(0, 22)}…` : name;
 }
