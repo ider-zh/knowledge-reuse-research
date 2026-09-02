@@ -4,6 +4,8 @@ from knowledge_reuse.sources.lean_mathlib.layout import (
     RESULTS_ROOT,
     ROOT,
     run_results_root,
+    source_graph_normalized_root,
+    source_graph_raw_root,
 )
 
 
@@ -21,3 +23,13 @@ def test_smoke_and_full_results_are_isolated() -> None:
     assert smoke != full
     assert smoke == RESULTS_ROOT / "runs" / "smoke"
     assert full == RESULTS_ROOT / "runs" / "full"
+
+
+def test_source_graph_has_versioned_raw_and_normalized_paths() -> None:
+    snapshot = "mathlib-v4.32.1"
+    assert source_graph_raw_root(snapshot, "full") == (
+        DATA_ROOT / snapshot / "raw" / "lean-source-graph-v1" / "full"
+    )
+    assert source_graph_normalized_root(snapshot, "full") == (
+        DATA_ROOT / snapshot / "normalized" / "lean-source-graph-v1" / "full"
+    )

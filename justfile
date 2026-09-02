@@ -45,6 +45,12 @@ normalize-complexity-smoke:
 normalize-complexity:
     uv run python -m knowledge_reuse.sources.lean_mathlib.normalize_complexity
 
+source-graph-smoke:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.ilean_graph --smoke
+
+source-graph:
+    uv run python -m knowledge_reuse.sources.lean_mathlib.ilean_graph
+
 validate:
     uv run python -m knowledge_reuse.sources.lean_mathlib.commands.verify_run
 
