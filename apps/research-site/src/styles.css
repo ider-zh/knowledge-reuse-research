@@ -260,6 +260,16 @@ td.numeric, th.numeric { text-align: right; font-family: "DM Mono", monospace; }
 .explorer-panel h2 { margin: 0; font: 800 clamp(28px,4vw,54px) "Noto Serif SC", serif; }
 .close-button { width: 46px; height: 46px; border: 1px solid var(--ink); background: transparent; font-size: 30px; cursor: pointer; }
 .sample-contract { display: flex; gap: 18px; flex-wrap: wrap; margin: 20px 0 4px; padding: 12px 15px; border-left: 4px solid var(--gold); background: #f5e8d6; font-size: 13px; }
+.degree-guide { margin: 16px 0 4px; border: 1px solid var(--line); background: #f8f6ef; }
+.degree-guide > header { padding: 15px 17px 13px; border-bottom: 1px solid var(--line); }
+.degree-guide h3 { margin: 4px 0 0; font: 700 18px/1.45 "Noto Serif SC", serif; }
+.degree-guide-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+.degree-guide-grid article { min-width: 0; padding: 14px 17px; border-right: 1px solid var(--line); }
+.degree-guide-grid article:last-child { border-right: 0; }
+.degree-guide-grid b { color: var(--green-dark); font: 700 14px "DM Mono", monospace; }
+.degree-guide-grid p { margin: 8px 0 0; color: var(--muted); font-size: 14px; line-height: 1.65; }
+.degree-example { margin: 0; padding: 13px 17px; border-top: 1px solid var(--line); background: #e4eee8; font-size: 14px; line-height: 1.65; }
+.degree-example b { color: var(--green-dark); }
 .active-filter { color: var(--green); font-weight: 600; }
 .loading, .error, .fatal { padding: 80px 32px; }
 .error { color: var(--red); }
@@ -326,6 +336,9 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .flow-value { grid-column: 2; }
   .matrix-ledger > input { float: none; width: 100%; margin-bottom: 10px; }
   .explorer-panel { width: 100vw; padding: 15px; }
+  .degree-guide-grid { grid-template-columns: 1fr; }
+  .degree-guide-grid article { border-right: 0; border-bottom: 1px solid var(--line); }
+  .degree-guide-grid article:last-child { border-bottom: 0; }
   .table-tools { align-items: start; flex-direction: column; }
   footer { flex-direction: column; }
 }

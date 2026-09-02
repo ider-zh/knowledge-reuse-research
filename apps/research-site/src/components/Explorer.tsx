@@ -44,7 +44,7 @@ const nodeColumns: Column<NodeSample>[] = [
   },
   { id: "domain", label: "领域", value: (row) => row.domain },
   { id: "kind", label: "kind", value: (row) => row.kind },
-  { id: "in_degree_all", label: "ALL 入度", value: (row) => row.in_degree_all, align: "right" },
+  { id: "in_degree_all", label: "ALL 入度（并集）", value: (row) => row.in_degree_all, align: "right" },
   { id: "type", label: "TYPE 入度", value: (row) => row.in_degree_type, align: "right" },
   { id: "value", label: "VALUE 入度", value: (row) => row.in_degree_value, align: "right" },
   { id: "tokens", label: "Token", value: (row) => row.source_tokens, align: "right" },
@@ -112,6 +112,42 @@ const typedEdgeColumns: Column<TypedEdgeSample>[] = [
   { id: "external", label: "external?", value: (row) => row.is_external_target },
   { id: "reason", label: "为何发布", value: (row) => row.sample_reason },
 ];
+
+function NodeDegreeGuide({ rows }: { rows: NodeSample[] }) {
+  const example = rows.find((row) => row.name === "DFunLike.coe");
+  const overlap = example
+    ? example.in_degree_type + example.in_degree_value - example.in_degree_all
+    : null;
+
+  return (
+    <aside className="degree-guide" aria-labelledby="degree-guide-title">
+      <header>
+        <p className="eyebrow">EDGE TYPE &amp; REUSE INDEGREE</p>
+        <h3 id="degree-guide-title">TYPE、VALUE 与 ALL 入度统计 consumer 集合，不能直接相加</h3>
+      </header>
+      <div className="degree-guide-grid">
+        <article>
+          <b>TYPE edge · A → B</b>
+          <p>B 出现在 A 精化后的声明类型或定理命题中，表示“表达 A 的接口或命题需要 B”。TYPE 入度是这类不同 A 的数量。</p>
+        </article>
+        <article>
+          <b>VALUE edge · A → B</b>
+          <p>B 出现在 A 精化后的定义体或证明项中，表示“实现或证明 A 需要 B”。VALUE 入度是这类不同 A 的数量。</p>
+        </article>
+        <article>
+          <b>ALL reuse indegree</b>
+          <p><code>|TYPE consumers ∪ VALUE consumers|</code>。同一 A 若在两层都引用 B，在 ALL 中仍只贡献一个 consumer；重复出现次数不改变入度，self-loop 也不计入复用入度。</p>
+        </article>
+      </div>
+      {example && overlap !== null && (
+        <p className="degree-example">
+          <b>表中算例 · DFunLike.coe：</b>
+          TYPE {number(example.in_degree_type)} + VALUE {number(example.in_degree_value)} − 两层共有 {number(overlap)} = ALL {number(example.in_degree_all)}。
+        </p>
+      )}
+    </aside>
+  );
+}
 
 export default function Explorer({ selection, onClose }: Props) {
   const [payload, setPayload] = useState<SamplePayload<unknown> | null>(null);
@@ -183,11 +219,14 @@ export default function Explorer({ selection, onClose }: Props) {
         {!payload && !error && <p className="loading">正在按需加载小型公开数据…</p>}
         {error && <p className="error">{error}</p>}
         {payload && selection.kind === "nodes" && (
-          <DataTable
-            rows={payload.rows as NodeSample[]}
-            columns={nodeColumns}
-            initialSort="in_degree_all"
-          />
+          <>
+            <NodeDegreeGuide rows={payload.rows as NodeSample[]} />
+            <DataTable
+              rows={payload.rows as NodeSample[]}
+              columns={nodeColumns}
+              initialSort="in_degree_all"
+            />
+          </>
         )}
         {payload && selection.kind === "external" && (
           <DataTable
