@@ -49,7 +49,7 @@ function App() {
             <p className="eyebrow">LEAN 4 / MATHLIB v4.32.1 · FULL GRAPH</p>
             <h1>形式化知识<br />复用观测站</h1>
             <p className="hero-dek">
-              不把 2,400 万条边下载到浏览器。总体结论来自完整图；站点只发布带选择规则、可追溯到源码的局部证据。
+              本研究把 mathlib 中的声明视为节点，把类型和证明中对其他声明的引用视为有向边。完整图用于计算总体规律；本页通过统计图、概念说明和真实源码案例解释研究发现。
             </p>
           </div>
           <aside className="concept-card">
