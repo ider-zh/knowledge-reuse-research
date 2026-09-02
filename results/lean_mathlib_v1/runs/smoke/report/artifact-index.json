@@ -11,9 +11,9 @@
       "sha256": "e4f0bca3e6f6cbcbb6b7bf39f2d96ef334b4545d040ce958d8baca8f6c898626"
     },
     {
-      "bytes": 3935,
+      "bytes": 3967,
       "path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/manifest.json",
-      "sha256": "e1e67cae11590c70cd323e96ae65ffa757946c49c3d82ccbf1d07ab5afcbbd82"
+      "sha256": "15d9c62d240013bdf94758c02054b7a571c2bede7358859160be4254105f26d8"
     },
     {
       "bytes": 400,
@@ -43,7 +43,7 @@
     {
       "bytes": 7595,
       "path": "results/lean_mathlib_v1/capability-probe.json",
-      "sha256": "ce07663dd03891ecdb0c1e0f3410ab7f12e8fb72e4135590efa89cb68f5d16a5"
+      "sha256": "d4d3a6f103a6606b3194620a917fba8a79f9452a9e69c6e80d41a0a10ef2e26a"
     },
     {
       "bytes": 1284,
@@ -71,9 +71,9 @@
       "sha256": "b95b139628346abc175248843203f1e07cb130b3bbbdec7ec957c4b4ed2c05dc"
     },
     {
-      "bytes": 3747,
+      "bytes": 3768,
       "path": "metrics/length_binned.parquet",
-      "sha256": "60079a81f4f1b4ca80469aaca451921ad98d187846af959cceef01914730cc8a"
+      "sha256": "af57cecb8a5aeda3d5e15eb54abe615742b0d5bcd416f5b77ead68e3f4f42084"
     },
     {
       "bytes": 2012,
@@ -98,12 +98,12 @@
     {
       "bytes": 7638,
       "path": "metrics/regressions.parquet",
-      "sha256": "0eb4b5f6caffc678f4e5ec08c1d7fa9a486402e029fd88a92aa5c23fe31aa7f5"
+      "sha256": "45974f53ccefd451a712ef961f391428033edb2036bd695c75ac9370bf9c4200"
     },
     {
       "bytes": 7352,
       "path": "metrics/stratified_regressions.parquet",
-      "sha256": "0bcc6a6abdf1cc494f64eb8091669ab66808703e88afb9cef52b782a176f5a37"
+      "sha256": "a5b72ba2db126a5c45f2d531f8e4b1ec728d5dab89dacf4d7c9e991400e5d90e"
     },
     {
       "bytes": 3935,
@@ -113,7 +113,7 @@
     {
       "bytes": 2045,
       "path": "metrics/value_availability.parquet",
-      "sha256": "1c0c9fb4e1fb2520bc4bd11cdc2854749c6122ccaec2ee53c1ab31ad72fb545c"
+      "sha256": "8cb08db1ca7724295f00b6ba09968aa30d2a23ec08a5b7779bfabb5ab309a742"
     },
     {
       "bytes": 4826,
@@ -131,9 +131,9 @@
       "sha256": "a412194481d055bc1ce53a15312808c508975f4a4508c95addb25197d5dd236f"
     },
     {
-      "bytes": 1524,
+      "bytes": 1525,
       "path": "run-manifest.json",
-      "sha256": "900c61953fa330bb1ea0a0a49ef53193946136818689b6d3e134f8aac7b59f91"
+      "sha256": "8409a477289bfd502ff520127f0a7b9e98cdd4213c7ac00a5886d095a996f144"
     },
     {
       "bytes": 2131,
