@@ -123,6 +123,31 @@ function NodeDiagram({ item }: { item: ConstructionCase }) {
             <ExprLayer title="VALUE EXPR · 5 nodes" layer={item.expr_breakdown.value_expr} />
           </div>
           <p>{item.expr_breakdown.notation}</p>
+          <section className="expr-evidence-chain" aria-label="Sort 解释的证据链">
+            <header><span>EVIDENCE CHAIN</span><h6>为什么可以把这些 `.sort` 解释为 Type 和 Prop？</h6></header>
+            <ol>
+              {item.expr_breakdown.evidence.map((evidence, index) => (
+                <li key={evidence.kind}>
+                  <i>{index + 1}</i>
+                  <div>
+                    <span>{evidence.supports}</span>
+                    <a href={evidence.url} target="_blank" rel="noreferrer">{evidence.title} ↗</a>
+                    <p>{evidence.detail}</p>
+                    {evidence.code && <code>{evidence.code}</code>}
+                  </div>
+                </li>
+              ))}
+              <li className="observed-evidence">
+                <i>{item.expr_breakdown.evidence.length + 1}</i>
+                <div>
+                  <span>本案例观测</span>
+                  <b>Set 的 raw ConstantInfo</b>
+                  <p>TYPE 与 VALUE 面板逐项显示 `.sort (u+1)` 和 `.sort 0`；这些值由固定 Lean 环境直接读取。</p>
+                </div>
+              </li>
+            </ol>
+            <p><b>推理：</b>{item.expr_breakdown.inference}</p>
+          </section>
         </section>
       )}
       <aside className="node-schema-guide" aria-label="节点字段定义">

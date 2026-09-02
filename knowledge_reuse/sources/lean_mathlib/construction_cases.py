@@ -153,6 +153,51 @@ def build_construction_cases(nodes: pl.DataFrame, edges: pl.DataFrame) -> dict[s
             ],
         },
         "notation": "Lean 内部以 Sort (u+1) 表示 Type u，以 Sort 0 表示 Prop。",
+        "evidence": [
+            {
+                "kind": "language_reference",
+                "title": "Lean Language Reference · Universes",
+                "url": "https://lean-lang.org/doc/reference/latest/The-Type-System/Universes/",
+                "supports": "语言层定义",
+                "detail": (
+                    "官方参考说明 Type u 是 Sort (u+1) 的缩写，Prop 是 Sort 0 的缩写。"
+                ),
+                "code": None,
+            },
+            {
+                "kind": "pinned_parser_source",
+                "title": "Lean v4.32.1 · Lean/Parser/Term.lean L134–L144",
+                "url": (
+                    "https://github.com/leanprover/lean4/blob/v4.32.1/"
+                    "src/lean/Lean/Parser/Term.lean#L134-L144"
+                ),
+                "supports": "固定版本语法定义",
+                "detail": "parser 源码注释直接记录 Type u 与 Prop 的 Sort 等价关系。",
+                "code": "Type u ≡ Sort (u + 1)\nProp ≡ Sort 0",
+            },
+            {
+                "kind": "pinned_elaborator_source",
+                "title": "Lean v4.32.1 · Lean/Elab/BuiltinTerm.lean L21–L34",
+                "url": (
+                    "https://github.com/leanprover/lean4/blob/v4.32.1/"
+                    "src/lean/Lean/Elab/BuiltinTerm.lean#L21-L34"
+                ),
+                "supports": "固定版本执行规则",
+                "detail": (
+                    "elabProp 构造 level zero 的 Sort；elabTypeStx 对给定 universe level "
+                    "先取 successor，再构造 Sort。"
+                ),
+                "code": (
+                    "elabProp     → mkSort Level.zero\n"
+                    "elabTypeStx → mkSort (mkLevelSucc u)"
+                ),
+            },
+        ],
+        "inference": (
+            "前两项给出语言定义与 v4.32.1 的精化实现；本案例 raw ConstantInfo 中的 "
+            ".sort (u+1) 和 .sort 0 是同一规则的实际输出。因此这里不是从显示文本跳到解释，"
+            "而是用固定版本规则解释固定版本观测。"
+        ),
     }
     if len(set_expr_breakdown["type_expr"]["nodes"]) != node_by_name["Set"]["type_expr_nodes"]:
         raise ValueError("Set type Expr breakdown disagrees with extracted node count")

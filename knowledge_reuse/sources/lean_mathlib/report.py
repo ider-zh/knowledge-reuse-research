@@ -330,10 +330,29 @@ def render_construction_cases(cases: dict[str, Any]) -> str:
                         "<table><thead><tr><th>#</th><th>Expr constructor</th>"
                         f"<th>meaning</th></tr></thead><tbody>{expr_rows}</tbody></table>"
                     )
+                evidence_items = "".join(
+                    "<li>"
+                    f'<b>{html.escape(evidence["supports"])}</b>：'
+                    f'<a href="{html.escape(evidence["url"])}">'
+                    f'{html.escape(evidence["title"])}</a>。'
+                    f'{html.escape(evidence["detail"])}'
+                    + (
+                        f'<pre>{html.escape(evidence["code"])}</pre>'
+                        if evidence["code"]
+                        else ""
+                    )
+                    + "</li>"
+                    for evidence in breakdown["evidence"]
+                )
                 result += (
                     '<div class="expr-breakdown-report"><h4>精确 Expr 构造分解</h4>'
                     + "".join(layers)
-                    + f'<p class="note">{html.escape(breakdown["notation"])}</p></div>'
+                    + f'<p class="note">{html.escape(breakdown["notation"])}</p>'
+                    + "<h4>Sort 解释的证据链</h4><ol>"
+                    + evidence_items
+                    + "<li><b>本案例观测</b>：上述 raw ConstantInfo 实际包含 "
+                    "<code>.sort (u+1)</code> 与 <code>.sort 0</code>。</li></ol>"
+                    + f'<p><b>推理：</b>{html.escape(breakdown["inference"])}</p></div>'
                 )
         else:
             rows = []

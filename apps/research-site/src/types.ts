@@ -157,11 +157,22 @@ export type ExprBreakdownLayer = {
   nodes: ExprBreakdownNode[];
 };
 
+export type ExprEvidence = {
+  kind: string;
+  title: string;
+  url: string;
+  supports: string;
+  detail: string;
+  code: string | null;
+};
+
 export type ExprBreakdown = {
   verification: string;
   type_expr: ExprBreakdownLayer;
   value_expr: ExprBreakdownLayer;
   notation: string;
+  evidence: ExprEvidence[];
+  inference: string;
 };
 
 export type ConstructionCase = {

@@ -186,6 +186,19 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .expr-layer-grid li.expr-depth-1 code::before { content: "↳ "; }
 .expr-layer-grid li.expr-depth-2 code::before { content: "↳↳ "; }
 .expr-breakdown > p { margin: 0; padding: 13px 18px; border-top: 1px solid var(--line); color: var(--muted); background: #edf3ef; font-size: 13px; }
+.expr-evidence-chain { border-top: 1px solid var(--line); background: #f8f6ef; }
+.expr-evidence-chain > header { padding: 17px 18px; }
+.expr-evidence-chain > header span, .expr-evidence-chain li span { color: var(--green); font: 700 13px "DM Mono", monospace; letter-spacing: .05em; }
+.expr-evidence-chain h6 { margin: 5px 0 0; font: 700 17px "Noto Serif SC", serif; }
+.expr-evidence-chain ol { margin: 0; padding: 0 18px; list-style: none; }
+.expr-evidence-chain li { display: grid; grid-template-columns: 30px 1fr; gap: 11px; padding: 14px 0; border-top: 1px solid #ded8ca; }
+.expr-evidence-chain li i { width: 26px; height: 26px; display: grid; place-items: center; border-radius: 50%; color: white; background: var(--blue); font: normal 700 13px "DM Mono", monospace; }
+.expr-evidence-chain li div { min-width: 0; }
+.expr-evidence-chain li a, .expr-evidence-chain li b { display: block; margin-top: 4px; overflow-wrap: anywhere; font-size: 14px; }
+.expr-evidence-chain li p { margin: 7px 0; color: var(--muted); font-size: 13px; line-height: 1.65; }
+.expr-evidence-chain li code { display: block; padding: 9px 11px; overflow-wrap: anywhere; color: var(--blue); background: white; white-space: pre-line; font-size: 13px; line-height: 1.55; }
+.expr-evidence-chain .observed-evidence i { background: var(--gold); }
+.expr-evidence-chain > p { margin: 0; padding: 15px 18px; border-top: 1px solid var(--line); background: #e4eee8; font-size: 13px; line-height: 1.7; }
 .node-schema-guide { margin-top: 16px; padding: 18px; border-left: 4px solid var(--gold); background: #f5e8d6; }
 .node-schema-guide h5 { margin: 0 0 14px; font: 700 18px "Noto Serif SC", serif; }
 .node-schema-guide dl { display: block; }
