@@ -2,8 +2,8 @@
   "experiment_id": "lean_mathlib_v1",
   "files": {
     "construction-cases.json": {
-      "bytes": 17360,
-      "sha256": "f64703011e783521bc7713a23cde1506c2ba8a5ce120b352ec31178cceb30eda"
+      "bytes": 20529,
+      "sha256": "d878e0a0ea5309b575d09bf84b6dc74287c9333cdc23a3fa51a29fdc593d19b6"
     },
     "domain-edge-samples.json": {
       "bytes": 770013,

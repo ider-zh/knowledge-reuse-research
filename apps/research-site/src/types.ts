@@ -220,6 +220,32 @@ export type ConstructionCases = {
     }[];
     module_hint: string;
   };
+  attribution_boundary: {
+    primary_graph_rule: string;
+    target_endpoint: string;
+    source_endpoint: string;
+    unparented: {
+      total: number;
+      outside_declaration_range: number;
+      unique_declaration_range: number;
+      unique_environment_declaration: number;
+      overlapping_declaration_ranges: number;
+    };
+    parent_not_in_environment: {
+      total: number;
+      example_context: number;
+      private_or_eval_context: number;
+      metaprogram_or_external_context: number;
+    };
+    context_policy: string;
+    examples: {
+      kind: string;
+      title: string;
+      code: string;
+      explanation: string;
+      url: string;
+    }[];
+  };
   stages: { stage: string; description: string }[];
   node_cases: ConstructionCase[];
   edge_cases: ConstructionCase[];

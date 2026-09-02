@@ -46,6 +46,24 @@ def test_dfunlike_public_case_distinguishes_graph_and_excluded_location() -> Non
     assert len(case["source_locations"]) == 2
 
 
+def test_public_attribution_boundary_partitions_source_contexts() -> None:
+    boundary = load("construction-cases.json")["attribution_boundary"]
+
+    assert boundary["unparented"] == {
+        "outside_declaration_range": 107586,
+        "overlapping_declaration_ranges": 145,
+        "total": 109575,
+        "unique_declaration_range": 1844,
+        "unique_environment_declaration": 1844,
+    }
+    assert boundary["parent_not_in_environment"] == {
+        "example_context": 2090,
+        "metaprogram_or_external_context": 53,
+        "private_or_eval_context": 109,
+        "total": 2252,
+    }
+
+
 def test_public_manifest_checksums_every_published_payload() -> None:
     manifest = load("manifest.json")
 

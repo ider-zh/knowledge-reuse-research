@@ -1,12 +1,69 @@
+import json
+
 import polars as pl
 
 from knowledge_reuse.sources.lean_mathlib.export_site import (
+    attribution_boundary,
     domain_edge_sample,
     external_target_sample,
     public_node_sample,
     rank_frequency_distribution,
     source_edge_sample,
 )
+
+
+def test_attribution_boundary_distinguishes_declarations_from_source_contexts(
+    tmp_path,
+) -> None:
+    module_path = tmp_path / "Mathlib" / "Fixture.ilean"
+    module_path.parent.mkdir(parents=True)
+    module_path.write_text(
+        json.dumps(
+            {
+                "decls": {
+                    "Fixture.outer": [10, 0, 20, 0, 10, 8, 10, 13],
+                    "Fixture.inner": [14, 0, 16, 0, 14, 8, 14, 13],
+                }
+            }
+        )
+    )
+    unparented = pl.DataFrame(
+        {
+            "module": ["Mathlib.Fixture", "Mathlib.Fixture", "Mathlib.Fixture"],
+            "start_line": [5, 11, 15],
+            "start_character": [0, 2, 2],
+            "end_line": [5, 11, 15],
+            "end_character": [3, 5, 5],
+        }
+    )
+    unresolved = pl.DataFrame(
+        {
+            "parent_decl": [
+                "Fixture._example",
+                "_private.Fixture.0._example",
+                "_private.Fixture.0._eval",
+                "One",
+            ]
+        }
+    )
+
+    result = attribution_boundary(
+        unparented, unresolved, {"Fixture.outer", "Fixture.inner"}, tmp_path
+    )
+
+    assert result["unparented"] == {
+        "total": 3,
+        "outside_declaration_range": 1,
+        "unique_declaration_range": 1,
+        "unique_environment_declaration": 1,
+        "overlapping_declaration_ranges": 1,
+    }
+    assert result["parent_not_in_environment"] == {
+        "total": 4,
+        "example_context": 2,
+        "private_or_eval_context": 1,
+        "metaprogram_or_external_context": 1,
+    }
 
 
 def test_rank_frequency_display_uses_complete_sorted_population_and_zipf_reference() -> None:

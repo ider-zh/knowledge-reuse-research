@@ -316,6 +316,124 @@ def source_excerpt(source_file: str, zero_based_line: int, radius: int = 3) -> t
     return start + 1, end, "\n".join(lines[start:end])
 
 
+def attribution_boundary(
+    unparented_usages: pl.DataFrame,
+    unresolved_parent_usages: pl.DataFrame,
+    environment_names: set[str],
+    ilean_root: pathlib.Path,
+) -> dict[str, Any]:
+    """Audit which source-side `.ilean` locations can name a declaration."""
+
+    range_counts = {
+        "outside_declaration_range": 0,
+        "unique_declaration_range": 0,
+        "unique_environment_declaration": 0,
+        "overlapping_declaration_ranges": 0,
+    }
+    for frame in unparented_usages.sort("module").partition_by("module", maintain_order=True):
+        module = frame.item(0, "module")
+        path = ilean_root.joinpath(*module.split(".")).with_suffix(".ilean")
+        payload = json.loads(path.read_text())
+        declarations = [
+            (name, (bounds[0], bounds[1]), (bounds[2], bounds[3]))
+            for name, bounds in payload.get("decls", {}).items()
+            if isinstance(bounds, list)
+            and len(bounds) >= 4
+            and all(isinstance(value, int) for value in bounds[:4])
+        ]
+        for row in frame.iter_rows(named=True):
+            start = (row["start_line"], row["start_character"])
+            end = (row["end_line"], row["end_character"])
+            containing = [
+                name
+                for name, decl_start, decl_end in declarations
+                if decl_start <= start and end <= decl_end
+            ]
+            if not containing:
+                range_counts["outside_declaration_range"] += 1
+            elif len(containing) == 1:
+                range_counts["unique_declaration_range"] += 1
+                if containing[0] in environment_names:
+                    range_counts["unique_environment_declaration"] += 1
+            else:
+                range_counts["overlapping_declaration_ranges"] += 1
+
+    parent = pl.col("parent_decl")
+    is_example = parent.str.contains("_example")
+    example_count = unresolved_parent_usages.filter(is_example).height
+    private_count = unresolved_parent_usages.filter(
+        parent.str.starts_with("_private.") & ~is_example
+    ).height
+    other_count = unresolved_parent_usages.height - example_count - private_count
+    return {
+        "primary_graph_rule": (
+            "只有 `.ilean` 已解析目标且 parent label 对应持久 Environment declaration "
+            "的位置，才进入 declaration reuse 主图。"
+        ),
+        "target_endpoint": (
+            "constant reference key 提供目标 declaration 名与 module hint；不在内部语料中的"
+            "目标仍保留为显式 external declaration 节点。"
+        ),
+        "source_endpoint": (
+            "文件路径只能确定引用所在 module，不能保证存在 consumer declaration。来源端必须有"
+            " parent declaration label，或经过单独验证的唯一 declaration 范围归属。"
+        ),
+        "unparented": {"total": unparented_usages.height, **range_counts},
+        "parent_not_in_environment": {
+            "total": unresolved_parent_usages.height,
+            "example_context": example_count,
+            "private_or_eval_context": private_count,
+            "metaprogram_or_external_context": other_count,
+        },
+        "context_policy": (
+            "没有可靠持久 declaration 来源的位置继续作为 source-context 记录保存。完整源码引用层"
+            "可以将其表示为 SourceContextNode；它们不会被伪造成 declaration 节点，也不进入复用指标。"
+        ),
+        "examples": [
+            {
+                "kind": "模块级命令",
+                "title": "section variable 有所属 module，但没有 consumer declaration",
+                "code": "variable {G H : Type*} [Add G] [Add H]",
+                "explanation": (
+                    "两个 Add 引用都位于全部 declaration 范围之外。将其分配给相邻 theorem，"
+                    "会产生 Lean 并未记录的边。"
+                ),
+                "url": source_url("Mathlib/Algebra/AddConstMap/Basic.lean", 318),
+            },
+            {
+                "kind": "临时上下文",
+                "title": "example 会被精化，但不会持久化为 Environment 节点",
+                "code": "example (l : AList β) : True := by induction l <;> trivial",
+                "explanation": (
+                    "`.ilean` 可以把上下文标为 AList._example；declaration 语料则只包含持久的 "
+                    "Environment declarations。"
+                ),
+                "url": source_url("Mathlib/Data/List/AList.lean", 337),
+            },
+            {
+                "kind": "元编程命令",
+                "title": "to_additive 在新 declaration 正文之外关联已有常量",
+                "code": "attribute [to_additive existing] Inv Mul HMul instHMul Div HDiv instHDiv",
+                "explanation": (
+                    "该命令记录 resolved constants，但它本身不是具有 declaration 来源端的"
+                    "可复用数学声明。"
+                ),
+                "url": source_url("Mathlib/Tactic/ToAdditive.lean", 25),
+            },
+            {
+                "kind": "范围歧义",
+                "title": "生成或嵌套 declaration 可能共享源码范围",
+                "code": "usage range ⊆ outer declaration range ∩ generated declaration range",
+                "explanation": (
+                    "仅凭范围包含会得到多个候选。该位置可以审计，但 declaration 图不能按距离"
+                    "擅自选择其中一个。"
+                ),
+                "url": "https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Server/References.lean#L205-L217",
+            },
+        ],
+    }
+
+
 def build_source_edge_case(
     case_id: str,
     title: str,
@@ -386,6 +504,7 @@ def construction_cases(
     external_nodes: pl.DataFrame,
     edges: pl.DataFrame,
     usages: pl.DataFrame,
+    unparented_usages: pl.DataFrame,
     unresolved_parent_usages: pl.DataFrame,
 ) -> dict[str, Any]:
     old_root = normalized_root(snapshot, "full")
@@ -445,7 +564,7 @@ def construction_cases(
         ),
     ]
     return {
-        "schema_version": "lean-source-construction-cases-v1",
+        "schema_version": "lean-source-construction-cases-v2",
         "snapshot_id": snapshot,
         "edge_direction": "consumer declaration → resolved target declaration",
         "occurrence_unit": "one distinct `.ilean` resolved LSP source range",
@@ -489,6 +608,12 @@ def construction_cases(
                 "Lean 回退到当前模块，因此它只是 hint，不参与 node identity。"
             ),
         },
+        "attribution_boundary": attribution_boundary(
+            unparented_usages,
+            unresolved_parent_usages,
+            set(nodes["name"].to_list()),
+            ROOT / "vendor" / "mathlib4" / ".lake" / "build" / "lib" / "lean",
+        ),
         "stages": [
             {"stage": "Lean source", "description": "声明与证明源码提供 identifier 的实际位置。"},
             {"stage": "Elaborator InfoTree", "description": "Lean 把表面语法解析为带目标名称的精化信息。"},
@@ -608,6 +733,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     unresolved_parent_usages = pl.read_parquet(
         graph_root / "unresolved_parent_usages.parquet"
     )
+    unparented_usages = pl.read_parquet(graph_root / "unparented_usages.parquet")
     external_nodes = pl.read_parquet(graph_root / "external_nodes.parquet")
     domains = pl.read_parquet(derived_root / "domain_metrics.parquet").sort(
         "node_count", descending=True
@@ -628,6 +754,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
         external_nodes,
         edges,
         usages,
+        unparented_usages,
         unresolved_parent_usages,
     )
     rank_frequency = rank_frequency_distribution(nodes, rank_fits, snapshot)

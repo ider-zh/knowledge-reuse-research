@@ -74,6 +74,8 @@ export default function GraphConstruction() {
             <aside><b>module 字段怎样解释？</b><p>{data.edge_extraction.module_hint}</p></aside>
           </section>
 
+          <AttributionBoundary boundary={data.attribution_boundary} />
+
           <div className="construction-note">
             <b>边方向</b><span>{data.edge_direction}</span>
             <b>重复计数单位</b><span>{data.occurrence_unit}</span>
@@ -115,6 +117,77 @@ export default function GraphConstruction() {
           </div>
         </>
       )}
+    </section>
+  );
+}
+
+function AttributionBoundary({ boundary }: { boundary: ConstructionCases["attribution_boundary"] }) {
+  const unparented = boundary.unparented;
+  const unresolved = boundary.parent_not_in_environment;
+  return (
+    <section className="attribution-method" aria-labelledby="attribution-method-title">
+      <header>
+        <div>
+          <p className="eyebrow">ENDPOINT ATTRIBUTION</p>
+          <h3 id="attribution-method-title">文件能确定 module，但不能总能确定 consumer declaration</h3>
+        </div>
+        <p>主研究图只接受语义明确的 declaration → declaration 边；其余位置作为源码上下文证据保留。</p>
+      </header>
+
+      <div className="endpoint-flow" aria-label=".ilean 引用两端的对齐规则">
+        <article>
+          <span>来源端 · consumer</span>
+          <b>当前 module + source range + 可选 parent label</b>
+          <p>{boundary.source_endpoint}</p>
+        </article>
+        <i>→</i>
+        <article className="edge-contract">
+          <span>进入主图的条件</span>
+          <b>parent label ∈ persistent Environment declarations</b>
+          <p>{boundary.primary_graph_rule}</p>
+        </article>
+        <i>→</i>
+        <article>
+          <span>目标端 · dependency</span>
+          <b>resolved constant name + module hint</b>
+          <p>{boundary.target_endpoint}</p>
+        </article>
+      </div>
+
+      <div className="attribution-ledger">
+        <article>
+          <header><span>parent label 缺失</span><strong>{format.format(unparented.total)}</strong></header>
+          <dl>
+            <div><dt>不在任何 declaration 范围</dt><dd>{format.format(unparented.outside_declaration_range)}</dd></div>
+            <div><dt>唯一 Environment 范围候选</dt><dd>{format.format(unparented.unique_environment_declaration)}</dd></div>
+            <div><dt>多个声明范围重叠</dt><dd>{format.format(unparented.overlapping_declaration_ranges)}</dd></div>
+          </dl>
+          <p>唯一范围命中是可验证的回填候选；当前主图仍只采用 `.ilean` 直接给出的 parent，不把范围邻近当作事实。</p>
+        </article>
+        <article>
+          <header><span>parent 不在内部 Environment 节点集</span><strong>{format.format(unresolved.total)}</strong></header>
+          <dl>
+            <div><dt><code>example</code> 临时上下文</dt><dd>{format.format(unresolved.example_context)}</dd></div>
+            <div><dt>private / eval 上下文</dt><dd>{format.format(unresolved.private_or_eval_context)}</dd></div>
+            <div><dt>元编程或外部上下文</dt><dd>{format.format(unresolved.metaprogram_or_external_context)}</dd></div>
+          </dl>
+          <p>这些 label 描述精化上下文，并不必然对应本研究语料中的持久 declaration；把它们并入节点集会改变“复用组件”的定义。</p>
+        </article>
+      </div>
+
+      <aside className="context-policy"><b>完整性原则</b><p>{boundary.context_policy}</p></aside>
+
+      <div className="exception-cases">
+        {boundary.examples.map((example) => (
+          <article key={example.title}>
+            <span>{example.kind}</span>
+            <h4>{example.title}</h4>
+            <code>{example.code}</code>
+            <p>{example.explanation}</p>
+            <a href={example.url} target="_blank" rel="noreferrer">查看固定版本证据 ↗</a>
+          </article>
+        ))}
+      </div>
     </section>
   );
 }
