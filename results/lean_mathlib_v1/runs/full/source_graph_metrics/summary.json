@@ -1,0 +1,25 @@
+{
+  "external_target_count": 7299,
+  "graph_schema_version": "lean-source-graph-v1",
+  "internal_declaration_count": 566238,
+  "non_self_occurrence_count": 2380044,
+  "non_self_pair_count": 1834742,
+  "positive_reused_target_count": 177996,
+  "repeated_pair_count": 353628,
+  "reuse_concentration": {
+    "gini": 0.7707525348619368,
+    "population": "positive direct non-self SOURCE indegree targets",
+    "top_10pct_share": 0.7181502788064253,
+    "top_1pct_share": 0.40609685292295383,
+    "top_5pct_share": 0.619299665276423
+  },
+  "run_kind": "full",
+  "schema_version": "lean-source-graph-analysis-v1",
+  "self_loop_occurrence_count": 4714,
+  "self_loop_pair_count": 2580,
+  "snapshot_id": "mathlib-v4.32.1",
+  "source_occurrence_count": 2384758,
+  "source_pair_count": 1837322,
+  "unparented_usage_count": 109575,
+  "unresolved_parent_usage_count": 2252
+}
