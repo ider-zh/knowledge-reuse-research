@@ -31,3 +31,26 @@ another agent's dirty files. Shared-contract changes require adapter tests and
 explicit migration notes. All sources use source/snapshot namespaced data and
 experiment-namespaced results; do not introduce unscoped files under `data/`
 or `results/`.
+
+## Research report and website writing
+
+Write every reader-facing report and research website as a formal research
+report or senior engineering document, not as a developer execution log.
+
+- Write for the final reader. Present the research question, concepts,
+  methods, evidence, findings, limitations, and implications; do not narrate
+  the agent's work process.
+- Prefer evidence that helps the reader answer: what was found, what supports
+  it, and what it means. Do not use the page to prove that a task was completed.
+- Remove operational details that have no research value, including processed
+  task or module counts, `failed`/`partial` counters, pipeline status, progress
+  messages, internal field names such as `completeness.configured_corpus`, and
+  statements such as “checked”, “completed”, or “successfully extracted”.
+- Include corpus scope or data-quality limitations only when they affect the
+  interpretation, validity, or reproducibility of a result. Express them in
+  reader-facing methodological language rather than pipeline terminology.
+- Apply a concision-first rule: delete any content that can be removed without
+  weakening the reader's understanding of the argument, evidence, method, or
+  limitations.
+- Keep implementation and operational tracking in developer documentation,
+  handoffs, manifests, or logs rather than in the research narrative.
