@@ -120,6 +120,42 @@
     }
   ],
   "edge_direction": "consumer declaration → referenced declaration",
+  "expr_extraction": {
+    "cache": "先用 PtrSet 只访问每个共享 Expr 指针一次，再按 root-to-node path weight 恢复展开树中的重复出现次数；缓存减少扫描工作量，但不把重复引用去掉。",
+    "mechanism": "Lean Environment → ConstantInfo → Expr constructor traversal",
+    "official_expr_url": "https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Expr.lean#L290-L402",
+    "source_text_role": "Lean 自己负责解析和精化源码；本抽取器不搜索源码字符串。源码 range 只用于定位案例与计算独立的 source-length 指标。",
+    "steps": [
+      {
+        "code": "env.find? name → ConstantInfo",
+        "detail": "module 导入后，Lean Environment 保存已经精化的命名声明。",
+        "evidence": "LeanGraph/ExtractModule.lean L29–L35",
+        "step": "读取环境声明",
+        "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/knowledge_reuse/sources/lean_mathlib/lean/LeanGraph/ExtractModule.lean#L29-L35"
+      },
+      {
+        "code": "info.type / info.value? (allowOpaque := true)",
+        "detail": "TYPE 读取声明类型或命题；VALUE 读取可观测的定义体或证明项。",
+        "evidence": "LeanGraph/ExtractDecl.lean L18–L32",
+        "step": "分离 TYPE 与 VALUE",
+        "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/knowledge_reuse/sources/lean_mathlib/lean/LeanGraph/ExtractDecl.lean#L18-L32"
+      },
+      {
+        "code": ".app / .lam / .forallE / .letE / .proj / …",
+        "detail": "按 Lean Expr constructor 访问子表达式；不是把 Expr pretty-print 后再数文字。",
+        "evidence": "LeanGraph/ExprStats.lean L31–L43",
+        "step": "遍历 Expr 数据结构",
+        "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/knowledge_reuse/sources/lean_mathlib/lean/LeanGraph/ExprStats.lean#L31-L43"
+      },
+      {
+        "code": ".const targetName universes → count[targetName] += weight",
+        "detail": "只有命名常量 constructor 形成目标 declaration；变量、Sort 与 literal 不形成依赖边。",
+        "evidence": "LeanGraph/ExprStats.lean L119–L143",
+        "step": "识别 declaration 依赖",
+        "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/knowledge_reuse/sources/lean_mathlib/lean/LeanGraph/ExprStats.lean#L119-L143"
+      }
+    ]
+  },
   "node_cases": [
     {
       "case_id": "node.definition",

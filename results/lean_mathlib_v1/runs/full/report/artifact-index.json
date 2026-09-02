@@ -26,9 +26,9 @@
       "sha256": "28395bad5d1eba2b14b3a2dfa940e8a585f6026648cc1a6b461c8faca62098a0"
     },
     {
-      "bytes": 13506,
+      "bytes": 16742,
       "path": "knowledge_reuse/sources/lean_mathlib/construction_cases.py",
-      "sha256": "8c6cab47262e0c930b89ab4996fcd035d4763ac2b53b07f4b1a1f41ea4337321"
+      "sha256": "a3cc5e09479b01912fa4489208b5ab9e23cb67982e9d28932572016791bc2a56"
     },
     {
       "bytes": 44954,
@@ -36,9 +36,9 @@
       "sha256": "a50d9a73b1c38f1e5939a537ca260c3631287f4b1a711fed0f7f02eb1fc0f140"
     },
     {
-      "bytes": 130831,
+      "bytes": 132489,
       "path": "knowledge_reuse/sources/lean_mathlib/report.py",
-      "sha256": "afafe0454281f454c8cd114e6e5246eeedcb779b6d9bf964fc4c885385a83f92"
+      "sha256": "8dd6e15557ca4bf7c046558fe14cc2c62be459110374a4fc13e7aaaf76bfb6d1"
     },
     {
       "bytes": 1227,
@@ -131,9 +131,9 @@
       "sha256": "ff736710f61a084a2e963aff9725b2b92df3066c2c2bd74bb0bdb48c727cf15d"
     },
     {
-      "bytes": 13999,
+      "bytes": 16434,
       "path": "report/construction-cases.json",
-      "sha256": "2e1d501a12322101b7eb89b8fb0e0dddc17cf716bb816806fb5bfacfbbdc5df1"
+      "sha256": "cb3dca207c7748e08d3f57d0a201367b183f95eed8eca6dc6fb190e11ed8fe06"
     },
     {
       "bytes": 26559,
@@ -143,7 +143,7 @@
     {
       "bytes": 1524,
       "path": "run-manifest.json",
-      "sha256": "08dfe670c1f4446be29bcfd2087ea4b08247b824bf366b491fec8cc889533ef6"
+      "sha256": "4bb5dae8eab493469b094755224d23d9cc9557eee4df09e6bff4cfcd635a004a"
     },
     {
       "bytes": 11268,

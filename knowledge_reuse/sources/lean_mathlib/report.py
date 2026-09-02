@@ -714,6 +714,12 @@ A 使用 B，C 也使用 B：     A ──→ B ←── C
 因此 B 有 2 个不同使用者，复用入度为 2；A 和 C 各发出 1 条依赖边。</pre>
 <p>边分为两个语义层：<b>TYPE</b> 表示目标常量出现在声明的 type/statement 中，也就是“表达这句话需要什么”；<b>VALUE</b> 表示目标常量出现在 definition body 或 proof 中，也就是“实现或证明它需要什么”。<b>图不是由 import 关系生成</b>：module import 只负责把声明装入 Lean 环境，import 本身不会生成图边。</p>
 <div class="construction-flow"><span>Lean source</span><b>→</b><span>environment declaration</span><b>→</b><span>TYPE / VALUE Expr</span><b>→</b><span>constant occurrences</span><b>→</b><span>weighted typed edge</span><b>→</b><span>research views</span></div>
+<h3>Elaborated Expr 的读取机制</h3>
+<p>本实验没有把源码或 pretty-printed Expr 当成文本搜索。Lean 先自行解析并精化 module；抽取器从 <code>Environment</code> 以 <code>env.find? name</code> 取得 <code>ConstantInfo</code>，将 <code>info.type</code> 作为 TYPE Expr，并通过 <code>info.value? (allowOpaque := true)</code> 读取可观测的定义体或证明项作为 VALUE Expr。随后程序直接 pattern-match Lean 的 <code>Expr</code> constructors：<code>.app</code>、<code>.lam</code>、<code>.forallE</code>、<code>.letE</code>、<code>.proj</code> 等决定如何继续访问子表达式；遇到 <code>.const targetName universes</code> 时，才把 <code>targetName</code> 记录为 declaration 依赖。变量、Sort 与 literal 本身不形成依赖边。</p>
+<pre>env.find? name → ConstantInfo
+                    ├─ info.type   → traverse Expr → .const B → TYPE edge A→B
+                    └─ info.value? → traverse Expr → .const C → VALUE edge A→C</pre>
+<p>Expr 在内存中可能共享子树。实现先用 pointer set 访问每个共享节点一次，再传播 root-to-node path weight，恢复概念展开树中的重复 occurrence。因此缓存降低扫描复杂度，但不会把重复引用合并成一次。Lean 官方固定版本的 <a href="https://github.com/leanprover/lean4/blob/v4.32.1/src/lean/Lean/Expr.lean#L290-L402">Expr 数据结构定义</a>以及本实验的 <a href="https://github.com/ider-zh/knowledge-reuse-research/blob/main/knowledge_reuse/sources/lean_mathlib/lean/LeanGraph/ExprStats.lean#L31-L143">遍历实现</a>给出可核查证据。</p>
 <ol class="steps"><li><b>源码到声明：</b>一条 <code>def</code> 或 <code>theorem</code> 通常登记一个命名 declaration；<code>class</code> 等语法还会登记 constructor 等不同 kind 的节点。</li><li><b>声明到 Expr：</b>extractor 读取 Lean 精化后的 type 与可获得的 value/proof。隐式参数、类型类实例和 elaborator 插入结构因此可以进入观测。</li><li><b>Expr 到边：</b>遍历两棵概念上的展开 Expr tree；每遇到常量 B，就把 A→B 对应层的 occurrence 加一。</li><li><b>边的规范表示：</b>每个唯一 <code>(src,dst,edge_type)</code> 保存一行，并用正整数 <code>multiplicity</code> 保留重复出现次数；不需要物理复制相同行。</li><li><b>研究视图：</b>不同 source 的数量衡量 reuse breadth；multiplicity 之和衡量 reference intensity。TYPE 与 VALUE 在 ALL breadth 中对同一 pair 只贡献一个 consumer。</li></ol>
 <h3>固定 mathlib 源码中的节点与边案例</h3>
 {{ construction_cases_html|safe }}

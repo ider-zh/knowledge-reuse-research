@@ -54,6 +54,26 @@ export default function GraphConstruction() {
             ))}
           </div>
 
+          <section className="expr-mechanism" aria-label="Expr 抽取机制">
+            <header>
+              <div><p className="eyebrow">EXTRACTION MECHANISM</p><h3>不是 count Expr text：直接遍历 Lean 的 Expr 对象</h3></div>
+              <a href={data.expr_extraction.official_expr_url} target="_blank" rel="noreferrer">Lean v4.32.1 Expr 定义 ↗</a>
+            </header>
+            <p>{data.expr_extraction.source_text_role}</p>
+            <div className="expr-mechanism-grid">
+              {data.expr_extraction.steps.map((step, index) => (
+                <article key={step.step}>
+                  <span>{String(index + 1).padStart(2, "0")}</span>
+                  <h4>{step.step}</h4>
+                  <code>{step.code}</code>
+                  <p>{step.detail}</p>
+                  <a href={step.url} target="_blank" rel="noreferrer">{step.evidence} ↗</a>
+                </article>
+              ))}
+            </div>
+            <aside><b>缓存怎样保留重复引用？</b><p>{data.expr_extraction.cache}</p></aside>
+          </section>
+
           <div className="construction-note">
             <b>边方向</b><span>{data.edge_direction}</span>
             <b>重复计数单位</b><span>{data.occurrence_unit}</span>

@@ -195,6 +195,19 @@ export type ConstructionCases = {
   snapshot_id: string;
   edge_direction: string;
   occurrence_unit: string;
+  expr_extraction: {
+    mechanism: string;
+    source_text_role: string;
+    steps: {
+      step: string;
+      code: string;
+      detail: string;
+      evidence: string;
+      url: string;
+    }[];
+    cache: string;
+    official_expr_url: string;
+  };
   stages: { stage: string; description: string }[];
   node_cases: ConstructionCase[];
   edge_cases: ConstructionCase[];
