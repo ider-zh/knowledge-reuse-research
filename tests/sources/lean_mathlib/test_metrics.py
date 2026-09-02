@@ -113,10 +113,10 @@ def test_node_metrics_keep_unique_consumers_and_occurrence_weight_separate() -> 
     )
     edges = pl.DataFrame(
         {
-            "src_id": [1, 1, 3],
-            "dst_id": [2, 2, 2],
-            "edge_type": ["TYPE", "VALUE", "VALUE"],
-            "multiplicity": [2, 5, 7],
+            "src_id": [1, 1, 3, 2],
+            "dst_id": [2, 2, 2, 2],
+            "edge_type": ["TYPE", "VALUE", "VALUE", "VALUE"],
+            "multiplicity": [2, 5, 7, 100],
         }
     )
 
@@ -172,11 +172,7 @@ def test_domain_examples_use_sorted_unique_pairs() -> None:
 
     append_domain_examples(examples, pairs, edges, nodes, "test")
 
-    assert [(row["src_id"], row["dst_id"]) for row in examples] == [
-        (1, 2),
-        (1, 3),
-        (1, 1),
-    ]
+    assert [(row["src_id"], row["dst_id"]) for row in examples] == [(1, 2), (1, 3)]
     assert examples[0]["edge_type"] == "TYPE+VALUE"
     assert "仍只增加 1" in examples[0]["explanation"]
 

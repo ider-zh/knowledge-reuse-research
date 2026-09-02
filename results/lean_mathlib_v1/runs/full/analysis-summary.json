@@ -1,5 +1,6 @@
 {
   "all_unique_pair_count": 16812652,
+  "constant_occurrence_count": 44239111422103,
   "declaration_count": 566238,
   "declaration_counts_by_kind": {
     "constructor": 5056,
@@ -16,123 +17,126 @@
       "length_metric": "source_bytes",
       "n": 331132,
       "p_value": 0.0,
-      "spearman_rho": 0.1584845338873593
+      "spearman_rho": 0.1584800310224631
     },
     {
       "length_metric": "source_lines",
       "n": 331132,
       "p_value": 0.0,
-      "spearman_rho": 0.15992977887619278
+      "spearman_rho": 0.1599203689425201
     },
     {
       "length_metric": "source_tokens",
       "n": 331132,
       "p_value": 0.0,
-      "spearman_rho": 0.15218074585280839
+      "spearman_rho": 0.15217601802562308
     },
     {
       "length_metric": "type_const_unique",
       "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.10574686844506807
+      "spearman_rho": -0.10343677518458538
     },
     {
       "length_metric": "value_const_unique",
       "n": 553123,
-      "p_value": 7.985382046169701e-94,
-      "spearman_rho": 0.027623661410443867
+      "p_value": 1.873983764224564e-92,
+      "spearman_rho": 0.027417003244391547
     },
     {
       "length_metric": "type_expr_unique_ptr_nodes",
       "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.10967621047414611
+      "spearman_rho": -0.10716466031518118
     },
     {
       "length_metric": "type_expr_dag_arcs",
       "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.11170825419288577
+      "spearman_rho": -0.1091779821383154
     },
     {
       "length_metric": "type_expr_max_depth",
       "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.10208257718716482
+      "spearman_rho": -0.09966873677665959
     },
     {
       "length_metric": "type_expr_tree_occurrences",
       "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.10662321484164672
+      "spearman_rho": -0.10409274677921938
     },
     {
       "length_metric": "type_expr_expansion_factor",
       "n": 566238,
       "p_value": 0.0,
-      "spearman_rho": -0.09771100115312292
+      "spearman_rho": -0.09555925976616199
     },
     {
       "length_metric": "value_expr_unique_ptr_nodes",
       "n": 553123,
-      "p_value": 7.153486009180205e-59,
-      "spearman_rho": 0.021750866044034776
+      "p_value": 1.4731012917165506e-59,
+      "spearman_rho": 0.021881267772352556
     },
     {
       "length_metric": "value_expr_dag_arcs",
       "n": 553123,
-      "p_value": 2.155008762543646e-68,
-      "spearman_rho": 0.023495808777680507
+      "p_value": 3.031022146658685e-69,
+      "spearman_rho": 0.023645690208354473
     },
     {
       "length_metric": "value_expr_max_depth",
       "n": 553123,
-      "p_value": 2.2035658274132837e-17,
-      "spearman_rho": 0.011405155354491084
+      "p_value": 4.5076441815710344e-18,
+      "spearman_rho": 0.011650737723938391
     },
     {
       "length_metric": "value_expr_tree_occurrences",
       "n": 553123,
-      "p_value": 2.5295409319087612e-141,
-      "spearman_rho": 0.03402067397498357
+      "p_value": 4.623995018964894e-144,
+      "spearman_rho": 0.034353177656500075
     },
     {
       "length_metric": "value_expr_expansion_factor",
       "n": 553123,
-      "p_value": 5.850417641742488e-269,
-      "spearman_rho": 0.047086220475548696
+      "p_value": 1.840350565798773e-274,
+      "spearman_rho": 0.047568726192726736
     }
   ],
   "module_count": 8264,
   "reference_entropy_label": "H*ref empirical operational proxy; not theoretical H",
   "reuse_concentration": {
-    "gini": 0.9509112971000462,
-    "gini_positive": 0.932963317425449,
-    "hhi": 0.001400484995693506,
+    "gini": 0.9510285861758632,
+    "gini_positive": 0.9329700754652019,
+    "hhi": 0.001400724982831979,
     "nodes": 566238,
-    "positive_nodes": 414637,
-    "top_10pct_share": 0.9366742398757222,
-    "top_10pct_share_positive": 0.9227828155458018,
-    "top_1pct_share": 0.7989566870066114,
-    "top_1pct_share_positive": 0.772948156490496,
-    "top_5pct_share": 0.9039051810904911,
-    "top_5pct_share_positive": 0.8868949237196881,
+    "positive_nodes": 413688,
+    "top_10pct_share": 0.936754493471857,
+    "top_10pct_share_positive": 0.9227570088259872,
+    "top_1pct_share": 0.7990251410587873,
+    "top_1pct_share_positive": 0.7728050665084529,
+    "top_5pct_share": 0.9039826270565049,
+    "top_5pct_share_positive": 0.8868431999971469,
     "view": "ALL"
   },
   "run_kind": "full",
   "schema_version": "analysis-summary-v1",
   "self_loop_count": 1009,
+  "self_loop_occurrence_count": 2633,
   "snapshot_id": "mathlib-v4.32.1",
+  "type_constant_occurrence_count": 354945789,
   "type_edge_count": 9387434,
+  "value_constant_occurrence_count": 44238756476314,
   "value_edge_count": 15353752,
   "veldhuizen_reuse_concentration": {
-    "gini": 0.932963317425449,
-    "nodes": 414637,
+    "gini": 0.9329700754652019,
+    "nodes": 413688,
     "population": "positive unique-consumer indegree targets",
-    "top_10pct_share": 0.9227828155458018,
-    "top_1pct_share": 0.772948156490496,
-    "top_5pct_share": 0.8868949237196881
+    "top_10pct_share": 0.9227570088259872,
+    "top_1pct_share": 0.7728050665084529,
+    "top_5pct_share": 0.8868431999971469
   },
-  "zero_indegree_fraction": 0.2677337091470371,
+  "zero_indegree_fraction": 0.2694096828542062,
   "zero_outdegree_fraction": 0.0014834751464931706
 }

@@ -75,6 +75,7 @@ EXAMPLE_COLUMNS = (
     "dst_domain",
     "dst_kind",
     "edge_type",
+    "multiplicity",
     "node_id",
     "node_name",
     "node_module",
@@ -267,6 +268,7 @@ def build_report_examples(
                 dst_domain=dst["domain"],
                 dst_kind=dst["kind"],
                 edge_type=edge_type,
+                multiplicity=found["multiplicity"][0],
                 evidence=(
                     "normalized/edges.parquet#"
                     f"src_id={src['node_id']},dst_id={dst['node_id']},edge_type={edge_type}"
@@ -314,6 +316,7 @@ def build_report_examples(
                 dst_domain=reuse_target["domain"],
                 dst_kind=reuse_target["kind"],
                 edge_type=edge["edge_type"],
+                multiplicity=edge["multiplicity"],
                 in_degree_all=_node_record(node_metrics, reuse_target["name"])["in_degree_all"],
                 evidence=(
                     "normalized/edges.parquet#"
@@ -399,7 +402,8 @@ def with_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.DataFrame:
     internal_edges = edges.join(
         internal_ids.rename({"node_id": "dst_id"}), on="dst_id", how="inner"
     )
-    indegree = internal_edges.group_by("dst_id").agg(
+    reuse_edges = internal_edges.filter(pl.col("src_id") != pl.col("dst_id"))
+    indegree = reuse_edges.group_by("dst_id").agg(
         pl.col("src_id").n_unique().alias("in_degree_all"),
         pl.col("src_id").filter(pl.col("edge_type") == "TYPE").n_unique().alias("in_degree_type"),
         pl.col("src_id").filter(pl.col("edge_type") == "VALUE").n_unique().alias("in_degree_value"),
@@ -445,7 +449,11 @@ def population_degrees(
     node_kind = nodes.select("node_id", "kind")
     typed = edges.join(
         node_kind.rename({"node_id": "src_id", "kind": "src_kind"}), on="src_id", how="inner"
-    ).join(node_kind.rename({"node_id": "dst_id", "kind": "dst_kind"}), on="dst_id", how="inner")
+    ).join(
+        node_kind.rename({"node_id": "dst_id", "kind": "dst_kind"}),
+        on="dst_id",
+        how="inner",
+    ).filter(pl.col("src_id") != pl.col("dst_id"))
 
     def dst_degrees(frame: pl.DataFrame) -> np.ndarray:
         counts = frame.group_by("dst_id").agg(pl.col("src_id").n_unique().alias("degree"))
@@ -528,7 +536,8 @@ def internal_unique_dependency_pairs(nodes: pl.DataFrame, edges: pl.DataFrame) -
     """Collapse TYPE/VALUE duplicates and attach source/target path domains."""
     node_domain = nodes.select("node_id", "domain")
     return (
-        edges.select("src_id", "dst_id")
+        edges.filter(pl.col("src_id") != pl.col("dst_id"))
+        .select("src_id", "dst_id")
         .unique()
         .join(
             node_domain.rename({"node_id": "src_id", "domain": "src_domain"}),
