@@ -18,6 +18,7 @@ import duckdb
 import jinja2
 import polars as pl
 
+from knowledge_reuse.sources.lean_mathlib.construction_cases import build_construction_cases
 from knowledge_reuse.sources.lean_mathlib.layout import (
     BENCHMARK_ROOT,
     CONFIG_PATH,
@@ -285,6 +286,64 @@ def render_table(frame: pl.DataFrame, limit: int = 20) -> str:
     return f"<table><thead><tr>{headings}</tr></thead><tbody>{''.join(rows)}</tbody></table>"
 
 
+def render_construction_cases(cases: dict[str, Any]) -> str:
+    cards = []
+    for case in [*cases["node_cases"], *cases["edge_cases"]]:
+        source = (
+            f'<a href="{html.escape(case["source_url"])}">'
+            f'{html.escape(case["source_file"])}:{case["start_line"]}</a>'
+        )
+        if case.get("nodes"):
+            rows = []
+            for node in case["nodes"]:
+                value_size = node["value_expr_nodes"]
+                rows.append(
+                    "<tr>"
+                    f'<td>{html.escape(node["name"])}</td>'
+                    f'<td>{html.escape(node["kind"])}</td>'
+                    f'<td>{str(node["has_value"]).lower()}</td>'
+                    f'<td>{node["type_expr_nodes"]:,}</td>'
+                    f'<td>{"null" if value_size is None else format(value_size, ",")}</td>'
+                    "</tr>"
+                )
+            result = (
+                "<table><thead><tr><th>declaration</th><th>kind</th><th>has value</th>"
+                "<th>type Expr occurrences</th><th>value Expr occurrences</th></tr></thead>"
+                f"<tbody>{''.join(rows)}</tbody></table>"
+            )
+        else:
+            rows = []
+            for edge in case["edges"]:
+                rows.append(
+                    "<tr>"
+                    f'<td>{html.escape(edge["src_name"])}</td>'
+                    f'<td>{html.escape(edge["edge_type"])}</td>'
+                    f'<td>{html.escape(edge["dst_name"])}</td>'
+                    f'<td>{edge["multiplicity"]:,}</td>'
+                    f'<td>{"yes" if edge["is_self_loop"] else "no"}</td>'
+                    "</tr>"
+                )
+            result = (
+                "<table><thead><tr><th>consumer</th><th>edge layer</th><th>dependency</th>"
+                "<th>multiplicity</th><th>self-loop</th></tr></thead>"
+                f"<tbody>{''.join(rows)}</tbody></table>"
+            )
+        interpretation = case.get("interpretation")
+        cards.append(
+            '<article class="construction-case">'
+            f'<h3>{html.escape(case["title"])}</h3>'
+            f'<p>{html.escape(case["summary"])}</p><p class="source-ref">{source}</p>'
+            f'<pre>{html.escape(case["code"])}</pre>{result}'
+            + (
+                f'<p class="note"><b>研究解释：</b>{html.escape(interpretation)}</p>'
+                if interpretation
+                else ""
+            )
+            + "</article>"
+        )
+    return '<div class="construction-cases">' + "".join(cards) + "</div>"
+
+
 def run_manifest(run_kind: str) -> dict[str, Any]:
     raw_path = raw_root(CONFIG["snapshot_id"], run_kind) / "manifest.json"
     raw = json.loads(raw_path.read_text())
@@ -390,8 +449,6 @@ def build_audit_status(
 
 def build_claim_registry(
     summary: dict[str, Any],
-    quality: dict[str, Any],
-    audit: dict[str, Any],
     fits: pl.DataFrame,
     rank_fits: pl.DataFrame,
     domains: pl.DataFrame,
@@ -415,33 +472,6 @@ def build_claim_registry(
         "snapshot_id": summary["snapshot_id"],
         "run_kind": summary["run_kind"],
         "claims": [
-            {
-                "claim_id": "completeness.configured_corpus",
-                "status": "fact" if audit["graph_complete"] else "inconclusive",
-                "text": (
-                    f"配置内 {quality['expected_module_count']:,} 个模块全部成功提取，"
-                    "没有失败、partial 或静默空结果。"
-                ),
-                "evidence": [
-                    "metrics/data_quality.json",
-                    "results/lean_mathlib_v1/capability-probe.json",
-                    "results/lean_mathlib_v1/golden-test.json",
-                ],
-                "scope": "configured Mathlib corpus",
-                "caveat": "配置排除项和 mathlib 外部 universe 不属于该总体。",
-            },
-            {
-                "claim_id": "provenance.extractor_revision",
-                "status": "fact" if audit["provenance_complete"] else "inconclusive",
-                "text": (
-                    "raw manifest 已绑定实际提取代码 revision。"
-                    if audit["provenance_complete"]
-                    else "该历史 raw manifest 未记录实际提取代码 revision；当前源码哈希只能描述当前实现，不能倒推当时 extractor。"
-                ),
-                "evidence": ["run-manifest.json"],
-                "scope": "extractor-code provenance audit",
-                "caveat": "这不否定图完整性门禁，但会阻止把历史 raw 数据声明为代码级完全可追溯。",
-            },
             {
                 "claim_id": "veldhuizen.rank_frequency",
                 "status": "supported",
@@ -563,14 +593,11 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <header><p class="eyebrow">KNOWLEDGE REUSE RESEARCH · LEAN / MATHLIB V1</p>
 <h1>形式化知识如何被复用？</h1>
 <p class="dek">围绕 Veldhuizen 2005 的可检验命题，判断形式化数学知识是否呈现类似软件库的复用规律</p>
-<div class="status {{ 'ok' if audit.overall_status == 'complete' else 'warn' if audit.graph_complete else 'bad' }}">
-<b>{{ '完整图构建与 provenance 审计通过' if audit.overall_status == 'complete' else '图完整性门禁通过 · provenance 审计不完整' if audit.graph_complete else '构建未通过完整性门禁' }}</b>
-<span>{{ quality.extracted_module_count }}/{{ quality.expected_module_count }} 模块 · {{ manifest.mathlib_tag }} · {{ manifest.mathlib_commit[:12] }}</span></div>
 <div class="hero-stats">
 <div><strong>{{ summary.declaration_count|fmt }}</strong><span>内部声明节点</span></div>
 <div><strong>{{ quality.external_node_count|fmt }}</strong><span>显式外部目标</span></div>
 <div><strong>{{ summary.edge_count|fmt }}</strong><span>唯一类型化语义边</span></div>
-<div><strong>{{ (quality.extraction_completeness*100)|round(1) }}%</strong><span>模块覆盖率</span></div>
+<div><strong>{{ summary.constant_occurrence_count|fmt }}</strong><span>常量出现次数</span></div>
 </div></header>
 <nav><b>报告目录</b><ol>
 <li><a href="#s1">执行摘要</a></li><li><a href="#s2">概念设计</a></li>
@@ -627,7 +654,7 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <tr><td>P4 扩展</td><td>论文的 S(n) 是每次复用节省量</td><td>source、statement/type Expr、proof/value Expr 大小与复用</td><td>报告 βlength，但不得把 declaration length 当作 S(n)</td></tr>
 <tr><td>P5 纵向</td><td>library incompleteness / 持续扩展</td><td>多个 commit 的 |Vt|、|Et| 与 C_t(r)</td><td>单一 snapshot 一律判为不可检验</td></tr>
 </tbody></table>
-<div class="callout"><b>与原论文数据的关键差别：</b>原论文统计 Unix object 中的组件 reference frequency；本图只能稳定得到“有多少不同 declaration 使用目标”的 unique-consumer breadth。同一 proof 内重复十次仍计一个 consumer。因此本实验是知识复用广度的对应实验，不是 raw relocation occurrence 的逐项复刻。</div>
+<div class="callout"><b>与原论文数据的关键差别：</b>原论文统计 Unix object 中的组件 reference frequency；本图同时保留“有多少不同 declaration 使用目标”的 unique-consumer breadth，以及精化 Expr tree 中的 constant occurrence multiplicity。主命题使用前者，避免单个 proof 的内部重复主导复用广度；后者作为引用强度单独分析。两者都不是运行时调用频率。</div>
 <p class="bridge">要回答这些命题，必须先冻结“研究的是哪一版、哪些文件”，否则今天和明天得到的节点集合可能不同。所以下一节先定义 Corpus 与 Snapshot。</p></section>
 
 <section id="s4"><h2>4. 语料（Corpus）与快照（Snapshot）</h2>
@@ -642,18 +669,20 @@ TEMPLATE = _REPORT_ENV.from_string("""<!doctype html>
 <pre class="dag">教学例子，不是实验数据：
 A 使用 B，C 也使用 B：     A ──→ B ←── C
 因此 B 有 2 个不同使用者，复用入度为 2；A 和 C 各发出 1 条依赖边。</pre>
-<p>边还分两种语义：<b>TYPE</b> 表示目标常量出现在声明的 type/statement 中，也就是“表达这句话需要什么”；<b>VALUE</b> 表示目标常量出现在 definition body 或 proof 中，也就是“实现或证明它需要什么”。</p>
-<h3>两个不同语义的真实关系</h3>{{ edge_examples_table|safe }}
-<ol class="steps"><li><b>源码定位：</b><code>source locator</code> 给出 consumer declaration 所在 module/源码位置。</li><li><b>Lean 环境记录：</b>extractor 从精化后的 declaration type/value 中读取命名常量，而不是用文本搜索猜依赖。</li><li><b>规范化：</b>consumer 与 dependency 的完整 Lean 名称映射为表中的 <code>src_id</code>/<code>dst_id</code>；ID 只用于稳定连接记录。</li><li><b>边记录：</b><code>edge_type</code> 保留常量来自 TYPE 还是 VALUE，<code>evidence</code> 标明规范化证据位置。</li><li><b>复用计数：</b>对同一 target，每个不同 source 在 ALL union 中最多增加 1 个入度；同一 proof 内重复出现不会重复增加。</li></ol>
-<div class="grid"><article><h3>TYPE 示例如何进入图</h3><p><code>padicValRat.of_nat</code> 的 elaborated type 包含 <code>padicValNat</code>，因此规范化为一条 theorem→definition TYPE edge。</p></article><article><h3>VALUE 示例如何进入图</h3><p><code>constantCoeff_xInTermsOfW</code> 的 proof/value 包含 <code>map_pow</code>，因此规范化为 theorem→theorem VALUE edge。</p></article></div>
-<h3>“唯一类型化边”怎样计数</h3><p>若 A 的同一个 proof 中出现 B 十次，主图的 `(A,B,VALUE)` 仍只计 1 条，因为主问题是“有多少不同 declaration 使用 B”，不是“一个 proof 重复写了多少次”。但如果 B 同时出现在 A 的 type 和 value 中，则保留一条 TYPE 和一条 VALUE；它们说明两种不同机制。若 B 位于 configured corpus 之外，B 仍登记为 external target，避免让 A 的依赖凭空消失。</p>
+<p>边分为两个语义层：<b>TYPE</b> 表示目标常量出现在声明的 type/statement 中，也就是“表达这句话需要什么”；<b>VALUE</b> 表示目标常量出现在 definition body 或 proof 中，也就是“实现或证明它需要什么”。<b>图不是由 import 关系生成</b>：module import 只负责把声明装入 Lean 环境，import 本身不会生成图边。</p>
+<div class="construction-flow"><span>Lean source</span><b>→</b><span>environment declaration</span><b>→</b><span>TYPE / VALUE Expr</span><b>→</b><span>constant occurrences</span><b>→</b><span>weighted typed edge</span><b>→</b><span>research views</span></div>
+<ol class="steps"><li><b>源码到声明：</b>一条 <code>def</code> 或 <code>theorem</code> 通常登记一个命名 declaration；<code>class</code> 等语法还会登记 constructor 等不同 kind 的节点。</li><li><b>声明到 Expr：</b>extractor 读取 Lean 精化后的 type 与可获得的 value/proof。隐式参数、类型类实例和 elaborator 插入结构因此可以进入观测。</li><li><b>Expr 到边：</b>遍历两棵概念上的展开 Expr tree；每遇到常量 B，就把 A→B 对应层的 occurrence 加一。</li><li><b>边的规范表示：</b>每个唯一 <code>(src,dst,edge_type)</code> 保存一行，并用正整数 <code>multiplicity</code> 保留重复出现次数；不需要物理复制相同行。</li><li><b>研究视图：</b>不同 source 的数量衡量 reuse breadth；multiplicity 之和衡量 reference intensity。TYPE 与 VALUE 在 ALL breadth 中对同一 pair 只贡献一个 consumer。</li></ol>
+<h3>固定 mathlib 源码中的节点与边案例</h3>
+{{ construction_cases_html|safe }}
+<h3>案例在规范化边表中的身份</h3>{{ edge_examples_table|safe }}
+<h3>自环与复用的边界</h3><p>递归定义 A 在 value 中引用自身时，完整语义图保留 <code>A→A</code>。它对递归结构与调用依赖有意义，但“自己使用自己”不等于被其他 declaration 复用。因此 self-loop 保留在 graph stats 中，同时从 unique-consumer reuse、领域复用矩阵和 Veldhuizen-style 分布中排除。</p>
 <p class="bridge">单条真实边只能说明一个案例存在。将全部 declaration 按同一规则提取、编号和去重，才能统计总体；下一节先确认这个总体实际观测了多少。</p></section>
 
-<section id="s6"><h2>6. 研究范围与观测完整性</h2>
-<div class="answer"><b>本报告覆盖配置语料的全部 {{ quality.expected_module_count|fmt }} 个模块。</b>共观测 {{ summary.declaration_count|fmt }} 个内部 declaration、{{ quality.external_node_count|fmt }} 个语料外依赖目标和 {{ summary.edge_count|fmt }} 条唯一类型化边。</div>
-<p><b>图完整性</b>与<b>代码 provenance（来源追溯）</b>是两种不同审计。本次 capability probe（验证固定 Lean API 能读到声明种类、type/value 常量与模块来源）、golden fixture（验证小型已知输入产生预期节点和边）以及全量 data-quality gate 均通过，所以配置语料的图完整性可判定为通过。但这个历史 raw manifest 没有保存当时 extractor 的 Git revision，因此代码级 provenance 标为 <code>INCOMPLETE</code>；报告保留当前 extractor 源码哈希供比较，但明确不把它冒充历史提取版本。</p>
+<section id="s6"><h2>6. 研究范围与数据适用性</h2>
+<div class="answer">固定快照中包含 {{ summary.declaration_count|fmt }} 个内部 declaration、{{ quality.external_node_count|fmt }} 个语料外依赖目标、{{ summary.edge_count|fmt }} 条唯一类型化边，以及 {{ summary.constant_occurrence_count|fmt }} 次 TYPE/VALUE 常量出现。</div>
+<p>图的适用范围由第 4 节的固定 snapshot、语料 pattern 和排除规则共同限定。小型已知 fixture 对节点集合、TYPE/VALUE 边及 multiplicity 做精确比较；全量图保持声明身份、外部目标和缺失 value 的区别。这些条件支持对固定语料进行结构统计，但不把结果外推为全部 Lean package 或全部数学知识。</p>
 <p><b>内部节点</b>是 Corpus 内有完整 declaration 记录的节点；<b>外部目标</b>是被内部声明引用、但不属于本次 Corpus 的名字。外部目标只帮助保留边界依赖，不进入内部节点的复杂度总体。</p>
-<p>“完整”只针对第 4 节定义的固定 snapshot 与 configured corpus，并表示每个预期 module 都有成功观测记录；它不表示每个字段都必然非空，也不表示统计解释必然正确。源码范围覆盖率为 {{ ((1-quality.null_rates.source_bytes)*100)|round(2) }}%，value/proof 覆盖率为 {{ ((1-quality.null_rates.value_expr_nodes)*100)|round(2) }}%。缺失保持 null，后续表格同时报告 <code>n_valid</code>（有值的样本数）和总体数。</p>
+<p>源码范围覆盖率为 {{ ((1-quality.null_rates.source_bytes)*100)|round(2) }}%，value/proof 覆盖率为 {{ ((1-quality.null_rates.value_expr_nodes)*100)|round(2) }}%。缺失保持 null，后续表格同时报告 <code>n_valid</code>（有值的样本数）和总体数；“没有可观测 value”不会被改写为零复杂度。</p>
 <div class="callout"><b>三个容易混淆的状态：</b><code>0</code> 表示“测量过，结果就是零”；<code>null</code> 表示“这里没有可用于该指标的观测”；<code>external</code> 表示“名字真实存在于依赖边中，但不属于本次内部总体”。</div>
 <p class="bridge">确认分母和缺失规则以后，下面才能安全地比较节点“有多复杂”；否则 null 很容易被误当成一个特别简单的零值。</p></section>
 
@@ -874,6 +903,13 @@ background:var(--mint);font-size:.72rem;font-weight:800;text-transform:uppercase
 .bridge{margin:24px 0;padding:16px 19px;border-top:1px solid var(--line);border-bottom:1px solid var(--line);
 font-family:Georgia,"Noto Serif SC",serif;color:var(--green)}.dag{font-size:1rem;line-height:1.25}
 .note,.caption,figcaption{color:var(--muted);font-size:.86rem}.steps li{margin:.65em 0}
+.construction-flow{display:flex;align-items:center;gap:9px;overflow:auto;margin:18px 0;
+padding:14px;border:1px solid var(--line);background:var(--card)}
+.construction-flow span{min-width:max-content;padding:8px 10px;background:var(--mint);font-weight:700}
+.construction-cases{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:16px;margin:20px 0}
+.construction-case{min-width:0;padding:18px;border:1px solid var(--line);background:var(--card)}
+.construction-case h3{margin-top:0}.construction-case pre{max-height:330px;font-size:.78rem}
+.construction-case table{font-size:.75rem}.source-ref{font-size:.82rem;overflow-wrap:anywhere}
 svg,img{display:block;max-width:100%;height:auto;background:var(--card);margin:0}
 .figure{margin:22px 0;background:var(--card);border:1px solid var(--line);padding:10px}
 figcaption{padding:8px 10px 4px}table{border-collapse:collapse;width:100%;font-size:.82rem;
@@ -883,7 +919,8 @@ tr:hover td{background:#f4f8f2}code,pre{background:#e8e3d9;padding:.15em .35em}
 pre{padding:18px;overflow:auto;border-left:4px solid var(--green)}footer{padding:45px 34px 75px;
 color:var(--muted);border-top:1px solid var(--line);margin-top:30px}
 @media(max-width:760px){header,main,nav{padding-left:18px;padding-right:18px}.hero-stats,
-.grid,.grid.three{grid-template-columns:1fr 1fr}.status{display:block}.status span{display:block}}
+.grid,.grid.three{grid-template-columns:1fr 1fr}.construction-cases{grid-template-columns:1fr}
+.status{display:block}.status span{display:block}}
 @media(max-width:480px){.hero-stats,.grid,.grid.three{grid-template-columns:1fr}}
 @media print{body{background:white}nav{display:none}section{break-inside:avoid}.figure{break-inside:avoid}}
 """
@@ -920,9 +957,14 @@ def generate(run_kind: str) -> dict[str, Any]:
     value_availability = pl.read_parquet(metrics / "value_availability.parquet")
     examples_path = tables / "report_examples.parquet"
     examples = pl.read_parquet(examples_path)
-    claims = build_claim_registry(summary, quality, audit, fits, rank_fits, domains, regressions)
+    normalized_dir = normalized_root(CONFIG["snapshot_id"], run_kind)
+    normalized_nodes = pl.read_parquet(normalized_dir / "nodes.parquet")
+    normalized_edges = pl.read_parquet(normalized_dir / "edges.parquet")
+    construction_cases = build_construction_cases(normalized_nodes, normalized_edges)
+    claims = build_claim_registry(summary, fits, rank_fits, domains, regressions)
     claims_path = report / "claims.json"
     examples_json_path = report / "examples.json"
+    construction_cases_path = report / "construction-cases.json"
     claims_path.write_text(json.dumps(claims, indent=2, sort_keys=True) + "\n")
     examples_json_path.write_text(
         json.dumps(
@@ -931,6 +973,9 @@ def generate(run_kind: str) -> dict[str, Any]:
             sort_keys=True,
         )
         + "\n"
+    )
+    construction_cases_path.write_text(
+        json.dumps(construction_cases, ensure_ascii=False, indent=2, sort_keys=True) + "\n"
     )
     benchmark_path = metrics / "extraction_benchmark.parquet"
     benchmark = (
@@ -962,6 +1007,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         examples_path,
         claims_path,
         examples_json_path,
+        construction_cases_path,
         normalized_root(CONFIG["snapshot_id"], run_kind) / "manifest.json",
         complexity_normalized_root(CONFIG["snapshot_id"], run_kind) / "manifest.json",
         run_dir / "run-manifest.json",
@@ -972,6 +1018,7 @@ def generate(run_kind: str) -> dict[str, Any]:
         EXCLUSIONS_PATH,
         raw_root(CONFIG["snapshot_id"], run_kind) / "manifest.json",
         pathlib.Path(__file__).with_name("metrics.py"),
+        pathlib.Path(__file__).with_name("construction_cases.py"),
         pathlib.Path(__file__),
     ]
     artifacts = artifact_index(run_dir, compact_inputs)
@@ -1541,6 +1588,7 @@ def generate(run_kind: str) -> dict[str, Any]:
                 pl.col("src_module").alias("source module"),
                 pl.col("src_kind").alias("src kind"),
                 "edge_type",
+                "multiplicity",
                 pl.col("dst_name").alias("dependency/target"),
                 "dst_id",
                 pl.col("dst_module").alias("target module"),
@@ -1550,6 +1598,7 @@ def generate(run_kind: str) -> dict[str, Any]:
             ),
             10,
         ),
+        "construction_cases_html": render_construction_cases(construction_cases),
         "complexity_examples_table": render_table(
             node_examples.select(
                 pl.col("role").alias("复杂度角色"),

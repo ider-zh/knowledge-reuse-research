@@ -1,32 +1,5 @@
 {
-  "audit": {
-    "graph_complete": true,
-    "provenance_complete": false,
-    "status": "graph_complete_provenance_incomplete"
-  },
   "claims": [
-    {
-      "caveat": "配置排除项和 mathlib 外部 universe 不属于该总体。",
-      "claim_id": "completeness.configured_corpus",
-      "evidence": [
-        "metrics/data_quality.json",
-        "results/lean_mathlib_v1/capability-probe.json",
-        "results/lean_mathlib_v1/golden-test.json"
-      ],
-      "scope": "configured Mathlib corpus",
-      "status": "fact",
-      "text": "配置内 8,264 个模块全部成功提取，没有失败、partial 或静默空结果。"
-    },
-    {
-      "caveat": "这不否定图完整性门禁，但会阻止把历史 raw 数据声明为代码级完全可追溯。",
-      "claim_id": "provenance.extractor_revision",
-      "evidence": [
-        "run-manifest.json"
-      ],
-      "scope": "extractor-code provenance audit",
-      "status": "inconclusive",
-      "text": "该历史 raw manifest 未记录实际提取代码 revision；当前源码哈希只能描述当前实现，不能倒推当时 extractor。"
-    },
     {
       "caveat": "纯 power law 在相对模型比较中不占优；βrank 是描述性 log–log 斜率；absolute bootstrap=not_implemented_v1。",
       "claim_id": "veldhuizen.rank_frequency",
@@ -46,7 +19,7 @@
       ],
       "scope": "positive unique-consumer indegree targets",
       "status": "supported",
-      "text": "少数组件主导复用：在 414,637 个正入度声明中，Top 1/5/10% 分别承接 77.3%/88.7%/92.3%，Gini=0.933。"
+      "text": "少数组件主导复用：在 413,688 个正入度声明中，Top 1/5/10% 分别承接 77.3%/88.7%/92.3%，Gini=0.933。"
     },
     {
       "caveat": "H*ref 不是理论 H；领域规模与 Gini 强相关，不能据此断言领域具有内在固定复用潜力。",
@@ -93,129 +66,129 @@
   },
   "domain_matrix": [
     {
-      "dependency_pair_count": 1416903,
+      "dependency_pair_count": 1416858,
       "dst_domain": "Algebra",
-      "row_share": 0.7308837851333116,
+      "row_share": 0.7308775381453658,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 169133,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.08724419895430555,
+      "row_share": 0.08724622415170763,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 160624,
       "dst_domain": "Data",
-      "row_share": 0.08285498520594073,
+      "row_share": 0.08285690851663416,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 114398,
       "dst_domain": "Order",
-      "row_share": 0.05901013919208342,
+      "row_share": 0.0590115089929644,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 25245,
       "dst_domain": "Logic",
-      "row_share": 0.013022176645606969,
+      "row_share": 0.013022478929066822,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 12751,
       "dst_domain": "Combinatorics",
-      "row_share": 0.006577372723633767,
+      "row_share": 0.006577525404021829,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 11802,
       "dst_domain": "RingTheory",
-      "row_share": 0.006087848238124517,
+      "row_share": 0.006087989555192974,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 10416,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.0053729052066009975,
+      "row_share": 0.005373029927714796,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 7210,
       "dst_domain": "Tactic",
-      "row_share": 0.0037191480932789165,
+      "row_share": 0.0037192344257703227,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 3842,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0019818262100385017,
+      "row_share": 0.0019818722141206075,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 2552,
       "dst_domain": "Topology",
-      "row_share": 0.0013164030421702905,
+      "row_share": 0.0013164335998010906,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 1833,
       "dst_domain": "Analysis",
-      "row_share": 0.0009455198966685512,
+      "row_share": 0.0009455418449981971,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 984,
       "dst_domain": "SetTheory",
-      "row_share": 0.0005075786024669145,
+      "row_share": 0.0005075903848762826,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 325,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.00016764537174974312,
+      "row_share": 0.00016764926329755267,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 184,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 9.49130720060084e-05,
+      "row_share": 9.491527522076829e-05,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 158,
       "dst_domain": "Util",
-      "row_share": 8.150144226602897e-05,
+      "row_share": 8.150333415696407e-05,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 107,
       "dst_domain": "Control",
-      "row_share": 5.51940146991462e-05,
+      "row_share": 5.5195295916425033e-05,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 63,
       "dst_domain": "FieldTheory",
-      "row_share": 3.249741052379636e-05,
+      "row_share": 3.2498164885371754e-05,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 40,
       "dst_domain": "NumberTheory",
-      "row_share": 2.0633276523045307e-05,
+      "row_share": 2.0633755482775714e-05,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 34,
       "dst_domain": "Lean",
-      "row_share": 1.753828504458851e-05,
+      "row_share": 1.7538692160359356e-05,
       "src_domain": "Algebra"
     },
     {
       "dependency_pair_count": 12,
       "dst_domain": "Dynamics",
-      "row_share": 6.1899829569135916e-06,
+      "row_share": 6.190126644832715e-06,
       "src_domain": "Algebra"
     },
     {
@@ -333,495 +306,495 @@
       "src_domain": "AlgebraicGeometry"
     },
     {
-      "dependency_pair_count": 75293,
+      "dependency_pair_count": 75290,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 0.37122881752875686,
+      "row_share": 0.371219517005394,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 72231,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.3561317615039863,
+      "row_share": 0.3561370292577582,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 19360,
       "dst_domain": "Data",
-      "row_share": 0.09545362659685142,
+      "row_share": 0.09545503850743031,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 12658,
       "dst_domain": "Order",
-      "row_share": 0.06240971102597857,
+      "row_share": 0.0624106341646205,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 11339,
       "dst_domain": "Algebra",
-      "row_share": 0.055906439668476145,
+      "row_share": 0.05590726661341695,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 5920,
       "dst_domain": "Combinatorics",
-      "row_share": 0.029188299042012415,
+      "row_share": 0.029188730783263814,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 2878,
       "dst_domain": "Topology",
-      "row_share": 0.014189852135626981,
+      "row_share": 0.014190062026052915,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 2261,
       "dst_domain": "Logic",
-      "row_share": 0.011147760833444268,
+      "row_share": 0.011147925726513425,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 698,
       "dst_domain": "Tactic",
-      "row_share": 0.00344145823164268,
+      "row_share": 0.0034415091362699564,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 100,
       "dst_domain": "Analysis",
-      "row_share": 0.0004930455919258854,
+      "row_share": 0.0004930528848524293,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 47,
       "dst_domain": "SetTheory",
-      "row_share": 0.00023173142820516614,
+      "row_share": 0.00023173485588064176,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 35,
       "dst_domain": "Util",
-      "row_share": 0.0001725659571740599,
+      "row_share": 0.00017256850969835024,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "LinearAlgebra",
-      "row_share": 4.930455919258854e-06,
+      "row_share": 4.930528848524292e-06,
       "src_domain": "AlgebraicTopology"
     },
     {
       "dependency_pair_count": 685377,
       "dst_domain": "Algebra",
-      "row_share": 0.37819307696934346,
+      "row_share": 0.3781937030345904,
       "src_domain": "Analysis"
     },
     {
-      "dependency_pair_count": 504682,
+      "dependency_pair_count": 504679,
       "dst_domain": "Analysis",
-      "row_share": 0.2784850359306516,
+      "row_share": 0.27848384152633376,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 284811,
       "dst_domain": "Data",
-      "row_share": 0.15715956100761433,
+      "row_share": 0.1571598211713914,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 170661,
       "dst_domain": "Topology",
-      "row_share": 0.09417124985032344,
+      "row_share": 0.09417140574251284,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 86064,
       "dst_domain": "Order",
-      "row_share": 0.047490372417355084,
+      "row_share": 0.047490451033473526,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 42064,
       "dst_domain": "Tactic",
-      "row_share": 0.023211040915639806,
+      "row_share": 0.023211079339468657,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 13691,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.007554734717954179,
+      "row_share": 0.00755474722415047,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 12623,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.006965409126048909,
+      "row_share": 0.006965420656668716,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 6039,
       "dst_domain": "Logic",
-      "row_share": 0.003332338248610422,
+      "row_share": 0.0033323437650021686,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 1874,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0010340788007776008,
+      "row_share": 0.001034080512603753,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 1452,
       "dst_domain": "RingTheory",
-      "row_share": 0.0008012179395566042,
+      "row_share": 0.0008012192659021608,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 830,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.0004579964806005382,
+      "row_share": 0.0004579972387732737,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 605,
       "dst_domain": "Combinatorics",
-      "row_share": 0.00033384080814858507,
+      "row_share": 0.00033384136079256697,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 529,
       "dst_domain": "Geometry",
-      "row_share": 0.0002919037810092587,
+      "row_share": 0.0002919042642301949,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 417,
       "dst_domain": "FieldTheory",
-      "row_share": 0.0002301018462776198,
+      "row_share": 0.00023010222719090982,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 251,
       "dst_domain": "SetTheory",
-      "row_share": 0.00013850255015751217,
+      "row_share": 0.00013850277943625505,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 104,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 5.738751082223612e-05,
+      "row_share": 5.738760582219333e-05,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 72,
       "dst_domain": "Util",
-      "row_share": 3.9729815184625e-05,
+      "row_share": 3.9729880953826156e-05,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 44,
       "dst_domain": "NumberTheory",
-      "row_share": 2.4279331501715278e-05,
+      "row_share": 2.4279371694004872e-05,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 27,
       "dst_domain": "Dynamics",
-      "row_share": 1.4898680694234376e-05,
+      "row_share": 1.4898705357684808e-05,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 23,
       "dst_domain": "Lean",
-      "row_share": 1.2691468739532987e-05,
+      "row_share": 1.269148974913891e-05,
       "src_domain": "Analysis"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Computability",
-      "row_share": 5.518029886753473e-07,
+      "row_share": 5.518039021364744e-07,
       "src_domain": "Analysis"
     },
     {
-      "dependency_pair_count": 1240683,
+      "dependency_pair_count": 1240666,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.8480745293214149,
+      "row_share": 0.8480727638619642,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 63346,
       "dst_domain": "Combinatorics",
-      "row_share": 0.04330044752317421,
+      "row_share": 0.04330095069873759,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 54816,
       "dst_domain": "Algebra",
-      "row_share": 0.03746972707716852,
+      "row_share": 0.03747016249647965,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 45122,
       "dst_domain": "Data",
-      "row_share": 0.030843349116608257,
+      "row_share": 0.030843707533679123,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 31394,
       "dst_domain": "Order",
-      "row_share": 0.02145951203773768,
+      "row_share": 0.02145976140934184,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 15548,
       "dst_domain": "Logic",
-      "row_share": 0.010627906388569327,
+      "row_share": 0.010628029890821396,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 7374,
       "dst_domain": "Tactic",
-      "row_share": 0.005040531367977246,
+      "row_share": 0.005040589941787817,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 2359,
       "dst_domain": "SetTheory",
-      "row_share": 0.0016125052206479962,
+      "row_share": 0.0016125239588659424,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 1278,
       "dst_domain": "Topology",
-      "row_share": 0.0008735827350521997,
+      "row_share": 0.0008735928865751057,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 361,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 0.0002467631982424445,
+      "row_share": 0.00024676606576965035,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 322,
       "dst_domain": "GroupTheory",
-      "row_share": 0.00022010457017747128,
+      "row_share": 0.00022010712791641944,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 261,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.00017840774166559006,
+      "row_share": 0.00017840981486393005,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 32,
       "dst_domain": "Control",
-      "row_share": 2.1873746104593417e-05,
+      "row_share": 2.1874000289830505e-05,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 21,
       "dst_domain": "Util",
-      "row_share": 1.4354645881139431e-05,
+      "row_share": 1.4354812690201268e-05,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 10,
       "dst_domain": "FieldTheory",
-      "row_share": 6.8355456576854436e-06,
+      "row_share": 6.835625090572032e-06,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 9,
       "dst_domain": "RingTheory",
-      "row_share": 6.151991091916899e-06,
+      "row_share": 6.15206258151483e-06,
       "src_domain": "CategoryTheory"
     },
     {
       "dependency_pair_count": 5,
       "dst_domain": "Lean",
-      "row_share": 3.4177728288427218e-06,
+      "row_share": 3.417812545286016e-06,
       "src_domain": "CategoryTheory"
     },
     {
-      "dependency_pair_count": 72717,
+      "dependency_pair_count": 72666,
       "dst_domain": "Combinatorics",
-      "row_share": 0.3641476080544441,
+      "row_share": 0.3639851733119615,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 56882,
       "dst_domain": "Data",
-      "row_share": 0.2848500933942942,
+      "row_share": 0.28492286115007015,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 36037,
       "dst_domain": "Algebra",
-      "row_share": 0.18046381659664182,
+      "row_share": 0.18050991785213383,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 24145,
       "dst_domain": "Order",
-      "row_share": 0.12091180874451027,
+      "row_share": 0.12094269685433781,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 3970,
       "dst_domain": "Tactic",
-      "row_share": 0.019880715705765408,
+      "row_share": 0.019885794429973954,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 3649,
       "dst_domain": "Logic",
-      "row_share": 0.018273232143661958,
+      "row_share": 0.018277900220396714,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 412,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.00206318762488044,
+      "row_share": 0.002063714686435584,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 389,
       "dst_domain": "SetTheory",
-      "row_share": 0.0019480096749477944,
+      "row_share": 0.0019485073131636946,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 359,
       "dst_domain": "Analysis",
-      "row_share": 0.0017977775663399953,
+      "row_share": 0.0017982368262873171,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 331,
       "dst_domain": "Topology",
-      "row_share": 0.0016575609316393828,
+      "row_share": 0.0016579843718693649,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 246,
       "dst_domain": "RingTheory",
-      "row_share": 0.0012319032905839522,
+      "row_share": 0.0012322179923862954,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 234,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.0011718104471408325,
+      "row_share": 0.0011721097976357443,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 158,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0007912224386677416,
+      "row_share": 0.0007914245642155881,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 113,
       "dst_domain": "Util",
-      "row_share": 0.0005658742757560431,
+      "row_share": 0.0005660188339010219,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 18,
       "dst_domain": "Lean",
-      "row_share": 9.013926516467942e-05,
+      "row_share": 9.01622921258265e-05,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 17,
       "dst_domain": "Dynamics",
-      "row_share": 8.513152821108613e-05,
+      "row_share": 8.515327589661391e-05,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 12,
       "dst_domain": "NumberTheory",
-      "row_share": 6.009284344311962e-05,
+      "row_share": 6.0108194750550994e-05,
       "src_domain": "Combinatorics"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "FieldTheory",
-      "row_share": 1.0015473907186603e-05,
+      "row_share": 1.0018032458425165e-05,
       "src_domain": "Combinatorics"
     },
     {
-      "dependency_pair_count": 26193,
+      "dependency_pair_count": 26138,
       "dst_domain": "Computability",
-      "row_share": 0.6013637615942694,
+      "row_share": 0.6008597503505666,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 7835,
       "dst_domain": "Data",
-      "row_share": 0.17988336853705575,
+      "row_share": 0.18011080205052757,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 4132,
       "dst_domain": "Algebra",
-      "row_share": 0.09486637891450088,
+      "row_share": 0.09498632215351371,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 2150,
       "dst_domain": "Order",
-      "row_share": 0.04936174120672238,
+      "row_share": 0.04942415116893865,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 1291,
       "dst_domain": "Logic",
-      "row_share": 0.029640003673431902,
+      "row_share": 0.029677478678651066,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 988,
       "dst_domain": "Analysis",
-      "row_share": 0.02268344200569382,
+      "row_share": 0.022712121560423897,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 818,
       "dst_domain": "Tactic",
-      "row_share": 0.01878042060795298,
+      "row_share": 0.018804165421484564,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 124,
       "dst_domain": "Topology",
-      "row_share": 0.002846909725410965,
+      "row_share": 0.0028505091836969264,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 14,
       "dst_domain": "SetTheory",
-      "row_share": 0.00032142529157865734,
+      "row_share": 0.00032183168203029814,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 6,
       "dst_domain": "Control",
-      "row_share": 0.00013775369639085317,
+      "row_share": 0.00013792786372727065,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 4,
       "dst_domain": "Lean",
-      "row_share": 9.18357975939021e-05,
+      "row_share": 9.195190915151376e-05,
       "src_domain": "Computability"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "CategoryTheory",
-      "row_share": 2.2958949398475526e-05,
+      "row_share": 2.298797728787844e-05,
       "src_domain": "Computability"
     },
     {
@@ -879,147 +852,147 @@
       "src_domain": "Condensed"
     },
     {
-      "dependency_pair_count": 2935,
+      "dependency_pair_count": 2930,
       "dst_domain": "Control",
-      "row_share": 0.5663836356619066,
+      "row_share": 0.5659648445045393,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 695,
       "dst_domain": "Data",
-      "row_share": 0.13411810111925898,
+      "row_share": 0.13424763376472862,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 520,
       "dst_domain": "Algebra",
-      "row_share": 0.10034735623311462,
+      "row_share": 0.10044427274483292,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 374,
       "dst_domain": "Order",
-      "row_share": 0.07217290621381706,
+      "row_share": 0.07224261155109137,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 371,
       "dst_domain": "Logic",
-      "row_share": 0.07159397915862602,
+      "row_share": 0.07166312536217886,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 279,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.05384021613276727,
+      "row_share": 0.05389221556886228,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 7,
       "dst_domain": "Combinatorics",
-      "row_share": 0.001350829795445774,
+      "row_share": 0.0013521344407958276,
       "src_domain": "Control"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Tactic",
-      "row_share": 0.00019297568506368199,
+      "row_share": 0.00019316206297083252,
       "src_domain": "Control"
     },
     {
-      "dependency_pair_count": 223006,
+      "dependency_pair_count": 222724,
       "dst_domain": "Data",
-      "row_share": 0.6006135250217481,
+      "row_share": 0.6003099605137259,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 80109,
       "dst_domain": "Algebra",
-      "row_share": 0.21575450380692546,
+      "row_share": 0.21591849386143416,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 52808,
       "dst_domain": "Order",
-      "row_share": 0.1422257653576517,
+      "row_share": 0.14233386790291497,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 9188,
       "dst_domain": "Logic",
-      "row_share": 0.02474568876128813,
+      "row_share": 0.024764497392288722,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 2662,
       "dst_domain": "Tactic",
-      "row_share": 0.007169462721217785,
+      "row_share": 0.00717491206554991,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 2106,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.005672009200182064,
+      "row_share": 0.0056763203644057516,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 371,
       "dst_domain": "Control",
-      "row_share": 0.000999200101266641,
+      "row_share": 0.0009999595703677748,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 267,
       "dst_domain": "SetTheory",
-      "row_share": 0.0007191008815045638,
+      "row_share": 0.000719647453606997,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 214,
       "dst_domain": "RingTheory",
-      "row_share": 0.0005763580098950436,
+      "row_share": 0.0005767960864116006,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 205,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0005521186543387099,
+      "row_share": 0.0005525383070765332,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 149,
       "dst_domain": "Topology",
-      "row_share": 0.0004012959975437453,
+      "row_share": 0.00040160101343611444,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 69,
       "dst_domain": "Util",
-      "row_share": 0.00018583505926522435,
+      "row_share": 0.00018597630823551607,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 63,
       "dst_domain": "Lean",
-      "row_share": 0.00016967548889433527,
+      "row_share": 0.0001698044553454712,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 47,
       "dst_domain": "NumberTheory",
-      "row_share": 0.00012658330123863106,
+      "row_share": 0.00012667951430535155,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 32,
       "dst_domain": "Dynamics",
-      "row_share": 8.618437531140839e-05,
+      "row_share": 8.624988208023934e-05,
       "src_domain": "Data"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Analysis",
-      "row_share": 2.693261728481512e-06,
+      "row_share": 2.6953088150074795e-06,
       "src_domain": "Data"
     },
     {
@@ -1103,313 +1076,313 @@
     {
       "dependency_pair_count": 113148,
       "dst_domain": "Algebra",
-      "row_share": 0.6286558805227132,
+      "row_share": 0.6286628662866287,
       "src_domain": "FieldTheory"
     },
     {
-      "dependency_pair_count": 31674,
+      "dependency_pair_count": 31672,
       "dst_domain": "FieldTheory",
-      "row_share": 0.17598230953862565,
+      "row_share": 0.17597315287084264,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 13964,
       "dst_domain": "Data",
-      "row_share": 0.07758467419326162,
+      "row_share": 0.07758553633141092,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 8819,
       "dst_domain": "Order",
-      "row_share": 0.04899879989332385,
+      "row_share": 0.048999344378882335,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 5434,
       "dst_domain": "RingTheory",
-      "row_share": 0.03019157258422971,
+      "row_share": 0.03019190807969686,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 1523,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.008461863276735709,
+      "row_share": 0.008461957306841796,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 1467,
       "dst_domain": "Logic",
-      "row_share": 0.008150724508845231,
+      "row_share": 0.008150815081508151,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 1320,
       "dst_domain": "SetTheory",
-      "row_share": 0.007333985243132723,
+      "row_share": 0.007334066740007334,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 827,
       "dst_domain": "Topology",
-      "row_share": 0.004594852875811183,
+      "row_share": 0.004594903934837928,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 733,
       "dst_domain": "GroupTheory",
-      "row_share": 0.004072584229709308,
+      "row_share": 0.004072629485170739,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 727,
       "dst_domain": "Tactic",
-      "row_share": 0.004039247933149613,
+      "row_share": 0.0040392928181707055,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 154,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.0008556316116988177,
+      "row_share": 0.0008556411196675223,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 140,
       "dst_domain": "ModelTheory",
-      "row_share": 0.0007778469197261979,
+      "row_share": 0.0007778555633341112,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 22,
       "dst_domain": "NumberTheory",
-      "row_share": 0.00012223308738554538,
+      "row_share": 0.0001222344456667889,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 17,
       "dst_domain": "Combinatorics",
-      "row_share": 9.445284025246689e-05,
+      "row_share": 9.445388983342779e-05,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 15,
       "dst_domain": "Util",
-      "row_share": 8.334074139923549e-05,
+      "row_share": 8.334166750008334e-05,
       "src_domain": "FieldTheory"
     },
     {
       "dependency_pair_count": 79225,
       "dst_domain": "Algebra",
-      "row_share": 0.23146322152396145,
+      "row_share": 0.2314645740146139,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 67656,
       "dst_domain": "Analysis",
-      "row_share": 0.19766330975607618,
+      "row_share": 0.19766446474638963,
       "src_domain": "Geometry"
     },
     {
-      "dependency_pair_count": 64163,
+      "dependency_pair_count": 64161,
       "dst_domain": "Geometry",
-      "row_share": 0.18745818469727912,
+      "row_share": 0.18745343683624666,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 48763,
       "dst_domain": "Data",
-      "row_share": 0.1424656493679133,
+      "row_share": 0.1424664818261233,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 39118,
       "dst_domain": "Topology",
-      "row_share": 0.11428688292299556,
+      "row_share": 0.1142875507264584,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 13873,
       "dst_domain": "Order",
-      "row_share": 0.0405312625080709,
+      "row_share": 0.040531499341176884,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 10528,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.030758533243348263,
+      "row_share": 0.03075871297224178,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 6262,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.018295016638473292,
+      "row_share": 0.018295123540290465,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 5373,
       "dst_domain": "Tactic",
-      "row_share": 0.01569772028082354,
+      "row_share": 0.01569781200606526,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 5105,
       "dst_domain": "Logic",
-      "row_share": 0.014914733302364445,
+      "row_share": 0.014914820452440566,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 827,
       "dst_domain": "Combinatorics",
-      "row_share": 0.002416157579051008,
+      "row_share": 0.0024161716971926248,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 701,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.002048036835447106,
+      "row_share": 0.002048048802578029,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 402,
       "dst_domain": "RingTheory",
-      "row_share": 0.0011744804676886399,
+      "row_share": 0.0011744873304370437,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 186,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0005434163357962364,
+      "row_share": 0.0005434195110977367,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 39,
       "dst_domain": "Util",
-      "row_share": 0.00011394213492501731,
+      "row_share": 0.00011394280071404155,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 38,
       "dst_domain": "Lean",
-      "row_share": 0.00011102054172181174,
+      "row_share": 0.00011102119043932253,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 13,
       "dst_domain": "Dynamics",
-      "row_share": 3.7980711641672436e-05,
+      "row_share": 3.798093357134719e-05,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 4,
       "dst_domain": "SetTheory",
-      "row_share": 1.1686372812822288e-05,
+      "row_share": 1.1686441098876056e-05,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 5.843186406411144e-06,
+      "row_share": 5.843220549438028e-06,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "FieldTheory",
-      "row_share": 2.921593203205572e-06,
+      "row_share": 2.921610274719014e-06,
       "src_domain": "Geometry"
     },
     {
       "dependency_pair_count": 146694,
       "dst_domain": "Algebra",
-      "row_share": 0.5226285693927356,
+      "row_share": 0.5226676738021264,
       "src_domain": "GroupTheory"
     },
     {
-      "dependency_pair_count": 65522,
+      "dependency_pair_count": 65501,
       "dst_domain": "GroupTheory",
-      "row_share": 0.23343605821472468,
+      "row_share": 0.23337870193541033,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 41133,
       "dst_domain": "Data",
-      "row_share": 0.14654505940823342,
+      "row_share": 0.14655602428526637,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 14710,
       "dst_domain": "Order",
-      "row_share": 0.05240750307283966,
+      "row_share": 0.05241142433657327,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 9176,
       "dst_domain": "Logic",
-      "row_share": 0.032691451270997735,
+      "row_share": 0.03269389732919078,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 1198,
       "dst_domain": "SetTheory",
-      "row_share": 0.004268129753994691,
+      "row_share": 0.004268449106404812,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 803,
       "dst_domain": "Tactic",
-      "row_share": 0.002860858257477243,
+      "row_share": 0.0028610723142262636,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 422,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.0015034647380515525,
+      "row_share": 0.001503577231137588,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 328,
       "dst_domain": "Combinatorics",
-      "row_share": 0.0011685697490068938,
+      "row_share": 0.0011686571843913007,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 276,
       "dst_domain": "Dynamics",
-      "row_share": 0.0009833086912375082,
+      "row_share": 0.0009833822649146311,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 206,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.00073391880577872,
+      "row_share": 0.000733973719465268,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 177,
       "dst_domain": "RingTheory",
-      "row_share": 0.0006306001389457933,
+      "row_share": 0.0006306473220648178,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 28,
       "dst_domain": "NumberTheory",
-      "row_share": 9.975595418351533e-05,
+      "row_share": 9.976341817974517e-05,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 9,
       "dst_domain": "Lean",
-      "row_share": 3.206441384470136e-05,
+      "row_share": 3.206681298634666e-05,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "Control",
-      "row_share": 7.125425298822524e-06,
+      "row_share": 7.12595844141037e-06,
       "src_domain": "GroupTheory"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "FieldTheory",
-      "row_share": 3.562712649411262e-06,
+      "row_share": 3.562979220705185e-06,
       "src_domain": "GroupTheory"
     },
     {
@@ -1473,1287 +1446,1287 @@
       "src_domain": "InformationTheory"
     },
     {
-      "dependency_pair_count": 2675,
+      "dependency_pair_count": 2633,
       "dst_domain": "Lean",
-      "row_share": 0.9951636904761905,
+      "row_share": 0.9950869236583523,
       "src_domain": "Lean"
     },
     {
       "dependency_pair_count": 12,
       "dst_domain": "Logic",
-      "row_share": 0.004464285714285714,
+      "row_share": 0.0045351473922902496,
       "src_domain": "Lean"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Util",
-      "row_share": 0.0003720238095238095,
+      "row_share": 0.0003779289493575208,
       "src_domain": "Lean"
     },
     {
       "dependency_pair_count": 401542,
       "dst_domain": "Algebra",
-      "row_share": 0.6403300344769298,
+      "row_share": 0.6403341189828443,
       "src_domain": "LinearAlgebra"
     },
     {
-      "dependency_pair_count": 113649,
+      "dependency_pair_count": 113645,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.18123351502026835,
+      "row_share": 0.18122829231264811,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 70997,
       "dst_domain": "Data",
-      "row_share": 0.11321732585323226,
+      "row_share": 0.11321804803837457,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 18871,
       "dst_domain": "Order",
-      "row_share": 0.03009316106562736,
+      "row_share": 0.030093353022411742,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 9036,
       "dst_domain": "Logic",
-      "row_share": 0.014409506830004177,
+      "row_share": 0.014409598744661783,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 4051,
       "dst_domain": "Tactic",
-      "row_share": 0.0064600389739206425,
+      "row_share": 0.0064600801809013815,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 3689,
       "dst_domain": "RingTheory",
-      "row_share": 0.005882765681262219,
+      "row_share": 0.005882803205960305,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 2482,
       "dst_domain": "SetTheory",
-      "row_share": 0.0039579898131994655,
+      "row_share": 0.003958015060231358,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 1861,
       "dst_domain": "GroupTheory",
-      "row_share": 0.002967695021097585,
+      "row_share": 0.0029677139512854778,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 363,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.000578867970262452,
+      "row_share": 0.0005788716627171567,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 168,
       "dst_domain": "Analysis",
-      "row_share": 0.0002679058374768373,
+      "row_share": 0.000267907546381494,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 114,
       "dst_domain": "FieldTheory",
-      "row_share": 0.00018179324685928247,
+      "row_share": 0.0001817944064731566,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 102,
       "dst_domain": "Combinatorics",
-      "row_share": 0.00016265711561093695,
+      "row_share": 0.00016265815316019277,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 52,
       "dst_domain": "Lean",
-      "row_share": 8.292323540949727e-05,
+      "row_share": 8.29237643561767e-05,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 44,
       "dst_domain": "Topology",
-      "row_share": 7.016581457726692e-05,
+      "row_share": 7.016626214753414e-05,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 38,
       "dst_domain": "Util",
-      "row_share": 6.059774895309415e-05,
+      "row_share": 6.059813549105221e-05,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 19,
       "dst_domain": "RepresentationTheory",
-      "row_share": 3.0298874476547076e-05,
+      "row_share": 3.0299067745526104e-05,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 6,
       "dst_domain": "Dynamics",
-      "row_share": 9.568065624172761e-06,
+      "row_share": 9.568126656481927e-06,
       "src_domain": "LinearAlgebra"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "NumberTheory",
-      "row_share": 3.189355208057587e-06,
+      "row_share": 3.1893755521606425e-06,
       "src_domain": "LinearAlgebra"
     },
     {
-      "dependency_pair_count": 13593,
+      "dependency_pair_count": 13581,
       "dst_domain": "Logic",
-      "row_share": 0.649202407106696,
+      "row_share": 0.649001242473478,
       "src_domain": "Logic"
     },
     {
       "dependency_pair_count": 5950,
       "dst_domain": "Data",
-      "row_share": 0.28417231827299644,
+      "row_share": 0.28433527668928604,
       "src_domain": "Logic"
     },
     {
       "dependency_pair_count": 1221,
       "dst_domain": "Order",
-      "row_share": 0.05831502531282835,
+      "row_share": 0.05834846602312912,
       "src_domain": "Logic"
     },
     {
       "dependency_pair_count": 137,
       "dst_domain": "Algebra",
-      "row_share": 0.0065431273283026075,
+      "row_share": 0.006546879480072637,
       "src_domain": "Logic"
     },
     {
       "dependency_pair_count": 26,
       "dst_domain": "Control",
-      "row_share": 0.0012417613907727578,
+      "row_share": 0.0012424734779699896,
       "src_domain": "Logic"
     },
     {
       "dependency_pair_count": 9,
       "dst_domain": "Tactic",
-      "row_share": 0.00042984048142133917,
+      "row_share": 0.0004300869731434579,
       "src_domain": "Logic"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "Lean",
-      "row_share": 9.552010698251981e-05,
+      "row_share": 9.557488292076843e-05,
       "src_domain": "Logic"
     },
     {
-      "dependency_pair_count": 140033,
+      "dependency_pair_count": 140030,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.25734453620903214,
+      "row_share": 0.2573404417588759,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 110560,
       "dst_domain": "Algebra",
-      "row_share": 0.20318076398613608,
+      "row_share": 0.20318188417382932,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 110262,
       "dst_domain": "Data",
-      "row_share": 0.20263311684731672,
+      "row_share": 0.20263423401569072,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 60871,
       "dst_domain": "Analysis",
-      "row_share": 0.11186519794319907,
+      "row_share": 0.1118658146847428,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 58376,
       "dst_domain": "Order",
-      "row_share": 0.10728003146214435,
+      "row_share": 0.1072806229244886,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 51224,
       "dst_domain": "Topology",
-      "row_share": 0.09413650013047968,
+      "row_share": 0.09413701912916274,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 6588,
       "dst_domain": "Tactic",
-      "row_share": 0.012107044800476342,
+      "row_share": 0.012107111549721305,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 3482,
       "dst_domain": "Logic",
-      "row_share": 0.006399017910634278,
+      "row_share": 0.006399053190062171,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 728,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.0013378762317466269,
+      "row_share": 0.0013378836078016257,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 726,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0013342007475934767,
+      "row_share": 0.0013342081033845881,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 436,
       "dst_domain": "Dynamics",
-      "row_share": 0.0008012555453867161,
+      "row_share": 0.0008012599629141604,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 316,
       "dst_domain": "Util",
-      "row_share": 0.0005807264961977117,
+      "row_share": 0.0005807296978919145,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 253,
       "dst_domain": "SetTheory",
-      "row_share": 0.0004649487453734843,
+      "row_share": 0.0004649513087552353,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 126,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.00023155550164845464,
+      "row_share": 0.00023155677827335828,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 63,
       "dst_domain": "Probability",
-      "row_share": 0.00011577775082422732,
+      "row_share": 0.00011577838913667914,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 52,
       "dst_domain": "Combinatorics",
-      "row_share": 9.556258798190191e-05,
+      "row_share": 9.556311484297326e-05,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 43,
       "dst_domain": "RingTheory",
-      "row_share": 7.902290929272658e-05,
+      "row_share": 7.902334496630481e-05,
       "src_domain": "MeasureTheory"
     },
     {
       "dependency_pair_count": 7,
       "dst_domain": "Lean",
-      "row_share": 1.2864194536025258e-05,
+      "row_share": 1.2864265459631017e-05,
       "src_domain": "MeasureTheory"
     },
     {
-      "dependency_pair_count": 27047,
+      "dependency_pair_count": 27019,
       "dst_domain": "ModelTheory",
-      "row_share": 0.6157120743034056,
+      "row_share": 0.6154669703872437,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 6841,
       "dst_domain": "Data",
-      "row_share": 0.1557321070843198,
+      "row_share": 0.15583143507972666,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 4536,
       "dst_domain": "Algebra",
-      "row_share": 0.10325987980331451,
+      "row_share": 0.10332574031890661,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 3306,
       "dst_domain": "Order",
-      "row_share": 0.07525951557093426,
+      "row_share": 0.07530751708428246,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 1170,
       "dst_domain": "Logic",
-      "row_share": 0.02663449280641049,
+      "row_share": 0.02665148063781321,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 493,
       "dst_domain": "SetTheory",
-      "row_share": 0.011222910216718266,
+      "row_share": 0.01123006833712984,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 155,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.0035285011837552357,
+      "row_share": 0.003530751708428246,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 126,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.002868329994536514,
+      "row_share": 0.0028701594533029613,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 97,
       "dst_domain": "RingTheory",
-      "row_share": 0.002208158805317793,
+      "row_share": 0.0022095671981776765,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 61,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0013886359497359314,
+      "row_share": 0.001389521640091116,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 29,
       "dst_domain": "Topology",
-      "row_share": 0.0006601711892187215,
+      "row_share": 0.0006605922551252847,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 18,
       "dst_domain": "Tactic",
-      "row_share": 0.00040976142779093063,
+      "row_share": 0.0004100227790432802,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 17,
       "dst_domain": "Combinatorics",
-      "row_share": 0.0003869969040247678,
+      "row_share": 0.00038724373576309797,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 13,
       "dst_domain": "FieldTheory",
-      "row_share": 0.00029593880896011654,
+      "row_share": 0.00029612756264236903,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 12,
       "dst_domain": "Computability",
-      "row_share": 0.00027317428519395374,
+      "row_share": 0.0002733485193621868,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 6,
       "dst_domain": "Lean",
-      "row_share": 0.00013658714259697687,
+      "row_share": 0.0001366742596810934,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Control",
-      "row_share": 2.276452376616281e-05,
+      "row_share": 2.2779043280182233e-05,
       "src_domain": "ModelTheory"
     },
     {
       "dependency_pair_count": 209652,
       "dst_domain": "Algebra",
-      "row_share": 0.44406788995100793,
+      "row_share": 0.44408293987939024,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 93615,
       "dst_domain": "Data",
-      "row_share": 0.1982877125797207,
+      "row_share": 0.1982944327590918,
       "src_domain": "NumberTheory"
     },
     {
-      "dependency_pair_count": 57748,
+      "dependency_pair_count": 57732,
       "dst_domain": "NumberTheory",
-      "row_share": 0.12231713748922407,
+      "row_share": 0.1222873918928365,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 30883,
       "dst_domain": "Analysis",
-      "row_share": 0.0654138698670033,
+      "row_share": 0.06541608681193219,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 19985,
       "dst_domain": "Tactic",
-      "row_share": 0.042330608726226765,
+      "row_share": 0.042332043355129516,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 16987,
       "dst_domain": "Order",
-      "row_share": 0.035980487887536355,
+      "row_share": 0.035981707304157375,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 15347,
       "dst_domain": "Topology",
-      "row_share": 0.032506772685584294,
+      "row_share": 0.03250787437433939,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 11574,
       "dst_domain": "RingTheory",
-      "row_share": 0.024515109602068978,
+      "row_share": 0.024515940444947162,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 6004,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.012717186629585464,
+      "row_share": 0.012717617628431205,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 3810,
       "dst_domain": "Logic",
-      "row_share": 0.008070033487461794,
+      "row_share": 0.008070306989394219,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 2352,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.004981815948165391,
+      "row_share": 0.004981984787153597,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 1753,
       "dst_domain": "FieldTheory",
-      "row_share": 0.0037130626518426576,
+      "row_share": 0.0037131884914456863,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 1577,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0033402737033404856,
+      "row_share": 0.0033403869087335124,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 361,
       "dst_domain": "Geometry",
-      "row_share": 0.0007646409682345689,
+      "row_share": 0.0007646668827221293,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 286,
       "dst_domain": "SetTheory",
-      "row_share": 0.0006057820413160297,
+      "row_share": 0.0006058025719072825,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 128,
       "dst_domain": "Util",
-      "row_share": 0.000271119235274307,
+      "row_share": 0.0002711284237906719,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 28,
       "dst_domain": "Dynamics",
-      "row_share": 5.930733271625466e-05,
+      "row_share": 5.9309342704209484e-05,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 12,
       "dst_domain": "AlgebraicGeometry",
-      "row_share": 2.5417428306966283e-05,
+      "row_share": 2.541828973037549e-05,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 8,
       "dst_domain": "Lean",
-      "row_share": 1.6944952204644187e-05,
+      "row_share": 1.6945526486916995e-05,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 5,
       "dst_domain": "CategoryTheory",
-      "row_share": 1.0590595127902617e-05,
+      "row_share": 1.0590954054323121e-05,
       "src_domain": "NumberTheory"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "Combinatorics",
-      "row_share": 4.236238051161047e-06,
+      "row_share": 4.236381621729249e-06,
       "src_domain": "NumberTheory"
     },
     {
-      "dependency_pair_count": 280610,
+      "dependency_pair_count": 280609,
       "dst_domain": "Order",
-      "row_share": 0.7651532296986668,
+      "row_share": 0.7651525893285633,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 60423,
       "dst_domain": "Data",
-      "row_share": 0.16475839634397402,
+      "row_share": 0.1647588456001047,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 11172,
       "dst_domain": "Algebra",
-      "row_share": 0.030463247504342348,
+      "row_share": 0.03046333057021945,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 7732,
       "dst_domain": "Logic",
-      "row_share": 0.02108322858069952,
+      "row_share": 0.021083286069543215,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 4781,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.013036590254051269,
+      "row_share": 0.013036625801666594,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 695,
       "dst_domain": "Combinatorics",
-      "row_share": 0.001895091032538304,
+      "row_share": 0.0018950961999912744,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 512,
       "dst_domain": "SetTheory",
-      "row_share": 0.0013960958397980024,
+      "row_share": 0.001396099646612277,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 454,
       "dst_domain": "Tactic",
-      "row_share": 0.001237944357945885,
+      "row_share": 0.00123794773351948,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 146,
       "dst_domain": "Analysis",
-      "row_share": 0.00039810545431739913,
+      "row_share": 0.0003981065398542821,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 81,
       "dst_domain": "Util",
-      "row_share": 0.00022086672465554334,
+      "row_share": 0.0002208673269054579,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 61,
       "dst_domain": "Topology",
-      "row_share": 0.00016633173091343387,
+      "row_share": 0.0001663321844596658,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 46,
       "dst_domain": "Dynamics",
-      "row_share": 0.00012543048560685176,
+      "row_share": 0.00012543082762532176,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 15,
       "dst_domain": "Control",
-      "row_share": 4.09012453065821e-05,
+      "row_share": 4.090135683434405e-05,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 8,
       "dst_domain": "Lean",
-      "row_share": 2.1813997496843787e-05,
+      "row_share": 2.1814056978316828e-05,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "NumberTheory",
-      "row_share": 2.7267496871054734e-06,
+      "row_share": 2.7267571222896035e-06,
       "src_domain": "Order"
     },
     {
       "dependency_pair_count": 35937,
       "dst_domain": "Data",
-      "row_share": 0.20319346831692686,
+      "row_share": 0.20319576611877257,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 33100,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.18715262268108854,
+      "row_share": 0.18715473908593852,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 29165,
       "dst_domain": "Algebra",
-      "row_share": 0.16490351179740023,
+      "row_share": 0.16490537659943796,
       "src_domain": "Probability"
     },
     {
-      "dependency_pair_count": 26166,
+      "dependency_pair_count": 26164,
       "dst_domain": "Probability",
-      "row_share": 0.14794669260040372,
+      "row_share": 0.14793705720376119,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 18168,
       "dst_domain": "Order",
-      "row_share": 0.10272473863655639,
+      "row_share": 0.1027259002934541,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 17522,
       "dst_domain": "Analysis",
-      "row_share": 0.09907215270749345,
+      "row_share": 0.09907327305932975,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 11711,
       "dst_domain": "Topology",
-      "row_share": 0.0662158418192818,
+      "row_share": 0.06621659061738447,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 3565,
       "dst_domain": "Tactic",
-      "row_share": 0.020157072503265275,
+      "row_share": 0.020157300448379784,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 610,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.003449036248805559,
+      "row_share": 0.0034490752520369332,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 493,
       "dst_domain": "Logic",
-      "row_share": 0.002787499787969083,
+      "row_share": 0.0027875313102528002,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 196,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.0011082149258457206,
+      "row_share": 0.0011082274580315392,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 87,
       "dst_domain": "Combinatorics",
-      "row_share": 0.0004919117272886617,
+      "row_share": 0.0004919172900446118,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 56,
       "dst_domain": "Util",
-      "row_share": 0.00031663283595592017,
+      "row_share": 0.00031663641658043976,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 39,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0002205121536121587,
+      "row_share": 0.0002205146472613777,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 37,
       "dst_domain": "Dynamics",
-      "row_share": 0.0002092038380423044,
+      "row_share": 0.0002092062038120763,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 6,
       "dst_domain": "SetTheory",
-      "row_share": 3.392494670956288e-05,
+      "row_share": 3.392533034790426e-05,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "Control",
-      "row_share": 1.1308315569854293e-05,
+      "row_share": 1.1308443449301421e-05,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "RingTheory",
-      "row_share": 5.654157784927146e-06,
+      "row_share": 5.654221724650711e-06,
       "src_domain": "Probability"
     },
     {
       "dependency_pair_count": 94578,
       "dst_domain": "Algebra",
-      "row_share": 0.6042318847986916,
+      "row_share": 0.6042434658165253,
       "src_domain": "RepresentationTheory"
     },
     {
-      "dependency_pair_count": 33501,
+      "dependency_pair_count": 33498,
       "dst_domain": "RepresentationTheory",
-      "row_share": 0.2140283403396241,
+      "row_share": 0.21401327600416553,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 12147,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.07760372078760078,
+      "row_share": 0.07760520818026743,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 6416,
       "dst_domain": "Data",
-      "row_share": 0.04098999527235092,
+      "row_share": 0.040990780907598244,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 3000,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.019166144921610468,
+      "row_share": 0.01916651226976227,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 2980,
       "dst_domain": "Topology",
-      "row_share": 0.019038370622133063,
+      "row_share": 0.01903873552129719,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 1329,
       "dst_domain": "Combinatorics",
-      "row_share": 0.008490602200273437,
+      "row_share": 0.008490764935504685,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 683,
       "dst_domain": "Logic",
-      "row_share": 0.004363492327153317,
+      "row_share": 0.004363575960082544,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 561,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0035840691003411573,
+      "row_share": 0.0035841377944455448,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 537,
       "dst_domain": "Order",
-      "row_share": 0.0034307399409682737,
+      "row_share": 0.0034308056962874464,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 312,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 0.0019932790718474886,
+      "row_share": 0.0019933172760552764,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 307,
       "dst_domain": "Tactic",
-      "row_share": 0.0019613354969781377,
+      "row_share": 0.0019613730889390057,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 125,
       "dst_domain": "RingTheory",
-      "row_share": 0.0007985893717337695,
+      "row_share": 0.0007986046779067613,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 28,
       "dst_domain": "SetTheory",
-      "row_share": 0.00017888401926836436,
+      "row_share": 0.00017888744785111453,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 20,
       "dst_domain": "FieldTheory",
-      "row_share": 0.00012777429947740312,
+      "row_share": 0.00012777674846508181,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 2,
       "dst_domain": "Dynamics",
-      "row_share": 1.2777429947740311e-05,
+      "row_share": 1.2777674846508182e-05,
       "src_domain": "RepresentationTheory"
     },
     {
       "dependency_pair_count": 668361,
       "dst_domain": "Algebra",
-      "row_share": 0.6020234356070262,
+      "row_share": 0.6020256046954252,
       "src_domain": "RingTheory"
     },
     {
-      "dependency_pair_count": 231344,
+      "dependency_pair_count": 231340,
       "dst_domain": "RingTheory",
-      "row_share": 0.2083821612677458,
+      "row_share": 0.20837930907135466,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 98597,
       "dst_domain": "Data",
-      "row_share": 0.08881084426013182,
+      "row_share": 0.08881116424530282,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 46766,
       "dst_domain": "Order",
-      "row_share": 0.04212428311885072,
+      "row_share": 0.04212443489250009,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 26731,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.024077838858358607,
+      "row_share": 0.024077925610730445,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 9520,
       "dst_domain": "Tactic",
-      "row_share": 0.008575101041172194,
+      "row_share": 0.008575131937232196,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 8926,
       "dst_domain": "Logic",
-      "row_share": 0.008040057972006619,
+      "row_share": 0.008040086940308255,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 6336,
       "dst_domain": "GroupTheory",
-      "row_share": 0.005707126071099478,
+      "row_share": 0.005707146633855378,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 6100,
       "dst_domain": "Topology",
-      "row_share": 0.005494550036885545,
+      "row_share": 0.005494569833730714,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 2923,
       "dst_domain": "FieldTheory",
-      "row_share": 0.002632880288166631,
+      "row_share": 0.0026328897744253895,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 1748,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.0015745038466353988,
+      "row_share": 0.0015745095195674242,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 1076,
       "dst_domain": "SetTheory",
-      "row_share": 0.0009692025966703026,
+      "row_share": 0.0009692060887039751,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 848,
       "dst_domain": "Analysis",
-      "row_share": 0.0007638325297178594,
+      "row_share": 0.0007638352818038763,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 324,
       "dst_domain": "Combinatorics",
-      "row_share": 0.0002918416740903142,
+      "row_share": 0.00029184272559487726,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 296,
       "dst_domain": "Util",
-      "row_share": 0.00026662078867510186,
+      "row_share": 0.0002666217493089002,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 265,
       "dst_domain": "NumberTheory",
-      "row_share": 0.00023869766553683106,
+      "row_share": 0.00023869852556371134,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 26,
       "dst_domain": "Lean",
-      "row_share": 2.3419393599840028e-05,
+      "row_share": 2.341947797983583e-05,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 3,
       "dst_domain": "Dynamics",
-      "row_share": 2.7022377230584646e-06,
+      "row_share": 2.7022474592118265e-06,
       "src_domain": "RingTheory"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Control",
-      "row_share": 9.007459076861549e-07,
+      "row_share": 9.007491530706088e-07,
       "src_domain": "RingTheory"
     },
     {
-      "dependency_pair_count": 35924,
+      "dependency_pair_count": 35891,
       "dst_domain": "SetTheory",
-      "row_share": 0.509603654211706,
+      "row_share": 0.509373979932161,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 17646,
       "dst_domain": "Order",
-      "row_share": 0.25031917610009363,
+      "row_share": 0.2504364116319666,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 9034,
       "dst_domain": "Data",
-      "row_share": 0.1281527505887026,
+      "row_share": 0.128212770184925,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 5989,
       "dst_domain": "Algebra",
-      "row_share": 0.08495758504269867,
+      "row_share": 0.0849973744340841,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 1620,
       "dst_domain": "Logic",
-      "row_share": 0.022980679206741,
+      "row_share": 0.022991442074338998,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 99,
       "dst_domain": "Tactic",
-      "row_share": 0.00140437484041195,
+      "row_share": 0.0014050325712096053,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 81,
       "dst_domain": "Topology",
-      "row_share": 0.00114903396033705,
+      "row_share": 0.0011495721037169497,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 43,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0006099809912900389,
+      "row_share": 0.000610266672343566,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 22,
       "dst_domain": "Dynamics",
-      "row_share": 0.0003120832978693222,
+      "row_share": 0.0003122294602688012,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 17,
       "dst_domain": "Util",
-      "row_share": 0.00024115527562629444,
+      "row_share": 0.00024126821929861908,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 15,
       "dst_domain": "RingTheory",
-      "row_share": 0.00021278406672908332,
+      "row_share": 0.00021288372291054626,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 3,
       "dst_domain": "Analysis",
-      "row_share": 4.2556813345816665e-05,
+      "row_share": 4.257674458210925e-05,
       "src_domain": "SetTheory"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Control",
-      "row_share": 1.4185604448605555e-05,
+      "row_share": 1.4192248194036418e-05,
       "src_domain": "SetTheory"
     },
     {
-      "dependency_pair_count": 47407,
+      "dependency_pair_count": 47075,
       "dst_domain": "Tactic",
-      "row_share": 0.6782311367993362,
+      "row_share": 0.6766955121754881,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 10878,
       "dst_domain": "Algebra",
-      "row_share": 0.15562677043692238,
+      "row_share": 0.15636949084322802,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 4898,
       "dst_domain": "Data",
-      "row_share": 0.0700735357234828,
+      "row_share": 0.07040795791047351,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 2182,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.03121691607771324,
+      "row_share": 0.03136589713365725,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 2032,
       "dst_domain": "Order",
-      "row_share": 0.029070931929382815,
+      "row_share": 0.02920967139119685,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 656,
       "dst_domain": "Util",
-      "row_share": 0.00938510400869839,
+      "row_share": 0.009429893913693472,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 543,
       "dst_domain": "Topology",
-      "row_share": 0.007768462616956136,
+      "row_share": 0.007805537187706638,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 449,
       "dst_domain": "Analysis",
-      "row_share": 0.006423645884002404,
+      "row_share": 0.006454302389098123,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 422,
       "dst_domain": "Lean",
-      "row_share": 0.0060373687373029275,
+      "row_share": 0.006066181755455251,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 214,
       "dst_domain": "Combinatorics",
-      "row_share": 0.003061604051618072,
+      "row_share": 0.0030762153925768337,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 77,
       "dst_domain": "Logic",
-      "row_share": 0.0011016051961429511,
+      "row_share": 0.0011068625477963373,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 70,
       "dst_domain": "SetTheory",
-      "row_share": 0.0010014592692208647,
+      "row_share": 0.001006238679814852,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 53,
       "dst_domain": "NumberTheory",
-      "row_share": 0.0007582477324100833,
+      "row_share": 0.0007618664290026737,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 10,
       "dst_domain": "Control",
-      "row_share": 0.00014306560988869497,
+      "row_share": 0.00014374838283069316,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 6,
       "dst_domain": "RingTheory",
-      "row_share": 8.583936593321697e-05,
+      "row_share": 8.62490296984159e-05,
       "src_domain": "Tactic"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "GroupTheory",
-      "row_share": 1.4306560988869495e-05,
+      "row_share": 1.4374838283069316e-05,
       "src_domain": "Tactic"
     },
     {
-      "dependency_pair_count": 150,
+      "dependency_pair_count": 149,
       "dst_domain": "Testing",
-      "row_share": 0.4601226993865031,
+      "row_share": 0.4584615384615385,
       "src_domain": "Testing"
     },
     {
       "dependency_pair_count": 93,
       "dst_domain": "Data",
-      "row_share": 0.2852760736196319,
+      "row_share": 0.28615384615384615,
       "src_domain": "Testing"
     },
     {
       "dependency_pair_count": 49,
       "dst_domain": "Algebra",
-      "row_share": 0.15030674846625766,
+      "row_share": 0.15076923076923077,
       "src_domain": "Testing"
     },
     {
       "dependency_pair_count": 31,
       "dst_domain": "Order",
-      "row_share": 0.0950920245398773,
+      "row_share": 0.09538461538461539,
       "src_domain": "Testing"
     },
     {
       "dependency_pair_count": 3,
       "dst_domain": "Logic",
-      "row_share": 0.009202453987730062,
+      "row_share": 0.009230769230769232,
       "src_domain": "Testing"
     },
     {
-      "dependency_pair_count": 332583,
+      "dependency_pair_count": 332581,
       "dst_domain": "Topology",
-      "row_share": 0.3915163972058003,
+      "row_share": 0.3915149645897687,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 190061,
       "dst_domain": "Algebra",
-      "row_share": 0.22373963181921988,
+      "row_share": 0.22374015859263166,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 140063,
       "dst_domain": "Data",
-      "row_share": 0.16488203288152434,
+      "row_share": 0.16488242108038875,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 113058,
       "dst_domain": "Order",
-      "row_share": 0.1330917720848431,
+      "row_share": 0.13309208543660062,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 31895,
       "dst_domain": "CategoryTheory",
-      "row_share": 0.037546764232925314,
+      "row_share": 0.037546852633165075,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 16051,
       "dst_domain": "Analysis",
-      "row_share": 0.018895222219867825,
+      "row_share": 0.01889526670684849,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 11217,
       "dst_domain": "Logic",
-      "row_share": 0.013204641931359876,
+      "row_share": 0.013204673020417388,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 3501,
       "dst_domain": "Tactic",
-      "row_share": 0.004121373932574746,
+      "row_share": 0.004121383635952686,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 2769,
       "dst_domain": "RingTheory",
-      "row_share": 0.0032596642157382096,
+      "row_share": 0.003259671890303624,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 2418,
       "dst_domain": "Combinatorics",
-      "row_share": 0.00284646734332069,
+      "row_share": 0.002846474045053869,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 2396,
       "dst_domain": "LinearAlgebra",
-      "row_share": 0.0028205689638529253,
+      "row_share": 0.002820575604610864,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 1720,
       "dst_domain": "GroupTheory",
-      "row_share": 0.0020247823947525173,
+      "row_share": 0.002024787161907632,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 658,
       "dst_domain": "SetTheory",
-      "row_share": 0.0007745969858995096,
+      "row_share": 0.0007745988096135011,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 610,
       "dst_domain": "AlgebraicTopology",
-      "row_share": 0.0007180914306971137,
+      "row_share": 0.0007180931213742183,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 195,
       "dst_domain": "MeasureTheory",
-      "row_share": 0.00022955381800973307,
+      "row_share": 0.0002295543584720862,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 133,
       "dst_domain": "Util",
-      "row_share": 0.00015656747587330512,
+      "row_share": 0.00015656784449634596,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 59,
       "dst_domain": "NumberTheory",
-      "row_share": 6.945474493627822e-05,
+      "row_share": 6.945490846078505e-05,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 30,
       "dst_domain": "Control",
-      "row_share": 3.53159720014974e-05,
+      "row_share": 3.531605514955172e-05,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 24,
       "dst_domain": "FieldTheory",
-      "row_share": 2.8252777601197916e-05,
+      "row_share": 2.8252844119641376e-05,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 24,
       "dst_domain": "Lean",
-      "row_share": 2.8252777601197916e-05,
+      "row_share": 2.8252844119641376e-05,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 7,
       "dst_domain": "Geometry",
-      "row_share": 8.24039346701606e-06,
+      "row_share": 8.240412868228735e-06,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "AlgebraicGeometry",
-      "row_share": 1.1771990667165798e-06,
+      "row_share": 1.1772018383183908e-06,
       "src_domain": "Topology"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Dynamics",
-      "row_share": 1.1771990667165798e-06,
+      "row_share": 1.1772018383183908e-06,
       "src_domain": "Topology"
     },
     {
-      "dependency_pair_count": 1706,
+      "dependency_pair_count": 1666,
       "dst_domain": "Util",
-      "row_share": 0.9907084785133565,
+      "row_share": 0.990487514863258,
       "src_domain": "Util"
     },
     {
       "dependency_pair_count": 10,
       "dst_domain": "Lean",
-      "row_share": 0.005807200929152149,
+      "row_share": 0.005945303210463734,
       "src_domain": "Util"
     },
     {
       "dependency_pair_count": 5,
       "dst_domain": "Data",
-      "row_share": 0.0029036004645760743,
+      "row_share": 0.002972651605231867,
       "src_domain": "Util"
     },
     {
       "dependency_pair_count": 1,
       "dst_domain": "Tactic",
-      "row_share": 0.0005807200929152149,
+      "row_share": 0.0005945303210463733,
       "src_domain": "Util"
     }
   ],
@@ -2761,274 +2734,274 @@
     {
       "alpha": 1.7528246262662295,
       "domain": "Algebra",
-      "edge_count": 1938616,
-      "effective_target_domains": 2.7753605834152966,
-      "gini": 0.9136806309183318,
-      "internal_dependency_share": 0.7308837851333116,
+      "edge_count": 1938571,
+      "effective_target_domains": 2.7754061495777878,
+      "gini": 0.9136781598969039,
+      "internal_dependency_share": 0.7308775381453658,
       "node_count": 100546,
       "outbound_domain_diversity": 21,
       "rank_exponent_beta": 1.2637094752748474,
       "rank_r_squared": 0.9942395353984388,
-      "reference_entropy_proxy": 0.30012391642720687,
-      "reference_entropy_raw": 1.0207806787264075,
+      "reference_entropy_proxy": 0.3001287435421165,
+      "reference_entropy_raw": 1.0207970966969993,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 80846,
+      "reused_target_count": 80803,
       "tail_n": 17443,
-      "top_10pct_share": 0.8996103405728623,
-      "top_1pct_share": 0.6813639214780028,
-      "top_5pct_share": 0.848583216067545,
+      "top_10pct_share": 0.8995982091963617,
+      "top_1pct_share": 0.6813797379616222,
+      "top_5pct_share": 0.8485626783852642,
       "xmin": 6.0
     },
     {
       "alpha": 1.8877893277810793,
       "domain": "CategoryTheory",
-      "edge_count": 1462941,
-      "effective_target_domains": 1.985781517939008,
-      "gini": 0.9090835120297243,
-      "internal_dependency_share": 0.8480745293214149,
+      "edge_count": 1462924,
+      "effective_target_domains": 1.985793545704859,
+      "gini": 0.9090785104337502,
+      "internal_dependency_share": 0.8480727638619642,
       "node_count": 77072,
       "outbound_domain_diversity": 17,
       "rank_exponent_beta": 1.0653365930960108,
       "rank_r_squared": 0.9970196570253467,
-      "reference_entropy_proxy": 0.2016973646286323,
-      "reference_entropy_raw": 0.6860125484630613,
+      "reference_entropy_proxy": 0.20169914544996423,
+      "reference_entropy_raw": 0.6860186053879126,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 56862,
+      "reused_target_count": 56845,
       "tail_n": 3520,
-      "top_10pct_share": 0.8891500067330125,
-      "top_1pct_share": 0.67138797805243,
-      "top_5pct_share": 0.8327991354401852,
+      "top_10pct_share": 0.8891343637810303,
+      "top_1pct_share": 0.6713957799584941,
+      "top_5pct_share": 0.8327773691593001,
       "xmin": 36.0
     },
     {
       "alpha": 1.7069411907491134,
       "domain": "Analysis",
-      "edge_count": 1812241,
-      "effective_target_domains": 4.882823305335673,
-      "gini": 0.9364010178722271,
-      "internal_dependency_share": 0.2784850359306516,
+      "edge_count": 1812238,
+      "effective_target_domains": 4.882825789514221,
+      "gini": 0.9364007242421915,
+      "internal_dependency_share": 0.27848384152633376,
       "node_count": 50134,
       "outbound_domain_diversity": 22,
       "rank_exponent_beta": 1.4077940452132385,
       "rank_r_squared": 0.9928418849439441,
-      "reference_entropy_proxy": 0.46622510275253215,
-      "reference_entropy_raw": 1.5857235987470817,
+      "reference_entropy_proxy": 0.4662252523347099,
+      "reference_entropy_raw": 1.585724107505593,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 54528,
+      "reused_target_count": 54525,
       "tail_n": 19742,
-      "top_10pct_share": 0.9309755159495895,
-      "top_1pct_share": 0.7302974604371052,
-      "top_5pct_share": 0.8938805600358892,
+      "top_10pct_share": 0.930977057097357,
+      "top_1pct_share": 0.7302986693800704,
+      "top_5pct_share": 0.8938820397762325,
       "xmin": 3.0
     },
     {
       "alpha": 1.7388225643952817,
       "domain": "Topology",
-      "edge_count": 849474,
-      "effective_target_domains": 5.083517456125726,
-      "gini": 0.8883152209232579,
-      "internal_dependency_share": 0.3915163972058003,
+      "edge_count": 849472,
+      "effective_target_domains": 5.0835256938412074,
+      "gini": 0.8883150448213295,
+      "internal_dependency_share": 0.3915149645897687,
       "node_count": 47657,
       "outbound_domain_diversity": 23,
       "rank_exponent_beta": 1.2544443447598834,
       "rank_r_squared": 0.9919446718005308,
-      "reference_entropy_proxy": 0.4780679425937696,
-      "reference_entropy_raw": 1.6260034346065428,
+      "reference_entropy_proxy": 0.47806841903603486,
+      "reference_entropy_raw": 1.626005055080728,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 48329,
+      "reused_target_count": 48327,
       "tail_n": 17275,
-      "top_10pct_share": 0.870064298613024,
-      "top_1pct_share": 0.611460739233926,
-      "top_5pct_share": 0.805589105728957,
+      "top_10pct_share": 0.8700663470956076,
+      "top_1pct_share": 0.6114621788593385,
+      "top_5pct_share": 0.8055910024109094,
       "xmin": 3.0
     },
     {
       "alpha": 1.7937176850710363,
       "domain": "Data",
-      "edge_count": 371297,
-      "effective_target_domains": 3.0025954116427873,
-      "gini": 0.8427105888361528,
-      "internal_dependency_share": 0.6006135250217481,
+      "edge_count": 371015,
+      "effective_target_domains": 3.0039408914026273,
+      "gini": 0.8428897294720725,
+      "internal_dependency_share": 0.6003099605137259,
       "node_count": 44361,
       "outbound_domain_diversity": 16,
       "rank_exponent_beta": 1.169880377510189,
       "rank_r_squared": 0.9897685306589399,
-      "reference_entropy_proxy": 0.32326176004803403,
-      "reference_entropy_raw": 1.0994770518668733,
+      "reference_entropy_proxy": 0.32339347989868406,
+      "reference_entropy_raw": 1.099925057078017,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 36325,
+      "reused_target_count": 36046,
       "tail_n": 10804,
-      "top_10pct_share": 0.8228291637153007,
-      "top_1pct_share": 0.5244777092193043,
-      "top_5pct_share": 0.7485732445993369,
+      "top_10pct_share": 0.822699890839993,
+      "top_1pct_share": 0.523606862256243,
+      "top_5pct_share": 0.7482365942077813,
       "xmin": 3.0
     },
     {
       "alpha": 1.7643972347329944,
       "domain": "RingTheory",
-      "edge_count": 1110191,
-      "effective_target_domains": 3.500919150368551,
-      "gini": 0.9117501716395406,
-      "internal_dependency_share": 0.2083821612677458,
+      "edge_count": 1110187,
+      "effective_target_domains": 3.5009151724467356,
+      "gini": 0.9117515212424485,
+      "internal_dependency_share": 0.20837930907135466,
       "node_count": 38103,
       "outbound_domain_diversity": 19,
       "rank_exponent_beta": 1.2586828012514362,
       "rank_r_squared": 0.9927138592500283,
-      "reference_entropy_proxy": 0.368407183648045,
-      "reference_entropy_raw": 1.2530255484092594,
+      "reference_entropy_proxy": 0.36840684957412556,
+      "reference_entropy_raw": 1.2530244121579195,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 45939,
+      "reused_target_count": 45937,
       "tail_n": 8227,
-      "top_10pct_share": 0.8963313519925851,
-      "top_1pct_share": 0.6648675768403816,
-      "top_5pct_share": 0.8452392426168109,
+      "top_10pct_share": 0.8963345814714098,
+      "top_1pct_share": 0.6648699723560085,
+      "top_5pct_share": 0.8452422880109387,
       "xmin": 8.0
     },
     {
       "alpha": 1.754422759459831,
       "domain": "Order",
-      "edge_count": 366737,
-      "effective_target_domains": 2.1897698013448785,
-      "gini": 0.8775567383330205,
-      "internal_dependency_share": 0.7651532296986668,
+      "edge_count": 366736,
+      "effective_target_domains": 2.1897728830654306,
+      "gini": 0.8775571328992171,
+      "internal_dependency_share": 0.7651525893285633,
       "node_count": 33069,
       "outbound_domain_diversity": 15,
       "rank_exponent_beta": 1.224681313706055,
       "rank_r_squared": 0.9918079390540965,
-      "reference_entropy_proxy": 0.2304472033844162,
-      "reference_entropy_raw": 0.7837964247624426,
+      "reference_entropy_proxy": 0.23044761715789516,
+      "reference_entropy_raw": 0.7837978320877158,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 25914,
+      "reused_target_count": 25913,
       "tail_n": 8108,
-      "top_10pct_share": 0.8605703814995487,
-      "top_1pct_share": 0.6064700316575639,
-      "top_5pct_share": 0.7957446344383032,
+      "top_10pct_share": 0.8605727280659657,
+      "top_1pct_share": 0.6064716853540422,
+      "top_5pct_share": 0.7957468042406527,
       "xmin": 3.0
     },
     {
       "alpha": 1.7247836473377491,
       "domain": "LinearAlgebra",
-      "edge_count": 627086,
-      "effective_target_domains": 3.0713125663690417,
-      "gini": 0.9169899860544242,
-      "internal_dependency_share": 0.18123351502026835,
+      "edge_count": 627082,
+      "effective_target_domains": 3.071301088366955,
+      "gini": 0.9169890471521167,
+      "internal_dependency_share": 0.18122829231264811,
       "node_count": 21715,
       "outbound_domain_diversity": 19,
       "rank_exponent_beta": 1.3258292230511075,
       "rank_r_squared": 0.9937532854394291,
-      "reference_entropy_proxy": 0.3299147007244593,
-      "reference_entropy_raw": 1.1221050162758845,
+      "reference_entropy_proxy": 0.3299136019431631,
+      "reference_entropy_raw": 1.122101279103817,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 25220,
+      "reused_target_count": 25216,
       "tail_n": 7281,
-      "top_10pct_share": 0.905510567928482,
-      "top_1pct_share": 0.6828712489196059,
-      "top_5pct_share": 0.856168053504623,
+      "top_10pct_share": 0.905516343955017,
+      "top_1pct_share": 0.682875604785339,
+      "top_5pct_share": 0.8561735147875398,
       "xmin": 4.0
     },
     {
       "alpha": 1.708133724355384,
       "domain": "MeasureTheory",
-      "edge_count": 544146,
-      "effective_target_domains": 6.20505574150013,
-      "gini": 0.8997707941384796,
-      "internal_dependency_share": 0.25734453620903214,
+      "edge_count": 544143,
+      "effective_target_domains": 6.2050717524113495,
+      "gini": 0.8997693062253675,
+      "internal_dependency_share": 0.2573404417588759,
       "node_count": 19372,
       "outbound_domain_diversity": 18,
       "rank_exponent_beta": 1.3379662667102363,
       "rank_r_squared": 0.9885720024423382,
-      "reference_entropy_proxy": 0.5366828787349279,
-      "reference_entropy_raw": 1.825364401936145,
+      "reference_entropy_proxy": 0.5366836373788203,
+      "reference_entropy_raw": 1.8253669822337653,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 25139,
+      "reused_target_count": 25136,
       "tail_n": 9556,
-      "top_10pct_share": 0.8853634870053257,
-      "top_1pct_share": 0.5819669720993998,
-      "top_5pct_share": 0.8237660480826837,
+      "top_10pct_share": 0.8853683682414365,
+      "top_1pct_share": 0.5819701806326646,
+      "top_5pct_share": 0.8237705897163062,
       "xmin": 3.0
     },
     {
       "alpha": 1.7771495671398068,
       "domain": "GroupTheory",
-      "edge_count": 280685,
-      "effective_target_domains": 3.6779930420216855,
-      "gini": 0.8627473692959584,
-      "internal_dependency_share": 0.23343605821472468,
+      "edge_count": 280664,
+      "effective_target_domains": 3.6779510464749587,
+      "gini": 0.8627365075729405,
+      "internal_dependency_share": 0.23337870193541033,
       "node_count": 17194,
       "outbound_domain_diversity": 16,
       "rank_exponent_beta": 1.2068116735873375,
       "rank_r_squared": 0.9911570210756188,
-      "reference_entropy_proxy": 0.38291433523353974,
-      "reference_entropy_raw": 1.3023672343972201,
+      "reference_entropy_proxy": 0.3829109781435766,
+      "reference_entropy_raw": 1.3023558162716276,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 19197,
+      "reused_target_count": 19176,
       "tail_n": 7146,
-      "top_10pct_share": 0.8402764665015943,
-      "top_1pct_share": 0.5481233411119226,
-      "top_5pct_share": 0.765634073783779,
+      "top_10pct_share": 0.8402395747228002,
+      "top_1pct_share": 0.5481643531054927,
+      "top_5pct_share": 0.7655630932360402,
       "xmin": 3.0
     },
     {
-      "alpha": 1.8298759028740046,
+      "alpha": 1.8263740596990339,
       "domain": "Tactic",
-      "edge_count": 69898,
-      "effective_target_domains": 3.1106748299168707,
-      "gini": 0.7137522336314863,
-      "internal_dependency_share": 0.6782311367993362,
+      "edge_count": 69566,
+      "effective_target_domains": 3.1217610100332327,
+      "gini": 0.7150337547808607,
+      "internal_dependency_share": 0.6766955121754881,
       "node_count": 16491,
       "outbound_domain_diversity": 16,
-      "rank_exponent_beta": 1.0263454117465998,
-      "rank_r_squared": 0.9664443322846566,
-      "reference_entropy_proxy": 0.3336588743373034,
-      "reference_entropy_raw": 1.1348396897643784,
+      "rank_exponent_beta": 1.02712339346397,
+      "rank_r_squared": 0.9663122548098362,
+      "reference_entropy_proxy": 0.3347048527742764,
+      "reference_entropy_raw": 1.1383972688854862,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 13650,
-      "tail_n": 5623,
-      "top_10pct_share": 0.6779879252625254,
-      "top_1pct_share": 0.2668745886863716,
-      "top_5pct_share": 0.5468539872385476,
+      "reused_target_count": 13356,
+      "tail_n": 5590,
+      "top_10pct_share": 0.6774717534427738,
+      "top_1pct_share": 0.26502889342494895,
+      "top_5pct_share": 0.5449357444728746,
       "xmin": 2.0
     },
     {
-      "alpha": 1.7390679173294454,
+      "alpha": 1.7390013561983846,
       "domain": "Combinatorics",
-      "edge_count": 199691,
-      "effective_target_domains": 4.555417658735826,
-      "gini": 0.8369204452415431,
-      "internal_dependency_share": 0.3641476080544441,
+      "edge_count": 199640,
+      "effective_target_domains": 4.556006423767568,
+      "gini": 0.8369389405799681,
+      "internal_dependency_share": 0.3639851733119615,
       "node_count": 15639,
       "outbound_domain_diversity": 18,
-      "rank_exponent_beta": 1.2018179391701205,
-      "rank_r_squared": 0.9842349622660773,
-      "reference_entropy_proxy": 0.44581864817716715,
-      "reference_entropy_raw": 1.5163172188763425,
+      "rank_exponent_beta": 1.2018335407466414,
+      "rank_r_squared": 0.9842350031417036,
+      "reference_entropy_proxy": 0.44585664557951105,
+      "reference_entropy_raw": 1.5164464555417045,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 18328,
-      "tail_n": 8743,
-      "top_10pct_share": 0.809380492861471,
-      "top_1pct_share": 0.4697207185100981,
-      "top_5pct_share": 0.7192512431706988,
+      "reused_target_count": 18278,
+      "tail_n": 8742,
+      "top_10pct_share": 0.8092616710078141,
+      "top_1pct_share": 0.46900420757363254,
+      "top_5pct_share": 0.718969144460028,
       "xmin": 2.0
     },
     {
       "alpha": 1.654940723573381,
       "domain": "NumberTheory",
-      "edge_count": 472117,
-      "effective_target_domains": 5.734707983608629,
-      "gini": 0.8864328552381977,
-      "internal_dependency_share": 0.12231713748922407,
+      "edge_count": 472101,
+      "effective_target_domains": 5.7346390417523345,
+      "gini": 0.8864218773560097,
+      "internal_dependency_share": 0.1222873918928365,
       "node_count": 14080,
       "outbound_domain_diversity": 21,
       "rank_exponent_beta": 1.3733457267457025,
       "rank_r_squared": 0.9828611985033983,
-      "reference_entropy_proxy": 0.5135064611103919,
-      "reference_entropy_raw": 1.7465368309952642,
+      "reference_entropy_proxy": 0.5135029264927632,
+      "reference_entropy_raw": 1.7465248090630403,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 24266,
+      "reused_target_count": 24250,
       "tail_n": 12449,
-      "top_10pct_share": 0.86888631419754,
-      "top_1pct_share": 0.5128876952111447,
-      "top_5pct_share": 0.7894653232143727,
+      "top_10pct_share": 0.8688352704188299,
+      "top_1pct_share": 0.5129050775151928,
+      "top_5pct_share": 0.7893840512941087,
       "xmin": 2.0
     },
     {
@@ -3055,190 +3028,190 @@
     {
       "alpha": 1.652792663964095,
       "domain": "Geometry",
-      "edge_count": 342279,
-      "effective_target_domains": 7.232491733518635,
-      "gini": 0.8932530438185364,
-      "internal_dependency_share": 0.18745818469727912,
+      "edge_count": 342277,
+      "effective_target_domains": 7.232504596586579,
+      "gini": 0.8932494421728241,
+      "internal_dependency_share": 0.18745343683624666,
       "node_count": 10127,
       "outbound_domain_diversity": 20,
       "rank_exponent_beta": 1.3887981296652239,
       "rank_r_squared": 0.9850572018145398,
-      "reference_entropy_proxy": 0.581731488319966,
-      "reference_entropy_raw": 1.978583614904297,
+      "reference_entropy_proxy": 0.5817320112268934,
+      "reference_entropy_raw": 1.9785853934139697,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 14560,
+      "reused_target_count": 14558,
       "tail_n": 8288,
-      "top_10pct_share": 0.8747834369038124,
-      "top_1pct_share": 0.5179751021827222,
-      "top_5pct_share": 0.7986613259942912,
+      "top_10pct_share": 0.8747885484563672,
+      "top_1pct_share": 0.5179781288254834,
+      "top_5pct_share": 0.7986659927485633,
       "xmin": 2.0
     },
     {
       "alpha": 1.712767727024965,
       "domain": "AlgebraicTopology",
-      "edge_count": 202821,
-      "effective_target_domains": 4.6393670788694905,
-      "gini": 0.8757104670441602,
-      "internal_dependency_share": 0.37122881752875686,
+      "edge_count": 202818,
+      "effective_target_domains": 4.639404384783048,
+      "gini": 0.8757043089189587,
+      "internal_dependency_share": 0.371219517005394,
       "node_count": 9601,
       "outbound_domain_diversity": 13,
       "rank_exponent_beta": 1.2459920834149152,
       "rank_r_squared": 0.987304507578593,
-      "reference_entropy_proxy": 0.45118756111945996,
-      "reference_entropy_raw": 1.5345779515180409,
+      "reference_entropy_proxy": 0.45118992532570945,
+      "reference_entropy_raw": 1.5345859926501464,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 11000,
+      "reused_target_count": 10997,
       "tail_n": 4527,
-      "top_10pct_share": 0.8465444899689875,
-      "top_1pct_share": 0.5507072739016177,
-      "top_5pct_share": 0.7643636507067808,
+      "top_10pct_share": 0.8465570117050755,
+      "top_1pct_share": 0.5507154197359209,
+      "top_5pct_share": 0.7643749568578726,
       "xmin": 3.0
     },
     {
       "alpha": 1.6498148659951184,
       "domain": "Probability",
-      "edge_count": 176861,
-      "effective_target_domains": 7.334756267089405,
-      "gini": 0.8549125473280521,
-      "internal_dependency_share": 0.14794669260040372,
+      "edge_count": 176859,
+      "effective_target_domains": 7.3347630427073485,
+      "gini": 0.854906327366175,
+      "internal_dependency_share": 0.14793705720376119,
       "node_count": 6474,
       "outbound_domain_diversity": 18,
       "rank_exponent_beta": 1.3224103357575423,
       "rank_r_squared": 0.9757623466465842,
-      "reference_entropy_proxy": 0.5858596131563136,
-      "reference_entropy_raw": 1.992624182288857,
+      "reference_entropy_proxy": 0.5858598847572019,
+      "reference_entropy_raw": 1.992625106057087,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 10671,
+      "reused_target_count": 10669,
       "tail_n": 5923,
-      "top_10pct_share": 0.8222615500308151,
-      "top_1pct_share": 0.4121259067855548,
-      "top_5pct_share": 0.7170094028643963,
+      "top_10pct_share": 0.8221464556511119,
+      "top_1pct_share": 0.41213056728806563,
+      "top_5pct_share": 0.7170175111246813,
       "xmin": 2.0
     },
     {
       "alpha": 1.6886208750100429,
       "domain": "FieldTheory",
-      "edge_count": 179984,
-      "effective_target_domains": 3.486001322963535,
-      "gini": 0.8780618202634534,
-      "internal_dependency_share": 0.17598230953862565,
+      "edge_count": 179982,
+      "effective_target_domains": 3.4859823943623303,
+      "gini": 0.8780587680985961,
+      "internal_dependency_share": 0.17597315287084264,
       "node_count": 5610,
       "outbound_domain_diversity": 16,
       "rank_exponent_beta": 1.3126131536311285,
       "rank_r_squared": 0.9874164161755732,
-      "reference_entropy_proxy": 0.3671516782113674,
-      "reference_entropy_raw": 1.248755326605369,
+      "reference_entropy_proxy": 0.36715008174300345,
+      "reference_entropy_raw": 1.2487498967013497,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 10196,
+      "reused_target_count": 10194,
       "tail_n": 5451,
-      "top_10pct_share": 0.8556149435505378,
-      "top_1pct_share": 0.526791270335141,
-      "top_5pct_share": 0.7800804515956974,
+      "top_10pct_share": 0.8556244513340223,
+      "top_1pct_share": 0.5267971241568601,
+      "top_5pct_share": 0.7800891200231134,
       "xmin": 2.0
     },
     {
       "alpha": 1.7933968298264291,
       "domain": "SetTheory",
-      "edge_count": 70494,
-      "effective_target_domains": 3.589943976033499,
-      "gini": 0.8340595759168279,
-      "internal_dependency_share": 0.509603654211706,
+      "edge_count": 70461,
+      "effective_target_domains": 3.5909592881996737,
+      "gini": 0.8341035144653388,
+      "internal_dependency_share": 0.509373979932161,
       "node_count": 5604,
       "outbound_domain_diversity": 13,
       "rank_exponent_beta": 1.1726946061075196,
       "rank_r_squared": 0.988724345218607,
-      "reference_entropy_proxy": 0.3757901860409225,
-      "reference_entropy_raw": 1.27813659681672,
+      "reference_entropy_proxy": 0.3758733276980693,
+      "reference_entropy_raw": 1.2784193780033146,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 6345,
+      "reused_target_count": 6316,
       "tail_n": 2236,
-      "top_10pct_share": 0.8064516129032258,
-      "top_1pct_share": 0.4665503447101881,
-      "top_5pct_share": 0.721352171816041,
+      "top_10pct_share": 0.8063183888959851,
+      "top_1pct_share": 0.4667688508536637,
+      "top_5pct_share": 0.7208100935269156,
       "xmin": 3.0
     },
     {
-      "alpha": 1.5885146239302808,
+      "alpha": 1.585236199248385,
       "domain": "Computability",
-      "edge_count": 43556,
-      "effective_target_domains": 3.5707462287474048,
-      "gini": 0.7464551114645848,
-      "internal_dependency_share": 0.6013637615942694,
+      "edge_count": 43501,
+      "effective_target_domains": 3.5741961723637456,
+      "gini": 0.7460520132673494,
+      "internal_dependency_share": 0.6008597503505666,
       "node_count": 4791,
       "outbound_domain_diversity": 12,
-      "rank_exponent_beta": 1.2188662095561413,
-      "rank_r_squared": 0.9499165294248458,
-      "reference_entropy_proxy": 0.37421368382526693,
-      "reference_entropy_raw": 1.2727746016086476,
+      "rank_exponent_beta": 1.2211640248416855,
+      "rank_r_squared": 0.9497543926238484,
+      "reference_entropy_proxy": 0.3744976139404135,
+      "reference_entropy_raw": 1.273740303972859,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 5150,
-      "tail_n": 5150,
-      "top_10pct_share": 0.6675314537606759,
-      "top_1pct_share": 0.22334465974836992,
-      "top_5pct_share": 0.5132932317017174,
+      "reused_target_count": 5099,
+      "tail_n": 5099,
+      "top_10pct_share": 0.6661915818027172,
+      "top_1pct_share": 0.22132824532769363,
+      "top_5pct_share": 0.511344566791568,
       "xmin": 1.0
     },
     {
       "alpha": 1.9761550445187075,
       "domain": "Logic",
-      "edge_count": 20938,
-      "effective_target_domains": 2.337679580572258,
-      "gini": 0.7616601174017703,
-      "internal_dependency_share": 0.649202407106696,
+      "edge_count": 20926,
+      "effective_target_domains": 2.3382386437086016,
+      "gini": 0.7618636610657012,
+      "internal_dependency_share": 0.649001242473478,
       "node_count": 4645,
       "outbound_domain_diversity": 7,
       "rank_exponent_beta": 0.9720715214741046,
       "rank_r_squared": 0.9935407734017102,
-      "reference_entropy_proxy": 0.24966466507393037,
-      "reference_entropy_raw": 0.849158805143011,
+      "reference_entropy_proxy": 0.2497349710287808,
+      "reference_entropy_raw": 0.8493979295725635,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 3551,
+      "reused_target_count": 3539,
       "tail_n": 970,
-      "top_10pct_share": 0.730251217881364,
-      "top_1pct_share": 0.47401853090075463,
-      "top_5pct_share": 0.6499665679625561,
+      "top_10pct_share": 0.7300009557488292,
+      "top_1pct_share": 0.4742903564943133,
+      "top_5pct_share": 0.6497180540953837,
       "xmin": 3.0
     },
     {
       "alpha": 1.7264456834020876,
       "domain": "RepresentationTheory",
-      "edge_count": 156526,
-      "effective_target_domains": 3.4969433314817606,
-      "gini": 0.8816392374821924,
-      "internal_dependency_share": 0.2140283403396241,
+      "edge_count": 156523,
+      "effective_target_domains": 3.496923908404271,
+      "gini": 0.8816168220238261,
+      "internal_dependency_share": 0.21401327600416553,
       "node_count": 4045,
       "outbound_domain_diversity": 16,
       "rank_exponent_beta": 1.2122686505555766,
       "rank_r_squared": 0.9682765457433641,
-      "reference_entropy_proxy": 0.36807309678776184,
-      "reference_entropy_raw": 1.2518892530548167,
+      "reference_entropy_proxy": 0.36807146374025745,
+      "reference_entropy_raw": 1.2518836987379207,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 6074,
+      "reused_target_count": 6071,
       "tail_n": 1213,
-      "top_10pct_share": 0.8534428784994186,
-      "top_1pct_share": 0.44961220500108606,
-      "top_5pct_share": 0.7642244738893219,
+      "top_10pct_share": 0.8534592360228209,
+      "top_1pct_share": 0.4496208224989299,
+      "top_5pct_share": 0.7642391214070775,
       "xmin": 11.0
     },
     {
       "alpha": 1.7342526892594177,
       "domain": "ModelTheory",
-      "edge_count": 43928,
-      "effective_target_domains": 3.458477715406208,
-      "gini": 0.7986614129823362,
-      "internal_dependency_share": 0.6157120743034056,
+      "edge_count": 43900,
+      "effective_target_domains": 3.460144985449213,
+      "gini": 0.7986019239981621,
+      "internal_dependency_share": 0.6154669703872437,
       "node_count": 3815,
       "outbound_domain_diversity": 17,
       "rank_exponent_beta": 1.1437650566734032,
       "rank_r_squared": 0.979096636832838,
-      "reference_entropy_proxy": 0.364821086920841,
-      "reference_entropy_raw": 1.240828525610306,
+      "reference_entropy_proxy": 0.3649627916901753,
+      "reference_entropy_raw": 1.241310491500735,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 4688,
+      "reused_target_count": 4660,
       "tail_n": 2389,
-      "top_10pct_share": 0.7523675104716809,
-      "top_1pct_share": 0.3902294663995629,
-      "top_5pct_share": 0.6411855763977418,
+      "top_10pct_share": 0.7518906605922552,
+      "top_1pct_share": 0.39047835990888385,
+      "top_5pct_share": 0.6401366742596811,
       "xmin": 2.0
     },
     {
@@ -3263,66 +3236,66 @@
       "xmin": 2.0
     },
     {
-      "alpha": 1.9647004063176086,
+      "alpha": 1.9618639950751835,
       "domain": "Lean",
-      "edge_count": 2688,
-      "effective_target_domains": 1.0324363892266326,
-      "gini": 0.6612405136473194,
-      "internal_dependency_share": 0.9951636904761905,
+      "edge_count": 2646,
+      "effective_target_domains": 1.0328795310205219,
+      "gini": 0.6675945096234952,
+      "internal_dependency_share": 0.9950869236583523,
       "node_count": 1002,
       "outbound_domain_diversity": 3,
-      "rank_exponent_beta": 1.0028014617387888,
-      "rank_r_squared": 0.9685847882165666,
-      "reference_entropy_proxy": 0.009385352238029002,
-      "reference_entropy_raw": 0.03192143545796129,
+      "rank_exponent_beta": 1.0038515971249453,
+      "rank_r_squared": 0.9687551274927656,
+      "reference_entropy_proxy": 0.00951152173888515,
+      "reference_entropy_raw": 0.03235056283391884,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 731,
-      "tail_n": 246,
-      "top_10pct_share": 0.6569940476190477,
-      "top_1pct_share": 0.2864583333333333,
-      "top_5pct_share": 0.5494791666666666,
+      "reused_target_count": 690,
+      "tail_n": 245,
+      "top_10pct_share": 0.6583522297808012,
+      "top_1pct_share": 0.2705971277399849,
+      "top_5pct_share": 0.54724111866969,
       "xmin": 2.0
     },
     {
       "alpha": 1.7895249255595291,
       "domain": "Control",
-      "edge_count": 5182,
-      "effective_target_domains": 3.9295136056972293,
-      "gini": 0.6661012235940518,
-      "internal_dependency_share": 0.5663836356619066,
+      "edge_count": 5177,
+      "effective_target_domains": 3.932549628307572,
+      "gini": 0.6657906870961512,
+      "internal_dependency_share": 0.5659648445045393,
       "node_count": 999,
       "outbound_domain_diversity": 8,
       "rank_exponent_beta": 0.9831686199908045,
       "rank_r_squared": 0.9389567232274643,
-      "reference_entropy_proxy": 0.4023629034723345,
-      "reference_entropy_raw": 1.3685156537680867,
+      "reference_entropy_proxy": 0.40258997707494587,
+      "reference_entropy_raw": 1.369287975910733,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 873,
+      "reused_target_count": 868,
       "tail_n": 497,
-      "top_10pct_share": 0.5717869548436897,
-      "top_1pct_share": 0.14067927441142417,
-      "top_5pct_share": 0.4015824006175222,
+      "top_10pct_share": 0.5696349237009851,
+      "top_1pct_share": 0.1408151439057369,
+      "top_5pct_share": 0.4019702530423025,
       "xmin": 2.0
     },
     {
-      "alpha": 1.985695104760977,
+      "alpha": 1.971870604627953,
       "domain": "Util",
-      "edge_count": 1722,
-      "effective_target_domains": 1.0623005156785459,
-      "gini": 0.560093134010506,
-      "internal_dependency_share": 0.9907084785133565,
+      "edge_count": 1682,
+      "effective_target_domains": 1.063589478386457,
+      "gini": 0.5678850917077833,
+      "internal_dependency_share": 0.990487514863258,
       "node_count": 962,
       "outbound_domain_diversity": 4,
-      "rank_exponent_beta": 0.8887314375878165,
-      "rank_r_squared": 0.9523469428196628,
-      "reference_entropy_proxy": 0.017769287535458325,
-      "reference_entropy_raw": 0.060436854239602836,
+      "rank_exponent_beta": 0.89189668749492,
+      "rank_r_squared": 0.9521307999450813,
+      "reference_entropy_proxy": 0.018125818929734874,
+      "reference_entropy_raw": 0.06164948788429659,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 637,
-      "tail_n": 190,
-      "top_10pct_share": 0.5586527293844367,
-      "top_1pct_share": 0.17305458768873402,
-      "top_5pct_share": 0.4175377468060395,
+      "reused_target_count": 602,
+      "tail_n": 186,
+      "top_10pct_share": 0.5630202140309156,
+      "top_1pct_share": 0.17717003567181927,
+      "top_5pct_share": 0.4215219976218787,
       "xmin": 2.0
     },
     {
@@ -3370,22 +3343,22 @@
     {
       "alpha": 2.452468220503875,
       "domain": "Testing",
-      "edge_count": 326,
-      "effective_target_domains": 3.5492154473955653,
-      "gini": 0.39901563204048385,
-      "internal_dependency_share": 0.4601226993865031,
+      "edge_count": 325,
+      "effective_target_domains": 3.5545559419231734,
+      "gini": 0.3999125874125875,
+      "internal_dependency_share": 0.4584615384615385,
       "node_count": 109,
       "outbound_domain_diversity": 5,
       "rank_exponent_beta": 0.6658251824888152,
       "rank_r_squared": 0.9838812115412564,
-      "reference_entropy_proxy": 0.3724354796810923,
-      "reference_entropy_raw": 1.2667265783294201,
+      "reference_entropy_proxy": 0.3728775493711528,
+      "reference_entropy_raw": 1.268230144601766,
       "reference_entropy_target_domain_count": 30,
-      "reused_target_count": 177,
+      "reused_target_count": 176,
       "tail_n": 26,
-      "top_10pct_share": 0.4049079754601227,
-      "top_1pct_share": 0.1196319018404908,
-      "top_5pct_share": 0.2883435582822086,
+      "top_10pct_share": 0.40615384615384614,
+      "top_1pct_share": 0.12,
+      "top_5pct_share": 0.28923076923076924,
       "xmin": 3.0
     },
     {
@@ -3411,9 +3384,9 @@
     }
   ],
   "headline_metrics": {
+    "constant_occurrences": 44239111422103,
     "external_targets": 10805,
     "internal_declarations": 566238,
-    "modules": 8264,
     "typed_edges": 24741186,
     "unique_dependency_pairs": 16812652
   },
@@ -3436,18 +3409,18 @@
     },
     {
       "degree_tail_alpha": 1.7451493379549194,
-      "gini_all": 0.960847913369689,
-      "gini_positive": 0.9492935021120756,
+      "gini_all": 0.9610338415341073,
+      "gini_positive": 0.9489894176462268,
       "kind": "definition",
       "node_count": 115062,
-      "positive_node_count": 88843,
+      "positive_node_count": 87894,
       "rank_exponent_beta": 1.2823783350330535,
       "rank_r_squared": 0.9915347087486966,
-      "reuse_sum": 7932172,
+      "reuse_sum": 7931163,
       "tail_n": 8780,
-      "top_10pct_share_positive": 0.9356064139809374,
-      "top_1pct_share_positive": 0.7464999498245878,
-      "top_5pct_share_positive": 0.8944915717914337,
+      "top_10pct_share_positive": 0.93516247238898,
+      "top_1pct_share_positive": 0.7451565426155029,
+      "top_5pct_share_positive": 0.8938836586765396,
       "xmin": 48.0
     },
     {

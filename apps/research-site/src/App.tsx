@@ -2,6 +2,7 @@ import { lazy, Suspense, useEffect, useState } from "react";
 
 import DomainExplorer from "./components/DomainExplorer";
 import Explorer, { type ExplorerSelection } from "./components/Explorer";
+import GraphConstruction from "./components/GraphConstruction";
 import { loadOverview } from "./data";
 import type { Claim, ExplorerKind, Overview } from "./types";
 
@@ -32,6 +33,7 @@ function App() {
           <a className="wordmark" href="#top">KR / OBSERVATORY</a>
           <div>
             <a href="#findings">研究结论</a>
+            <a href="#construction">图的构建</a>
             <a href="#domains">领域流向</a>
             <a href="#methods">数据契约</a>
             <a href="https://github.com/ider-zh/knowledge-reuse-research" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -48,10 +50,10 @@ function App() {
               不把 2,400 万条边下载到浏览器。总体结论来自完整图；站点只发布带选择规则、可追溯到源码的局部证据。
             </p>
           </div>
-          <aside className="audit-card">
-            <span className="status-dot" />
-            <div><b>Graph gates passed</b><p>{format.format(metrics.modules)} / {format.format(metrics.modules)} modules</p></div>
-            <div className="audit-warning"><b>Provenance incomplete</b><p>历史 raw manifest 未记录 extractor revision</p></div>
+          <aside className="concept-card">
+            <p className="eyebrow">GRAPH SEMANTICS</p>
+            <b>consumer declaration</b><span>→</span><b>referenced declaration</b>
+            <p>边来自精化后的证明与类型表达式；import 只负责装载环境。</p>
           </aside>
         </section>
 
@@ -60,7 +62,15 @@ function App() {
           <MetricCard number={metrics.external_targets} label="显式 external targets" detail="保留边界依赖，不伪造领域" onClick={() => open("external")} />
           <MetricCard number={metrics.typed_edges} label="唯一 typed edges" detail="TYPE 与 VALUE 分开计数" onClick={() => open("typed")} />
           <MetricCard number={metrics.unique_dependency_pairs} label="ALL dependency pairs" detail="TYPE/VALUE 对同一 pair 折叠" onClick={() => open("edges")} />
+          <MetricCard
+            number={metrics.constant_occurrences}
+            label="展开 Expr tree 常量次数"
+            detail={`精确值 ${format.format(metrics.constant_occurrences)}；不是运行时调用量`}
+            onClick={() => open("typed")}
+          />
         </section>
+
+        <GraphConstruction />
 
         <section id="findings" className="section-block findings">
           <div className="section-heading">
@@ -107,10 +117,12 @@ function App() {
 }
 
 function MetricCard({ number, label, detail, onClick }: { number: number; label: string; detail: string; onClick: () => void }) {
+  const compact = number >= 1_000_000_000_000;
+  const displayNumber = compact ? `${(number / 1_000_000_000_000).toFixed(3)} 万亿` : format.format(number);
   return (
     <button className="metric-card" onClick={onClick}>
       <span className="metric-link">OPEN SAMPLE TABLE ↗</span>
-      <strong>{format.format(number)}</strong>
+      <strong className={compact ? "compact" : ""} title={format.format(number)}>{displayNumber}</strong>
       <b>{label}</b>
       <small>{detail}</small>
     </button>

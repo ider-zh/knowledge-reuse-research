@@ -1,5 +1,6 @@
 import type {
   DomainEdgeSample,
+  ConstructionCases,
   ExternalTargetSample,
   NodeSample,
   Overview,
@@ -25,6 +26,7 @@ export const loadDomainEdges = () =>
   loadJson<SamplePayload<DomainEdgeSample>>("domain-edge-samples.json");
 export const loadTypedEdges = () =>
   loadJson<SamplePayload<TypedEdgeSample>>("typed-edge-samples.json");
+export const loadConstructionCases = () => loadJson<ConstructionCases>("construction-cases.json");
 
 export function mathlibModuleUrl(module: string): string {
   return `https://github.com/leanprover-community/mathlib4/blob/v4.32.1/${module.replaceAll(".", "/")}.lean`;

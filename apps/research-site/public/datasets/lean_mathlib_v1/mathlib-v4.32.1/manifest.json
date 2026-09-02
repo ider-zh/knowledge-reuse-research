@@ -1,9 +1,13 @@
 {
   "experiment_id": "lean_mathlib_v1",
   "files": {
+    "construction-cases.json": {
+      "bytes": 10246,
+      "sha256": "d902e80f6fa983c2d416deb7cc34e806601a0ac10ae2fca26cbcb03c61e2c24e"
+    },
     "domain-edge-samples.json": {
       "bytes": 789905,
-      "sha256": "4aad2f4b98048b25d2b087ba573f732e0546547163cfcbdb1623d8432f602111"
+      "sha256": "67916b436027eda3cae514bde84353752b37248806bee09265837e5b407f353a"
     },
     "external-targets.json": {
       "bytes": 54267,
@@ -14,12 +18,12 @@
       "sha256": "c8b30980410db4962abe411f1ad7baef5ed1bf54be9a8e9e7d0bf34527deb98f"
     },
     "overview.json": {
-      "bytes": 101756,
-      "sha256": "3528a50ff299dd50a8b0942204cc2c1c75352a2f6ffa659cfc5f56e2cd5998e9"
+      "bytes": 100662,
+      "sha256": "c3c60be415c117834923676a4d9a5a2978ac70939266eb64ecda6065b8176408"
     },
     "typed-edge-samples.json": {
-      "bytes": 1163787,
-      "sha256": "5baa9bdb4a2e2b9996f90b45311156c50ec4f45e79a6229397651c7ca475549c"
+      "bytes": 1158868,
+      "sha256": "317691a8b164729d1136d5fe13adbb64a368cd46cef1a84c0816009c07943f44"
     }
   },
   "run_kind": "full",

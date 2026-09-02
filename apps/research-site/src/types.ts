@@ -3,7 +3,7 @@ export type HeadlineMetrics = {
   external_targets: number;
   typed_edges: number;
   unique_dependency_pairs: number;
-  modules: number;
+  constant_occurrences: number;
 };
 
 export type DomainMetric = {
@@ -43,11 +43,6 @@ export type Overview = {
   snapshot_id: string;
   run_kind: string;
   headline_metrics: HeadlineMetrics;
-  audit: {
-    graph_complete: boolean;
-    provenance_complete: boolean;
-    status: string;
-  };
   domain_algorithm: Record<string, string>;
   sampling_policy: Record<string, string>;
   claims: Claim[];
@@ -125,6 +120,52 @@ export type SamplePayload<T> = {
   internal_population_count?: number;
   published_count: number;
   rows: T[];
+};
+
+export type ConstructionNode = {
+  node_id: number;
+  name: string;
+  kind: string;
+  module: string;
+  has_value: boolean;
+  type_expr_nodes: number;
+  value_expr_nodes: number | null;
+};
+
+export type ConstructionEdge = {
+  src_id: number;
+  src_name: string;
+  src_kind: string;
+  dst_id: number;
+  dst_name: string;
+  dst_kind: string;
+  edge_type: "TYPE" | "VALUE";
+  multiplicity: number;
+  is_self_loop: boolean;
+};
+
+export type ConstructionCase = {
+  case_id: string;
+  title: string;
+  summary: string;
+  source_file: string;
+  start_line: number;
+  end_line: number;
+  source_url: string;
+  code: string;
+  nodes?: ConstructionNode[];
+  edges?: ConstructionEdge[];
+  interpretation?: string;
+};
+
+export type ConstructionCases = {
+  schema_version: string;
+  snapshot_id: string;
+  edge_direction: string;
+  occurrence_unit: string;
+  stages: { stage: string; description: string }[];
+  node_cases: ConstructionCase[];
+  edge_cases: ConstructionCase[];
 };
 
 export type ExplorerKind = "nodes" | "external" | "typed" | "edges" | null;

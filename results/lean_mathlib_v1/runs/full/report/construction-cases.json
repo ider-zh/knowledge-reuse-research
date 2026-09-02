@@ -1,0 +1,222 @@
+{
+  "edge_cases": [
+    {
+      "case_id": "edge.type-value",
+      "code": "/-- The `p`-adic value of an integer `z ≠ 0` is its `p`-adic value as a rational. -/\n@[simp]\ntheorem of_nat {n : ℕ} : padicValRat p n = padicValNat p n := by simp [padicValRat]",
+      "edges": [
+        {
+          "dst_id": 567440,
+          "dst_kind": "definition",
+          "dst_name": "padicValNat",
+          "edge_type": "TYPE",
+          "is_self_loop": false,
+          "multiplicity": 1,
+          "src_id": 567511,
+          "src_kind": "theorem",
+          "src_name": "padicValRat.of_nat"
+        },
+        {
+          "dst_id": 567440,
+          "dst_kind": "definition",
+          "dst_name": "padicValNat",
+          "edge_type": "VALUE",
+          "is_self_loop": false,
+          "multiplicity": 18,
+          "src_id": 567511,
+          "src_kind": "theorem",
+          "src_name": "padicValRat.of_nat"
+        }
+      ],
+      "end_line": 165,
+      "interpretation": "TYPE multiplicity 描述 target 在命题 Expr tree 中的出现次数；VALUE multiplicity 描述它在证明 Expr tree 中的出现次数。二者不是 import 边。",
+      "source_file": "Mathlib/NumberTheory/Padics/PadicVal/Basic.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/NumberTheory/Padics/PadicVal/Basic.lean#L163-L165",
+      "start_line": 163,
+      "summary": "`padicValNat` 出现在命题中，也进入精化后的证明；两种语义分别保存。",
+      "title": "同一依赖可同时进入 TYPE 与 VALUE 层"
+    },
+    {
+      "case_id": "edge.repeated",
+      "code": "@[simp]\ntheorem constantCoeff_xInTermsOfW [hp : Fact p.Prime] [Invertible (p : R)] (n : ℕ) :\n    constantCoeff (xInTermsOfW p R n) = 0 := by\n  induction n using Nat.strongRecOn with | ind n IH => ?_\n  rw [xInTermsOfW_eq, mul_comm, map_mul, map_sub, map_sum, constantCoeff_C,\n    constantCoeff_X, zero_sub, mul_neg, neg_eq_zero, sum_eq_zero, mul_zero]\n  intro m H\n  rw [mem_range] at H\n  simp only [map_mul, map_pow, map_natCast, IH m H]\n  rw [zero_pow, mul_zero]\n  exact pow_ne_zero _ hp.1.ne_zero\n",
+      "edges": [
+        {
+          "dst_id": 561492,
+          "dst_kind": "theorem",
+          "dst_name": "map_pow",
+          "edge_type": "VALUE",
+          "is_self_loop": false,
+          "multiplicity": 3,
+          "src_id": 538840,
+          "src_kind": "theorem",
+          "src_name": "constantCoeff_xInTermsOfW"
+        }
+      ],
+      "end_line": 214,
+      "interpretation": "源码中肉眼可见的名字次数不必等于精化 Expr 的 constant occurrence；隐式参数、类型类与证明项结构均属于可复现的语义表示。",
+      "source_file": "Mathlib/RingTheory/WittVector/WittPolynomial.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/RingTheory/WittVector/WittPolynomial.lean#L203-L214",
+      "start_line": 203,
+      "summary": "`map_pow` 在该证明的精化 VALUE Expr tree 中出现三次，因此边权为 3。",
+      "title": "重复引用由 multiplicity 保留"
+    },
+    {
+      "case_id": "edge.self-loop",
+      "code": "/-- `run c` is an unsound meta function that runs `c` to completion, possibly\n  resulting in an infinite loop in the VM. -/\nunsafe def run : Computation α → α\n  | c =>\n    match destruct c with\n    | Sum.inl a => a\n    | Sum.inr ca => run ca",
+      "edges": [
+        {
+          "dst_id": 136920,
+          "dst_kind": "definition",
+          "dst_name": "Computation.run",
+          "edge_type": "VALUE",
+          "is_self_loop": true,
+          "multiplicity": 1,
+          "src_id": 136920,
+          "src_kind": "definition",
+          "src_name": "Computation.run"
+        }
+      ],
+      "end_line": 103,
+      "interpretation": "自环是递归计算依赖的真实语义边；研究复用广度时应与‘被其他 declaration 使用’分开报告。",
+      "source_file": "Mathlib/Data/Seq/Computation.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/Data/Seq/Computation.lean#L97-L103",
+      "start_line": 97,
+      "summary": "`Computation.run` 的定义体直接再次引用自身，因此形成 VALUE 自环。",
+      "title": "递归定义产生 self-loop"
+    },
+    {
+      "case_id": "edge.same-pair-weighted",
+      "code": "@[simp]\ntheorem mem {n m l : ℕ} : l ∈ Ico n m ↔ n ≤ l ∧ l < m := by\n  suffices n ≤ l ∧ l < n + (m - n) ↔ n ≤ l ∧ l < m by simp [Ico, this]\n  lia",
+      "edges": [
+        {
+          "dst_id": 250423,
+          "dst_kind": "definition",
+          "dst_name": "List.Ico",
+          "edge_type": "TYPE",
+          "is_self_loop": false,
+          "multiplicity": 1,
+          "src_id": 250446,
+          "src_kind": "theorem",
+          "src_name": "List.Ico.mem"
+        },
+        {
+          "dst_id": 250423,
+          "dst_kind": "definition",
+          "dst_name": "List.Ico",
+          "edge_type": "VALUE",
+          "is_self_loop": false,
+          "multiplicity": 4,
+          "src_id": 250446,
+          "src_kind": "theorem",
+          "src_name": "List.Ico.mem"
+        }
+      ],
+      "end_line": 63,
+      "interpretation": "ALL reuse breadth 将该 source-target pair 计为一个 consumer；occurrence intensity 则保留 TYPE 与 VALUE multiplicity 的信息。",
+      "source_file": "Mathlib/Data/List/Intervals.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/Data/List/Intervals.lean#L60-L63",
+      "start_line": 60,
+      "summary": "`List.Ico.mem` 对 `List.Ico` 贡献一个 consumer，但 TYPE 与 VALUE 各有独立权重。",
+      "title": "唯一 consumer 与引用强度是两个层级"
+    }
+  ],
+  "edge_direction": "consumer declaration → referenced declaration",
+  "node_cases": [
+    {
+      "case_id": "node.definition",
+      "code": "@[use_set_notation_for_order]\ndef Set (α : Type u) := α → Prop",
+      "end_line": 50,
+      "nodes": [
+        {
+          "has_value": true,
+          "kind": "definition",
+          "module": "Mathlib.Data.Set.Defs",
+          "name": "Set",
+          "node_id": 384132,
+          "type_expr_nodes": 3,
+          "value_expr_nodes": 5
+        }
+      ],
+      "source_file": "Mathlib/Data/Set/Defs.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/Data/Set/Defs.lean#L49-L50",
+      "start_line": 49,
+      "summary": "`def Set` 在环境中登记为 definition；其 type 与 value 分别成为可分析对象。",
+      "title": "一个 definition 形成一个命名节点"
+    },
+    {
+      "case_id": "node.inductive-constructor",
+      "code": "@[univ_out_params, pp_with_univ, stacks 0014, wikidata Q719395]\nclass Category (obj : Type u) : Type max u (v + 1) extends CategoryStruct.{v} obj where\n  /-- Identity morphisms are left identities for composition. -/\n  id_comp : ∀ {X Y : obj} (f : X ⟶ Y), 𝟙 X ≫ f = f := by cat_disch\n  /-- Identity morphisms are right identities for composition. -/\n  comp_id : ∀ {X Y : obj} (f : X ⟶ Y), f ≫ 𝟙 Y = f := by cat_disch\n  /-- Composition in a category is associative. -/\n  assoc : ∀ {W X Y Z : obj} (f : W ⟶ X) (g : X ⟶ Y) (h : Y ⟶ Z), (f ≫ g) ≫ h = f ≫ g ≫ h := by\n    cat_disch\n",
+      "end_line": 242,
+      "nodes": [
+        {
+          "has_value": false,
+          "kind": "inductive",
+          "module": "Mathlib.CategoryTheory.Category.Basic",
+          "name": "CategoryTheory.Category",
+          "node_id": 52492,
+          "type_expr_nodes": 3,
+          "value_expr_nodes": null
+        },
+        {
+          "has_value": false,
+          "kind": "constructor",
+          "module": "Mathlib.CategoryTheory.Category.Basic",
+          "name": "CategoryTheory.Category.mk",
+          "node_id": 52502,
+          "type_expr_nodes": 263,
+          "value_expr_nodes": null
+        }
+      ],
+      "source_file": "Mathlib/CategoryTheory/Category/Basic.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/CategoryTheory/Category/Basic.lean#L233-L242",
+      "start_line": 233,
+      "summary": "Lean 将 class 编译为归纳声明，并为构造方式登记 constructor；二者是不同节点。",
+      "title": "一段 class 源码产生不同 kind 的节点"
+    },
+    {
+      "case_id": "node.theorem",
+      "code": "@[simp]\ntheorem mem {n m l : ℕ} : l ∈ Ico n m ↔ n ≤ l ∧ l < m := by\n  suffices n ≤ l ∧ l < n + (m - n) ↔ n ≤ l ∧ l < m by simp [Ico, this]\n  lia",
+      "end_line": 63,
+      "nodes": [
+        {
+          "has_value": true,
+          "kind": "theorem",
+          "module": "Mathlib.Data.List.Intervals",
+          "name": "List.Ico.mem",
+          "node_id": 250446,
+          "type_expr_nodes": 49,
+          "value_expr_nodes": 612
+        }
+      ],
+      "source_file": "Mathlib/Data/List/Intervals.lean",
+      "source_url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/Data/List/Intervals.lean#L60-L63",
+      "start_line": 60,
+      "summary": "`List.Ico.mem` 的 type 是区间成员关系命题，value 是 `by` 后精化得到的证明项。",
+      "title": "theorem 的命题和证明共同属于一个节点"
+    }
+  ],
+  "occurrence_unit": "constant occurrences in the expanded elaborated Expr tree",
+  "schema_version": "lean-graph-construction-cases-v1",
+  "snapshot_id": "mathlib-v4.32.1",
+  "stages": [
+    {
+      "description": "源码定义 declaration；import 只决定环境中哪些名字可见。",
+      "stage": "Lean source"
+    },
+    {
+      "description": "读取完整名称、kind、type，以及可获得时的 value/proof。",
+      "stage": "Environment declaration"
+    },
+    {
+      "description": "分别遍历 TYPE 与 VALUE Expr，而不是搜索源码字符串。",
+      "stage": "Elaborated Expr"
+    },
+    {
+      "description": "每个唯一 (src,dst,edge_type) 保存正整数 multiplicity。",
+      "stage": "Weighted typed edge"
+    },
+    {
+      "description": "unique consumers 衡量复用广度；multiplicity 之和衡量引用强度。",
+      "stage": "Research views"
+    }
+  ]
+}

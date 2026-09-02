@@ -10,6 +10,7 @@ from typing import Any
 
 import polars as pl
 
+from knowledge_reuse.sources.lean_mathlib.construction_cases import build_construction_cases
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
     normalized_root,
@@ -230,7 +231,6 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
 
     summary = json.loads((metrics_dir / "summary.json").read_text())
     quality = json.loads((metrics_dir / "data_quality.json").read_text())
-    report_summary = json.loads((run_dir / "report-summary.json").read_text())
     claims = json.loads((run_dir / "report" / "claims.json").read_text())
     nodes = pl.read_parquet(metrics_dir / "node_metrics.parquet")
     normalized_nodes = pl.read_parquet(normalized_dir / "nodes.parquet")
@@ -250,6 +250,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     external_sample = external_target_sample(edges, external_nodes)
     edge_sample = domain_edge_sample(edges, normalized_nodes)
     typed_sample = typed_edge_sample(edges, normalized_nodes, external_nodes)
+    construction_cases = build_construction_cases(normalized_nodes, edges)
 
     files = {
         "overview.json": {
@@ -262,11 +263,6 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
                 "typed_edges": summary["edge_count"],
                 "unique_dependency_pairs": summary["all_unique_pair_count"],
                 "constant_occurrences": summary["constant_occurrence_count"],
-            },
-            "audit": {
-                "graph_complete": report_summary["graph_complete"],
-                "provenance_complete": report_summary["provenance_complete"],
-                "status": report_summary["audit_status"],
             },
             "domain_algorithm": {
                 "classification": "Mathlib.X... → X；非 Mathlib module → 第一段",
@@ -314,6 +310,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
             "published_count": typed_sample.height,
             "rows": typed_sample.to_dicts(),
         },
+        "construction-cases.json": construction_cases,
     }
     for name, payload in files.items():
         write_json(output / name, payload)

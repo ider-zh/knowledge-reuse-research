@@ -92,6 +92,7 @@ def test_typed_edge_sample_keeps_edge_type_and_external_group() -> None:
             "src_id": [1, 1, 1],
             "dst_id": [2, 2, 9],
             "edge_type": ["TYPE", "VALUE", "VALUE"],
+            "multiplicity": [1, 4, 2],
         }
     )
     sample = typed_edge_sample(edges, nodes, external)
@@ -99,3 +100,4 @@ def test_typed_edge_sample_keeps_edge_type_and_external_group() -> None:
     external_row = sample.filter(pl.col("dst_id") == 9).row(0, named=True)
     assert external_row["dst_domain"] == "EXTERNAL"
     assert external_row["is_external_target"] is True
+    assert external_row["multiplicity"] == 2

@@ -57,7 +57,12 @@ def test_report_contract_has_all_sections_and_figures() -> None:
     assert "Lean 官方语言参考：Definitions" in source
     assert "β=1 才是恰好 1/r" in source
     assert "0–1 集中度" in source
-    assert "provenance 审计不完整" in source
+    assert "provenance 审计不完整" not in source
+    assert "completeness.configured_corpus" not in source
+    assert "个模块全部成功提取" not in source
+    assert "图不是由 import 关系生成" in source
+    assert "每个唯一 <code>(src,dst,edge_type)</code> 保存一行" in source
+    assert "完整语义图保留 <code>A→A</code>" in source
 
 
 def test_points_svg_skips_missing_metrics() -> None:

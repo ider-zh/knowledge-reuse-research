@@ -6,14 +6,14 @@
       "sha256": "7b7286ae69aa8e49ea9b9aeab7e5981234d4495947ee32f82f9a1d2ed7bb4048"
     },
     {
-      "bytes": 2310,
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/manifest.json",
-      "sha256": "48b3d829fc578157f4010d570a27cf6a6199328b79e3196356e671d56df21a36"
+      "bytes": 2402,
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/full/manifest.json",
+      "sha256": "0e22b09dbd16fc72129e47b4bc0f7a8142358a0864d309f6e94b29fd8d7d0676"
     },
     {
-      "bytes": 141803,
-      "path": "data/lean_mathlib/mathlib-v4.32.1/raw/full/manifest.json",
-      "sha256": "8aea28a53fe52239db93400940416b7f92666735f989ff9016b06ac33d537fe0"
+      "bytes": 145424,
+      "path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/full/manifest.json",
+      "sha256": "8fea857f321003beaa80ad063d8fb547d3cba258320e6d2fe9fc167e9c4633df"
     },
     {
       "bytes": 400,
@@ -21,19 +21,24 @@
       "sha256": "9bccb9c6f59a728cfe665edb5b21f322499e66b607ac8417dae2e31dfeaa6183"
     },
     {
-      "bytes": 1010,
+      "bytes": 1077,
       "path": "experiments/lean_mathlib_v1/config/experiment-v1.toml",
-      "sha256": "98d911a04a04bf4ceb520de233a67d347a226783840b38d5816d94c27e288b0f"
+      "sha256": "28395bad5d1eba2b14b3a2dfa940e8a585f6026648cc1a6b461c8faca62098a0"
     },
     {
-      "bytes": 43490,
+      "bytes": 8615,
+      "path": "knowledge_reuse/sources/lean_mathlib/construction_cases.py",
+      "sha256": "b75fffc0233ab9ce41e286cecd77ddb642b344fe6648c137750023a278c3a48a"
+    },
+    {
+      "bytes": 44954,
       "path": "knowledge_reuse/sources/lean_mathlib/metrics.py",
-      "sha256": "69d683c2a75126424e734abab9dac3a10d89ef18627749b3349e026dc53e6cbd"
+      "sha256": "a50d9a73b1c38f1e5939a537ca260c3631287f4b1a711fed0f7f02eb1fc0f140"
     },
     {
-      "bytes": 126315,
+      "bytes": 128354,
       "path": "knowledge_reuse/sources/lean_mathlib/report.py",
-      "sha256": "b94e21643bed450b6337d72955086f520945ad192277372fa94855b9335255e2"
+      "sha256": "3988efd257223a9149345f47017cb77186c012d3a4921057d80c3c501a2a2fcc"
     },
     {
       "bytes": 1227,
@@ -41,74 +46,74 @@
       "sha256": "8ec1a9da88a782a280cbac7dbd6fc9372be30e240ea776e6e5086a8675af081f"
     },
     {
-      "bytes": 6286,
+      "bytes": 7595,
       "path": "results/lean_mathlib_v1/capability-probe.json",
-      "sha256": "29f09476803a264907c808ebb725bcf8bde1993d906226b7f0871b44a9493f90"
+      "sha256": "1c4a34adc07a4e24b24df68759174ca1445cbffa4e017f9e2f9154038316c204"
     },
     {
-      "bytes": 1057,
+      "bytes": 1284,
       "path": "results/lean_mathlib_v1/golden-test.json",
-      "sha256": "2ff257ec5a6c2bd03a541ae5dcacb3dfddc02f95c7519c7ae142255b7fce742d"
+      "sha256": "b9ac2d9ede3ba722722819891bc6a2037285c21f3094a23782f3c21d2291f618"
     },
     {
-      "bytes": 1210,
+      "bytes": 1305,
       "path": "metrics/data_quality.json",
-      "sha256": "a64e6accf269af18a765879443bef7f3ed6dbcc17fc41b828acc40b93aaea4b1"
+      "sha256": "bd9fe8ca8e985d6cb77eb34348c5f0f71da47ac28b327ae7cc16d8ea5f853dea"
     },
     {
       "bytes": 2114,
       "path": "metrics/domain_associations.parquet",
-      "sha256": "a15816bcf293b8cb2b2a733d2818cf422ba358fbd6abc3ae260f23ebe75a467c"
+      "sha256": "f29f0ebd34e30997cf22b6c2f19e9f6bdb86d8d68f34ef814d45a42a37b17051"
     },
     {
-      "bytes": 10703,
+      "bytes": 10704,
       "path": "metrics/domain_metrics.parquet",
-      "sha256": "b48a7fde2c7c8157ed5fc25896522694603364a4ec9fe4570da2eca009c9deee"
+      "sha256": "afb4467406f98533e33e2150b9bd8aa25afef8719f4a47714b548e84788912d6"
     },
     {
       "bytes": 5653,
       "path": "metrics/kind_reuse_metrics.parquet",
-      "sha256": "669e908792e7980fd9427af11f062b9bd26bfa7bf9871196403f74809adb01e1"
+      "sha256": "a5e6e5e847f51434ee120cefd769c5aba7c51ac49e7ebace74c82bef960d0f54"
     },
     {
-      "bytes": 5197,
+      "bytes": 5185,
       "path": "metrics/length_binned.parquet",
-      "sha256": "74455a9f7671d1460198dea34b108b08000907eb83e77068231ecb4d31aaca7a"
+      "sha256": "ff507239e146238f85867edda016e077327729d92137eb6c8925d576a26f2935"
     },
     {
       "bytes": 1955,
       "path": "metrics/length_correlations.parquet",
-      "sha256": "9a7a1c704e73fe3f0659641e2d32f6361fbe831c24d18b2f3405c24345003f85"
+      "sha256": "494bf3188cdf9a9e54bedb6cf21f9b728a7fbf32702ad06bed37d1f1fc7ca96d"
     },
     {
-      "bytes": 21513739,
+      "bytes": 23695591,
       "path": "metrics/node_metrics.parquet",
-      "sha256": "8a0140ad2272c01dcb7363e4c3dac3a1316f2dc788a75e3d9ef1344dd5e75c69"
+      "sha256": "9606f423b99b2fd8e2d8cbe826cbd26c2e706d9fcb9736e46f14b406087cd70b"
     },
     {
       "bytes": 7705,
       "path": "metrics/powerlaw_fits.parquet",
-      "sha256": "650f9b39a780e734a5345495252e8ab5f5e91f9b95de1b0175f9270d4691ea04"
+      "sha256": "d6eb3a28009a40e3ebcdde6a777389854cd2a559f8a2023baf558a1090ae50c5"
     },
     {
       "bytes": 6345,
       "path": "metrics/rank_frequency_fits.parquet",
-      "sha256": "2c1b2fb30c4e9a2d733a7acaed6622d78606dea8c975fc1bcb3240e134d2c36f"
+      "sha256": "47c678d8e2446fe53c725091c283ca8ee436a4c6e1586a1507f786c4ecdfc274"
     },
     {
       "bytes": 7318,
       "path": "metrics/regressions.parquet",
-      "sha256": "6bc837b7cb6f4147628ffea4841640bc1b90fbcdfa1425131ea605d608088e6d"
+      "sha256": "91d3e3ab3f90cd2942c687b7e3494d337af7c9884d6b02799b509ff93b8e6151"
     },
     {
       "bytes": 7358,
       "path": "metrics/stratified_regressions.parquet",
-      "sha256": "670d3a296f21b3aa44a41ce1fed844ff30958c12af6548fa47de515c74a00318"
+      "sha256": "9b628b0911b4b9507752034418c5a149d10b4dfbc3c0b5ad87180c98cde767fb"
     },
     {
-      "bytes": 3793,
+      "bytes": 3980,
       "path": "metrics/summary.json",
-      "sha256": "38540a1637345b2b8360476c1ef462dac1c1a46133de211308cbedb33103da85"
+      "sha256": "0646bd15dc6be5081f7711e03ac7cc9d8c4bf2ce93b3f6441bec977c58aa01da"
     },
     {
       "bytes": 2082,
@@ -118,22 +123,27 @@
     {
       "bytes": 4842,
       "path": "metrics/view_metrics.parquet",
-      "sha256": "52b4e9a80ad0e2a662a25d8f9d0e00356f4a45944e121398ea43d537ee3608d9"
+      "sha256": "55da1c9a87a13ced76b9e3ec5463f665a0bd43746b037626384478ef5705edcc"
     },
     {
-      "bytes": 4848,
+      "bytes": 3550,
       "path": "report/claims.json",
-      "sha256": "9763edea70c963a761bded9445796ae92a11076447b7ba0bf54d39456102df52"
+      "sha256": "ff736710f61a084a2e963aff9725b2b92df3066c2c2bd74bb0bdb48c727cf15d"
     },
     {
-      "bytes": 26187,
+      "bytes": 10246,
+      "path": "report/construction-cases.json",
+      "sha256": "d902e80f6fa983c2d416deb7cc34e806601a0ac10ae2fca26cbcb03c61e2c24e"
+    },
+    {
+      "bytes": 26559,
       "path": "report/examples.json",
-      "sha256": "d1a6016981e2f6dd875caaf96b48a89913c316a62ebc8f1454b71b016824b99e"
+      "sha256": "2c60d093ec3668b215104e8f56e47da8a00b86fd06db5e51279ae41947332305"
     },
     {
-      "bytes": 1435,
+      "bytes": 1524,
       "path": "run-manifest.json",
-      "sha256": "e72042e10dcf0658becaadcbfbf2164d8ab41e5f6615abe59788b7f1651baec5"
+      "sha256": "8f50f512e1b109baeff8269dc20851c806f1f769fe752bbdae918d95d163b62a"
     },
     {
       "bytes": 11268,
@@ -141,19 +151,19 @@
       "sha256": "b9c9f4b7e03987f15731cf322bf16d79756a0aa1fdfc8f8188360883253726aa"
     },
     {
-      "bytes": 6750,
+      "bytes": 6751,
       "path": "tables/domain_reuse_matrix.parquet",
-      "sha256": "63ddc1c300fccb15945044498b3a11f59e234d5018476de6f27e221b3ec2e31e"
+      "sha256": "ffafec95dcd1bc7abc8fd8e16addac21904439c728bb00e7eb1f302ab9955185"
     },
     {
-      "bytes": 21972,
+      "bytes": 22360,
       "path": "tables/report_examples.parquet",
-      "sha256": "b7753ea765cd0fa424178c355697f574c09ed0fd46f8c03306a5fb7dd15b7e23"
+      "sha256": "96ba154317649400d9d282b6d3da5745c842eac805cf342b1bec6927f538ae1b"
     },
     {
-      "bytes": 23815,
+      "bytes": 26627,
       "path": "tables/top_reuse.csv",
-      "sha256": "1f352edd3915d8e26b7a8ea08be485a6aff981c6ee0445e88b2ac94b486d3a03"
+      "sha256": "8827c269af2dbc48cf5e6507000babe2c54c148015c700f1db2447a04568f093"
     }
   ],
   "schema_version": "report-artifact-index-v1"

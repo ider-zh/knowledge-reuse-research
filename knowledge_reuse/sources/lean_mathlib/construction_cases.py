@@ -1,0 +1,215 @@
+"""Curated, data-verified cases explaining the Lean source-to-graph transformation."""
+
+from __future__ import annotations
+
+from typing import Any
+
+import polars as pl
+
+from knowledge_reuse.sources.lean_mathlib.layout import ROOT
+
+
+MATHLIB_TAG = "v4.32.1"
+
+
+def source_excerpt(source_file: str, start_line: int, end_line: int) -> dict[str, Any]:
+    path = ROOT / "vendor" / "mathlib4" / source_file
+    lines = path.read_text().splitlines()
+    if start_line < 1 or end_line < start_line or end_line > len(lines):
+        raise ValueError(f"invalid source excerpt {source_file}:{start_line}-{end_line}")
+    return {
+        "source_file": source_file,
+        "start_line": start_line,
+        "end_line": end_line,
+        "source_url": (
+            "https://github.com/leanprover-community/mathlib4/blob/"
+            f"{MATHLIB_TAG}/{source_file}#L{start_line}-L{end_line}"
+        ),
+        "code": "\n".join(lines[start_line - 1 : end_line]),
+    }
+
+
+def _node(nodes: pl.DataFrame, name: str) -> dict[str, Any]:
+    selected = nodes.filter(pl.col("name") == name)
+    if selected.height != 1:
+        raise ValueError(f"expected exactly one node named {name}, observed {selected.height}")
+    row = selected.row(0, named=True)
+    return {
+        "node_id": row["node_id"],
+        "name": row["name"],
+        "kind": row["kind"],
+        "module": row["module"],
+        "has_value": row["has_value"],
+        "type_expr_nodes": row["type_expr_nodes"],
+        "value_expr_nodes": row["value_expr_nodes"],
+    }
+
+
+def _edge(
+    edges: pl.DataFrame,
+    node_by_name: dict[str, dict[str, Any]],
+    src_name: str,
+    dst_name: str,
+    edge_type: str,
+) -> dict[str, Any]:
+    src, dst = node_by_name[src_name], node_by_name[dst_name]
+    selected = edges.filter(
+        (pl.col("src_id") == src["node_id"])
+        & (pl.col("dst_id") == dst["node_id"])
+        & (pl.col("edge_type") == edge_type)
+    )
+    if selected.height != 1:
+        raise ValueError(
+            f"expected one {edge_type} edge {src_name} -> {dst_name}, observed {selected.height}"
+        )
+    row = selected.row(0, named=True)
+    return {
+        "src_id": src["node_id"],
+        "src_name": src_name,
+        "src_kind": src["kind"],
+        "dst_id": dst["node_id"],
+        "dst_name": dst_name,
+        "dst_kind": dst["kind"],
+        "edge_type": edge_type,
+        "multiplicity": row["multiplicity"],
+        "is_self_loop": src["node_id"] == dst["node_id"],
+    }
+
+
+def build_construction_cases(nodes: pl.DataFrame, edges: pl.DataFrame) -> dict[str, Any]:
+    required_names = {
+        "Set",
+        "CategoryTheory.Category",
+        "CategoryTheory.Category.mk",
+        "List.Ico",
+        "List.Ico.mem",
+        "padicValNat",
+        "padicValRat.of_nat",
+        "map_pow",
+        "constantCoeff_xInTermsOfW",
+        "Computation.run",
+    }
+    node_by_name = {name: _node(nodes, name) for name in sorted(required_names)}
+
+    node_cases = [
+        {
+            "case_id": "node.definition",
+            "title": "一个 definition 形成一个命名节点",
+            "summary": "`def Set` 在环境中登记为 definition；其 type 与 value 分别成为可分析对象。",
+            **source_excerpt("Mathlib/Data/Set/Defs.lean", 49, 50),
+            "nodes": [node_by_name["Set"]],
+        },
+        {
+            "case_id": "node.inductive-constructor",
+            "title": "一段 class 源码产生不同 kind 的节点",
+            "summary": "Lean 将 class 编译为归纳声明，并为构造方式登记 constructor；二者是不同节点。",
+            **source_excerpt("Mathlib/CategoryTheory/Category/Basic.lean", 233, 242),
+            "nodes": [
+                node_by_name["CategoryTheory.Category"],
+                node_by_name["CategoryTheory.Category.mk"],
+            ],
+        },
+        {
+            "case_id": "node.theorem",
+            "title": "theorem 的命题和证明共同属于一个节点",
+            "summary": "`List.Ico.mem` 的 type 是区间成员关系命题，value 是 `by` 后精化得到的证明项。",
+            **source_excerpt("Mathlib/Data/List/Intervals.lean", 60, 63),
+            "nodes": [node_by_name["List.Ico.mem"]],
+        },
+    ]
+
+    edge_cases = [
+        {
+            "case_id": "edge.type-value",
+            "title": "同一依赖可同时进入 TYPE 与 VALUE 层",
+            "summary": "`padicValNat` 出现在命题中，也进入精化后的证明；两种语义分别保存。",
+            **source_excerpt("Mathlib/NumberTheory/Padics/PadicVal/Basic.lean", 163, 165),
+            "edges": [
+                _edge(edges, node_by_name, "padicValRat.of_nat", "padicValNat", "TYPE"),
+                _edge(edges, node_by_name, "padicValRat.of_nat", "padicValNat", "VALUE"),
+            ],
+            "interpretation": (
+                "TYPE multiplicity 描述 target 在命题 Expr tree 中的出现次数；VALUE multiplicity "
+                "描述它在证明 Expr tree 中的出现次数。二者不是 import 边。"
+            ),
+        },
+        {
+            "case_id": "edge.repeated",
+            "title": "重复引用由 multiplicity 保留",
+            "summary": "`map_pow` 在该证明的精化 VALUE Expr tree 中出现三次，因此边权为 3。",
+            **source_excerpt(
+                "Mathlib/RingTheory/WittVector/WittPolynomial.lean", 203, 214
+            ),
+            "edges": [
+                _edge(
+                    edges,
+                    node_by_name,
+                    "constantCoeff_xInTermsOfW",
+                    "map_pow",
+                    "VALUE",
+                )
+            ],
+            "interpretation": (
+                "源码中肉眼可见的名字次数不必等于精化 Expr 的 constant occurrence；隐式参数、"
+                "类型类与证明项结构均属于可复现的语义表示。"
+            ),
+        },
+        {
+            "case_id": "edge.self-loop",
+            "title": "递归定义产生 self-loop",
+            "summary": "`Computation.run` 的定义体直接再次引用自身，因此形成 VALUE 自环。",
+            **source_excerpt("Mathlib/Data/Seq/Computation.lean", 97, 103),
+            "edges": [
+                _edge(edges, node_by_name, "Computation.run", "Computation.run", "VALUE")
+            ],
+            "interpretation": (
+                "自环是递归计算依赖的真实语义边；研究复用广度时应与‘被其他 declaration 使用’"
+                "分开报告。"
+            ),
+        },
+        {
+            "case_id": "edge.same-pair-weighted",
+            "title": "唯一 consumer 与引用强度是两个层级",
+            "summary": "`List.Ico.mem` 对 `List.Ico` 贡献一个 consumer，但 TYPE 与 VALUE 各有独立权重。",
+            **source_excerpt("Mathlib/Data/List/Intervals.lean", 60, 63),
+            "edges": [
+                _edge(edges, node_by_name, "List.Ico.mem", "List.Ico", "TYPE"),
+                _edge(edges, node_by_name, "List.Ico.mem", "List.Ico", "VALUE"),
+            ],
+            "interpretation": (
+                "ALL reuse breadth 将该 source-target pair 计为一个 consumer；occurrence intensity "
+                "则保留 TYPE 与 VALUE multiplicity 的信息。"
+            ),
+        },
+    ]
+
+    return {
+        "schema_version": "lean-graph-construction-cases-v1",
+        "snapshot_id": "mathlib-v4.32.1",
+        "edge_direction": "consumer declaration → referenced declaration",
+        "occurrence_unit": "constant occurrences in the expanded elaborated Expr tree",
+        "stages": [
+            {
+                "stage": "Lean source",
+                "description": "源码定义 declaration；import 只决定环境中哪些名字可见。",
+            },
+            {
+                "stage": "Environment declaration",
+                "description": "读取完整名称、kind、type，以及可获得时的 value/proof。",
+            },
+            {
+                "stage": "Elaborated Expr",
+                "description": "分别遍历 TYPE 与 VALUE Expr，而不是搜索源码字符串。",
+            },
+            {
+                "stage": "Weighted typed edge",
+                "description": "每个唯一 (src,dst,edge_type) 保存正整数 multiplicity。",
+            },
+            {
+                "stage": "Research views",
+                "description": "unique consumers 衡量复用广度；multiplicity 之和衡量引用强度。",
+            },
+        ],
+        "node_cases": node_cases,
+        "edge_cases": edge_cases,
+    }
