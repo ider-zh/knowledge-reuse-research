@@ -11,9 +11,9 @@
       "sha256": "e4f0bca3e6f6cbcbb6b7bf39f2d96ef334b4545d040ce958d8baca8f6c898626"
     },
     {
-      "bytes": 3967,
+      "bytes": 3968,
       "path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/manifest.json",
-      "sha256": "15d9c62d240013bdf94758c02054b7a571c2bede7358859160be4254105f26d8"
+      "sha256": "ecdddbc6bbf51b85da5d692b33edaad6cf01ca78aeec017419db63235b881df3"
     },
     {
       "bytes": 400,
@@ -71,9 +71,9 @@
       "sha256": "b95b139628346abc175248843203f1e07cb130b3bbbdec7ec957c4b4ed2c05dc"
     },
     {
-      "bytes": 3768,
+      "bytes": 3763,
       "path": "metrics/length_binned.parquet",
-      "sha256": "af57cecb8a5aeda3d5e15eb54abe615742b0d5bcd416f5b77ead68e3f4f42084"
+      "sha256": "9f8dd834cb82857b2ff4d8da9149db431d33f63e9fb4f2b906d606f22912ee13"
     },
     {
       "bytes": 2012,
@@ -98,12 +98,12 @@
     {
       "bytes": 7638,
       "path": "metrics/regressions.parquet",
-      "sha256": "45974f53ccefd451a712ef961f391428033edb2036bd695c75ac9370bf9c4200"
+      "sha256": "a384f490b115329ae0c41420de686cffd791602bff0fa7855529748b94f01ec0"
     },
     {
       "bytes": 7352,
       "path": "metrics/stratified_regressions.parquet",
-      "sha256": "a5b72ba2db126a5c45f2d531f8e4b1ec728d5dab89dacf4d7c9e991400e5d90e"
+      "sha256": "7f6bcf19fa3c91aef0c89e7ca073a89ddd1521bdf3ac937c83a392c4642c03f2"
     },
     {
       "bytes": 3935,
@@ -131,9 +131,9 @@
       "sha256": "a412194481d055bc1ce53a15312808c508975f4a4508c95addb25197d5dd236f"
     },
     {
-      "bytes": 1525,
+      "bytes": 1526,
       "path": "run-manifest.json",
-      "sha256": "8409a477289bfd502ff520127f0a7b9e98cdd4213c7ac00a5886d095a996f144"
+      "sha256": "793b5ff1530da821b78df671f4344cf13ebe88d537cf5eb7f4d13b292a05d2db"
     },
     {
       "bytes": 2131,

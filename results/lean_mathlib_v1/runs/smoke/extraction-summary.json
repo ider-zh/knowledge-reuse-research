@@ -1,23 +1,23 @@
 {
   "bytes_written": 126862,
   "config_sha256": "28395bad5d1eba2b14b3a2dfa940e8a585f6026648cc1a6b461c8faca62098a0",
-  "extractor_commit": "5864b1c90946eda30fef95a58ec0464360c7816a",
-  "extractor_repository_dirty": true,
+  "extractor_commit": "bba24ca088aa53940434057aa079d6434932df4a",
+  "extractor_repository_dirty": false,
   "extractor_sha256": "48cc9b5a8f933f3f0a88b4cb019fd978c5e8ab81623ee5efd15c0fe308b6492e",
   "failed_retries": 0,
-  "finished_at": "2026-09-02T00:53:17.253017+00:00",
+  "finished_at": "2026-09-02T00:54:17.469603+00:00",
   "graph_schema_version": "lean-graph-v2",
   "module_count": 7,
-  "peak_child_rss_kib": 829512,
+  "peak_child_rss_kib": 829472,
   "record_count": 18326,
-  "records_per_second": 28116.556466571168,
+  "records_per_second": 28657.725045951735,
   "run_kind": "smoke",
   "schema_version": "raw-manifest-v1",
   "shard_count": 7,
   "shards": [
     {
       "bytes_written": 3555,
-      "duration_seconds": 0.3186004781164229,
+      "duration_seconds": 0.30542382365092635,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00000.jsonl.zst",
@@ -29,7 +29,7 @@
     },
     {
       "bytes_written": 1760,
-      "duration_seconds": 0.3243738911114633,
+      "duration_seconds": 0.3049440048635006,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00001.jsonl.zst",
@@ -41,7 +41,7 @@
     },
     {
       "bytes_written": 1602,
-      "duration_seconds": 0.3226201180368662,
+      "duration_seconds": 0.3039550273679197,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00002.jsonl.zst",
@@ -53,7 +53,7 @@
     },
     {
       "bytes_written": 55976,
-      "duration_seconds": 0.32300021685659885,
+      "duration_seconds": 0.3304086378775537,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00003.jsonl.zst",
@@ -65,7 +65,7 @@
     },
     {
       "bytes_written": 59925,
-      "duration_seconds": 0.32907318929210305,
+      "duration_seconds": 0.3306476310826838,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00004.jsonl.zst",
@@ -77,7 +77,7 @@
     },
     {
       "bytes_written": 1911,
-      "duration_seconds": 0.3155532409437001,
+      "duration_seconds": 0.306467826012522,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00005.jsonl.zst",
@@ -89,7 +89,7 @@
     },
     {
       "bytes_written": 2133,
-      "duration_seconds": 0.299227561801672,
+      "duration_seconds": 0.30641176691278815,
       "failed_retries": 0,
       "module_audits": null,
       "raw_path": "data/lean_mathlib/mathlib-v4.32.1/raw/lean-graph-v2/smoke/smoke-00006.jsonl.zst",
@@ -101,13 +101,13 @@
     }
   ],
   "snapshot_id": "mathlib-v4.32.1",
-  "started_at": "2026-09-02T00:53:16.601221+00:00",
+  "started_at": "2026-09-02T00:54:16.830116+00:00",
   "status_counts": {
     "excluded": 0,
     "failed": 0,
     "ok": 7,
     "partial": 0
   },
-  "wall_time_seconds": 0.6517867869697511,
+  "wall_time_seconds": 0.6394785339944065,
   "worker_count": 4
 }
