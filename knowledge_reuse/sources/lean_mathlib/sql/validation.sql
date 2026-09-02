@@ -8,6 +8,9 @@ FROM (
   FROM edges GROUP BY ALL HAVING count(*) > 1
 )
 UNION ALL
+SELECT 'missing_or_nonpositive_multiplicity', count(*)
+FROM edges WHERE multiplicity IS NULL OR multiplicity < 1
+UNION ALL
 SELECT 'dangling_sources', count(*)
 FROM edges e LEFT JOIN nodes n ON e.src_id = n.node_id WHERE n.node_id IS NULL
 UNION ALL

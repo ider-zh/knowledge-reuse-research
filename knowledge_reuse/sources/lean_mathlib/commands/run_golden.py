@@ -67,6 +67,11 @@ def check_golden() -> dict[str, Any]:
         for row in rows
         if row["record"] == "edge"
     )
+    weighted_edges = sorted(
+        (row["src"], row["dst"], row["edge_type"], row["multiplicity"])
+        for row in rows
+        if row["record"] == "edge"
+    )
     audits = [row for row in rows if row["record"] == "audit"]
     complexity_audits = [row for row in complexity_rows if row["record"] == "audit"]
     complexity_values = sorted(
@@ -89,12 +94,15 @@ def check_golden() -> dict[str, Any]:
     complexity_tree_sizes = [(row[0], row[2], row[6]) for row in complexity_values]
     node_set = set(nodes)
     edge_set = set(edges)
+    weighted_edge_set = set(weighted_edges)
     checks = {
         "one_successful_audit": len(audits) == 1 and audits[0]["status"] == "ok",
         "node_count": len(nodes) == expected["node_count"],
         "node_set_exact": canonical_sha256(nodes) == expected["node_set_sha256"],
         "typed_edge_count": len(edges) == expected["typed_edge_count"],
         "typed_edge_set_exact": canonical_sha256(edges) == expected["typed_edge_set_sha256"],
+        "weighted_typed_edges_exact": canonical_sha256(weighted_edges)
+        == expected["weighted_typed_edges_sha256"],
         "expression_sizes_exact": canonical_sha256(size_rows)
         == expected["expression_size_sha256"],
         "complexity_one_successful_audit": len(complexity_audits) == 1
@@ -106,6 +114,11 @@ def check_golden() -> dict[str, Any]:
         "required_nodes": set(expected["required_nodes"]) <= node_set,
         "required_typed_edges": {tuple(edge) for edge in expected["required_typed_edges"]}
         <= edge_set,
+        "required_weighted_typed_edges": {
+            tuple(edge) for edge in expected["required_weighted_typed_edges"]
+        }
+        <= weighted_edge_set,
+        "all_multiplicities_positive": all(edge[3] >= 1 for edge in weighted_edges),
         "no_duplicate_nodes": len(nodes) == len(node_set),
         "no_duplicate_typed_edges": len(edges) == len(edge_set),
     }
@@ -119,6 +132,7 @@ def check_golden() -> dict[str, Any]:
             "node_set_sha256": canonical_sha256(nodes),
             "typed_edge_count": len(edges),
             "typed_edge_set_sha256": canonical_sha256(edges),
+            "weighted_typed_edges_sha256": canonical_sha256(weighted_edges),
             "expression_size_sha256": canonical_sha256(size_rows),
             "expression_complexity_sha256": canonical_sha256(complexity_values),
         },

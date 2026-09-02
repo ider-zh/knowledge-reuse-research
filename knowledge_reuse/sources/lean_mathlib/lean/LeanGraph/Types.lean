@@ -23,8 +23,8 @@ structure DeclRecord where
   hasValue : Bool
   typeExprNodes : Nat
   valueExprNodes : Option Nat
-  typeConstants : Array String
-  valueConstants : Option (Array String)
+  typeConstants : Array (String × Nat)
+  valueConstants : Option (Array (String × Nat))
   sourceStartLine : Option Nat
   sourceStartColumn : Option Nat
   sourceEndLine : Option Nat
@@ -35,5 +35,6 @@ structure EdgeRecord where
   src : String
   dst : String
   edgeType : EdgeType
+  multiplicity : Nat
 
 end LeanGraph

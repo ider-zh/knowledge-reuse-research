@@ -24,5 +24,6 @@ def test_shared_dag_complexity_distinguishes_storage_depth_and_expansion() -> No
     )
     assert result.stdout.strip() == (
         "tree_occurrences=2417851639229258349412351 "
-        "unique_ptr_nodes=81 dag_arcs=160 max_depth=81"
+        "unique_ptr_nodes=81 dag_arcs=160 max_depth=81 "
+        "nat_occurrences=1208925819614629174706176"
     )

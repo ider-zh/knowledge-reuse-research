@@ -7,6 +7,7 @@ from knowledge_reuse.sources.lean_mathlib.metrics import (
     fit_regression,
     fit_rank_frequency,
     internal_unique_dependency_pairs,
+    with_node_metrics,
 )
 
 
@@ -58,28 +59,28 @@ def test_report_examples_bind_real_type_value_and_null_cases() -> None:
                 "src_id": 5,
                 "dst_id": 6,
                 "edge_type": "VALUE",
-                "multiplicity": None,
+                "multiplicity": 2,
             },
             {
                 "snapshot_id": "test",
                 "src_id": 7,
                 "dst_id": 8,
                 "edge_type": "TYPE",
-                "multiplicity": None,
+                "multiplicity": 1,
             },
             {
                 "snapshot_id": "test",
                 "src_id": 5,
                 "dst_id": 9,
                 "edge_type": "TYPE",
-                "multiplicity": None,
+                "multiplicity": 3,
             },
             {
                 "snapshot_id": "test",
                 "src_id": 7,
                 "dst_id": 9,
                 "edge_type": "VALUE",
-                "multiplicity": None,
+                "multiplicity": 1,
             },
         ]
     )
@@ -104,6 +105,29 @@ def test_rank_frequency_fit_recovers_zipf_slope() -> None:
     assert abs(result["beta_rank"] - 1.0) < 1e-10
     assert result["r_squared"] > 0.999999
     assert result["tail_n"] == 2_000
+
+
+def test_node_metrics_keep_unique_consumers_and_occurrence_weight_separate() -> None:
+    nodes = pl.DataFrame([_node(1, "A"), _node(2, "B"), _node(3, "C")]).drop(
+        "in_degree_all", "in_degree_type", "in_degree_value", "out_degree_all"
+    )
+    edges = pl.DataFrame(
+        {
+            "src_id": [1, 1, 3],
+            "dst_id": [2, 2, 2],
+            "edge_type": ["TYPE", "VALUE", "VALUE"],
+            "multiplicity": [2, 5, 7],
+        }
+    )
+
+    observed = with_node_metrics(nodes, edges).filter(pl.col("node_id") == 2).row(0, named=True)
+
+    assert observed["in_degree_all"] == 2
+    assert observed["in_degree_type"] == 1
+    assert observed["in_degree_value"] == 2
+    assert observed["in_occurrences_all"] == 14
+    assert observed["in_occurrences_type"] == 2
+    assert observed["in_occurrences_value"] == 12
 
 
 def test_internal_dependency_pairs_collapse_type_value_duplicates() -> None:

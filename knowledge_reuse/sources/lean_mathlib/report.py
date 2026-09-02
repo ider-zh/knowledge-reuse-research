@@ -817,7 +817,7 @@ row_share[a,b] = M[a,b] / Σ_c M[a,c]</pre>
 <tr><td>S(n): code saved per component use</td><td>本报告仅有 declaration size</td><td>Token βlength={{ complexity_analysis.token_beta }}；多层 Expr 条件系数为负</td><td><b>扩展性观察</b>：较短对象条件上更高复用；没有测量 S(n)</td></tr>
 <tr><td>Library Incompleteness / vocabulary growth</td><td>多个 mathlib commit 的 Vt、Et、C_t(r)</td><td>只有 {{ summary.snapshot_id }}</td><td><b>不可检验</b>：不能从单一横截面声称稳定核心或持续长尾</td></tr>
 </tbody></table>
-<h3>为什么只能说“经验对应”</h3><ul><li>Unix 数据是共享对象中的 reference frequency；Lean 主指标是 unique consumer declaration breadth，不保留同一 Expr 内 occurrence multiplicity。</li><li>论文 H 建立在 problem domain 的程序概率分布及渐近熵上；H*ref 只是一次快照中目标领域份额的标准化熵。</li><li>论文 S(n) 是一次复用的代码节省；Lean source/Expr length 是被复用对象自身大小，两者没有等号。</li><li>论文 incompleteness 是带前提的理论结果；历史图只能检验与“稳定核心 + 新增长尾”是否经验相容，不能证明该定理。</li></ul>
+<h3>为什么只能说“经验对应”</h3><ul><li>Unix 数据是共享对象中的 reference frequency；Lean 同时保存 unique consumer declaration breadth 与 Expr 内 constant occurrence multiplicity，但二者都不是运行时调用频率。</li><li>论文 H 建立在 problem domain 的程序概率分布及渐近熵上；H*ref 只是一次快照中目标领域份额的标准化熵。</li><li>论文 S(n) 是一次复用的代码节省；Lean source/Expr length 是被复用对象自身大小，两者没有等号。</li><li>论文 incompleteness 是带前提的理论结果；历史图只能检验与“稳定核心 + 新增长尾”是否经验相容，不能证明该定理。</li></ul>
 <p>这套操作化仍可用于后续 Wikipedia 与软件图：先统一比较 unique indegree、Top-k、Gini 与 βrank，再保留各系统自己的复杂度单位。它们可以回答“结构是否相似”，不能让 Lean Expr U、wikitext bytes 与软件 AST nodes 直接互换。</p>
 <p class="note">论文来源：Todd L. Veldhuizen, 2005, arXiv:cs/0508023v3，<a href="https://arxiv.org/abs/cs/0508023v3">摘要与版本页面</a>。</p>
 <p class="bridge">最后不再给模糊的“可能相关”，而是按五个命题逐项给出支持、部分支持、探索性支持或不可检验。</p></section>
@@ -1013,12 +1013,14 @@ def generate(run_kind: str) -> dict[str, Any]:
 
     graph_stats = pl.DataFrame(
         [
-            {"指标": "配置内模块", "数值": summary["module_count"]},
             {"指标": "内部声明节点", "数值": summary["declaration_count"]},
             {"指标": "显式外部目标", "数值": quality["external_node_count"]},
             {"指标": "TYPE 唯一边", "数值": summary["type_edge_count"]},
             {"指标": "VALUE 唯一边", "数值": summary["value_edge_count"]},
             {"指标": "全部唯一 typed edges", "数值": summary["edge_count"]},
+            {"指标": "TYPE 常量出现次数", "数值": summary["type_constant_occurrence_count"]},
+            {"指标": "VALUE 常量出现次数", "数值": summary["value_constant_occurrence_count"]},
+            {"指标": "全部常量出现次数", "数值": summary["constant_occurrence_count"]},
             {
                 "指标": "ALL union 唯一 source–target pairs",
                 "数值": summary["all_unique_pair_count"],

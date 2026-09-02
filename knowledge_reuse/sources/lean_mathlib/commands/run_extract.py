@@ -22,7 +22,7 @@ from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
     RESULTS_ROOT,
     ROOT,
-    audit_root,
+    graph_audit_root,
     raw_root,
     run_results_root,
 )
@@ -319,7 +319,7 @@ def main() -> int:
     snapshot = config["snapshot_id"]
     run_kind = "smoke" if args.smoke else "full"
     raw_dir = raw_root(snapshot, run_kind)
-    log_dir = audit_root(snapshot) / run_kind / "logs"
+    log_dir = graph_audit_root(snapshot) / run_kind / "logs"
     shards = select_shards(args.smoke, config)
     started_at = datetime.datetime.now(datetime.UTC)
     started = time.perf_counter()
@@ -336,13 +336,14 @@ def main() -> int:
         (audit for result in results for audit in result.module_audits),
         key=lambda audit: audit["module"],
     )
-    audit_path = audit_root(snapshot) / f"modules-{run_kind}.jsonl"
+    audit_path = graph_audit_root(snapshot) / f"modules-{run_kind}.jsonl"
     audit_path.parent.mkdir(parents=True, exist_ok=True)
     audit_path.write_text("".join(json.dumps(row, sort_keys=True) + "\n" for row in audits))
     record_count = sum(result.record_count for result in results)
     bytes_written = sum(result.bytes_written for result in results)
     raw_manifest = {
         "schema_version": "raw-manifest-v1",
+        "graph_schema_version": config["schema_version"],
         "snapshot_id": snapshot,
         "run_kind": run_kind,
         "extractor_commit": extractor_commit,

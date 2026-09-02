@@ -53,6 +53,20 @@ def null_statistics(frame: pl.DataFrame) -> dict[str, int]:
     return {column: frame[column].null_count() for column in frame.columns}
 
 
+def validate_weighted_edges(raw_edges: pl.DataFrame) -> None:
+    edge_key = ["snapshot_id", "src", "dst", "edge_type"]
+    duplicate_edge_keys = raw_edges.group_by(edge_key).len().filter(pl.col("len") > 1)
+    if duplicate_edge_keys.height:
+        raise ValueError(
+            "raw extractor emitted duplicate typed-edge keys; occurrence repetition must be "
+            "encoded in multiplicity"
+        )
+    if raw_edges["multiplicity"].null_count():
+        raise ValueError("lean-graph-v2 requires non-null edge multiplicity")
+    if raw_edges.filter(pl.col("multiplicity") < 1).height:
+        raise ValueError("lean-graph-v2 edge multiplicity must be positive")
+
+
 def normalize(run_kind: str) -> dict[str, Any]:
     snapshot = CONFIG["snapshot_id"]
     raw_dir = raw_root(snapshot, run_kind)
@@ -99,10 +113,10 @@ def normalize(run_kind: str) -> dict[str, Any]:
             "edge_type",
             "multiplicity",
         )
-        .unique(subset=["snapshot_id", "src", "dst", "edge_type"], keep="first")
         .collect(engine="streaming")
         .sort("src", "dst", "edge_type")
     )
+    validate_weighted_edges(raw_edges)
     all_names = (
         pl.concat(
             [nodes.select("name"), raw_edges.select(pl.col("src").alias("name")), raw_edges.select(pl.col("dst").alias("name"))]
@@ -200,11 +214,12 @@ def normalize(run_kind: str) -> dict[str, Any]:
             "sha256": file_sha256(path),
             "null_counts": null_statistics(frame),
         }
-    audit_path = audit_root(snapshot) / "modules.parquet"
+    audit_path = audit_root(snapshot) / CONFIG["schema_version"] / "modules.parquet"
     audit_path.parent.mkdir(parents=True, exist_ok=True)
     modules.write_parquet(audit_path, compression="zstd", statistics=True)
     manifest = {
         "schema_version": "normalized-manifest-v1",
+        "graph_schema_version": CONFIG["schema_version"],
         "snapshot_id": snapshot,
         "run_kind": run_kind,
         "generated_heuristic": (

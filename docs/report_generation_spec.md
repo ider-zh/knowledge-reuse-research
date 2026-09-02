@@ -210,7 +210,7 @@ Lean、图论或统计建模，但具备高中代数和比例知识的读者为�
 | `supported` | 预先定义方法和质量门禁支持的统计结论 | “复用高度集中，Gini=…” |
 | `exploratory` | 观察性、快照特定或多重比较中的发现 | “某领域表现出更高集中度” |
 | `inconclusive` | 现有证据不能区分假设或缺少必要检验 | “尚不能确认纯幂律” |
-| `not_available` | 指标未实现、输入不可用或不适用 | “multiplicity 在 v1 不可用” |
+| `not_available` | 指标未实现、输入不可用或不适用 | “该快照没有可验证的 occurrence 数据” |
 
 禁止只用颜色表达证据等级；标签必须出现在文本或可访问属性中。
 
@@ -696,7 +696,10 @@ consumer declaration → referenced declaration
 - `ALL`：TYPE 与 VALUE 的 union；
 - theorem→theorem、theorem→definition、definition→definition 等派生视图。
 
-主 edge table 是唯一 `(src, dst, edge_type)`。如果同一 Expr 中 occurrence multiplicity 未稳定实现，则必须为 null，并在正文和 robustness 中显示 `not_available`。
+主 edge table 的存储键是唯一 `(src, dst, edge_type)`，并以正整数
+`multiplicity` 保存 target constant 在 source 的对应 elaborated Expr tree 中出现的准确次数。
+无权复用广度使用不同 source 的数量；加权引用强度使用 `multiplicity` 之和。两种统计必须
+并列命名，不得把同一 source 内的重复出现解释为多个独立 consumer。
 
 ### 8.4 Proof visibility
 
@@ -734,11 +737,15 @@ Expr 计数报告必须说明当前算法：
 
 算法复杂度应报告为：对单个 Expr，pointer collection 约为 `O(U + A)`，cached recurrence 约为 `O(U + A)`；其中 U 为唯一 Expr 对象数，A 为 DAG child arcs。`Nat` 加法成本还依赖结果位宽。
 
-当前 v1 没有以下变量时，必须显示 `not_available`，不得从现有计数推断：
+没有以下变量时，必须显示 `not_available`，不得从其他计数推断：
 
 - maximum Expr depth；
 - unique pointer-node count；
-- constant occurrence multiplicity。
+
+`constant occurrence multiplicity` 采用与 Expr tree occurrence 相同的 DAG 动态规划语义：先按
+pointer identity 收集唯一 DAG 节点，再从根向子节点传播 root-to-node path count；每个 `.const`
+节点按其路径权重累加。该算法在不展开共享子树的情况下保留每个使用位置，时间约为
+`O(U + A + K)`，其中 `K` 是唯一 DAG 中 constant nodes 的数量，整数加法成本仍取决于位宽。
 
 ### 8.6 Lean 完整图与“不截断”声明
 

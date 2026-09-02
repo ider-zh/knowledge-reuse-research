@@ -25,7 +25,7 @@ RAW_SCHEMA = {
     "src": pl.String,
     "dst": pl.String,
     "edge_type": pl.String,
-    "multiplicity": pl.UInt32,
+    "multiplicity": pl.UInt64,
     "status": pl.String,
     "decl_count": pl.UInt64,
     "edge_count": pl.UInt64,

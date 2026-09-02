@@ -1,0 +1,53 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://github.com/ider-zh/knowledge-reuse-research/schemas/lean-graph-v2.json",
+  "title": "Lean declaration occurrence-weighted graph raw record v2",
+  "oneOf": [
+    {"$ref": "#/$defs/node"},
+    {"$ref": "#/$defs/edge"},
+    {"$ref": "#/$defs/audit"}
+  ],
+  "$defs": {
+    "node": {
+      "type": "object",
+      "required": ["record", "snapshot", "name", "module", "kind", "has_value", "type_expr_nodes", "type_const_unique"],
+      "properties": {
+        "record": {"const": "node"},
+        "snapshot": {"type": "string"},
+        "name": {"type": "string"},
+        "module": {"type": "string"},
+        "kind": {"type": "string"},
+        "has_value": {"type": "boolean"},
+        "type_expr_nodes": {"type": "integer", "minimum": 0},
+        "value_expr_nodes": {"type": ["integer", "null"], "minimum": 0},
+        "type_const_unique": {"type": "integer", "minimum": 0},
+        "value_const_unique": {"type": ["integer", "null"], "minimum": 0}
+      },
+      "additionalProperties": true
+    },
+    "edge": {
+      "type": "object",
+      "required": ["record", "snapshot", "src", "dst", "edge_type", "multiplicity"],
+      "properties": {
+        "record": {"const": "edge"},
+        "snapshot": {"type": "string"},
+        "src": {"type": "string"},
+        "dst": {"type": "string"},
+        "edge_type": {"enum": ["TYPE", "VALUE"]},
+        "multiplicity": {"type": "integer", "minimum": 1}
+      },
+      "additionalProperties": false
+    },
+    "audit": {
+      "type": "object",
+      "required": ["record", "module", "status"],
+      "properties": {
+        "record": {"const": "audit"},
+        "module": {"type": "string"},
+        "status": {"enum": ["ok", "partial", "failed", "excluded"]},
+        "error": {"type": ["string", "null"]}
+      },
+      "additionalProperties": true
+    }
+  }
+}

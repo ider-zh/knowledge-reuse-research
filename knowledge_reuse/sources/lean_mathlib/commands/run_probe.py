@@ -23,7 +23,7 @@ def run(*args: str) -> str:
 
 
 def main() -> int:
-    run(LAKE, "build", "LeanGraph.Compat", "LeanGraph.ProbeFixture")
+    run(LAKE, "build", "LeanGraph.Compat", "LeanGraph.ExprStats", "LeanGraph.ProbeFixture")
     normal = run(LAKE, "env", "lean", str(LEAN_ROOT / "LeanGraph" / "ProbeNormal.lean"))
     import_all = run(LAKE, "env", "lean", str(LEAN_ROOT / "LeanGraph" / "ProbeAll.lean"))
 
@@ -43,6 +43,10 @@ def main() -> int:
         "type_constant_references": "T2 kind=theorem" in import_all
         and "typeConsts=[LeanGraph.ProbeFixture.P]" in import_all,
         "value_constant_references": "LeanGraph.ProbeFixture.T1" in import_all,
+        "constant_occurrence_multiplicity": (
+            "name=LeanGraph.ProbeFixture.T1" in import_all
+            and bool(re.search(r"LeanGraph\.ProbeFixture\.P,\s+2\)", import_all))
+        ),
         "module_provenance": "module=some (LeanGraph.ProbeFixture)" in normal,
         "ordinary_import_hides_values": "T2 kind=axiom" in normal and "hasValue=false" in normal,
         "import_all_exposes_values": "T2 kind=theorem" in import_all

@@ -11,8 +11,9 @@ namespace LeanGraph
 open Lean
 open LeanGraph.Compat
 
-private def deterministicNames (names : Array Name) : Array String :=
-  names.map (·.toString)
+private def deterministicOccurrences
+    (occurrences : Array (Name × Nat)) : Array (String × Nat) :=
+  occurrences.map fun (name, count) => (name.toString, count)
 
 def extractDecl (env : Environment) (snapshot : String) (module : Name)
     (info : ConstantInfo) : DeclRecord :=
@@ -26,8 +27,9 @@ def extractDecl (env : Environment) (snapshot : String) (module : Name)
     hasValue := value?.isSome
     typeExprNodes := ExprStats.treeOccurrences info.type
     valueExprNodes := value?.map ExprStats.treeOccurrences
-    typeConstants := deterministicNames (getUsedConstants info.type)
-    valueConstants := value?.map fun value => deterministicNames (getUsedConstants value)
+    typeConstants := deterministicOccurrences (ExprStats.constantOccurrences info.type)
+    valueConstants := value?.map fun value =>
+      deterministicOccurrences (ExprStats.constantOccurrences value)
     sourceStartLine := range?.map (·.pos.line)
     sourceStartColumn := range?.map (·.pos.column)
     sourceEndLine := range?.map (·.endPos.line)
@@ -35,10 +37,10 @@ def extractDecl (env : Environment) (snapshot : String) (module : Name)
   }
 
 def DeclRecord.edges (record : DeclRecord) : Array EdgeRecord :=
-  let typeEdges := record.typeConstants.map fun dst =>
-    { snapshot := record.snapshot, src := record.name, dst, edgeType := .type }
-  let valueEdges := record.valueConstants.getD #[] |>.map fun dst =>
-    { snapshot := record.snapshot, src := record.name, dst, edgeType := .value }
+  let typeEdges := record.typeConstants.map fun (dst, multiplicity) =>
+    { snapshot := record.snapshot, src := record.name, dst, edgeType := .type, multiplicity }
+  let valueEdges := record.valueConstants.getD #[] |>.map fun (dst, multiplicity) =>
+    { snapshot := record.snapshot, src := record.name, dst, edgeType := .value, multiplicity }
   typeEdges ++ valueEdges
 
 private def optionNatJson : Option Nat → Json
@@ -68,7 +70,7 @@ def EdgeRecord.toJson (record : EdgeRecord) : Json := Json.mkObj [
   ("src", record.src),
   ("dst", record.dst),
   ("edge_type", record.edgeType.toString),
-  ("multiplicity", Json.null)
+  ("multiplicity", record.multiplicity)
 ]
 
 end LeanGraph

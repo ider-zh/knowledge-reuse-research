@@ -403,14 +403,35 @@ def with_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.DataFrame:
         pl.col("src_id").n_unique().alias("in_degree_all"),
         pl.col("src_id").filter(pl.col("edge_type") == "TYPE").n_unique().alias("in_degree_type"),
         pl.col("src_id").filter(pl.col("edge_type") == "VALUE").n_unique().alias("in_degree_value"),
+        pl.col("multiplicity").sum().alias("in_occurrences_all"),
+        pl.col("multiplicity")
+        .filter(pl.col("edge_type") == "TYPE")
+        .sum()
+        .alias("in_occurrences_type"),
+        pl.col("multiplicity")
+        .filter(pl.col("edge_type") == "VALUE")
+        .sum()
+        .alias("in_occurrences_value"),
     )
-    outdegree = edges.group_by("src_id").agg(pl.col("dst_id").n_unique().alias("out_degree_all"))
+    outdegree = edges.group_by("src_id").agg(
+        pl.col("dst_id").n_unique().alias("out_degree_all"),
+        pl.col("multiplicity").sum().alias("out_occurrences_all"),
+    )
     return (
         nodes.join(indegree, left_on="node_id", right_on="dst_id", how="left")
         .join(outdegree, left_on="node_id", right_on="src_id", how="left")
         .with_columns(
             pl.col(column).fill_null(0).cast(pl.UInt64)
-            for column in ("in_degree_all", "in_degree_type", "in_degree_value", "out_degree_all")
+            for column in (
+                "in_degree_all",
+                "in_degree_type",
+                "in_degree_value",
+                "in_occurrences_all",
+                "in_occurrences_type",
+                "in_occurrences_value",
+                "out_degree_all",
+                "out_occurrences_all",
+            )
         )
     )
 
@@ -989,10 +1010,20 @@ def analyze(run_kind: str) -> dict[str, Any]:
         "declaration_count": nodes.height,
         "declaration_counts_by_kind": dict(nodes.group_by("kind").len().sort("kind").iter_rows()),
         "edge_count": edges.height,
+        "constant_occurrence_count": int(edges["multiplicity"].sum()),
         "all_unique_pair_count": edges.select("src_id", "dst_id").unique().height,
         "type_edge_count": edges.filter(pl.col("edge_type") == "TYPE").height,
         "value_edge_count": edges.filter(pl.col("edge_type") == "VALUE").height,
+        "type_constant_occurrence_count": int(
+            edges.filter(pl.col("edge_type") == "TYPE")["multiplicity"].sum()
+        ),
+        "value_constant_occurrence_count": int(
+            edges.filter(pl.col("edge_type") == "VALUE")["multiplicity"].sum()
+        ),
         "self_loop_count": edges.filter(pl.col("src_id") == pl.col("dst_id")).height,
+        "self_loop_occurrence_count": int(
+            edges.filter(pl.col("src_id") == pl.col("dst_id"))["multiplicity"].sum()
+        ),
         "zero_indegree_fraction": float(np.count_nonzero(degree == 0) / degree.size),
         "zero_outdegree_fraction": float(
             np.count_nonzero(node_metrics["out_degree_all"].to_numpy() == 0) / nodes.height

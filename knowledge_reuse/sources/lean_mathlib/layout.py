@@ -22,6 +22,7 @@ RESULTS_ROOT = ROOT / "results" / EXPERIMENT_ID
 BENCHMARK_ROOT = RESULTS_ROOT / "benchmarks"
 SCHEMA_ROOT = ROOT / "schemas" / "lean_mathlib"
 COMPLEXITY_SCHEMA_VERSION = "expr-complexity-v2"
+GRAPH_SCHEMA_VERSION = "lean-graph-v2"
 
 
 def snapshot_root(snapshot: str) -> pathlib.Path:
@@ -29,7 +30,7 @@ def snapshot_root(snapshot: str) -> pathlib.Path:
 
 
 def raw_root(snapshot: str, run_kind: str) -> pathlib.Path:
-    return snapshot_root(snapshot) / "raw" / run_kind
+    return snapshot_root(snapshot) / "raw" / GRAPH_SCHEMA_VERSION / run_kind
 
 
 def complexity_raw_root(snapshot: str, run_kind: str) -> pathlib.Path:
@@ -37,7 +38,11 @@ def complexity_raw_root(snapshot: str, run_kind: str) -> pathlib.Path:
 
 
 def normalized_root(snapshot: str, run_kind: str) -> pathlib.Path:
-    return snapshot_root(snapshot) / "normalized" / run_kind
+    return snapshot_root(snapshot) / "normalized" / GRAPH_SCHEMA_VERSION / run_kind
+
+
+def graph_audit_root(snapshot: str) -> pathlib.Path:
+    return audit_root(snapshot) / GRAPH_SCHEMA_VERSION
 
 
 def complexity_normalized_root(snapshot: str, run_kind: str) -> pathlib.Path:

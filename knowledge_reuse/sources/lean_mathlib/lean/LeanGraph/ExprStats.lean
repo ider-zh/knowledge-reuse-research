@@ -103,4 +103,46 @@ opaque analyze (expr : Expr) : Complexity := {
 
 def treeOccurrences (expr : Expr) : Nat := (analyze expr).treeOccurrences
 
+/-- Add one expanded-tree occurrence weight to an expression DAG node. -/
+private unsafe def addOccurrenceWeight
+    (weights : PtrMap Expr Nat) (expr : Expr) (weight : Nat) : PtrMap Expr Nat :=
+  weights.insert expr ((weights.find? expr).getD 0 + weight)
+
+/--
+Count named constants in the tree obtained by expanding the expression DAG.
+
+The traversal visits each pointer-distinct Expr node once.  A forward dynamic-programming
+pass propagates the number of root-to-node paths, so a shared subtree contributes once for
+every use site without recursively expanding it.  Results are deterministic and retain
+arbitrary-precision occurrence counts.
+-/
+private unsafe def constantOccurrencesUnsafe (expr : Expr) : Array (Name × Nat) :=
+  let (_, state) := (collectPostorder expr).run {}
+  Id.run do
+    let mut weights : PtrMap Expr Nat := mkPtrMap state.postorder.size
+    let mut counts : Std.HashMap Name Nat := {}
+    weights := weights.insert expr 1
+    for current in state.postorder.reverse do
+      let weight := (weights.find? current).getD 0
+      match current with
+        | .app fn arg =>
+          weights := addOccurrenceWeight weights fn weight
+          weights := addOccurrenceWeight weights arg weight
+        | .lam _ type body _ | .forallE _ type body _ =>
+          weights := addOccurrenceWeight weights type weight
+          weights := addOccurrenceWeight weights body weight
+        | .letE _ type value body _ =>
+          weights := addOccurrenceWeight weights type weight
+          weights := addOccurrenceWeight weights value weight
+          weights := addOccurrenceWeight weights body weight
+        | .mdata _ nested | .proj _ _ nested =>
+          weights := addOccurrenceWeight weights nested weight
+        | .const name _ =>
+          counts := counts.alter name fun previous => some (previous.getD 0 + weight)
+        | .bvar _ | .fvar _ | .mvar _ | .sort _ | .lit _ => pure ()
+    return counts.toArray.qsort fun left right => Name.quickLt left.1 right.1
+
+@[implemented_by constantOccurrencesUnsafe]
+opaque constantOccurrences (expr : Expr) : Array (Name × Nat) := #[]
+
 end LeanGraph.ExprStats

@@ -261,7 +261,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
                 "external_targets": quality["external_node_count"],
                 "typed_edges": summary["edge_count"],
                 "unique_dependency_pairs": summary["all_unique_pair_count"],
-                "modules": summary["module_count"],
+                "constant_occurrences": summary["constant_occurrence_count"],
             },
             "audit": {
                 "graph_complete": report_summary["graph_complete"],

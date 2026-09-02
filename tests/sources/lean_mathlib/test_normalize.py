@@ -5,7 +5,10 @@ from knowledge_reuse.sources.lean_mathlib.commands.verify_run import (
     SemanticAccumulator,
     semantic_accumulator,
 )
-from knowledge_reuse.sources.lean_mathlib.normalize import null_statistics
+from knowledge_reuse.sources.lean_mathlib.normalize import (
+    null_statistics,
+    validate_weighted_edges,
+)
 from knowledge_reuse.sources.lean_mathlib.normalize_complexity import (
     select_graph_complexity,
 )
@@ -14,6 +17,34 @@ from knowledge_reuse.sources.lean_mathlib.normalize_complexity import (
 def test_null_statistics_counts_missing_values() -> None:
     frame = pl.DataFrame({"a": [1, None], "b": [None, None]})
     assert null_statistics(frame) == {"a": 1, "b": 2}
+
+
+def weighted_edges(multiplicities: list[int | None]) -> pl.DataFrame:
+    return pl.DataFrame(
+        {
+            "snapshot_id": ["s"] * len(multiplicities),
+            "src": ["a"] * len(multiplicities),
+            "dst": ["b"] * len(multiplicities),
+            "edge_type": ["VALUE"] * len(multiplicities),
+            "multiplicity": multiplicities,
+        },
+        schema_overrides={"multiplicity": pl.UInt64},
+    )
+
+
+def test_weighted_edges_accept_positive_multiplicity() -> None:
+    validate_weighted_edges(weighted_edges([3]))
+
+
+@pytest.mark.parametrize(
+    ("multiplicities", "message"),
+    [([2, 3], "duplicate typed-edge keys"), ([None], "non-null"), ([0], "positive")],
+)
+def test_weighted_edges_reject_lossy_or_invalid_encoding(
+    multiplicities: list[int | None], message: str
+) -> None:
+    with pytest.raises(ValueError, match=message):
+        validate_weighted_edges(weighted_edges(multiplicities))
 
 
 def test_semantic_accumulator_is_merge_order_independent() -> None:

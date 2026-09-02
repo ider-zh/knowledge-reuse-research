@@ -1,11 +1,11 @@
-schema_version = "lean-graph-v1"
+schema_version = "lean-graph-v2"
 snapshot_id = "mathlib-v4.32.1"
 mathlib_tag = "v4.32.1"
 corpus_glob = "Mathlib/**/*.lean"
 raw_format = "jsonl.zst"
 canonical_format = "parquet"
 default_workers = 8
-multiplicity = "nullable_pending_probe"
+multiplicity = "exact_expanded_expr_tree_occurrences"
 
 [extraction]
 profiled_chunk_size = 1
@@ -20,6 +20,7 @@ require_validation_before_analysis = true
 [graph]
 direction = "consumer_to_dependency"
 edge_types = ["TYPE", "VALUE"]
+edge_storage = "unique_typed_edge_with_multiplicity"
 
 [smoke]
 domains = ["Algebra", "Analysis", "Topology", "NumberTheory", "CategoryTheory"]
