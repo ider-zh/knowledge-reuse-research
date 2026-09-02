@@ -90,6 +90,74 @@ def build_construction_cases(nodes: pl.DataFrame, edges: pl.DataFrame) -> dict[s
         "Computation.run",
     }
     node_by_name = {name: _node(nodes, name) for name in sorted(required_names)}
+    set_expr_breakdown = {
+        "verification": "Lean v4.32.1 environment ConstantInfo for `Set`",
+        "type_expr": {
+            "surface": "(α : Type u) → Type u",
+            "raw": ".forallE α (.sort (u+1)) (.sort (u+1))",
+            "nodes": [
+                {
+                    "index": 1,
+                    "depth": 0,
+                    "constructor": ".forallE α",
+                    "meaning": "根节点：接收类型参数 α 的函数类型",
+                },
+                {
+                    "index": 2,
+                    "depth": 1,
+                    "constructor": ".sort (u+1)",
+                    "meaning": "参数 α 的类型 Type u",
+                },
+                {
+                    "index": 3,
+                    "depth": 1,
+                    "constructor": ".sort (u+1)",
+                    "meaning": "Set α 的结果类型 Type u",
+                },
+            ],
+        },
+        "value_expr": {
+            "surface": "fun (α : Type u) => α → Prop",
+            "raw": ".lam α (.sort (u+1)) (.forallE _ (.bvar 0) (.sort 0))",
+            "nodes": [
+                {
+                    "index": 1,
+                    "depth": 0,
+                    "constructor": ".lam α",
+                    "meaning": "根节点：以类型 α 为参数的函数",
+                },
+                {
+                    "index": 2,
+                    "depth": 1,
+                    "constructor": ".sort (u+1)",
+                    "meaning": "参数 α 的类型 Type u",
+                },
+                {
+                    "index": 3,
+                    "depth": 1,
+                    "constructor": ".forallE _",
+                    "meaning": "函数类型 α → Prop",
+                },
+                {
+                    "index": 4,
+                    "depth": 2,
+                    "constructor": ".bvar 0",
+                    "meaning": "引用最近绑定的参数 α",
+                },
+                {
+                    "index": 5,
+                    "depth": 2,
+                    "constructor": ".sort 0",
+                    "meaning": "Prop 的内部表示",
+                },
+            ],
+        },
+        "notation": "Lean 内部以 Sort (u+1) 表示 Type u，以 Sort 0 表示 Prop。",
+    }
+    if len(set_expr_breakdown["type_expr"]["nodes"]) != node_by_name["Set"]["type_expr_nodes"]:
+        raise ValueError("Set type Expr breakdown disagrees with extracted node count")
+    if len(set_expr_breakdown["value_expr"]["nodes"]) != node_by_name["Set"]["value_expr_nodes"]:
+        raise ValueError("Set value Expr breakdown disagrees with extracted node count")
 
     node_cases = [
         {
@@ -98,6 +166,7 @@ def build_construction_cases(nodes: pl.DataFrame, edges: pl.DataFrame) -> dict[s
             "summary": "`def Set` 在环境中登记为 definition；其 type 与 value 分别成为可分析对象。",
             **source_excerpt("Mathlib/Data/Set/Defs.lean", 49, 50),
             "nodes": [node_by_name["Set"]],
+            "expr_breakdown": set_expr_breakdown,
         },
         {
             "case_id": "node.inductive-constructor",

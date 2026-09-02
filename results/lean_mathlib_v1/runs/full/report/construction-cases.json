@@ -125,6 +125,70 @@
       "case_id": "node.definition",
       "code": "@[use_set_notation_for_order]\ndef Set (α : Type u) := α → Prop",
       "end_line": 50,
+      "expr_breakdown": {
+        "notation": "Lean 内部以 Sort (u+1) 表示 Type u，以 Sort 0 表示 Prop。",
+        "type_expr": {
+          "nodes": [
+            {
+              "constructor": ".forallE α",
+              "depth": 0,
+              "index": 1,
+              "meaning": "根节点：接收类型参数 α 的函数类型"
+            },
+            {
+              "constructor": ".sort (u+1)",
+              "depth": 1,
+              "index": 2,
+              "meaning": "参数 α 的类型 Type u"
+            },
+            {
+              "constructor": ".sort (u+1)",
+              "depth": 1,
+              "index": 3,
+              "meaning": "Set α 的结果类型 Type u"
+            }
+          ],
+          "raw": ".forallE α (.sort (u+1)) (.sort (u+1))",
+          "surface": "(α : Type u) → Type u"
+        },
+        "value_expr": {
+          "nodes": [
+            {
+              "constructor": ".lam α",
+              "depth": 0,
+              "index": 1,
+              "meaning": "根节点：以类型 α 为参数的函数"
+            },
+            {
+              "constructor": ".sort (u+1)",
+              "depth": 1,
+              "index": 2,
+              "meaning": "参数 α 的类型 Type u"
+            },
+            {
+              "constructor": ".forallE _",
+              "depth": 1,
+              "index": 3,
+              "meaning": "函数类型 α → Prop"
+            },
+            {
+              "constructor": ".bvar 0",
+              "depth": 2,
+              "index": 4,
+              "meaning": "引用最近绑定的参数 α"
+            },
+            {
+              "constructor": ".sort 0",
+              "depth": 2,
+              "index": 5,
+              "meaning": "Prop 的内部表示"
+            }
+          ],
+          "raw": ".lam α (.sort (u+1)) (.forallE _ (.bvar 0) (.sort 0))",
+          "surface": "fun (α : Type u) => α → Prop"
+        },
+        "verification": "Lean v4.32.1 environment ConstantInfo for `Set`"
+      },
       "nodes": [
         {
           "has_value": true,

@@ -311,6 +311,30 @@ def render_construction_cases(cases: dict[str, Any]) -> str:
                 "<th>type Expr occurrences</th><th>value Expr occurrences</th></tr></thead>"
                 f"<tbody>{''.join(rows)}</tbody></table>"
             )
+            if breakdown := case.get("expr_breakdown"):
+                layers = []
+                for key, label in (("type_expr", "TYPE Expr"), ("value_expr", "VALUE Expr")):
+                    layer = breakdown[key]
+                    expr_rows = "".join(
+                        "<tr>"
+                        f'<td>{node["index"]}</td>'
+                        f'<td>{html.escape(node["constructor"])}</td>'
+                        f'<td>{html.escape(node["meaning"])}</td>'
+                        "</tr>"
+                        for node in layer["nodes"]
+                    )
+                    layers.append(
+                        f"<h4>{label} · {len(layer['nodes'])} nodes</h4>"
+                        f"<p><code>{html.escape(layer['surface'])}</code></p>"
+                        f"<pre>{html.escape(layer['raw'])}</pre>"
+                        "<table><thead><tr><th>#</th><th>Expr constructor</th>"
+                        f"<th>meaning</th></tr></thead><tbody>{expr_rows}</tbody></table>"
+                    )
+                result += (
+                    '<div class="expr-breakdown-report"><h4>精确 Expr 构造分解</h4>'
+                    + "".join(layers)
+                    + f'<p class="note">{html.escape(breakdown["notation"])}</p></div>'
+                )
         else:
             rows = []
             for edge in case["edges"]:
@@ -910,6 +934,8 @@ padding:14px;border:1px solid var(--line);background:var(--card)}
 .construction-case{min-width:0;padding:18px;border:1px solid var(--line);background:var(--card)}
 .construction-case h3{margin-top:0}.construction-case pre{max-height:330px;font-size:.78rem}
 .construction-case table{font-size:.75rem}.source-ref{font-size:.82rem;overflow-wrap:anywhere}
+.expr-breakdown-report{margin-top:16px;padding:14px;border-left:4px solid var(--gold);background:#f5e8d6}
+.expr-breakdown-report h4{margin:12px 0 6px}.expr-breakdown-report pre{background:#fffdf8}
 svg,img{display:block;max-width:100%;height:auto;background:var(--card);margin:0}
 .figure{margin:22px 0;background:var(--card);border:1px solid var(--line);padding:10px}
 figcaption{padding:8px 10px 4px}table{border-collapse:collapse;width:100%;font-size:.82rem;

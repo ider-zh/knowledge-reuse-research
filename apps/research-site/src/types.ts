@@ -144,6 +144,26 @@ export type ConstructionEdge = {
   is_self_loop: boolean;
 };
 
+export type ExprBreakdownNode = {
+  index: number;
+  depth: number;
+  constructor: string;
+  meaning: string;
+};
+
+export type ExprBreakdownLayer = {
+  surface: string;
+  raw: string;
+  nodes: ExprBreakdownNode[];
+};
+
+export type ExprBreakdown = {
+  verification: string;
+  type_expr: ExprBreakdownLayer;
+  value_expr: ExprBreakdownLayer;
+  notation: string;
+};
+
 export type ConstructionCase = {
   case_id: string;
   title: string;
@@ -155,6 +175,7 @@ export type ConstructionCase = {
   code: string;
   nodes?: ConstructionNode[];
   edges?: ConstructionEdge[];
+  expr_breakdown?: ExprBreakdown;
   interpretation?: string;
 };
 

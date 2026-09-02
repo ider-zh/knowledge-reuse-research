@@ -1,7 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 
 import { loadConstructionCases } from "../data";
-import type { ConstructionCase, ConstructionCases, ConstructionEdge } from "../types";
+import type {
+  ConstructionCase,
+  ConstructionCases,
+  ConstructionEdge,
+  ExprBreakdownLayer,
+} from "../types";
 
 const format = new Intl.NumberFormat("en-US");
 
@@ -107,6 +112,19 @@ function NodeDiagram({ item }: { item: ConstructionCase }) {
           </dl>
         </article>
       ))}
+      {item.expr_breakdown && (
+        <section className="expr-breakdown" aria-label="Set 的具体 Expr 构造">
+          <header>
+            <div><span>EXACT EXPR BREAKDOWN</span><h5>3 和 5 具体由哪些 Expr 构造组成？</h5></div>
+            <small>{item.expr_breakdown.verification}</small>
+          </header>
+          <div className="expr-layer-grid">
+            <ExprLayer title="TYPE EXPR · 3 nodes" layer={item.expr_breakdown.type_expr} />
+            <ExprLayer title="VALUE EXPR · 5 nodes" layer={item.expr_breakdown.value_expr} />
+          </div>
+          <p>{item.expr_breakdown.notation}</p>
+        </section>
+      )}
       <aside className="node-schema-guide" aria-label="节点字段定义">
         <h5>这些字段怎样理解？</h5>
         <dl>
@@ -130,6 +148,23 @@ function NodeDiagram({ item }: { item: ConstructionCase }) {
         <p>因此，Set 的 type Expr=3、value Expr=5，表示它的精化类型树含 3 个表达式构造出现，定义体树含 5 个；两者都不是源码 Token 数或依赖边数。</p>
       </aside>
     </div>
+  );
+}
+
+function ExprLayer({ title, layer }: { title: string; layer: ExprBreakdownLayer }) {
+  return (
+    <article>
+      <span>{title}</span>
+      <b>{layer.surface}</b>
+      <code>{layer.raw}</code>
+      <ol>
+        {layer.nodes.map((node) => (
+          <li key={node.index} style={{ paddingLeft: `${12 + node.depth * 22}px` }}>
+            <i>{node.index}</i><code>{node.constructor}</code><p>{node.meaning}</p>
+          </li>
+        ))}
+      </ol>
+    </article>
   );
 }
 
