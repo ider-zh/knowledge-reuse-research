@@ -15,7 +15,15 @@ The normalized edge table contains one row per `(src_id, dst_id)` with
 `edge_type = SOURCE`. Its positive `multiplicity` is the number of distinct
 resolved source locations for the pair. Positions use LSP UTF-16 coordinates.
 
-Usages without a parent declaration remain in a separate unattributed artifact
-and do not become declaration edges. The graph does not claim TYPE/VALUE
-classification, transitive dependency, runtime call frequency, or expanded
-Expr-tree occurrence counts.
+The `.ilean` constant key's module component is retained as `target_module` in
+the atomic usage record. Lean normally obtains it from the Environment module
+index, but falls back to the current module when no index is available. It is
+therefore a module hint, not part of node identity. External-node metadata
+retains every observed hint rather than selecting an arbitrary one.
+
+Usages without a parent declaration remain in `unparented_usages.parquet`.
+Usages whose `.ilean` parent label is absent from the extracted Environment
+(for example an `example` command context) remain in
+`unresolved_parent_usages.parquet`. Neither class becomes a declaration edge.
+The graph does not claim TYPE/VALUE classification, transitive dependency,
+runtime call frequency, or expanded Expr-tree occurrence counts.

@@ -2,10 +2,17 @@ import json
 import pathlib
 
 from knowledge_reuse.sources.lean_mathlib.ilean_graph import (
+    USAGE_SCHEMA,
     SourceUsage,
     constant_identity,
     parse_ilean,
 )
+from knowledge_reuse.sources.lean_mathlib.layout import SCHEMA_ROOT
+
+
+def test_atomic_usage_schema_matches_parquet_columns() -> None:
+    schema = json.loads((SCHEMA_ROOT / "lean-source-graph-v1.json").read_text())
+    assert set(schema["required"]) == set(USAGE_SCHEMA.names)
 
 
 def test_constant_identity_keeps_global_constants_and_skips_locals() -> None:

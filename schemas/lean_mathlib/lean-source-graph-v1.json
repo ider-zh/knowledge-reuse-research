@@ -3,24 +3,30 @@
   "$id": "https://github.com/ider-zh/knowledge-reuse-research/schemas/lean-source-graph-v1.json",
   "title": "Lean resolved source-reference graph v1",
   "type": "object",
-  "required": ["snapshot_id", "module", "target_module", "target_decl", "source_range"],
+  "required": [
+    "snapshot_id",
+    "module",
+    "parent_decl",
+    "target_module",
+    "target_decl",
+    "start_line",
+    "start_character",
+    "end_line",
+    "end_character"
+  ],
   "properties": {
     "snapshot_id": {"type": "string"},
     "module": {"type": "string"},
     "parent_decl": {"type": ["string", "null"]},
-    "target_module": {"type": "string"},
+    "target_module": {
+      "type": "string",
+      "description": "Module component encoded by Lean's RefIdent.const. It is a containing-module hint when available and falls back to the current module when no module index exists."
+    },
     "target_decl": {"type": "string"},
-    "source_range": {
-      "type": "object",
-      "required": ["start_line", "start_character", "end_line", "end_character"],
-      "properties": {
-        "start_line": {"type": "integer", "minimum": 0},
-        "start_character": {"type": "integer", "minimum": 0},
-        "end_line": {"type": "integer", "minimum": 0},
-        "end_character": {"type": "integer", "minimum": 0}
-      },
-      "additionalProperties": false
-    }
+    "start_line": {"type": "integer", "minimum": 0},
+    "start_character": {"type": "integer", "minimum": 0},
+    "end_line": {"type": "integer", "minimum": 0},
+    "end_character": {"type": "integer", "minimum": 0}
   },
   "additionalProperties": false
 }

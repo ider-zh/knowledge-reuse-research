@@ -82,6 +82,8 @@ def constant_identity(encoded: str) -> tuple[str, str] | None:
     """Decode the compact constant identity used as an `.ilean` reference key."""
 
     value = json.loads(encoded)
+    if not isinstance(value, dict):
+        raise ValueError(f"invalid .ilean reference identity: {encoded}")
     constant = value.get("c")
     if not isinstance(constant, dict):
         return None
@@ -272,6 +274,9 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
     raw_dir = source_graph_raw_root(snapshot, run_kind)
     output_dir = source_graph_normalized_root(snapshot, run_kind)
     output_dir.mkdir(parents=True, exist_ok=True)
+    deprecated_unattributed_path = output_dir / "unattributed_usages.parquet"
+    if deprecated_unattributed_path.exists():
+        deprecated_unattributed_path.unlink()
     usages = pl.read_parquet(raw_dir / "usages.parquet")
     unexpected_nulls = sum(
         usages[column].null_count() for column in usages.columns if column != "parent_decl"
@@ -283,21 +288,27 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
 
     base_dir = normalized_root(snapshot, run_kind)
     base_nodes = pl.read_parquet(base_dir / "nodes.parquet").drop("node_id")
-    attributed = usages.filter(pl.col("parent_decl").is_not_null())
-    unattributed = usages.filter(pl.col("parent_decl").is_null()).sort(
+    parent_labeled = usages.filter(pl.col("parent_decl").is_not_null())
+    unparented = usages.filter(pl.col("parent_decl").is_null()).sort(
         "module", "target_decl", "start_line", "start_character"
     )
-    missing_sources = (
-        attributed.select(pl.col("parent_decl").alias("name"))
-        .unique()
-        .join(base_nodes.select("name"), on="name", how="anti")
-        .sort("name")
+    unresolved_parent_usages = (
+        parent_labeled.join(
+            base_nodes.select(pl.col("name").alias("parent_decl")),
+            on="parent_decl",
+            how="anti",
+        )
+        .with_columns(pl.lit("parent_not_in_environment").alias("exclusion_reason"))
+        .sort("parent_decl", "module", "target_decl", "start_line", "start_character")
     )
-    if missing_sources.height:
-        sample = missing_sources.head(10)["name"].to_list()
+    attributed = parent_labeled.join(
+        base_nodes.select(pl.col("name").alias("parent_decl")),
+        on="parent_decl",
+        how="semi",
+    )
+    if usages.height != attributed.height + unparented.height + unresolved_parent_usages.height:
         raise ValueError(
-            f".ilean parent declarations are absent from Environment nodes: "
-            f"count={missing_sources.height}, sample={sample}"
+            "source usages were lost while classifying declaration-parent attribution"
         )
 
     all_names = (
@@ -324,7 +335,10 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
             usages.select(pl.col("target_decl").alias("name"), "target_module")
             .unique()
             .group_by("name")
-            .agg(pl.col("target_module").sort().first()),
+            .agg(
+                pl.col("target_module").sort().alias("target_module_hints"),
+                pl.col("target_module").n_unique().alias("target_module_hint_count"),
+            ),
             on="name",
             how="left",
         )
@@ -332,7 +346,14 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
             pl.lit(snapshot).alias("snapshot_id"),
             pl.lit("not_in_extracted_corpus").alias("external_reason"),
         )
-        .select("snapshot_id", "node_id", "name", "target_module", "external_reason")
+        .select(
+            "snapshot_id",
+            "node_id",
+            "name",
+            "target_module_hints",
+            "target_module_hint_count",
+            "external_reason",
+        )
         .sort("node_id")
     )
     ids = all_names.select("node_id", "name")
@@ -380,12 +401,21 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
     if edges.filter(pl.col("multiplicity") == 0).height:
         raise ValueError("normalized source graph contains zero-multiplicity edges")
     modules = pl.read_parquet(raw_dir / "modules.parquet").sort("module")
+    target_module_ambiguity_count = (
+        usages.select("target_decl", "target_module")
+        .unique()
+        .group_by("target_decl")
+        .agg(pl.col("target_module").n_unique().alias("module_hint_count"))
+        .filter(pl.col("module_hint_count") > 1)
+        .height
+    )
 
     frames = {
         "nodes": nodes,
         "edges": edges,
         "usages": normalized_usages,
-        "unattributed_usages": unattributed,
+        "unparented_usages": unparented,
+        "unresolved_parent_usages": unresolved_parent_usages,
         "external_nodes": external_nodes,
         "modules": modules,
     }
@@ -408,8 +438,11 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
         "edge_direction": "consumer_declaration_to_resolved_target_declaration",
         "edge_type": "SOURCE",
         "multiplicity": "distinct_resolved_source_ranges",
+        "parent_labeled_usage_count": parent_labeled.height,
         "attributed_usage_count": attributed.height,
-        "unattributed_usage_count": unattributed.height,
+        "unparented_usage_count": unparented.height,
+        "unresolved_parent_usage_count": unresolved_parent_usages.height,
+        "target_names_with_multiple_module_hints": target_module_ambiguity_count,
         "edge_multiplicity_sum": edges.select(pl.col("multiplicity").sum()).item(),
         "self_loop_edge_count": edges.filter(pl.col("src_id") == pl.col("dst_id")).height,
         "self_loop_multiplicity": edges.filter(pl.col("src_id") == pl.col("dst_id")).select(
