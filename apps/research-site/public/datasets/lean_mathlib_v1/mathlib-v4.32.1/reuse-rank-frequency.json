@@ -1,0 +1,4215 @@
+{
+  "rank_definition": "positive indegree sorted descending; rank 1 is most reused",
+  "reference_definition": "Zipf reference C(r)=exp(fitted intercept)/r",
+  "reuse_unit": "distinct non-self consumer declarations",
+  "schema_version": "research-site-rank-frequency-v1",
+  "series": [
+    {
+      "beta_rank": 1.2551231901648368,
+      "display_sampling": "完整排序的 413,688 个正入度节点中，按对数间隔显示 235 个 rank；拟合使用全部 81,726 个选定高复用区间观测。",
+      "label": "全部 declaration",
+      "points": [
+        {
+          "empirical_degree": 114756,
+          "fitted_degree": 8305219.594110332,
+          "rank": 1,
+          "zipf_degree": 8305219.594110332
+        },
+        {
+          "empirical_degree": 105228,
+          "fitted_degree": 3479536.4586984296,
+          "rank": 2,
+          "zipf_degree": 4152609.797055166
+        },
+        {
+          "empirical_degree": 83559,
+          "fitted_degree": 2091727.8008101566,
+          "rank": 3,
+          "zipf_degree": 2768406.531370111
+        },
+        {
+          "empirical_degree": 82417,
+          "fitted_degree": 1457778.9100239375,
+          "rank": 4,
+          "zipf_degree": 2076304.898527583
+        },
+        {
+          "empirical_degree": 81532,
+          "fitted_degree": 1101685.5628874237,
+          "rank": 5,
+          "zipf_degree": 1661043.9188220664
+        },
+        {
+          "empirical_degree": 77932,
+          "fitted_degree": 876345.6597527429,
+          "rank": 6,
+          "zipf_degree": 1384203.2656850554
+        },
+        {
+          "empirical_degree": 77523,
+          "fitted_degree": 722185.8450124615,
+          "rank": 7,
+          "zipf_degree": 1186459.9420157617
+        },
+        {
+          "empirical_degree": 73715,
+          "fitted_degree": 610747.832573512,
+          "rank": 8,
+          "zipf_degree": 1038152.4492637916
+        },
+        {
+          "empirical_degree": 71759,
+          "fitted_degree": 526816.3163060573,
+          "rank": 9,
+          "zipf_degree": 922802.1771233702
+        },
+        {
+          "empirical_degree": 69488,
+          "fitted_degree": 461559.75030532916,
+          "rank": 10,
+          "zipf_degree": 830521.9594110332
+        },
+        {
+          "empirical_degree": 67199,
+          "fitted_degree": 409519.9001860358,
+          "rank": 11,
+          "zipf_degree": 755019.9631009393
+        },
+        {
+          "empirical_degree": 64756,
+          "fitted_degree": 367151.8421613078,
+          "rank": 12,
+          "zipf_degree": 692101.6328425277
+        },
+        {
+          "empirical_degree": 61046,
+          "fitted_degree": 332058.7937155819,
+          "rank": 13,
+          "zipf_degree": 638863.0457007948
+        },
+        {
+          "empirical_degree": 58456,
+          "fitted_degree": 302565.38664658583,
+          "rank": 14,
+          "zipf_degree": 593229.9710078809
+        },
+        {
+          "empirical_degree": 50682,
+          "fitted_degree": 277467.2353367995,
+          "rank": 15,
+          "zipf_degree": 553681.3062740222
+        },
+        {
+          "empirical_degree": 50012,
+          "fitted_degree": 255877.56307101296,
+          "rank": 16,
+          "zipf_degree": 519076.2246318958
+        },
+        {
+          "empirical_degree": 49016,
+          "fitted_degree": 237129.8051085504,
+          "rank": 17,
+          "zipf_degree": 488542.3290653137
+        },
+        {
+          "empirical_degree": 48430,
+          "fitted_degree": 220713.8003821189,
+          "rank": 18,
+          "zipf_degree": 461401.0885616851
+        },
+        {
+          "empirical_degree": 47022,
+          "fitted_degree": 206232.83924943078,
+          "rank": 19,
+          "zipf_degree": 437116.8207426491
+        },
+        {
+          "empirical_degree": 46163,
+          "fitted_degree": 193374.05361250718,
+          "rank": 20,
+          "zipf_degree": 415260.9797055166
+        },
+        {
+          "empirical_degree": 45462,
+          "fitted_degree": 181887.5698886274,
+          "rank": 21,
+          "zipf_degree": 395486.64733858727
+        },
+        {
+          "empirical_degree": 45318,
+          "fitted_degree": 171571.55293887146,
+          "rank": 22,
+          "zipf_degree": 377509.98155046965
+        },
+        {
+          "empirical_degree": 44054,
+          "fitted_degree": 162261.29368528636,
+          "rank": 23,
+          "zipf_degree": 361096.50409175357
+        },
+        {
+          "empirical_degree": 43804,
+          "fitted_degree": 153821.12492058813,
+          "rank": 24,
+          "zipf_degree": 346050.81642126385
+        },
+        {
+          "empirical_degree": 42836,
+          "fitted_degree": 139118.61884833852,
+          "rank": 26,
+          "zipf_degree": 319431.5228503974
+        },
+        {
+          "empirical_degree": 40873,
+          "fitted_degree": 132682.38392145972,
+          "rank": 27,
+          "zipf_degree": 307600.7257077901
+        },
+        {
+          "empirical_degree": 38665,
+          "fitted_degree": 126762.12616022448,
+          "rank": 28,
+          "zipf_degree": 296614.98550394044
+        },
+        {
+          "empirical_degree": 37612,
+          "fitted_degree": 121300.18954107183,
+          "rank": 29,
+          "zipf_degree": 286386.8825555287
+        },
+        {
+          "empirical_degree": 36988,
+          "fitted_degree": 111559.99163893705,
+          "rank": 31,
+          "zipf_degree": 267910.3094874301
+        },
+        {
+          "empirical_degree": 36926,
+          "fitted_degree": 107201.8987071552,
+          "rank": 32,
+          "zipf_degree": 259538.1123159479
+        },
+        {
+          "empirical_degree": 36378,
+          "fitted_degree": 99347.37943646636,
+          "rank": 34,
+          "zipf_degree": 244271.16453265684
+        },
+        {
+          "empirical_degree": 35685,
+          "fitted_degree": 95797.7944058337,
+          "rank": 35,
+          "zipf_degree": 237291.98840315235
+        },
+        {
+          "empirical_degree": 34964,
+          "fitted_degree": 89343.8718137795,
+          "rank": 37,
+          "zipf_degree": 224465.3944354144
+        },
+        {
+          "empirical_degree": 34568,
+          "fitted_degree": 83631.33598670026,
+          "rank": 39,
+          "zipf_degree": 212954.3485669316
+        },
+        {
+          "empirical_degree": 32965,
+          "fitted_degree": 78543.21977185276,
+          "rank": 41,
+          "zipf_degree": 202566.33156366664
+        },
+        {
+          "empirical_degree": 32115,
+          "fitted_degree": 73985.56264911043,
+          "rank": 43,
+          "zipf_degree": 193144.6417234961
+        },
+        {
+          "empirical_degree": 30349,
+          "fitted_degree": 69882.0691483582,
+          "rank": 45,
+          "zipf_degree": 184560.43542467404
+        },
+        {
+          "empirical_degree": 29519,
+          "fitted_degree": 66170.18093571626,
+          "rank": 47,
+          "zipf_degree": 176706.79987468792
+        },
+        {
+          "empirical_degree": 28950,
+          "fitted_degree": 62798.1462532578,
+          "rank": 49,
+          "zipf_degree": 169494.2774308231
+        },
+        {
+          "empirical_degree": 28797,
+          "fitted_degree": 59722.804451551965,
+          "rank": 51,
+          "zipf_degree": 162847.44302177124
+        },
+        {
+          "empirical_degree": 28251,
+          "fitted_degree": 55588.31853273791,
+          "rank": 54,
+          "zipf_degree": 153800.36285389506
+        },
+        {
+          "empirical_degree": 27405,
+          "fitted_degree": 53107.98041624564,
+          "rank": 56,
+          "zipf_degree": 148307.49275197022
+        },
+        {
+          "empirical_degree": 26547,
+          "fitted_degree": 49740.90626629843,
+          "rank": 59,
+          "zipf_degree": 140766.4337984802
+        },
+        {
+          "empirical_degree": 24597,
+          "fitted_degree": 46738.92771180309,
+          "rank": 62,
+          "zipf_degree": 133955.15474371504
+        },
+        {
+          "empirical_degree": 23995,
+          "fitted_degree": 44047.52636832084,
+          "rank": 65,
+          "zipf_degree": 127772.60914015897
+        },
+        {
+          "empirical_degree": 23172,
+          "fitted_degree": 41622.35867555786,
+          "rank": 68,
+          "zipf_degree": 122135.58226632842
+        },
+        {
+          "empirical_degree": 22769,
+          "fitted_degree": 39427.009311571965,
+          "rank": 71,
+          "zipf_degree": 116974.9238607089
+        },
+        {
+          "empirical_degree": 21148,
+          "fitted_degree": 36805.96808802192,
+          "rank": 75,
+          "zipf_degree": 110736.26125480443
+        },
+        {
+          "empirical_degree": 20768,
+          "fitted_degree": 35037.999821430814,
+          "rank": 78,
+          "zipf_degree": 106477.1742834658
+        },
+        {
+          "empirical_degree": 19828,
+          "fitted_degree": 32906.293889391214,
+          "rank": 82,
+          "zipf_degree": 101283.16578183332
+        },
+        {
+          "empirical_degree": 19218,
+          "fitted_degree": 30996.8279270373,
+          "rank": 86,
+          "zipf_degree": 96572.32086174806
+        },
+        {
+          "empirical_degree": 18685,
+          "fitted_degree": 29277.637352711623,
+          "rank": 90,
+          "zipf_degree": 92280.21771233702
+        },
+        {
+          "empirical_degree": 18399,
+          "fitted_degree": 27722.512865014774,
+          "rank": 94,
+          "zipf_degree": 88353.39993734396
+        },
+        {
+          "empirical_degree": 18092,
+          "fitted_degree": 26309.772661741845,
+          "rank": 98,
+          "zipf_degree": 84747.13871541155
+        },
+        {
+          "empirical_degree": 16844,
+          "fitted_degree": 24716.811252645963,
+          "rank": 103,
+          "zipf_degree": 80633.19994281876
+        },
+        {
+          "empirical_degree": 16338,
+          "fitted_degree": 23289.159163180775,
+          "rank": 108,
+          "zipf_degree": 76900.18142694753
+        },
+        {
+          "empirical_degree": 15960,
+          "fitted_degree": 22003.144670739774,
+          "rank": 113,
+          "zipf_degree": 73497.51853194984
+        },
+        {
+          "empirical_degree": 15529,
+          "fitted_degree": 20839.340234305586,
+          "rank": 118,
+          "zipf_degree": 70383.2168992401
+        },
+        {
+          "empirical_degree": 14831,
+          "fitted_degree": 19581.637929118522,
+          "rank": 124,
+          "zipf_degree": 66977.57737185752
+        },
+        {
+          "empirical_degree": 14268,
+          "fitted_degree": 18454.0543663338,
+          "rank": 130,
+          "zipf_degree": 63886.30457007948
+        },
+        {
+          "empirical_degree": 13540,
+          "fitted_degree": 17438.01146586546,
+          "rank": 136,
+          "zipf_degree": 61067.79113316421
+        },
+        {
+          "empirical_degree": 12798,
+          "fitted_degree": 16373.400187363432,
+          "rank": 143,
+          "zipf_degree": 58078.45870007225
+        },
+        {
+          "empirical_degree": 12141,
+          "fitted_degree": 15550.151976087478,
+          "rank": 149,
+          "zipf_degree": 55739.72881953243
+        },
+        {
+          "empirical_degree": 10913,
+          "fitted_degree": 14679.44302219229,
+          "rank": 156,
+          "zipf_degree": 53238.5871417329
+        },
+        {
+          "empirical_degree": 10493,
+          "fitted_degree": 13786.348212873154,
+          "rank": 164,
+          "zipf_degree": 50641.58289091666
+        },
+        {
+          "empirical_degree": 9736,
+          "fitted_degree": 12986.36257042659,
+          "rank": 172,
+          "zipf_degree": 48286.16043087403
+        },
+        {
+          "empirical_degree": 9558,
+          "fitted_degree": 12266.09428431661,
+          "rank": 180,
+          "zipf_degree": 46140.10885616851
+        },
+        {
+          "empirical_degree": 9173,
+          "fitted_degree": 11614.562763513331,
+          "rank": 188,
+          "zipf_degree": 44176.69996867198
+        },
+        {
+          "empirical_degree": 8950,
+          "fitted_degree": 10952.502233005005,
+          "rank": 197,
+          "zipf_degree": 42158.47509700676
+        },
+        {
+          "empirical_degree": 8303,
+          "fitted_degree": 10292.551093887703,
+          "rank": 207,
+          "zipf_degree": 40121.83378797262
+        },
+        {
+          "empirical_degree": 7997,
+          "fitted_degree": 9757.174687853483,
+          "rank": 216,
+          "zipf_degree": 38450.090713473764
+        },
+        {
+          "empirical_degree": 7634,
+          "fitted_degree": 9167.447465807734,
+          "rank": 227,
+          "zipf_degree": 36586.87045863583
+        },
+        {
+          "empirical_degree": 7364,
+          "fitted_degree": 8684.591596117185,
+          "rank": 237,
+          "zipf_degree": 35043.12065025457
+        },
+        {
+          "empirical_degree": 6707,
+          "fitted_degree": 8162.548055175288,
+          "rank": 249,
+          "zipf_degree": 33354.295558676036
+        },
+        {
+          "empirical_degree": 6283,
+          "fitted_degree": 7731.469860712315,
+          "rank": 260,
+          "zipf_degree": 31943.15228503974
+        },
+        {
+          "empirical_degree": 6017,
+          "fitted_degree": 7272.217954586915,
+          "rank": 273,
+          "zipf_degree": 30422.049795275943
+        },
+        {
+          "empirical_degree": 5733,
+          "fitted_degree": 6859.763581108979,
+          "rank": 286,
+          "zipf_degree": 29039.229350036127
+        },
+        {
+          "empirical_degree": 5344,
+          "fitted_degree": 6487.521351762367,
+          "rank": 299,
+          "zipf_degree": 27776.654160904123
+        },
+        {
+          "empirical_degree": 5101,
+          "fitted_degree": 6100.940849486637,
+          "rank": 314,
+          "zipf_degree": 26449.743930287685
+        },
+        {
+          "empirical_degree": 4797,
+          "fitted_degree": 5775.89799949687,
+          "rank": 328,
+          "zipf_degree": 25320.79144545833
+        },
+        {
+          "empirical_degree": 4624,
+          "fitted_degree": 5440.737781541636,
+          "rank": 344,
+          "zipf_degree": 24143.080215437014
+        },
+        {
+          "empirical_degree": 4342,
+          "fitted_degree": 5138.975771137818,
+          "rank": 360,
+          "zipf_degree": 23070.054428084255
+        },
+        {
+          "empirical_degree": 4144,
+          "fitted_degree": 4849.816932600262,
+          "rank": 377,
+          "zipf_degree": 22029.760196579133
+        },
+        {
+          "empirical_degree": 3992,
+          "fitted_degree": 4574.0603425120835,
+          "rank": 395,
+          "zipf_degree": 21025.87239015274
+        },
+        {
+          "empirical_degree": 3800,
+          "fitted_degree": 4312.14447473439,
+          "rank": 414,
+          "zipf_degree": 20060.91689398631
+        },
+        {
+          "empirical_degree": 3628,
+          "fitted_degree": 4064.21427176492,
+          "rank": 434,
+          "zipf_degree": 19136.450677673576
+        },
+        {
+          "empirical_degree": 3476,
+          "fitted_degree": 3840.77354355584,
+          "rank": 454,
+          "zipf_degree": 18293.435229317914
+        },
+        {
+          "empirical_degree": 3225,
+          "fitted_degree": 3619.299638125882,
+          "rank": 476,
+          "zipf_degree": 17447.940323761202
+        },
+        {
+          "empirical_degree": 3044,
+          "fitted_degree": 3419.7631058426973,
+          "rank": 498,
+          "zipf_degree": 16677.147779338018
+        },
+        {
+          "empirical_degree": 2906,
+          "fitted_degree": 3223.5903599306625,
+          "rank": 522,
+          "zipf_degree": 15910.382364196039
+        },
+        {
+          "empirical_degree": 2779,
+          "fitted_degree": 3039.763054447122,
+          "rank": 547,
+          "zipf_degree": 15183.216808245581
+        },
+        {
+          "empirical_degree": 2681,
+          "fitted_degree": 2867.6575784280762,
+          "rank": 573,
+          "zipf_degree": 14494.275033351365
+        },
+        {
+          "empirical_degree": 2574,
+          "fitted_degree": 2706.631050607065,
+          "rank": 600,
+          "zipf_degree": 13842.032656850553
+        },
+        {
+          "empirical_degree": 2483,
+          "fitted_degree": 2556.036704099375,
+          "rank": 628,
+          "zipf_degree": 13224.871965143842
+        },
+        {
+          "empirical_degree": 2361,
+          "fitted_degree": 2410.6293822125226,
+          "rank": 658,
+          "zipf_degree": 12621.914276763424
+        },
+        {
+          "empirical_degree": 2253,
+          "fitted_degree": 2275.2878919746217,
+          "rank": 689,
+          "zipf_degree": 12054.019730203676
+        },
+        {
+          "empirical_degree": 2141,
+          "fitted_degree": 2145.530997054898,
+          "rank": 722,
+          "zipf_degree": 11503.074230069713
+        },
+        {
+          "empirical_degree": 2068,
+          "fitted_degree": 2025.1241883861478,
+          "rank": 756,
+          "zipf_degree": 10985.740203849646
+        },
+        {
+          "empirical_degree": 1970,
+          "fitted_degree": 1910.2663371017295,
+          "rank": 792,
+          "zipf_degree": 10486.388376401936
+        },
+        {
+          "empirical_degree": 1895,
+          "fitted_degree": 1801.1443175076354,
+          "rank": 830,
+          "zipf_degree": 10006.28866760281
+        },
+        {
+          "empirical_degree": 1771,
+          "fitted_degree": 1700.2752854462738,
+          "rank": 869,
+          "zipf_degree": 9557.2147227967
+        },
+        {
+          "empirical_degree": 1673,
+          "fitted_degree": 1602.4739313099547,
+          "rank": 911,
+          "zipf_degree": 9116.59670045042
+        },
+        {
+          "empirical_degree": 1589,
+          "fitted_degree": 1512.3449434417842,
+          "rank": 954,
+          "zipf_degree": 8705.68091625821
+        },
+        {
+          "empirical_degree": 1488,
+          "fitted_degree": 1427.3382860860324,
+          "rank": 999,
+          "zipf_degree": 8313.53312723757
+        },
+        {
+          "empirical_degree": 1415,
+          "fitted_degree": 1347.3079710807867,
+          "rank": 1046,
+          "zipf_degree": 7939.980491501274
+        },
+        {
+          "empirical_degree": 1339,
+          "fitted_degree": 1270.616233684217,
+          "rank": 1096,
+          "zipf_degree": 7577.7551041152665
+        },
+        {
+          "empirical_degree": 1278,
+          "fitted_degree": 1198.8009974848078,
+          "rank": 1148,
+          "zipf_degree": 7234.511841559523
+        },
+        {
+          "empirical_degree": 1200,
+          "fitted_degree": 1130.416008419384,
+          "rank": 1203,
+          "zipf_degree": 6903.756936085065
+        },
+        {
+          "empirical_degree": 1144,
+          "fitted_degree": 1066.6063149014954,
+          "rank": 1260,
+          "zipf_degree": 6591.444122309787
+        },
+        {
+          "empirical_degree": 1076,
+          "fitted_degree": 1007.0696735629941,
+          "rank": 1319,
+          "zipf_degree": 6296.603179765226
+        },
+        {
+          "empirical_degree": 1005,
+          "fitted_degree": 949.7879299129078,
+          "rank": 1382,
+          "zipf_degree": 6009.565552901832
+        },
+        {
+          "empirical_degree": 933,
+          "fitted_degree": 895.7714142246954,
+          "rank": 1448,
+          "zipf_degree": 5735.648890960174
+        },
+        {
+          "empirical_degree": 874,
+          "fitted_degree": 845.632744666337,
+          "rank": 1516,
+          "zipf_degree": 5478.377040969876
+        },
+        {
+          "empirical_degree": 821,
+          "fitted_degree": 797.791548954487,
+          "rank": 1588,
+          "zipf_degree": 5229.987149943534
+        },
+        {
+          "empirical_degree": 771,
+          "fitted_degree": 752.3274124544365,
+          "rank": 1664,
+          "zipf_degree": 4991.117544537459
+        },
+        {
+          "empirical_degree": 726,
+          "fitted_degree": 710.2911860062235,
+          "rank": 1742,
+          "zipf_degree": 4767.634669408916
+        },
+        {
+          "empirical_degree": 685,
+          "fitted_degree": 669.9840504299378,
+          "rank": 1825,
+          "zipf_degree": 4550.805257046757
+        },
+        {
+          "empirical_degree": 645,
+          "fitted_degree": 631.9454241322884,
+          "rank": 1912,
+          "zipf_degree": 4343.73409733804
+        },
+        {
+          "empirical_degree": 608,
+          "fitted_degree": 596.4952644866917,
+          "rank": 2002,
+          "zipf_degree": 4148.461335719447
+        },
+        {
+          "empirical_degree": 577,
+          "fitted_degree": 562.7764315931648,
+          "rank": 2097,
+          "zipf_degree": 3960.524365336353
+        },
+        {
+          "empirical_degree": 545,
+          "fitted_degree": 530.8144267933799,
+          "rank": 2197,
+          "zipf_degree": 3780.2547082887268
+        },
+        {
+          "empirical_degree": 514,
+          "fitted_degree": 500.87759837076084,
+          "rank": 2301,
+          "zipf_degree": 3609.3957384225696
+        },
+        {
+          "empirical_degree": 483,
+          "fitted_degree": 472.61021063645273,
+          "rank": 2410,
+          "zipf_degree": 3446.1492091744117
+        },
+        {
+          "empirical_degree": 456,
+          "fitted_degree": 445.75267672964554,
+          "rank": 2525,
+          "zipf_degree": 3289.195878855577
+        },
+        {
+          "empirical_degree": 432,
+          "fitted_degree": 420.5186745475812,
+          "rank": 2645,
+          "zipf_degree": 3139.9696007978573
+        },
+        {
+          "empirical_degree": 410,
+          "fitted_degree": 396.83953317283397,
+          "rank": 2770,
+          "zipf_degree": 2998.274221700481
+        },
+        {
+          "empirical_degree": 390,
+          "fitted_degree": 374.4787413502625,
+          "rank": 2901,
+          "zipf_degree": 2862.881624994944
+        },
+        {
+          "empirical_degree": 370,
+          "fitted_degree": 353.2604787181661,
+          "rank": 3039,
+          "zipf_degree": 2732.8791030307116
+        },
+        {
+          "empirical_degree": 350,
+          "fitted_degree": 333.31865707678577,
+          "rank": 3183,
+          "zipf_degree": 2609.242725136768
+        },
+        {
+          "empirical_degree": 329,
+          "fitted_degree": 314.48164522196555,
+          "rank": 3334,
+          "zipf_degree": 2491.0676647001596
+        },
+        {
+          "empirical_degree": 307,
+          "fitted_degree": 296.7266018618594,
+          "rank": 3492,
+          "zipf_degree": 2378.3561266066245
+        },
+        {
+          "empirical_degree": 291,
+          "fitted_degree": 279.92476248897253,
+          "rank": 3658,
+          "zipf_degree": 2270.4263515883904
+        },
+        {
+          "empirical_degree": 274,
+          "fitted_degree": 264.064897751905,
+          "rank": 3832,
+          "zipf_degree": 2167.332879465118
+        },
+        {
+          "empirical_degree": 258,
+          "fitted_degree": 249.12516398485408,
+          "rank": 4014,
+          "zipf_degree": 2069.0631774066596
+        },
+        {
+          "empirical_degree": 242,
+          "fitted_degree": 235.07585402321104,
+          "rank": 4204,
+          "zipf_degree": 1975.5517588273865
+        },
+        {
+          "empirical_degree": 229,
+          "fitted_degree": 221.81843947726446,
+          "rank": 4403,
+          "zipf_degree": 1886.2638187849948
+        },
+        {
+          "empirical_degree": 216,
+          "fitted_degree": 209.27564783222508,
+          "rank": 4612,
+          "zipf_degree": 1800.7848209259178
+        },
+        {
+          "empirical_degree": 205,
+          "fitted_degree": 197.4380262082039,
+          "rank": 4831,
+          "zipf_degree": 1719.151230409922
+        },
+        {
+          "empirical_degree": 192,
+          "fitted_degree": 186.28844019897136,
+          "rank": 5060,
+          "zipf_degree": 1641.3477458716072
+        },
+        {
+          "empirical_degree": 180,
+          "fitted_degree": 175.72084027662714,
+          "rank": 5301,
+          "zipf_degree": 1566.7269560668426
+        },
+        {
+          "empirical_degree": 170,
+          "fitted_degree": 165.80811096565319,
+          "rank": 5552,
+          "zipf_degree": 1495.8969009564719
+        },
+        {
+          "empirical_degree": 161,
+          "fitted_degree": 156.45068427320976,
+          "rank": 5815,
+          "zipf_degree": 1428.2406868633418
+        },
+        {
+          "empirical_degree": 150,
+          "fitted_degree": 147.60487152895055,
+          "rank": 6091,
+          "zipf_degree": 1363.5231643589448
+        },
+        {
+          "empirical_degree": 142,
+          "fitted_degree": 139.26194345074978,
+          "rank": 6380,
+          "zipf_degree": 1301.758557070585
+        },
+        {
+          "empirical_degree": 134,
+          "fitted_degree": 131.3834728397993,
+          "rank": 6683,
+          "zipf_degree": 1242.7382304519426
+        },
+        {
+          "empirical_degree": 127,
+          "fitted_degree": 123.95938172169191,
+          "rank": 7000,
+          "zipf_degree": 1186.4599420157617
+        },
+        {
+          "empirical_degree": 119,
+          "fitted_degree": 116.9555349870376,
+          "rank": 7332,
+          "zipf_degree": 1132.7358966326149
+        },
+        {
+          "empirical_degree": 113,
+          "fitted_degree": 110.34283818340053,
+          "rank": 7680,
+          "zipf_degree": 1081.4088013164496
+        },
+        {
+          "empirical_degree": 106,
+          "fitted_degree": 104.0961833903822,
+          "rank": 8045,
+          "zipf_degree": 1032.345505793702
+        },
+        {
+          "empirical_degree": 100,
+          "fitted_degree": 98.22286467086433,
+          "rank": 8426,
+          "zipf_degree": 985.66574817355
+        },
+        {
+          "empirical_degree": 95,
+          "fitted_degree": 92.668325845373,
+          "rank": 8826,
+          "zipf_degree": 940.994742138039
+        },
+        {
+          "empirical_degree": 89,
+          "fitted_degree": 87.42776580198941,
+          "rank": 9245,
+          "zipf_degree": 898.3471708069586
+        },
+        {
+          "empirical_degree": 84,
+          "fitted_degree": 82.49309885725428,
+          "rank": 9683,
+          "zipf_degree": 857.7114111443078
+        },
+        {
+          "empirical_degree": 79,
+          "fitted_degree": 77.82492944213679,
+          "rank": 10143,
+          "zipf_degree": 818.8129344484208
+        },
+        {
+          "empirical_degree": 75,
+          "fitted_degree": 73.42832187161993,
+          "rank": 10624,
+          "zipf_degree": 781.7413021564695
+        },
+        {
+          "empirical_degree": 71,
+          "fitted_degree": 69.27860901789515,
+          "rank": 11128,
+          "zipf_degree": 746.3353337626107
+        },
+        {
+          "empirical_degree": 67,
+          "fitted_degree": 65.36277617427653,
+          "rank": 11656,
+          "zipf_degree": 712.5274188495481
+        },
+        {
+          "empirical_degree": 64,
+          "fitted_degree": 61.66861054752388,
+          "rank": 12209,
+          "zipf_degree": 680.2538778041062
+        },
+        {
+          "empirical_degree": 60,
+          "fitted_degree": 58.18458010947971,
+          "rank": 12788,
+          "zipf_degree": 649.4541440499165
+        },
+        {
+          "empirical_degree": 57,
+          "fitted_degree": 54.894598137778175,
+          "rank": 13395,
+          "zipf_degree": 620.0238592094313
+        },
+        {
+          "empirical_degree": 53,
+          "fitted_degree": 51.78977395358253,
+          "rank": 14031,
+          "zipf_degree": 591.9192925743234
+        },
+        {
+          "empirical_degree": 50,
+          "fitted_degree": 48.865555156840266,
+          "rank": 14696,
+          "zipf_degree": 565.1347029198647
+        },
+        {
+          "empirical_degree": 47,
+          "fitted_degree": 46.100875080912076,
+          "rank": 15394,
+          "zipf_degree": 539.5101724120003
+        },
+        {
+          "empirical_degree": 45,
+          "fitted_degree": 43.496513773250896,
+          "rank": 16124,
+          "zipf_degree": 515.0843211430372
+        },
+        {
+          "empirical_degree": 42,
+          "fitted_degree": 41.03811284762426,
+          "rank": 16889,
+          "zipf_degree": 491.7531881171373
+        },
+        {
+          "empirical_degree": 40,
+          "fitted_degree": 38.719470654459194,
+          "rank": 17690,
+          "zipf_degree": 469.4866927139815
+        },
+        {
+          "empirical_degree": 37,
+          "fitted_degree": 36.52933014075447,
+          "rank": 18530,
+          "zipf_degree": 448.20397161955384
+        },
+        {
+          "empirical_degree": 35,
+          "fitted_degree": 34.465050108136445,
+          "rank": 19409,
+          "zipf_degree": 427.90558988666766
+        },
+        {
+          "empirical_degree": 33,
+          "fitted_degree": 32.51681420638284,
+          "rank": 20330,
+          "zipf_degree": 408.52039321742905
+        },
+        {
+          "empirical_degree": 31,
+          "fitted_degree": 30.679980042299807,
+          "rank": 21294,
+          "zipf_degree": 390.0262794266147
+        },
+        {
+          "empirical_degree": 29,
+          "fitted_degree": 28.946434887643516,
+          "rank": 22304,
+          "zipf_degree": 372.36458008026955
+        },
+        {
+          "empirical_degree": 28,
+          "fitted_degree": 27.309236335377104,
+          "rank": 23363,
+          "zipf_degree": 355.4860075380017
+        },
+        {
+          "empirical_degree": 26,
+          "fitted_degree": 25.766330689573667,
+          "rank": 24471,
+          "zipf_degree": 339.3902821343767
+        },
+        {
+          "empirical_degree": 25,
+          "fitted_degree": 24.310056644104062,
+          "rank": 25632,
+          "zipf_degree": 324.0176183719699
+        },
+        {
+          "empirical_degree": 23,
+          "fitted_degree": 22.93617734042487,
+          "rank": 26848,
+          "zipf_degree": 309.34220776632645
+        },
+        {
+          "empirical_degree": 22,
+          "fitted_degree": 21.639641183540352,
+          "rank": 28122,
+          "zipf_degree": 295.3281983539696
+        },
+        {
+          "empirical_degree": 21,
+          "fitted_degree": 20.416790801003057,
+          "rank": 29456,
+          "zipf_degree": 281.9534082737076
+        },
+        {
+          "empirical_degree": 19,
+          "fitted_degree": 19.262479055983107,
+          "rank": 30854,
+          "zipf_degree": 269.1780512773168
+        },
+        {
+          "empirical_degree": 18,
+          "fitted_degree": 18.173676056590935,
+          "rank": 32318,
+          "zipf_degree": 256.98433053129315
+        },
+        {
+          "empirical_degree": 17,
+          "fitted_degree": 17.14671325616908,
+          "rank": 33851,
+          "zipf_degree": 245.34635887005797
+        },
+        {
+          "empirical_degree": 16,
+          "fitted_degree": 16.177620643009163,
+          "rank": 35457,
+          "zipf_degree": 234.23356725358414
+        },
+        {
+          "empirical_degree": 15,
+          "fitted_degree": 15.262883052331095,
+          "rank": 37140,
+          "zipf_degree": 223.61926747739182
+        },
+        {
+          "empirical_degree": 14,
+          "fitted_degree": 14.400279082509032,
+          "rank": 38902,
+          "zipf_degree": 213.49081266028307
+        },
+        {
+          "empirical_degree": 14,
+          "fitted_degree": 13.586674598000718,
+          "rank": 40747,
+          "zipf_degree": 203.82407524751105
+        },
+        {
+          "empirical_degree": 13,
+          "fitted_degree": 12.818473645358132,
+          "rank": 42681,
+          "zipf_degree": 194.58821475856547
+        },
+        {
+          "empirical_degree": 12,
+          "fitted_degree": 12.093977165196439,
+          "rank": 44706,
+          "zipf_degree": 185.7741599362576
+        },
+        {
+          "empirical_degree": 11,
+          "fitted_degree": 11.410452301079982,
+          "rank": 46827,
+          "zipf_degree": 177.35963427318282
+        },
+        {
+          "empirical_degree": 11,
+          "fitted_degree": 10.765456060955591,
+          "rank": 49049,
+          "zipf_degree": 169.32495247834476
+        },
+        {
+          "empirical_degree": 10,
+          "fitted_degree": 10.15702774662008,
+          "rank": 51376,
+          "zipf_degree": 161.6556289728732
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": 9.583074845127781,
+          "rank": 53813,
+          "zipf_degree": 154.3348186146532
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": 9.04147393914356,
+          "rank": 56366,
+          "zipf_degree": 147.34449125555003
+        },
+        {
+          "empirical_degree": 8,
+          "fitted_degree": 8.53032271124752,
+          "rank": 59041,
+          "zipf_degree": 140.6686809862694
+        },
+        {
+          "empirical_degree": 8,
+          "fitted_degree": 8.048223999268407,
+          "rank": 61842,
+          "zipf_degree": 134.297396496076
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": 7.593354445837674,
+          "rank": 64776,
+          "zipf_degree": 128.2144558804238
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": 7.164219609248745,
+          "rank": 67849,
+          "zipf_degree": 122.40739869578523
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": 6.759192011793422,
+          "rank": 71069,
+          "zipf_degree": 116.86135437547077
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": 6.377150278780692,
+          "rank": 74441,
+          "zipf_degree": 111.56781335702546
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": 6.01679819174977,
+          "rank": 77972,
+          "zipf_degree": 106.51541058470133
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": 5.676676510289717,
+          "rank": 81672,
+          "zipf_degree": 101.68992548376839
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": 5.671969150379833,
+          "rank": 81726,
+          "zipf_degree": 101.62273443102968
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 85547,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 89606,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 93857,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 98310,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 102974,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 107860,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 112978,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 118338,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 123953,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 129834,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 135994,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 142446,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 149204,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 156283,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 163698,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 171465,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 179600,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 188121,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 197047,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 206396,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 216189,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 226446,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 237190,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 248443,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 260231,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 272577,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 285510,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 299056,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 313245,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 328107,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 343674,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 359980,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 377060,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 394949,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 413688,
+          "zipf_degree": null
+        }
+      ],
+      "population": "all_declarations",
+      "positive_n": 413688,
+      "r_squared": 0.9980278300934461,
+      "tail_n": 81726,
+      "xmin": 6.0
+    },
+    {
+      "beta_rank": 0.9562617984240908,
+      "display_sampling": "完整排序的 312,177 个正入度节点中，按对数间隔显示 234 个 rank；拟合使用全部 7,011 个选定高复用区间观测。",
+      "label": "theorem",
+      "points": [
+        {
+          "empirical_degree": 9721,
+          "fitted_degree": 129288.81734963313,
+          "rank": 1,
+          "zipf_degree": 129288.81734963313
+        },
+        {
+          "empirical_degree": 9645,
+          "fitted_degree": 66634.24446129813,
+          "rank": 2,
+          "zipf_degree": 64644.408674816565
+        },
+        {
+          "empirical_degree": 7729,
+          "fitted_degree": 45217.66517864654,
+          "rank": 3,
+          "zipf_degree": 43096.27244987771
+        },
+        {
+          "empirical_degree": 7369,
+          "fitted_degree": 34342.6649415526,
+          "rank": 4,
+          "zipf_degree": 32322.204337408282
+        },
+        {
+          "empirical_degree": 6581,
+          "fitted_degree": 27743.589468457227,
+          "rank": 5,
+          "zipf_degree": 25857.763469926627
+        },
+        {
+          "empirical_degree": 6318,
+          "fitted_degree": 23304.760746128148,
+          "rank": 6,
+          "zipf_degree": 21548.136224938855
+        },
+        {
+          "empirical_degree": 6123,
+          "fitted_degree": 20110.64460549324,
+          "rank": 7,
+          "zipf_degree": 18469.83104994759
+        },
+        {
+          "empirical_degree": 6108,
+          "fitted_degree": 17699.887570163177,
+          "rank": 8,
+          "zipf_degree": 16161.102168704141
+        },
+        {
+          "empirical_degree": 5893,
+          "fitted_degree": 15814.4941389549,
+          "rank": 9,
+          "zipf_degree": 14365.424149959237
+        },
+        {
+          "empirical_degree": 5779,
+          "fitted_degree": 14298.785933479041,
+          "rank": 10,
+          "zipf_degree": 12928.881734963314
+        },
+        {
+          "empirical_degree": 5372,
+          "fitted_degree": 13053.197853006195,
+          "rank": 11,
+          "zipf_degree": 11753.528849966648
+        },
+        {
+          "empirical_degree": 4954,
+          "fitted_degree": 12011.055221196008,
+          "rank": 12,
+          "zipf_degree": 10774.068112469427
+        },
+        {
+          "empirical_degree": 4756,
+          "fitted_degree": 11126.011113432778,
+          "rank": 13,
+          "zipf_degree": 9945.293642279472
+        },
+        {
+          "empirical_degree": 4753,
+          "fitted_degree": 10364.83770512675,
+          "rank": 14,
+          "zipf_degree": 9234.915524973794
+        },
+        {
+          "empirical_degree": 4732,
+          "fitted_degree": 9703.084653067894,
+          "rank": 15,
+          "zipf_degree": 8619.254489975541
+        },
+        {
+          "empirical_degree": 4689,
+          "fitted_degree": 9122.356128436597,
+          "rank": 16,
+          "zipf_degree": 8080.551084352071
+        },
+        {
+          "empirical_degree": 4551,
+          "fitted_degree": 8608.543223518138,
+          "rank": 17,
+          "zipf_degree": 7605.224549978419
+        },
+        {
+          "empirical_degree": 4241,
+          "fitted_degree": 8150.642028360063,
+          "rank": 18,
+          "zipf_degree": 7182.712074979619
+        },
+        {
+          "empirical_degree": 4141,
+          "fitted_degree": 7739.942683860669,
+          "rank": 19,
+          "zipf_degree": 6804.674597349112
+        },
+        {
+          "empirical_degree": 4083,
+          "fitted_degree": 7369.460228061382,
+          "rank": 20,
+          "zipf_degree": 6464.440867481657
+        },
+        {
+          "empirical_degree": 3911,
+          "fitted_degree": 7033.527051599469,
+          "rank": 21,
+          "zipf_degree": 6156.61034998253
+        },
+        {
+          "empirical_degree": 3772,
+          "fitted_degree": 6727.495807984316,
+          "rank": 22,
+          "zipf_degree": 5876.764424983324
+        },
+        {
+          "empirical_degree": 3763,
+          "fitted_degree": 6447.519338079229,
+          "rank": 23,
+          "zipf_degree": 5621.252928244919
+        },
+        {
+          "empirical_degree": 3555,
+          "fitted_degree": 6190.3852649758755,
+          "rank": 24,
+          "zipf_degree": 5387.034056234714
+        },
+        {
+          "empirical_degree": 3542,
+          "fitted_degree": 5953.39003305126,
+          "rank": 25,
+          "zipf_degree": 5171.552693985325
+        },
+        {
+          "empirical_degree": 3534,
+          "fitted_degree": 5734.241828562162,
+          "rank": 26,
+          "zipf_degree": 4972.646821139736
+        },
+        {
+          "empirical_degree": 3522,
+          "fitted_degree": 5530.984934382339,
+          "rank": 27,
+          "zipf_degree": 4788.474716653079
+        },
+        {
+          "empirical_degree": 3293,
+          "fitted_degree": 5165.657686731485,
+          "rank": 29,
+          "zipf_degree": 4458.235081021832
+        },
+        {
+          "empirical_degree": 3199,
+          "fitted_degree": 5000.878869923632,
+          "rank": 30,
+          "zipf_degree": 4309.627244987771
+        },
+        {
+          "empirical_degree": 3102,
+          "fitted_degree": 4846.505917963684,
+          "rank": 31,
+          "zipf_degree": 4170.607011278488
+        },
+        {
+          "empirical_degree": 3039,
+          "fitted_degree": 4565.245023718494,
+          "rank": 33,
+          "zipf_degree": 3917.8429499888825
+        },
+        {
+          "empirical_degree": 3004,
+          "fitted_degree": 4436.762477765729,
+          "rank": 34,
+          "zipf_degree": 3802.6122749892097
+        },
+        {
+          "empirical_degree": 2827,
+          "fitted_degree": 4200.764494314686,
+          "rank": 36,
+          "zipf_degree": 3591.3560374898093
+        },
+        {
+          "empirical_degree": 2765,
+          "fitted_degree": 3989.093902205698,
+          "rank": 38,
+          "zipf_degree": 3402.337298674556
+        },
+        {
+          "empirical_degree": 2730,
+          "fitted_degree": 3891.227838681528,
+          "rank": 39,
+          "zipf_degree": 3315.097880759824
+        },
+        {
+          "empirical_degree": 2674,
+          "fitted_degree": 3709.5170497335157,
+          "rank": 41,
+          "zipf_degree": 3153.3857890154422
+        },
+        {
+          "empirical_degree": 2579,
+          "fitted_degree": 3544.3571693709064,
+          "rank": 43,
+          "zipf_degree": 3006.716682549608
+        },
+        {
+          "empirical_degree": 2516,
+          "fitted_degree": 3393.571401121125,
+          "rank": 45,
+          "zipf_degree": 2873.0848299918475
+        },
+        {
+          "empirical_degree": 2489,
+          "fitted_degree": 3255.349770122942,
+          "rank": 47,
+          "zipf_degree": 2750.825901056024
+        },
+        {
+          "empirical_degree": 2455,
+          "fitted_degree": 3128.1748471311375,
+          "rank": 49,
+          "zipf_degree": 2638.5472928496556
+        },
+        {
+          "empirical_degree": 2396,
+          "fitted_degree": 2955.3744835588955,
+          "rank": 52,
+          "zipf_degree": 2486.323410569868
+        },
+        {
+          "empirical_degree": 2341,
+          "fitted_degree": 2850.617785703147,
+          "rank": 54,
+          "zipf_degree": 2394.2373583265394
+        },
+        {
+          "empirical_degree": 2262,
+          "fitted_degree": 2706.979180065334,
+          "rank": 57,
+          "zipf_degree": 2268.2248657830373
+        },
+        {
+          "empirical_degree": 2231,
+          "fitted_degree": 2619.1648481369843,
+          "rank": 59,
+          "zipf_degree": 2191.3358872819176
+        },
+        {
+          "empirical_degree": 2188,
+          "fitted_degree": 2497.8437171978403,
+          "rank": 62,
+          "zipf_degree": 2085.303505639244
+        },
+        {
+          "empirical_degree": 2157,
+          "fitted_degree": 2387.4878824038337,
+          "rank": 65,
+          "zipf_degree": 1989.0587284558942
+        },
+        {
+          "empirical_degree": 2105,
+          "fitted_degree": 2286.665789204819,
+          "rank": 68,
+          "zipf_degree": 1901.3061374946049
+        },
+        {
+          "empirical_degree": 2100,
+          "fitted_degree": 2194.185420091884,
+          "rank": 71,
+          "zipf_degree": 1820.969258445537
+        },
+        {
+          "empirical_degree": 2048,
+          "fitted_degree": 2109.0461199001884,
+          "rank": 74,
+          "zipf_degree": 1747.1461804004477
+        },
+        {
+          "empirical_degree": 2007,
+          "fitted_degree": 2005.5023502622323,
+          "rank": 78,
+          "zipf_degree": 1657.548940379912
+        },
+        {
+          "empirical_degree": 1970,
+          "fitted_degree": 1934.414978788949,
+          "rank": 81,
+          "zipf_degree": 1596.1582388843597
+        },
+        {
+          "empirical_degree": 1958,
+          "fitted_degree": 1847.2741418067765,
+          "rank": 85,
+          "zipf_degree": 1521.0449099956838
+        },
+        {
+          "empirical_degree": 1924,
+          "fitted_degree": 1767.8026038288378,
+          "rank": 89,
+          "zipf_degree": 1452.6833410071138
+        },
+        {
+          "empirical_degree": 1917,
+          "fitted_degree": 1695.0242594622412,
+          "rank": 93,
+          "zipf_degree": 1390.2023370928293
+        },
+        {
+          "empirical_degree": 1864,
+          "fitted_degree": 1612.2319915552362,
+          "rank": 98,
+          "zipf_degree": 1319.2736464248278
+        },
+        {
+          "empirical_degree": 1808,
+          "fitted_degree": 1551.7199732306333,
+          "rank": 102,
+          "zipf_degree": 1267.5374249964032
+        },
+        {
+          "empirical_degree": 1772,
+          "fitted_degree": 1482.3091242483322,
+          "rank": 107,
+          "zipf_degree": 1208.3067042021787
+        },
+        {
+          "empirical_degree": 1744,
+          "fitted_degree": 1418.966201598194,
+          "rank": 112,
+          "zipf_degree": 1154.3644406217243
+        },
+        {
+          "empirical_degree": 1642,
+          "fitted_degree": 1360.9238691348353,
+          "rank": 117,
+          "zipf_degree": 1105.0326269199413
+        },
+        {
+          "empirical_degree": 1604,
+          "fitted_degree": 1307.5393237783135,
+          "rank": 122,
+          "zipf_degree": 1059.7444045051896
+        },
+        {
+          "empirical_degree": 1455,
+          "fitted_degree": 1248.8680858737468,
+          "rank": 128,
+          "zipf_degree": 1010.0688855440088
+        },
+        {
+          "empirical_degree": 1368,
+          "fitted_degree": 1195.341239230759,
+          "rank": 134,
+          "zipf_degree": 964.8419205196502
+        },
+        {
+          "empirical_degree": 1286,
+          "fitted_degree": 1146.3063752843595,
+          "rank": 140,
+          "zipf_degree": 923.4915524973795
+        },
+        {
+          "empirical_degree": 1242,
+          "fitted_degree": 1094.0525697232003,
+          "rank": 147,
+          "zipf_degree": 879.5157642832186
+        },
+        {
+          "empirical_degree": 1191,
+          "fitted_degree": 1052.989416595153,
+          "rank": 153,
+          "zipf_degree": 845.0249499976021
+        },
+        {
+          "empirical_degree": 1100,
+          "fitted_degree": 1002.9001166010302,
+          "rank": 161,
+          "zipf_degree": 803.0361326064169
+        },
+        {
+          "empirical_degree": 1040,
+          "fitted_degree": 962.9033708178254,
+          "rank": 168,
+          "zipf_degree": 769.5762937478163
+        },
+        {
+          "empirical_degree": 980,
+          "fitted_degree": 921.0071054177245,
+          "rank": 176,
+          "zipf_degree": 734.5955531229155
+        },
+        {
+          "empirical_degree": 954,
+          "fitted_degree": 882.6777886121572,
+          "rank": 184,
+          "zipf_degree": 702.6566160306148
+        },
+        {
+          "empirical_degree": 915,
+          "fitted_degree": 847.4756398286343,
+          "rank": 192,
+          "zipf_degree": 673.3792570293392
+        },
+        {
+          "empirical_degree": 862,
+          "fitted_degree": 811.152589283998,
+          "rank": 201,
+          "zipf_degree": 643.2279470131001
+        },
+        {
+          "empirical_degree": 830,
+          "fitted_degree": 774.3520315466592,
+          "rank": 211,
+          "zipf_degree": 612.7432101878347
+        },
+        {
+          "empirical_degree": 785,
+          "fitted_degree": 740.8123110625778,
+          "rank": 221,
+          "zipf_degree": 585.017273075263
+        },
+        {
+          "empirical_degree": 760,
+          "fitted_degree": 710.1157090850263,
+          "rank": 231,
+          "zipf_degree": 559.6918499984118
+        },
+        {
+          "empirical_degree": 730,
+          "fitted_degree": 681.9131442952277,
+          "rank": 241,
+          "zipf_degree": 536.4681217827101
+        },
+        {
+          "empirical_degree": 718,
+          "fitted_degree": 650.9514690155879,
+          "rank": 253,
+          "zipf_degree": 511.02299347681077
+        },
+        {
+          "empirical_degree": 677,
+          "fitted_degree": 624.9908175085768,
+          "rank": 264,
+          "zipf_degree": 489.7303687486103
+        },
+        {
+          "empirical_degree": 637,
+          "fitted_degree": 596.9127648001352,
+          "rank": 277,
+          "zipf_degree": 466.74663303116654
+        },
+        {
+          "empirical_degree": 621,
+          "fitted_degree": 571.2994749457629,
+          "rank": 290,
+          "zipf_degree": 445.8235081021832
+        },
+        {
+          "empirical_degree": 603,
+          "fitted_degree": 547.8380240069461,
+          "rank": 303,
+          "zipf_degree": 426.6957668304724
+        },
+        {
+          "empirical_degree": 586,
+          "fitted_degree": 524.6788219664743,
+          "rank": 317,
+          "zipf_degree": 407.85115883165025
+        },
+        {
+          "empirical_degree": 556,
+          "fitted_degree": 501.9875253424009,
+          "rank": 332,
+          "zipf_degree": 389.4241486434733
+        },
+        {
+          "empirical_degree": 541,
+          "fitted_degree": 481.2169660632363,
+          "rank": 347,
+          "zipf_degree": 372.59025172804934
+        },
+        {
+          "empirical_degree": 512,
+          "fitted_degree": 460.9141591952119,
+          "rank": 363,
+          "zipf_degree": 356.16754090808024
+        },
+        {
+          "empirical_degree": 488,
+          "fitted_degree": 441.17659164547786,
+          "rank": 380,
+          "zipf_degree": 340.2337298674556
+        },
+        {
+          "empirical_degree": 463,
+          "fitted_degree": 422.07740196054294,
+          "rank": 398,
+          "zipf_degree": 324.84627474782195
+        },
+        {
+          "empirical_degree": 441,
+          "fitted_degree": 404.59644661503233,
+          "rank": 416,
+          "zipf_degree": 310.7904263212335
+        },
+        {
+          "empirical_degree": 424,
+          "fitted_degree": 387.6809677017955,
+          "rank": 435,
+          "zipf_degree": 297.21567206812216
+        },
+        {
+          "empirical_degree": 402,
+          "fitted_degree": 370.5906521857814,
+          "rank": 456,
+          "zipf_degree": 283.52810822287967
+        },
+        {
+          "empirical_degree": 386,
+          "fitted_degree": 354.973686272097,
+          "rank": 477,
+          "zipf_degree": 271.04573867847614
+        },
+        {
+          "empirical_degree": 371,
+          "fitted_degree": 339.99339702749944,
+          "rank": 499,
+          "zipf_degree": 259.0958263519702
+        },
+        {
+          "empirical_degree": 356,
+          "fitted_degree": 325.6540473391091,
+          "rank": 522,
+          "zipf_degree": 247.67972672343512
+        },
+        {
+          "empirical_degree": 336,
+          "fitted_degree": 311.952308392893,
+          "rank": 546,
+          "zipf_degree": 236.79270576855885
+        },
+        {
+          "empirical_degree": 320,
+          "fitted_degree": 298.3791533903279,
+          "rank": 572,
+          "zipf_degree": 226.02940096089708
+        },
+        {
+          "empirical_degree": 304,
+          "fitted_degree": 285.9615845885239,
+          "rank": 598,
+          "zipf_degree": 216.20203570172765
+        },
+        {
+          "empirical_degree": 293,
+          "fitted_degree": 273.71825430228233,
+          "rank": 626,
+          "zipf_degree": 206.53165710804015
+        },
+        {
+          "empirical_degree": 280,
+          "fitted_degree": 262.1180886840218,
+          "rank": 655,
+          "zipf_degree": 197.38750740402006
+        },
+        {
+          "empirical_degree": 268,
+          "fitted_degree": 251.12988464527936,
+          "rank": 685,
+          "zipf_degree": 188.7427990505593
+        },
+        {
+          "empirical_degree": 258,
+          "fitted_degree": 240.40144821493894,
+          "rank": 717,
+          "zipf_degree": 180.31913158944647
+        },
+        {
+          "empirical_degree": 245,
+          "fitted_degree": 230.27654696684004,
+          "rank": 750,
+          "zipf_degree": 172.38508979951084
+        },
+        {
+          "empirical_degree": 234,
+          "fitted_degree": 220.4487794690258,
+          "rank": 785,
+          "zipf_degree": 164.69913038169827
+        },
+        {
+          "empirical_degree": 224,
+          "fitted_degree": 211.19611946682593,
+          "rank": 821,
+          "zipf_degree": 157.47724403122183
+        },
+        {
+          "empirical_degree": 214,
+          "fitted_degree": 202.02829393270204,
+          "rank": 860,
+          "zipf_degree": 150.33583412748038
+        },
+        {
+          "empirical_degree": 209,
+          "fitted_degree": 193.63925714639367,
+          "rank": 899,
+          "zipf_degree": 143.814034871672
+        },
+        {
+          "empirical_degree": 199,
+          "fitted_degree": 185.36630873237127,
+          "rank": 941,
+          "zipf_degree": 137.39513002086412
+        },
+        {
+          "empirical_degree": 189,
+          "fitted_degree": 177.44029448961092,
+          "rank": 985,
+          "zipf_degree": 131.25768258846003
+        },
+        {
+          "empirical_degree": 179,
+          "fitted_degree": 169.86222652625784,
+          "rank": 1031,
+          "zipf_degree": 125.40137473291283
+        },
+        {
+          "empirical_degree": 172,
+          "fitted_degree": 162.773421569831,
+          "rank": 1078,
+          "zipf_degree": 119.93396785680252
+        },
+        {
+          "empirical_degree": 163,
+          "fitted_degree": 155.8670708141399,
+          "rank": 1128,
+          "zipf_degree": 114.61774587733433
+        },
+        {
+          "empirical_degree": 156,
+          "fitted_degree": 149.17146349215932,
+          "rank": 1181,
+          "zipf_degree": 109.47401977106954
+        },
+        {
+          "empirical_degree": 149,
+          "fitted_degree": 142.9282110164649,
+          "rank": 1235,
+          "zipf_degree": 104.68730149767865
+        },
+        {
+          "empirical_degree": 141,
+          "fitted_degree": 136.79120064209934,
+          "rank": 1293,
+          "zipf_degree": 99.99135139182764
+        },
+        {
+          "empirical_degree": 133,
+          "fitted_degree": 130.98467909949446,
+          "rank": 1353,
+          "zipf_degree": 95.55714512168007
+        },
+        {
+          "empirical_degree": 128,
+          "fitted_degree": 125.40635620947593,
+          "rank": 1416,
+          "zipf_degree": 91.3056619700799
+        },
+        {
+          "empirical_degree": 124,
+          "fitted_degree": 120.13796758456293,
+          "rank": 1481,
+          "zipf_degree": 87.29832366619388
+        },
+        {
+          "empirical_degree": 118,
+          "fitted_degree": 115.01874790818891,
+          "rank": 1550,
+          "zipf_degree": 83.41214022556976
+        },
+        {
+          "empirical_degree": 113,
+          "fitted_degree": 110.13160389558989,
+          "rank": 1622,
+          "zipf_degree": 79.70950514773929
+        },
+        {
+          "empirical_degree": 108,
+          "fitted_degree": 105.472586409772,
+          "rank": 1697,
+          "zipf_degree": 76.18669260438016
+        },
+        {
+          "empirical_degree": 102,
+          "fitted_degree": 100.98172673726383,
+          "rank": 1776,
+          "zipf_degree": 72.79775751668532
+        },
+        {
+          "empirical_degree": 97,
+          "fitted_degree": 96.71580108643516,
+          "rank": 1858,
+          "zipf_degree": 69.58493937009318
+        },
+        {
+          "empirical_degree": 93,
+          "fitted_degree": 92.62033814309393,
+          "rank": 1944,
+          "zipf_degree": 66.50659328684831
+        },
+        {
+          "empirical_degree": 89,
+          "fitted_degree": 88.69749097260521,
+          "rank": 2034,
+          "zipf_degree": 63.563823672386
+        },
+        {
+          "empirical_degree": 85,
+          "fitted_degree": 84.90899868255201,
+          "rank": 2129,
+          "zipf_degree": 60.72748583824947
+        },
+        {
+          "empirical_degree": 81,
+          "fitted_degree": 81.29757018159604,
+          "rank": 2228,
+          "zipf_degree": 58.02909216769889
+        },
+        {
+          "empirical_degree": 78,
+          "fitted_degree": 77.85901983257648,
+          "rank": 2331,
+          "zipf_degree": 55.46495810795072
+        },
+        {
+          "empirical_degree": 74,
+          "fitted_degree": 74.55893827731522,
+          "rank": 2439,
+          "zipf_degree": 53.00894520280161
+        },
+        {
+          "empirical_degree": 71,
+          "fitted_degree": 71.39883511996075,
+          "rank": 2552,
+          "zipf_degree": 50.661762284339
+        },
+        {
+          "empirical_degree": 68,
+          "fitted_degree": 68.3539518350407,
+          "rank": 2671,
+          "zipf_degree": 48.40464895156613
+        },
+        {
+          "empirical_degree": 65,
+          "fitted_degree": 65.45121199384381,
+          "rank": 2795,
+          "zipf_degree": 46.257179731532425
+        },
+        {
+          "empirical_degree": 63,
+          "fitted_degree": 62.68724898307129,
+          "rank": 2924,
+          "zipf_degree": 44.21642180220011
+        },
+        {
+          "empirical_degree": 60,
+          "fitted_degree": 60.02037751789798,
+          "rank": 3060,
+          "zipf_degree": 42.25124749988011
+        },
+        {
+          "empirical_degree": 57,
+          "fitted_degree": 57.47254908725197,
+          "rank": 3202,
+          "zipf_degree": 40.3775194720903
+        },
+        {
+          "empirical_degree": 55,
+          "fitted_degree": 55.04213562791736,
+          "rank": 3350,
+          "zipf_degree": 38.59367682078601
+        },
+        {
+          "empirical_degree": 52,
+          "fitted_degree": 52.69783204884522,
+          "rank": 3506,
+          "zipf_degree": 36.876445336461245
+        },
+        {
+          "empirical_degree": 50,
+          "fitted_degree": 50.47000691500944,
+          "rank": 3668,
+          "zipf_degree": 35.24776917928929
+        },
+        {
+          "empirical_degree": 48,
+          "fitted_degree": 48.33016725495468,
+          "rank": 3838,
+          "zipf_degree": 33.68650790766887
+        },
+        {
+          "empirical_degree": 46,
+          "fitted_degree": 46.26870196707622,
+          "rank": 4017,
+          "zipf_degree": 32.18541631805654
+        },
+        {
+          "empirical_degree": 44,
+          "fitted_degree": 44.308754650232984,
+          "rank": 4203,
+          "zipf_degree": 30.761079550233912
+        },
+        {
+          "empirical_degree": 42,
+          "fitted_degree": 42.428254889332955,
+          "rank": 4398,
+          "zipf_degree": 29.39718448149912
+        },
+        {
+          "empirical_degree": 40,
+          "fitted_degree": 40.62796277622421,
+          "rank": 4602,
+          "zipf_degree": 28.094049836947658
+        },
+        {
+          "empirical_degree": 38,
+          "fitted_degree": 38.90763296307865,
+          "rank": 4815,
+          "zipf_degree": 26.85126009338175
+        },
+        {
+          "empirical_degree": 37,
+          "fitted_degree": 37.25207668704109,
+          "rank": 5039,
+          "zipf_degree": 25.657633925309213
+        },
+        {
+          "empirical_degree": 35,
+          "fitted_degree": 35.67615742400324,
+          "rank": 5272,
+          "zipf_degree": 24.523675521554082
+        },
+        {
+          "empirical_degree": 34,
+          "fitted_degree": 34.15964417667573,
+          "rank": 5517,
+          "zipf_degree": 23.434623409395165
+        },
+        {
+          "empirical_degree": 32,
+          "fitted_degree": 32.709683723083536,
+          "rank": 5773,
+          "zipf_degree": 22.395429993007642
+        },
+        {
+          "empirical_degree": 31,
+          "fitted_degree": 31.320668830710126,
+          "rank": 6041,
+          "zipf_degree": 21.4018899767643
+        },
+        {
+          "empirical_degree": 29,
+          "fitted_degree": 29.992640884637893,
+          "rank": 6321,
+          "zipf_degree": 20.453854983330665
+        },
+        {
+          "empirical_degree": 28,
+          "fitted_degree": 28.720831240170053,
+          "rank": 6614,
+          "zipf_degree": 19.54774982607093
+        },
+        {
+          "empirical_degree": 27,
+          "fitted_degree": 27.50136137195065,
+          "rank": 6921,
+          "zipf_degree": 18.680655591624493
+        },
+        {
+          "empirical_degree": 27,
+          "fitted_degree": 27.16367308783349,
+          "rank": 7011,
+          "zipf_degree": 18.440852567341768
+        },
+        {
+          "empirical_degree": 26,
+          "fitted_degree": null,
+          "rank": 7242,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 25,
+          "fitted_degree": null,
+          "rank": 7578,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 24,
+          "fitted_degree": null,
+          "rank": 7930,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 23,
+          "fitted_degree": null,
+          "rank": 8297,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 22,
+          "fitted_degree": null,
+          "rank": 8682,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 21,
+          "fitted_degree": null,
+          "rank": 9085,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 20,
+          "fitted_degree": null,
+          "rank": 9507,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 19,
+          "fitted_degree": null,
+          "rank": 9948,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 18,
+          "fitted_degree": null,
+          "rank": 10409,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 18,
+          "fitted_degree": null,
+          "rank": 10892,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 17,
+          "fitted_degree": null,
+          "rank": 11397,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 16,
+          "fitted_degree": null,
+          "rank": 11926,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 15,
+          "fitted_degree": null,
+          "rank": 12479,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 15,
+          "fitted_degree": null,
+          "rank": 13058,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 14,
+          "fitted_degree": null,
+          "rank": 13664,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 14,
+          "fitted_degree": null,
+          "rank": 14298,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 13,
+          "fitted_degree": null,
+          "rank": 14961,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 13,
+          "fitted_degree": null,
+          "rank": 15655,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 12,
+          "fitted_degree": null,
+          "rank": 16381,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 12,
+          "fitted_degree": null,
+          "rank": 17141,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 11,
+          "fitted_degree": null,
+          "rank": 17936,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 11,
+          "fitted_degree": null,
+          "rank": 18768,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 10,
+          "fitted_degree": null,
+          "rank": 19639,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 10,
+          "fitted_degree": null,
+          "rank": 20550,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": null,
+          "rank": 21503,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": null,
+          "rank": 22501,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": null,
+          "rank": 23544,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 8,
+          "fitted_degree": null,
+          "rank": 24637,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 8,
+          "fitted_degree": null,
+          "rank": 25780,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 8,
+          "fitted_degree": null,
+          "rank": 26975,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": null,
+          "rank": 28227,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": null,
+          "rank": 29536,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": null,
+          "rank": 30906,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": null,
+          "rank": 32340,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": null,
+          "rank": 33840,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": null,
+          "rank": 35410,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": null,
+          "rank": 37053,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 38772,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 40570,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 42452,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 44422,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 46482,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 48638,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 50895,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 53256,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 55726,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 58311,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 61016,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 63847,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 66809,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 69908,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 73151,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 76544,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 80095,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 83810,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 87698,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 91767,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 96024,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 100478,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 105139,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 110016,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 115120,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 120460,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 126048,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 131896,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 138014,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 144416,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 151116,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 158126,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 165461,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 173137,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 181168,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 189573,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 198367,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 207569,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 217198,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 227273,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 237816,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 248848,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 260392,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 272472,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 285111,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 298337,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 312177,
+          "zipf_degree": null
+        }
+      ],
+      "population": "kind:theorem",
+      "positive_n": 312177,
+      "r_squared": 0.993187234447217,
+      "tail_n": 7011,
+      "xmin": 27.0
+    },
+    {
+      "beta_rank": 1.2823783350330535,
+      "display_sampling": "完整排序的 87,894 个正入度节点中，按对数间隔显示 226 个 rank；拟合使用全部 8,780 个选定高复用区间观测。",
+      "label": "definition",
+      "points": [
+        {
+          "empirical_degree": 114756,
+          "fitted_degree": 5754277.038411563,
+          "rank": 1,
+          "zipf_degree": 5754277.038411563
+        },
+        {
+          "empirical_degree": 105228,
+          "fitted_degree": 2365682.3105312805,
+          "rank": 2,
+          "zipf_degree": 2877138.5192057816
+        },
+        {
+          "empirical_degree": 82417,
+          "fitted_degree": 1406503.4663701684,
+          "rank": 3,
+          "zipf_degree": 1918092.3461371877
+        },
+        {
+          "empirical_degree": 81532,
+          "fitted_degree": 972572.7067019157,
+          "rank": 4,
+          "zipf_degree": 1438569.2596028908
+        },
+        {
+          "empirical_degree": 77932,
+          "fitted_degree": 730544.6702537317,
+          "rank": 5,
+          "zipf_degree": 1150855.4076823127
+        },
+        {
+          "empirical_degree": 77523,
+          "fitted_degree": 578237.7782442204,
+          "rank": 6,
+          "zipf_degree": 959046.1730685938
+        },
+        {
+          "empirical_degree": 73715,
+          "fitted_degree": 474520.9045260286,
+          "rank": 7,
+          "zipf_degree": 822039.5769159376
+        },
+        {
+          "empirical_degree": 71759,
+          "fitted_degree": 399841.3758308328,
+          "rank": 8,
+          "zipf_degree": 719284.6298014454
+        },
+        {
+          "empirical_degree": 69488,
+          "fitted_degree": 343788.1053876726,
+          "rank": 9,
+          "zipf_degree": 639364.1153790626
+        },
+        {
+          "empirical_degree": 67199,
+          "fitted_degree": 300339.485209984,
+          "rank": 10,
+          "zipf_degree": 575427.7038411563
+        },
+        {
+          "empirical_degree": 64756,
+          "fitted_degree": 265785.5398787729,
+          "rank": 11,
+          "zipf_degree": 523116.09440105123
+        },
+        {
+          "empirical_degree": 61046,
+          "fitted_degree": 237723.5009962034,
+          "rank": 12,
+          "zipf_degree": 479523.0865342969
+        },
+        {
+          "empirical_degree": 58456,
+          "fitted_degree": 214532.92081539126,
+          "rank": 13,
+          "zipf_degree": 442636.69526242797
+        },
+        {
+          "empirical_degree": 50682,
+          "fitted_degree": 195083.7094427429,
+          "rank": 14,
+          "zipf_degree": 411019.7884579688
+        },
+        {
+          "empirical_degree": 50012,
+          "fitted_degree": 178565.1966686965,
+          "rank": 15,
+          "zipf_degree": 383618.46922743757
+        },
+        {
+          "empirical_degree": 49016,
+          "fitted_degree": 164381.67010509467,
+          "rank": 16,
+          "zipf_degree": 359642.3149007227
+        },
+        {
+          "empirical_degree": 48430,
+          "fitted_degree": 152086.17167271377,
+          "rank": 17,
+          "zipf_degree": 338486.8846124449
+        },
+        {
+          "empirical_degree": 47022,
+          "fitted_degree": 141337.20605693775,
+          "rank": 18,
+          "zipf_degree": 319682.0576895313
+        },
+        {
+          "empirical_degree": 46163,
+          "fitted_degree": 131869.6499545362,
+          "rank": 19,
+          "zipf_degree": 302856.68623218755
+        },
+        {
+          "empirical_degree": 45462,
+          "fitted_degree": 123474.73063470406,
+          "rank": 20,
+          "zipf_degree": 287713.85192057816
+        },
+        {
+          "empirical_degree": 43804,
+          "fitted_degree": 115985.95142808821,
+          "rank": 21,
+          "zipf_degree": 274013.19230531255
+        },
+        {
+          "empirical_degree": 42836,
+          "fitted_degree": 109269.0091021037,
+          "rank": 22,
+          "zipf_degree": 261558.04720052562
+        },
+        {
+          "empirical_degree": 38665,
+          "fitted_degree": 103214.44745035932,
+          "rank": 23,
+          "zipf_degree": 250185.9581918071
+        },
+        {
+          "empirical_degree": 37126,
+          "fitted_degree": 97732.22202376356,
+          "rank": 24,
+          "zipf_degree": 239761.54326714846
+        },
+        {
+          "empirical_degree": 36988,
+          "fitted_degree": 92747.62262462381,
+          "rank": 25,
+          "zipf_degree": 230171.08153646253
+        },
+        {
+          "empirical_degree": 36926,
+          "fitted_degree": 88198.17544615062,
+          "rank": 26,
+          "zipf_degree": 221318.34763121398
+        },
+        {
+          "empirical_degree": 36763,
+          "fitted_degree": 84031.26208502338,
+          "rank": 27,
+          "zipf_degree": 213121.37179302087
+        },
+        {
+          "empirical_degree": 36378,
+          "fitted_degree": 80202.26996733499,
+          "rank": 28,
+          "zipf_degree": 205509.8942289844
+        },
+        {
+          "empirical_degree": 35664,
+          "fitted_degree": 73411.2251140907,
+          "rank": 30,
+          "zipf_degree": 191809.23461371879
+        },
+        {
+          "empirical_degree": 34964,
+          "fitted_degree": 70388.35913106112,
+          "rank": 31,
+          "zipf_degree": 185621.8399487601
+        },
+        {
+          "empirical_degree": 34775,
+          "fitted_degree": 67580.13327258185,
+          "rank": 32,
+          "zipf_degree": 179821.15745036135
+        },
+        {
+          "empirical_degree": 34568,
+          "fitted_degree": 64965.29114867817,
+          "rank": 33,
+          "zipf_degree": 174372.03146701708
+        },
+        {
+          "empirical_degree": 32965,
+          "fitted_degree": 60243.66143851206,
+          "rank": 35,
+          "zipf_degree": 164407.91538318753
+        },
+        {
+          "empirical_degree": 32523,
+          "fitted_degree": 58106.157551481076,
+          "rank": 36,
+          "zipf_degree": 159841.02884476565
+        },
+        {
+          "empirical_degree": 30578,
+          "fitted_degree": 54213.882319352786,
+          "rank": 38,
+          "zipf_degree": 151428.34311609378
+        },
+        {
+          "empirical_degree": 30349,
+          "fitted_degree": 52437.742354625785,
+          "rank": 39,
+          "zipf_degree": 147545.565087476
+        },
+        {
+          "empirical_degree": 29444,
+          "fitted_degree": 49180.35849097731,
+          "rank": 41,
+          "zipf_degree": 140348.22044906253
+        },
+        {
+          "empirical_degree": 28797,
+          "fitted_degree": 46266.45331112291,
+          "rank": 43,
+          "zipf_degree": 133820.39624212938
+        },
+        {
+          "empirical_degree": 28757,
+          "fitted_degree": 44922.36995135787,
+          "rank": 44,
+          "zipf_degree": 130779.02360026281
+        },
+        {
+          "empirical_degree": 28251,
+          "fitted_degree": 42433.235468964835,
+          "rank": 46,
+          "zipf_degree": 125092.97909590355
+        },
+        {
+          "empirical_degree": 27405,
+          "fitted_degree": 40179.39825753602,
+          "rank": 48,
+          "zipf_degree": 119880.77163357423
+        },
+        {
+          "empirical_degree": 26547,
+          "fitted_degree": 38130.14366918118,
+          "rank": 50,
+          "zipf_degree": 115085.54076823127
+        },
+        {
+          "empirical_degree": 24459,
+          "fitted_degree": 36259.787646875135,
+          "rank": 52,
+          "zipf_degree": 110659.17381560699
+        },
+        {
+          "empirical_degree": 22769,
+          "fitted_degree": 33743.28491534487,
+          "rank": 55,
+          "zipf_degree": 104623.21888021025
+        },
+        {
+          "empirical_degree": 21670,
+          "fitted_degree": 32232.566929254986,
+          "rank": 57,
+          "zipf_degree": 100952.22874406251
+        },
+        {
+          "empirical_degree": 21119,
+          "fitted_degree": 30838.16393377058,
+          "rank": 59,
+          "zipf_degree": 97530.11929511125
+        },
+        {
+          "empirical_degree": 20502,
+          "fitted_degree": 28937.865687057743,
+          "rank": 62,
+          "zipf_degree": 92810.91997438006
+        },
+        {
+          "empirical_degree": 20321,
+          "fitted_degree": 27783.355712471115,
+          "rank": 64,
+          "zipf_degree": 89910.57872518068
+        },
+        {
+          "empirical_degree": 19390,
+          "fitted_degree": 26198.23309764576,
+          "rank": 67,
+          "zipf_degree": 85884.73191659049
+        },
+        {
+          "empirical_degree": 18955,
+          "fitted_degree": 24767.205894915438,
+          "rank": 70,
+          "zipf_degree": 82203.95769159377
+        },
+        {
+          "empirical_degree": 18685,
+          "fitted_degree": 23469.61146962877,
+          "rank": 73,
+          "zipf_degree": 78825.71285495292
+        },
+        {
+          "empirical_degree": 18399,
+          "fitted_degree": 22288.259938127856,
+          "rank": 76,
+          "zipf_degree": 75714.17155804689
+        },
+        {
+          "empirical_degree": 18092,
+          "fitted_degree": 21208.74142353778,
+          "rank": 79,
+          "zipf_degree": 72838.94985331093
+        },
+        {
+          "empirical_degree": 17097,
+          "fitted_degree": 20218.891675018887,
+          "rank": 82,
+          "zipf_degree": 70174.11022453126
+        },
+        {
+          "empirical_degree": 16591,
+          "fitted_degree": 19308.375560149474,
+          "rank": 85,
+          "zipf_degree": 67697.37692248898
+        },
+        {
+          "empirical_degree": 16318,
+          "fitted_degree": 18202.676717635655,
+          "rank": 89,
+          "zipf_degree": 64654.79818439959
+        },
+        {
+          "empirical_degree": 15960,
+          "fitted_degree": 17204.849618654192,
+          "rank": 93,
+          "zipf_degree": 61873.9466495867
+        },
+        {
+          "empirical_degree": 15473,
+          "fitted_degree": 16300.380354649478,
+          "rank": 97,
+          "zipf_degree": 59322.44369496457
+        },
+        {
+          "empirical_degree": 14786,
+          "fitted_degree": 15477.202359348395,
+          "rank": 101,
+          "zipf_degree": 56973.0399842729
+        },
+        {
+          "empirical_degree": 14268,
+          "fitted_degree": 14725.206672268268,
+          "rank": 105,
+          "zipf_degree": 54802.63846106251
+        },
+        {
+          "empirical_degree": 13605,
+          "fitted_degree": 14035.864497914607,
+          "rank": 109,
+          "zipf_degree": 52791.53246249141
+        },
+        {
+          "empirical_degree": 13083,
+          "fitted_degree": 13251.36292509876,
+          "rank": 114,
+          "zipf_degree": 50476.114372031254
+        },
+        {
+          "empirical_degree": 12206,
+          "fitted_degree": 12678.099858661502,
+          "rank": 118,
+          "zipf_degree": 48765.05964755562
+        },
+        {
+          "empirical_degree": 11146,
+          "fitted_degree": 12021.031353398615,
+          "rank": 123,
+          "zipf_degree": 46782.7401496875
+        },
+        {
+          "empirical_degree": 10518,
+          "fitted_degree": 11422.215631511304,
+          "rank": 128,
+          "zipf_degree": 44955.28936259034
+        },
+        {
+          "empirical_degree": 9928,
+          "fitted_degree": 10770.544447645158,
+          "rank": 134,
+          "zipf_degree": 42942.365958295246
+        },
+        {
+          "empirical_degree": 9662,
+          "fitted_degree": 10276.258384763622,
+          "rank": 139,
+          "zipf_degree": 41397.67653533499
+        },
+        {
+          "empirical_degree": 9330,
+          "fitted_degree": 9734.177628945012,
+          "rank": 145,
+          "zipf_degree": 39684.66923042457
+        },
+        {
+          "empirical_degree": 9112,
+          "fitted_degree": 9240.978021385165,
+          "rank": 151,
+          "zipf_degree": 38107.79495636797
+        },
+        {
+          "empirical_degree": 8855,
+          "fitted_degree": 8719.278560864243,
+          "rank": 158,
+          "zipf_degree": 36419.474926655465
+        },
+        {
+          "empirical_degree": 8303,
+          "fitted_degree": 8312.33429583779,
+          "rank": 164,
+          "zipf_degree": 35087.05511226563
+        },
+        {
+          "empirical_degree": 7997,
+          "fitted_degree": 7878.525280131477,
+          "rank": 171,
+          "zipf_degree": 33650.74291468751
+        },
+        {
+          "empirical_degree": 7774,
+          "fitted_degree": 7483.433631676035,
+          "rank": 178,
+          "zipf_degree": 32327.399092199794
+        },
+        {
+          "empirical_degree": 7393,
+          "fitted_degree": 7122.277008116704,
+          "rank": 185,
+          "zipf_degree": 31104.20020763007
+        },
+        {
+          "empirical_degree": 6676,
+          "fitted_degree": 6745.926274516011,
+          "rank": 193,
+          "zipf_degree": 29814.90693477494
+        },
+        {
+          "empirical_degree": 6244,
+          "fitted_degree": 6403.568236051439,
+          "rank": 201,
+          "zipf_degree": 28628.243972196833
+        },
+        {
+          "empirical_degree": 5982,
+          "fitted_degree": 6053.785855454447,
+          "rank": 210,
+          "zipf_degree": 27401.319230531255
+        },
+        {
+          "empirical_degree": 5733,
+          "fitted_degree": 5770.385425324688,
+          "rank": 218,
+          "zipf_degree": 26395.766231245703
+        },
+        {
+          "empirical_degree": 5424,
+          "fitted_degree": 5478.658759004599,
+          "rank": 227,
+          "zipf_degree": 25349.23805467649
+        },
+        {
+          "empirical_degree": 5146,
+          "fitted_degree": 5183.999333092402,
+          "rank": 237,
+          "zipf_degree": 24279.64995110364
+        },
+        {
+          "empirical_degree": 4864,
+          "fitted_degree": 4916.409304384011,
+          "rank": 247,
+          "zipf_degree": 23296.668171706733
+        },
+        {
+          "empirical_degree": 4715,
+          "fitted_degree": 4672.450840815508,
+          "rank": 257,
+          "zipf_degree": 22390.18302883877
+        },
+        {
+          "empirical_degree": 4480,
+          "fitted_degree": 4427.956162781238,
+          "rank": 268,
+          "zipf_degree": 21471.182979147623
+        },
+        {
+          "empirical_degree": 4296,
+          "fitted_degree": 4205.338127705874,
+          "rank": 279,
+          "zipf_degree": 20624.64888319557
+        },
+        {
+          "empirical_degree": 4090,
+          "fitted_degree": 4001.887929733964,
+          "rank": 290,
+          "zipf_degree": 19842.334615212287
+        },
+        {
+          "empirical_degree": 3992,
+          "fitted_degree": 3783.0536525827765,
+          "rank": 303,
+          "zipf_degree": 18991.01332809097
+        },
+        {
+          "empirical_degree": 3827,
+          "fitted_degree": 3599.245237813511,
+          "rank": 315,
+          "zipf_degree": 18267.5461536875
+        },
+        {
+          "empirical_degree": 3653,
+          "fitted_degree": 3417.3436683045393,
+          "rank": 328,
+          "zipf_degree": 17543.527556132816
+        },
+        {
+          "empirical_degree": 3485,
+          "fitted_degree": 3238.997316928884,
+          "rank": 342,
+          "zipf_degree": 16825.371457343754
+        },
+        {
+          "empirical_degree": 3276,
+          "fitted_degree": 3076.568341481485,
+          "rank": 356,
+          "zipf_degree": 16163.699546099897
+        },
+        {
+          "empirical_degree": 3125,
+          "fitted_degree": 2917.97341476558,
+          "rank": 371,
+          "zipf_degree": 15510.180696527124
+        },
+        {
+          "empirical_degree": 2941,
+          "fitted_degree": 2764.1797954220297,
+          "rank": 387,
+          "zipf_degree": 14868.932915792153
+        },
+        {
+          "empirical_degree": 2834,
+          "fitted_degree": 2624.2428327638704,
+          "rank": 403,
+          "zipf_degree": 14278.603072981547
+        },
+        {
+          "empirical_degree": 2724,
+          "fitted_degree": 2496.4352957011356,
+          "rank": 419,
+          "zipf_degree": 13733.358086901106
+        },
+        {
+          "empirical_degree": 2634,
+          "fitted_degree": 2365.3454577652656,
+          "rank": 437,
+          "zipf_degree": 13167.68201009511
+        },
+        {
+          "empirical_degree": 2529,
+          "fitted_degree": 2246.0247504150784,
+          "rank": 455,
+          "zipf_degree": 12646.762721783656
+        },
+        {
+          "empirical_degree": 2439,
+          "fitted_degree": 2131.231332492114,
+          "rank": 474,
+          "zipf_degree": 12139.82497555182
+        },
+        {
+          "empirical_degree": 2324,
+          "fitted_degree": 2021.220466980372,
+          "rank": 494,
+          "zipf_degree": 11648.334085853367
+        },
+        {
+          "empirical_degree": 2213,
+          "fitted_degree": 1920.9249445514226,
+          "rank": 514,
+          "zipf_degree": 11195.091514419384
+        },
+        {
+          "empirical_degree": 2119,
+          "fitted_degree": 1820.4089751283761,
+          "rank": 536,
+          "zipf_degree": 10735.591489573811
+        },
+        {
+          "empirical_degree": 2022,
+          "fitted_degree": 1728.8868700806854,
+          "rank": 558,
+          "zipf_degree": 10312.324441597784
+        },
+        {
+          "empirical_degree": 1909,
+          "fitted_degree": 1641.6145045615713,
+          "rank": 581,
+          "zipf_degree": 9904.091288143827
+        },
+        {
+          "empirical_degree": 1791,
+          "fitted_degree": 1558.575845174095,
+          "rank": 605,
+          "zipf_degree": 9511.20171638275
+        },
+        {
+          "empirical_degree": 1694,
+          "fitted_degree": 1476.7051154454812,
+          "rank": 631,
+          "zipf_degree": 9119.29800065224
+        },
+        {
+          "empirical_degree": 1601,
+          "fitted_degree": 1402.1871396646816,
+          "rank": 657,
+          "zipf_degree": 8758.412539439214
+        },
+        {
+          "empirical_degree": 1533,
+          "fitted_degree": 1331.607533903532,
+          "rank": 684,
+          "zipf_degree": 8412.685728671877
+        },
+        {
+          "empirical_degree": 1442,
+          "fitted_degree": 1262.5557556845436,
+          "rank": 713,
+          "zipf_degree": 8070.514780380874
+        },
+        {
+          "empirical_degree": 1400,
+          "fitted_degree": 1199.6290835202858,
+          "rank": 742,
+          "zipf_degree": 7755.090348263562
+        },
+        {
+          "empirical_degree": 1337,
+          "fitted_degree": 1138.2874729298712,
+          "rank": 773,
+          "zipf_degree": 7444.084137660496
+        },
+        {
+          "empirical_degree": 1272,
+          "fitted_degree": 1078.8713867210163,
+          "rank": 806,
+          "zipf_degree": 7139.301536490773
+        },
+        {
+          "empirical_degree": 1200,
+          "fitted_degree": 1024.759071945641,
+          "rank": 839,
+          "zipf_degree": 6858.494682254545
+        },
+        {
+          "empirical_degree": 1147,
+          "fitted_degree": 972.4342207332189,
+          "rank": 874,
+          "zipf_degree": 6583.841005047555
+        },
+        {
+          "empirical_degree": 1101,
+          "fitted_degree": 922.079821804714,
+          "rank": 911,
+          "zipf_degree": 6316.44021779535
+        },
+        {
+          "empirical_degree": 1042,
+          "fitted_degree": 876.1858751796159,
+          "rank": 948,
+          "zipf_degree": 6069.91248777591
+        },
+        {
+          "empirical_degree": 967,
+          "fitted_degree": 830.9585152923337,
+          "rank": 988,
+          "zipf_degree": 5824.167042926683
+        },
+        {
+          "empirical_degree": 909,
+          "fitted_degree": 788.7412499568403,
+          "rank": 1029,
+          "zipf_degree": 5592.105965414542
+        },
+        {
+          "empirical_degree": 850,
+          "fitted_degree": 748.4014554124362,
+          "rank": 1072,
+          "zipf_degree": 5367.795744786906
+        },
+        {
+          "empirical_degree": 794,
+          "fitted_degree": 709.9592367442681,
+          "rank": 1117,
+          "zipf_degree": 5151.5461400282575
+        },
+        {
+          "empirical_degree": 740,
+          "fitted_degree": 674.1518902695755,
+          "rank": 1163,
+          "zipf_degree": 4947.787651256718
+        },
+        {
+          "empirical_degree": 698,
+          "fitted_degree": 639.4017364702081,
+          "rank": 1212,
+          "zipf_degree": 4747.753332022742
+        },
+        {
+          "empirical_degree": 660,
+          "fitted_degree": 607.0988842144392,
+          "rank": 1262,
+          "zipf_degree": 4559.64900032612
+        },
+        {
+          "empirical_degree": 623,
+          "fitted_degree": 575.9011596930118,
+          "rank": 1315,
+          "zipf_degree": 4375.876074837691
+        },
+        {
+          "empirical_degree": 589,
+          "fitted_degree": 546.9340166879947,
+          "rank": 1369,
+          "zipf_degree": 4203.270298328388
+        },
+        {
+          "empirical_degree": 560,
+          "fitted_degree": 519.0583973181224,
+          "rank": 1426,
+          "zipf_degree": 4035.257390190437
+        },
+        {
+          "empirical_degree": 530,
+          "fitted_degree": 492.3371049150045,
+          "rank": 1486,
+          "zipf_degree": 3872.3264053913617
+        },
+        {
+          "empirical_degree": 499,
+          "fitted_degree": 467.19436820623775,
+          "rank": 1548,
+          "zipf_degree": 3717.2332289480382
+        },
+        {
+          "empirical_degree": 474,
+          "fitted_degree": 443.5425923825176,
+          "rank": 1612,
+          "zipf_degree": 3569.6507682453866
+        },
+        {
+          "empirical_degree": 445,
+          "fitted_degree": 420.9743402241613,
+          "rank": 1679,
+          "zipf_degree": 3427.2049067370835
+        },
+        {
+          "empirical_degree": 429,
+          "fitted_degree": 399.49134094249445,
+          "rank": 1749,
+          "zipf_degree": 3290.0383295663596
+        },
+        {
+          "empirical_degree": 407,
+          "fitted_degree": 379.0828819641601,
+          "rank": 1822,
+          "zipf_degree": 3158.220108897675
+        },
+        {
+          "empirical_degree": 389,
+          "fitted_degree": 359.7284065806315,
+          "rank": 1898,
+          "zipf_degree": 3031.7581867289587
+        },
+        {
+          "empirical_degree": 369,
+          "fitted_degree": 341.3997684454233,
+          "rank": 1977,
+          "zipf_degree": 2910.6105404206187
+        },
+        {
+          "empirical_degree": 350,
+          "fitted_degree": 324.06315690435304,
+          "rank": 2059,
+          "zipf_degree": 2794.6950162270828
+        },
+        {
+          "empirical_degree": 331,
+          "fitted_degree": 307.4967834843809,
+          "rank": 2145,
+          "zipf_degree": 2682.646637954109
+        },
+        {
+          "empirical_degree": 312,
+          "fitted_degree": 291.87645925852604,
+          "rank": 2234,
+          "zipf_degree": 2575.7730700141287
+        },
+        {
+          "empirical_degree": 295,
+          "fitted_degree": 277.0027155864537,
+          "rank": 2327,
+          "zipf_degree": 2472.8306997901004
+        },
+        {
+          "empirical_degree": 277,
+          "fitted_degree": 262.8690567369877,
+          "rank": 2424,
+          "zipf_degree": 2373.876666011371
+        },
+        {
+          "empirical_degree": 263,
+          "fitted_degree": 249.4620460793867,
+          "rank": 2525,
+          "zipf_degree": 2278.9215993709163
+        },
+        {
+          "empirical_degree": 247,
+          "fitted_degree": 236.7628769010904,
+          "rank": 2630,
+          "zipf_degree": 2187.9380374188454
+        },
+        {
+          "empirical_degree": 234,
+          "fitted_degree": 224.64353473237486,
+          "rank": 2740,
+          "zipf_degree": 2100.1011089093295
+        },
+        {
+          "empirical_degree": 222,
+          "fitted_degree": 213.2020910219269,
+          "rank": 2854,
+          "zipf_degree": 2016.2147997237432
+        },
+        {
+          "empirical_degree": 209,
+          "fitted_degree": 202.32095306724227,
+          "rank": 2973,
+          "zipf_degree": 1935.5119537206738
+        },
+        {
+          "empirical_degree": 198,
+          "fitted_degree": 191.99211658650538,
+          "rank": 3097,
+          "zipf_degree": 1858.0164799520708
+        },
+        {
+          "empirical_degree": 186,
+          "fitted_degree": 182.2030333820985,
+          "rank": 3226,
+          "zipf_degree": 1783.7188587760581
+        },
+        {
+          "empirical_degree": 175,
+          "fitted_degree": 172.93769881696585,
+          "rank": 3360,
+          "zipf_degree": 1712.5824519082034
+        },
+        {
+          "empirical_degree": 165,
+          "fitted_degree": 164.1174230495525,
+          "rank": 3500,
+          "zipf_degree": 1644.0791538318751
+        },
+        {
+          "empirical_degree": 155,
+          "fitted_degree": 155.73787457513663,
+          "rank": 3646,
+          "zipf_degree": 1578.2438393887996
+        },
+        {
+          "empirical_degree": 146,
+          "fitted_degree": 147.8405922826348,
+          "rank": 3797,
+          "zipf_degree": 1515.4798626314362
+        },
+        {
+          "empirical_degree": 138,
+          "fitted_degree": 140.2643308788997,
+          "rank": 3956,
+          "zipf_degree": 1454.5695243709715
+        },
+        {
+          "empirical_degree": 131,
+          "fitted_degree": 133.14500976662464,
+          "rank": 4120,
+          "zipf_degree": 1396.6691840804765
+        },
+        {
+          "empirical_degree": 124,
+          "fitted_degree": 126.34168135724401,
+          "rank": 4292,
+          "zipf_degree": 1340.698284811641
+        },
+        {
+          "empirical_degree": 117,
+          "fitted_degree": 119.8921930525698,
+          "rank": 4471,
+          "zipf_degree": 1287.022374952262
+        },
+        {
+          "empirical_degree": 112,
+          "fitted_degree": 113.7865151801606,
+          "rank": 4657,
+          "zipf_degree": 1235.6188615871943
+        },
+        {
+          "empirical_degree": 105,
+          "fitted_degree": 107.98429417055912,
+          "rank": 4851,
+          "zipf_degree": 1186.2042956939936
+        },
+        {
+          "empirical_degree": 100,
+          "fitted_degree": 102.48006313266644,
+          "rank": 5053,
+          "zipf_degree": 1138.7842941641725
+        },
+        {
+          "empirical_degree": 95,
+          "fitted_degree": 97.26614727597365,
+          "rank": 5263,
+          "zipf_degree": 1093.345437661327
+        },
+        {
+          "empirical_degree": 90,
+          "fitted_degree": 92.29002725798064,
+          "rank": 5483,
+          "zipf_degree": 1049.4760237847097
+        },
+        {
+          "empirical_degree": 85,
+          "fitted_degree": 87.59200789804574,
+          "rank": 5711,
+          "zipf_degree": 1007.5778389794367
+        },
+        {
+          "empirical_degree": 80,
+          "fitted_degree": 83.12383938498478,
+          "rank": 5949,
+          "zipf_degree": 967.2679506491113
+        },
+        {
+          "empirical_degree": 76,
+          "fitted_degree": 78.89859182427853,
+          "rank": 6196,
+          "zipf_degree": 928.7083664318211
+        },
+        {
+          "empirical_degree": 72,
+          "fitted_degree": 74.87703645674179,
+          "rank": 6454,
+          "zipf_degree": 891.5830552233597
+        },
+        {
+          "empirical_degree": 69,
+          "fitted_degree": 71.0569819101528,
+          "rank": 6723,
+          "zipf_degree": 855.9091236667505
+        },
+        {
+          "empirical_degree": 65,
+          "fitted_degree": 67.43443318017833,
+          "rank": 7003,
+          "zipf_degree": 821.6874251622967
+        },
+        {
+          "empirical_degree": 62,
+          "fitted_degree": 63.99275673767138,
+          "rank": 7295,
+          "zipf_degree": 788.7974007418181
+        },
+        {
+          "empirical_degree": 58,
+          "fitted_degree": 60.728531455727484,
+          "rank": 7599,
+          "zipf_degree": 757.2413526005479
+        },
+        {
+          "empirical_degree": 55,
+          "fitted_degree": 57.637053132703215,
+          "rank": 7915,
+          "zipf_degree": 727.0091015049353
+        },
+        {
+          "empirical_degree": 52,
+          "fitted_degree": 54.69564005346102,
+          "rank": 8245,
+          "zipf_degree": 697.9111022937008
+        },
+        {
+          "empirical_degree": 49,
+          "fitted_degree": 51.9102174405832,
+          "rank": 8588,
+          "zipf_degree": 670.0369164428928
+        },
+        {
+          "empirical_degree": 48,
+          "fitted_degree": 50.459022791388094,
+          "rank": 8780,
+          "zipf_degree": 655.3846285206791
+        },
+        {
+          "empirical_degree": 46,
+          "fitted_degree": null,
+          "rank": 8946,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 44,
+          "fitted_degree": null,
+          "rank": 9318,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 41,
+          "fitted_degree": null,
+          "rank": 9707,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 39,
+          "fitted_degree": null,
+          "rank": 10111,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 37,
+          "fitted_degree": null,
+          "rank": 10532,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 35,
+          "fitted_degree": null,
+          "rank": 10970,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 33,
+          "fitted_degree": null,
+          "rank": 11427,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 31,
+          "fitted_degree": null,
+          "rank": 11903,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 29,
+          "fitted_degree": null,
+          "rank": 12399,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 27,
+          "fitted_degree": null,
+          "rank": 12915,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 26,
+          "fitted_degree": null,
+          "rank": 13453,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 24,
+          "fitted_degree": null,
+          "rank": 14013,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 23,
+          "fitted_degree": null,
+          "rank": 14597,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 21,
+          "fitted_degree": null,
+          "rank": 15205,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 20,
+          "fitted_degree": null,
+          "rank": 15838,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 19,
+          "fitted_degree": null,
+          "rank": 16498,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 18,
+          "fitted_degree": null,
+          "rank": 17185,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 17,
+          "fitted_degree": null,
+          "rank": 17901,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 16,
+          "fitted_degree": null,
+          "rank": 18646,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 15,
+          "fitted_degree": null,
+          "rank": 19423,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 14,
+          "fitted_degree": null,
+          "rank": 20232,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 13,
+          "fitted_degree": null,
+          "rank": 21074,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 12,
+          "fitted_degree": null,
+          "rank": 21952,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 11,
+          "fitted_degree": null,
+          "rank": 22866,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 11,
+          "fitted_degree": null,
+          "rank": 23818,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 10,
+          "fitted_degree": null,
+          "rank": 24810,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": null,
+          "rank": 25843,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 9,
+          "fitted_degree": null,
+          "rank": 26920,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 8,
+          "fitted_degree": null,
+          "rank": 28041,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": null,
+          "rank": 29209,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": null,
+          "rank": 30425,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 7,
+          "fitted_degree": null,
+          "rank": 31692,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": null,
+          "rank": 33012,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 6,
+          "fitted_degree": null,
+          "rank": 34387,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 35819,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 5,
+          "fitted_degree": null,
+          "rank": 37311,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 38865,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 4,
+          "fitted_degree": null,
+          "rank": 40483,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 42169,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 43925,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 3,
+          "fitted_degree": null,
+          "rank": 45755,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 47660,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 49645,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 51713,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 2,
+          "fitted_degree": null,
+          "rank": 53866,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 56109,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 58446,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 60880,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 63416,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 66057,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 68808,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 71673,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 74658,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 77768,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 81006,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 84380,
+          "zipf_degree": null
+        },
+        {
+          "empirical_degree": 1,
+          "fitted_degree": null,
+          "rank": 87894,
+          "zipf_degree": null
+        }
+      ],
+      "population": "kind:definition",
+      "positive_n": 87894,
+      "r_squared": 0.9915347087486966,
+      "tail_n": 8780,
+      "xmin": 48.0
+    }
+  ],
+  "snapshot_id": "mathlib-v4.32.1"
+}

@@ -168,4 +168,32 @@ export type ConstructionCases = {
   edge_cases: ConstructionCase[];
 };
 
+export type RankFrequencyPoint = {
+  rank: number;
+  empirical_degree: number;
+  fitted_degree: number | null;
+  zipf_degree: number | null;
+};
+
+export type RankFrequencySeries = {
+  population: string;
+  label: string;
+  positive_n: number;
+  tail_n: number;
+  xmin: number;
+  beta_rank: number;
+  r_squared: number;
+  display_sampling: string;
+  points: RankFrequencyPoint[];
+};
+
+export type RankFrequencyDistribution = {
+  schema_version: string;
+  snapshot_id: string;
+  reuse_unit: string;
+  rank_definition: string;
+  reference_definition: string;
+  series: RankFrequencySeries[];
+};
+
 export type ExplorerKind = "nodes" | "external" | "typed" | "edges" | null;

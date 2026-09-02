@@ -4,6 +4,7 @@ import type {
   ExternalTargetSample,
   NodeSample,
   Overview,
+  RankFrequencyDistribution,
   SamplePayload,
   TypedEdgeSample,
 } from "./types";
@@ -27,6 +28,8 @@ export const loadDomainEdges = () =>
 export const loadTypedEdges = () =>
   loadJson<SamplePayload<TypedEdgeSample>>("typed-edge-samples.json");
 export const loadConstructionCases = () => loadJson<ConstructionCases>("construction-cases.json");
+export const loadRankFrequency = () =>
+  loadJson<RankFrequencyDistribution>("reuse-rank-frequency.json");
 
 export function mathlibModuleUrl(module: string): string {
   return `https://github.com/leanprover-community/mathlib4/blob/v4.32.1/${module.replaceAll(".", "/")}.lean`;

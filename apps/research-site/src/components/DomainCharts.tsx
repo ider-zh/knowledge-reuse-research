@@ -42,7 +42,7 @@ export default function DomainCharts({ overview }: { overview: Overview }) {
           <ResponsiveContainer width="100%" height={340}>
             <BarChart data={chartData} margin={{ left: 10, right: 10, bottom: 70 }}>
               <CartesianGrid strokeDasharray="2 4" vertical={false} />
-              <XAxis dataKey="domain" angle={-45} textAnchor="end" interval={0} fontSize={11} />
+              <XAxis dataKey="domain" angle={-45} textAnchor="end" interval={0} fontSize={13} />
               <YAxis tickFormatter={(value) => `${Math.round(value / 1000)}k`} />
               <Tooltip formatter={(value) => format.format(Number(value))} />
               <Bar dataKey="nodes" fill="#1f6b53" radius={[3, 3, 0, 0]} />
@@ -56,7 +56,7 @@ export default function DomainCharts({ overview }: { overview: Overview }) {
           <ResponsiveContainer width="100%" height={340}>
             <BarChart data={chartData} margin={{ left: 0, right: 10, bottom: 70 }}>
               <CartesianGrid strokeDasharray="2 4" vertical={false} />
-              <XAxis dataKey="domain" angle={-45} textAnchor="end" interval={0} fontSize={11} />
+              <XAxis dataKey="domain" angle={-45} textAnchor="end" interval={0} fontSize={13} />
               <YAxis domain={[0, 1]} />
               <Tooltip />
               <Legend />

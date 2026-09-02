@@ -8,6 +8,7 @@ import type { Claim, ExplorerKind, Overview } from "./types";
 
 const format = new Intl.NumberFormat("en-US");
 const DomainCharts = lazy(() => import("./components/DomainCharts"));
+const ReuseDistributionChart = lazy(() => import("./components/ReuseDistributionChart"));
 
 function App() {
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -34,6 +35,7 @@ function App() {
           <div>
             <a href="#findings">研究结论</a>
             <a href="#construction">图的构建</a>
+            <a href="#distribution">Zipf 对照</a>
             <a href="#domains">领域流向</a>
             <a href="#methods">数据契约</a>
             <a href="https://github.com/ider-zh/knowledge-reuse-research" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -81,6 +83,10 @@ function App() {
             {overview.claims.map((claim) => <ClaimCard key={claim.claim_id} claim={claim} />)}
           </div>
         </section>
+
+        <Suspense fallback={<section className="section-block loading">正在加载 Zipf 对照图…</section>}>
+          <ReuseDistributionChart />
+        </Suspense>
 
         <Suspense fallback={<section className="section-block loading">正在加载领域图表…</section>}>
           <DomainCharts overview={overview} />

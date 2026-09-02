@@ -4,8 +4,35 @@ from knowledge_reuse.sources.lean_mathlib.export_site import (
     domain_edge_sample,
     external_target_sample,
     public_node_sample,
+    rank_frequency_distribution,
     typed_edge_sample,
 )
+
+
+def test_rank_frequency_display_uses_complete_sorted_population_and_zipf_reference() -> None:
+    nodes = pl.DataFrame(
+        {
+            "kind": ["theorem", "theorem", "definition", "definition", "definition"],
+            "in_degree_all": [100, 10, 50, 5, 0],
+        }
+    )
+    fits = pl.DataFrame(
+        {
+            "population": ["all_declarations", "kind:theorem", "kind:definition"],
+            "status": ["ok", "ok", "ok"],
+            "tail_n": [2, 2, 2],
+            "xmin": [50.0, 10.0, 5.0],
+            "beta_rank": [1.0, 0.9, 1.2],
+            "intercept": [0.0, 0.0, 0.0],
+            "r_squared": [0.99, 0.98, 0.97],
+        }
+    )
+    payload = rank_frequency_distribution(nodes, fits)
+    all_series = payload["series"][0]
+    assert all_series["positive_n"] == 4
+    assert [point["empirical_degree"] for point in all_series["points"]] == [100, 50, 10, 5]
+    assert all_series["points"][0]["zipf_degree"] == 1.0
+    assert all_series["points"][2]["zipf_degree"] is None
 
 
 def test_public_node_sample_explains_overlapping_selection_reasons() -> None:

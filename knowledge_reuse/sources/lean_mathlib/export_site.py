@@ -5,6 +5,7 @@ from __future__ import annotations
 import argparse
 import hashlib
 import json
+import math
 import pathlib
 from typing import Any
 
@@ -218,6 +219,88 @@ def typed_edge_sample(
     )
 
 
+def logarithmic_ranks(population_size: int, limit: int = 280) -> list[int]:
+    """Choose deterministic display ranks without changing the fitted population."""
+
+    if population_size < 1:
+        return []
+    if population_size <= limit:
+        return list(range(1, population_size + 1))
+    return sorted(
+        {
+            1,
+            population_size,
+            *(
+                round(math.exp(math.log(population_size) * index / (limit - 1)))
+                for index in range(limit)
+            ),
+        }
+    )
+
+
+def rank_frequency_distribution(
+    nodes: pl.DataFrame, rank_fits: pl.DataFrame
+) -> dict[str, Any]:
+    """Publish compact display curves computed from complete reuse populations."""
+
+    populations = (
+        ("all_declarations", "全部 declaration", None),
+        ("kind:theorem", "theorem", "theorem"),
+        ("kind:definition", "definition", "definition"),
+    )
+    series = []
+    for population, label, kind in populations:
+        selected = nodes if kind is None else nodes.filter(pl.col("kind") == kind)
+        degrees = (
+            selected.filter(pl.col("in_degree_all") > 0)
+            .sort("in_degree_all", descending=True)["in_degree_all"]
+            .to_list()
+        )
+        fit_rows = rank_fits.filter(pl.col("population") == population)
+        if fit_rows.height != 1:
+            raise ValueError(f"expected one rank-frequency fit for {population}")
+        fit = fit_rows.row(0, named=True)
+        if fit["status"] != "ok":
+            raise ValueError(f"rank-frequency fit unavailable for {population}")
+        beta = float(fit["beta_rank"])
+        intercept = float(fit["intercept"])
+        tail_n = int(fit["tail_n"])
+        points = []
+        display_ranks = sorted({*logarithmic_ranks(len(degrees)), tail_n})
+        for rank in display_ranks:
+            in_tail = rank <= tail_n
+            points.append(
+                {
+                    "rank": rank,
+                    "empirical_degree": degrees[rank - 1],
+                    "fitted_degree": math.exp(intercept) * rank ** (-beta) if in_tail else None,
+                    "zipf_degree": math.exp(intercept) / rank if in_tail else None,
+                }
+            )
+        series.append(
+            {
+                "population": population,
+                "label": label,
+                "positive_n": len(degrees),
+                "tail_n": tail_n,
+                "xmin": fit["xmin"],
+                "beta_rank": beta,
+                "r_squared": fit["r_squared"],
+                "display_sampling": (
+                    f"完整排序的 {len(degrees):,} 个正入度节点中，按对数间隔显示 "
+                    f"{len(points):,} 个 rank；拟合使用全部 {tail_n:,} 个选定高复用区间观测。"
+                ),
+                "points": points,
+            }
+        )
+    return {
+        "schema_version": "research-site-rank-frequency-v1",
+        "snapshot_id": "mathlib-v4.32.1",
+        "reuse_unit": "distinct non-self consumer declarations",
+        "rank_definition": "positive indegree sorted descending; rank 1 is most reused",
+        "reference_definition": "Zipf reference C(r)=exp(fitted intercept)/r",
+        "series": series,
+    }
 def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     import tomllib
 
@@ -245,12 +328,14 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     kind_metrics = pl.read_parquet(metrics_dir / "kind_reuse_metrics.parquet").sort(
         "node_count", descending=True
     )
+    rank_fits = pl.read_parquet(metrics_dir / "rank_frequency_fits.parquet")
 
     node_sample = public_node_sample(nodes)
     external_sample = external_target_sample(edges, external_nodes)
     edge_sample = domain_edge_sample(edges, normalized_nodes)
     typed_sample = typed_edge_sample(edges, normalized_nodes, external_nodes)
     construction_cases = build_construction_cases(normalized_nodes, edges)
+    rank_frequency = rank_frequency_distribution(nodes, rank_fits)
 
     files = {
         "overview.json": {
@@ -311,6 +396,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
             "rows": typed_sample.to_dicts(),
         },
         "construction-cases.json": construction_cases,
+        "reuse-rank-frequency.json": rank_frequency,
     }
     for name, payload in files.items():
         write_json(output / name, payload)

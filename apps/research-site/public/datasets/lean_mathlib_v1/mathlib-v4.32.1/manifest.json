@@ -21,6 +21,10 @@
       "bytes": 100662,
       "sha256": "c3c60be415c117834923676a4d9a5a2978ac70939266eb64ecda6065b8176408"
     },
+    "reuse-rank-frequency.json": {
+      "bytes": 114646,
+      "sha256": "2b8941b84501b5ba0ca3898aa0ed66b7d51ee63a8c78f40b2c6a9a5f97672f3a"
+    },
     "typed-edge-samples.json": {
       "bytes": 1158868,
       "sha256": "317691a8b164729d1136d5fe13adbb64a368cd46cef1a84c0816009c07943f44"
