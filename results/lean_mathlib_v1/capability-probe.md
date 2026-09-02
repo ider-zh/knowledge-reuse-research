@@ -8,6 +8,7 @@ Overall gate: **PASS**
 | `declaration_kinds` | PASS |
 | `type_constant_references` | PASS |
 | `value_constant_references` | PASS |
+| `constant_occurrence_multiplicity` | PASS |
 | `module_provenance` | PASS |
 | `ordinary_import_hides_values` | PASS |
 | `import_all_exposes_values` | PASS |

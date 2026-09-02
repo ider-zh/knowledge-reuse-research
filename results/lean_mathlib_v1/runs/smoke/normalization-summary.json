@@ -4,13 +4,13 @@
       "null_counts": {
         "dst_id": 0,
         "edge_type": 0,
-        "multiplicity": 17561,
+        "multiplicity": 0,
         "snapshot_id": 0,
         "src_id": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/smoke/edges.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/smoke/edges.parquet",
       "rows": 17561,
-      "sha256": "47e195d1e81cf82e6d7e3eed0be72a31faa13fbccbc0c134b985693a196b85c9"
+      "sha256": "2f4e6e11fd5861b5bd72fbf89518ba364b49402464208dc9330447402b6f8408"
     },
     "external_nodes": {
       "null_counts": {
@@ -19,7 +19,7 @@
         "node_id": 0,
         "snapshot_id": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/smoke/external_nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/smoke/external_nodes.parquet",
       "rows": 1071,
       "sha256": "46de9ca4e7858583df4480e721a76079a72e79d960b99e6a1c01e2494965eff9"
     },
@@ -36,9 +36,9 @@
         "status": 0,
         "warning_count": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/smoke/modules.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/smoke/modules.parquet",
       "rows": 7,
-      "sha256": "e355305d4392977fb71816b83da56d27c30d4d87b3bc907d8016f2ce6b9cc74b"
+      "sha256": "eafb22a047486d306b811e42646b39c67ec61d45953c041b123dd3a8410c871f"
     },
     "nodes": {
       "null_counts": {
@@ -62,12 +62,13 @@
         "value_const_unique": 3,
         "value_expr_nodes": 3
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/smoke/nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/smoke/nodes.parquet",
       "rows": 758,
       "sha256": "280f7df972453e86c041c1260d677230767fd615404e0242525dfd5936d9b871"
     }
   },
   "generated_heuristic": "name matches private/auxiliary/recursor/cases/noConfusion/injection/ctorIdx/sizeOf patterns",
+  "graph_schema_version": "lean-graph-v2",
   "run_kind": "smoke",
   "schema_version": "normalized-manifest-v1",
   "snapshot_id": "mathlib-v4.32.1",

@@ -1,5 +1,6 @@
 {
   "all_unique_pair_count": 11821,
+  "constant_occurrence_count": 130517,
   "declaration_count": 758,
   "declaration_counts_by_kind": {
     "constructor": 1,
@@ -121,8 +122,11 @@
   "run_kind": "smoke",
   "schema_version": "analysis-summary-v1",
   "self_loop_count": 0,
+  "self_loop_occurrence_count": 0,
   "snapshot_id": "mathlib-v4.32.1",
+  "type_constant_occurrence_count": 18504,
   "type_edge_count": 7273,
+  "value_constant_occurrence_count": 112013,
   "value_edge_count": 10288,
   "veldhuizen_reuse_concentration": {
     "gini": 0.7039703429101019,
