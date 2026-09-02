@@ -159,7 +159,7 @@ function ExprLayer({ title, layer }: { title: string; layer: ExprBreakdownLayer 
       <code>{layer.raw}</code>
       <ol>
         {layer.nodes.map((node) => (
-          <li key={node.index} style={{ paddingLeft: `${12 + node.depth * 22}px` }}>
+          <li key={node.index} className={`expr-depth-${node.depth}`}>
             <i>{node.index}</i><code>{node.constructor}</code><p>{node.meaning}</p>
           </li>
         ))}
