@@ -42,7 +42,11 @@ data/lean_mathlib/<snapshot>/raw/lean-graph-v2/<run>/
 data/lean_mathlib/<snapshot>/normalized/lean-graph-v2/<run>/
 ```
 
-The v2 normalizer rejects null, zero, negative, and duplicate typed-edge keys.
-This prevents a silent fallback to the old unique-only semantics. Existing v1
-results remain historical evidence and must not be presented as v2
+The v2 normalizer rejects null, zero, and negative multiplicities. Identical
+typed-edge records emitted for the same generated declaration in multiple
+import environments collapse to one canonical row without summing their
+weights; duplicate keys with conflicting multiplicities are rejected as an
+identity ambiguity. This prevents both a silent fallback to the old
+unique-only semantics and artificial multiplication of occurrences. Existing
+v1 results remain historical evidence and must not be presented as v2
 occurrence-weighted results.

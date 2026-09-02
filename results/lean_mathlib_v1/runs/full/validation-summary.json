@@ -7,6 +7,7 @@
     "duplicate_node_names": true,
     "duplicate_typed_edges": true,
     "missing_domains": true,
+    "missing_or_nonpositive_multiplicity": true,
     "module_count_matches": true,
     "shard_merge_order_independent": true,
     "theorem_value_coverage_complete": true
@@ -22,7 +23,8 @@
     "dangling_targets": 0,
     "duplicate_node_names": 0,
     "duplicate_typed_edges": 0,
-    "missing_domains": 0
+    "missing_domains": 0,
+    "missing_or_nonpositive_multiplicity": 0
   },
   "module_status_counts": {
     "ok": 8264

@@ -4,13 +4,13 @@
       "null_counts": {
         "dst_id": 0,
         "edge_type": 0,
-        "multiplicity": 24741186,
+        "multiplicity": 0,
         "snapshot_id": 0,
         "src_id": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/edges.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/full/edges.parquet",
       "rows": 24741186,
-      "sha256": "c99b631c7cf4802ee2a2b5cadffbf1e6b4b0d8c6316d725b3ebedd29e4ee88fd"
+      "sha256": "da36012e630e4e9c15240c823528cfd3242651301c57956d339cd4089851a2ae"
     },
     "external_nodes": {
       "null_counts": {
@@ -19,7 +19,7 @@
         "node_id": 0,
         "snapshot_id": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/external_nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/full/external_nodes.parquet",
       "rows": 10805,
       "sha256": "b1c361989c8af67e500e25e147c524b96edd92b1d97597ae700455ee2a5bba2d"
     },
@@ -36,9 +36,9 @@
         "status": 0,
         "warning_count": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/modules.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/full/modules.parquet",
       "rows": 8264,
-      "sha256": "c3771df5a7d009ec11e8cd48854a66bc5ed086cea57aa08c7d34f89cd3600495"
+      "sha256": "8292562b9ca8d52fc8555d2e81917a95ff2bac0f44bf2093aa26fb22b82995fe"
     },
     "nodes": {
       "null_counts": {
@@ -62,12 +62,13 @@
         "value_const_unique": 13115,
         "value_expr_nodes": 13115
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/full/nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-graph-v2/full/nodes.parquet",
       "rows": 566238,
       "sha256": "b4e6f9ffc6aee84442a21a7e9c7cdc18740bfe764c49fb39aa0a66a2f50d6b89"
     }
   },
   "generated_heuristic": "name matches private/auxiliary/recursor/cases/noConfusion/injection/ctorIdx/sizeOf patterns",
+  "graph_schema_version": "lean-graph-v2",
   "run_kind": "full",
   "schema_version": "normalized-manifest-v1",
   "snapshot_id": "mathlib-v4.32.1",

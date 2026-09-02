@@ -6,8 +6,8 @@ from knowledge_reuse.sources.lean_mathlib.commands.verify_run import (
     semantic_accumulator,
 )
 from knowledge_reuse.sources.lean_mathlib.normalize import (
+    canonicalize_weighted_edges,
     null_statistics,
-    validate_weighted_edges,
 )
 from knowledge_reuse.sources.lean_mathlib.normalize_complexity import (
     select_graph_complexity,
@@ -33,18 +33,25 @@ def weighted_edges(multiplicities: list[int | None]) -> pl.DataFrame:
 
 
 def test_weighted_edges_accept_positive_multiplicity() -> None:
-    validate_weighted_edges(weighted_edges([3]))
+    observed = canonicalize_weighted_edges(weighted_edges([3]))
+    assert observed["multiplicity"].to_list() == [3]
+
+
+def test_weighted_edges_collapse_identical_extraction_aliases_without_summing() -> None:
+    observed = canonicalize_weighted_edges(weighted_edges([3, 3]))
+    assert observed.height == 1
+    assert observed["multiplicity"].to_list() == [3]
 
 
 @pytest.mark.parametrize(
     ("multiplicities", "message"),
-    [([2, 3], "duplicate typed-edge keys"), ([None], "non-null"), ([0], "positive")],
+    [([2, 3], "disagree on multiplicity"), ([None], "non-null"), ([0], "positive")],
 )
 def test_weighted_edges_reject_lossy_or_invalid_encoding(
     multiplicities: list[int | None], message: str
 ) -> None:
     with pytest.raises(ValueError, match=message):
-        validate_weighted_edges(weighted_edges(multiplicities))
+        canonicalize_weighted_edges(weighted_edges(multiplicities))
 
 
 def test_semantic_accumulator_is_merge_order_independent() -> None:
