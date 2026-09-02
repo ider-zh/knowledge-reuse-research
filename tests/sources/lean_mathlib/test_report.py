@@ -61,7 +61,8 @@ def test_report_contract_has_all_sections_and_figures() -> None:
     assert "completeness.configured_corpus" not in source
     assert "个模块全部成功提取" not in source
     assert "图不是由 import 关系生成" in source
-    assert "没有把源码或 pretty-printed Expr 当成文本搜索" in source
+    assert "Lean 首先解析并精化 module" in source
+    assert "源码文本和 pretty-printed Expr 不参与依赖识别" in source
     assert ".const targetName universes" in source
     assert "每个唯一 <code>(src,dst,edge_type)</code> 保存一行" in source
     assert "完整语义图保留 <code>A→A</code>" in source

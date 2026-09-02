@@ -56,7 +56,7 @@ export default function GraphConstruction() {
 
           <section className="expr-mechanism" aria-label="Expr 抽取机制">
             <header>
-              <div><p className="eyebrow">EXTRACTION MECHANISM</p><h3>不是 count Expr text：直接遍历 Lean 的 Expr 对象</h3></div>
+              <div><p className="eyebrow">EXTRACTION MECHANISM</p><h3>从 Lean Environment 读取并遍历精化后的 Expr</h3></div>
               <a href={data.expr_extraction.official_expr_url} target="_blank" rel="noreferrer">Lean v4.32.1 Expr 定义 ↗</a>
             </header>
             <p>{data.expr_extraction.source_text_role}</p>
