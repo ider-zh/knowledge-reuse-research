@@ -1,0 +1,400 @@
+{
+  "spec_version": "1.0",
+  "extractor_version": "1.0.0",
+  "graph_id": "software/openjdk/jdk-28+13/default",
+  "source": {
+    "repository": "https://github.com/openjdk/jdk",
+    "tag": "jdk-28+13",
+    "commit": "6870f28fe74cbd71419bdd1d1797434366bf8114",
+    "binary_url": "https://download.java.net/java/early_access/jdk28/13/GPL/openjdk-28-ea+13_linux-x64_bin.tar.gz"
+  },
+  "generated_at_utc": "2026-09-03T07:29:22.384168+00:00",
+  "jdk_version": [
+    "openjdk version \"28-ea\" 2027-03-23",
+    "OpenJDK Runtime Environment (build 28-ea+13-812)",
+    "OpenJDK 64-Bit Server VM (build 28-ea+13-812, mixed mode, sharing)"
+  ],
+  "platform": "Linux-6.18.35-x86_64-with-glibc2.39",
+  "input_archive": {
+    "filename": "openjdk-28-ea+13_linux-x64_bin.tar.gz",
+    "size_bytes": 241950028,
+    "sha256": "e4a930685f551dc72f843ee83fd1ce3901edeed8db422f0f98f3e9c0e7f4ddb8"
+  },
+  "jmods": [
+    {
+      "name": "java.base.jmod",
+      "size_bytes": 25117639,
+      "sha256": "a53a3d03aa39a659404f76c69e76e2aefef42e0dc54dbd8e47df869d8bf466d8"
+    },
+    {
+      "name": "java.compiler.jmod",
+      "size_bytes": 141751,
+      "sha256": "48aa2836b41fe7d7025f6a087328a2618a676a18f673076e68531d4df3512ff8"
+    },
+    {
+      "name": "java.datatransfer.jmod",
+      "size_bytes": 58855,
+      "sha256": "e935028fb4d6401e677aad5a894e8a4fece5cf3cf5639d6c7cbc828beae824a0"
+    },
+    {
+      "name": "java.desktop.jmod",
+      "size_bytes": 13632497,
+      "sha256": "675876a917d585a23ff99b2647deb81206a5b32e7fcaed900fa2f3fae2984ece"
+    },
+    {
+      "name": "java.instrument.jmod",
+      "size_bytes": 49210,
+      "sha256": "a1ed44735ee504c0a1835eb032ca37e2891d1db891c43610799352925c1323ac"
+    },
+    {
+      "name": "java.logging.jmod",
+      "size_bytes": 108755,
+      "sha256": "7e9212d0a30bb4c9eb7d9c507820fdf7cb493e279dae848823df3dc8e3d4988d"
+    },
+    {
+      "name": "java.management.jmod",
+      "size_bytes": 808177,
+      "sha256": "7db9d3f5e61c31b1d1247329f67d9e1b9570cfa5dfe82e6138ccf3b97ad7e889"
+    },
+    {
+      "name": "java.management.rmi.jmod",
+      "size_bytes": 86200,
+      "sha256": "3ffdad5f87d6295561c3648b044d1994fcbc7845c700373dc8eabc505024563f"
+    },
+    {
+      "name": "java.naming.jmod",
+      "size_bytes": 477584,
+      "sha256": "795ca06a568cfe57c46e1f5bd8b9200e6ed5de213870877c01ec094f9e33e2db"
+    },
+    {
+      "name": "java.net.http.jmod",
+      "size_bytes": 1684206,
+      "sha256": "a515dba31e8106d8ad992995a98dc635446f72e6d179970220ae950e818d23a2"
+    },
+    {
+      "name": "java.prefs.jmod",
+      "size_bytes": 56045,
+      "sha256": "c066d58a97e9c6760ec2a2beb65bfd8c5aba135875b3933459310357ee84ad27"
+    },
+    {
+      "name": "java.rmi.jmod",
+      "size_bytes": 230921,
+      "sha256": "774aa5dd69d16f147eafae866240fac3611a216ed8501f1fee546be3a1940d67"
+    },
+    {
+      "name": "java.scripting.jmod",
+      "size_bytes": 24799,
+      "sha256": "5a042f5697dd739ab916f568bdec8eef6c366429a08ea8d6114b6771f5a20853"
+    },
+    {
+      "name": "java.se.jmod",
+      "size_bytes": 9867,
+      "sha256": "cdcad34eabc80150c06b7f9187921f568fad42b90bf4c00ba92469b4a89f2415"
+    },
+    {
+      "name": "java.security.jgss.jmod",
+      "size_bytes": 578070,
+      "sha256": "fadb3802c591e2e36d5793189874dcacdedaea378ec5c029919ac1b9592dc184"
+    },
+    {
+      "name": "java.security.sasl.jmod",
+      "size_bytes": 88334,
+      "sha256": "c85c563a98f74e4b10b79eca2a1fede4aebc9f4c83f1bff901815f07b0b7a5dc"
+    },
+    {
+      "name": "java.smartcardio.jmod",
+      "size_bytes": 65051,
+      "sha256": "b5d136478307a066600f8e875eb8009f6a34f1c27f3d9d05b2a3611908e1ba37"
+    },
+    {
+      "name": "java.sql.jmod",
+      "size_bytes": 89145,
+      "sha256": "9d94bc45681b49dd64766b4a39e5a4e9c53dca057868713979697f0cad85de87"
+    },
+    {
+      "name": "java.sql.rowset.jmod",
+      "size_bytes": 195261,
+      "sha256": "c7267a2ff745cdae2b48f8f218f48fedbc2263bae4444e7d614159f47dc2b165"
+    },
+    {
+      "name": "java.transaction.xa.jmod",
+      "size_bytes": 11679,
+      "sha256": "65889bc3d518c945b679d0cd6c6b84fe5f8ace732091348b02c170ec8d42199f"
+    },
+    {
+      "name": "java.xml.crypto.jmod",
+      "size_bytes": 702731,
+      "sha256": "5c835e06e9f96ddce72c8d6ff8b924122a01b7958f217fd6cf7250568c91231a"
+    },
+    {
+      "name": "java.xml.jmod",
+      "size_bytes": 4879862,
+      "sha256": "196fe9f0ad3b38ff1c40b916c0a3f80572524027362c9e19c9ca4e487178efe1"
+    },
+    {
+      "name": "jdk.accessibility.jmod",
+      "size_bytes": 55393,
+      "sha256": "a0f2206adf03859b1b3aee81cc164f4f39068880e8583538a60aef29bcf6cec8"
+    },
+    {
+      "name": "jdk.attach.jmod",
+      "size_bytes": 45315,
+      "sha256": "5c71ccec210153d0640efbc69aa717abf865fb24fb80b9f0d4cf9fd2a6bf2006"
+    },
+    {
+      "name": "jdk.charsets.jmod",
+      "size_bytes": 1248017,
+      "sha256": "2f5d8c5ed19f8d0343c1e4e00122c5dbca82178283e9bd3516e0bdc7c6d4365e"
+    },
+    {
+      "name": "jdk.compiler.jmod",
+      "size_bytes": 11765265,
+      "sha256": "f94ca8a7594918db73bb18aa6300fb7e1c0cc0a612fd377799679bee5f2ac8bd"
+    },
+    {
+      "name": "jdk.crypto.cryptoki.jmod",
+      "size_bytes": 438410,
+      "sha256": "7107efe3c23600939a558dec7360b79e65e8a21244d84baf9f8c0c1337482ee8"
+    },
+    {
+      "name": "jdk.crypto.ec.jmod",
+      "size_bytes": 9719,
+      "sha256": "23e6829d4ac908ef9b6d3b6e634df2b17fbf4e6639b6e37a73ef729644fad1c4"
+    },
+    {
+      "name": "jdk.dynalink.jmod",
+      "size_bytes": 159512,
+      "sha256": "c4b20ba8c3c638253f00f84f480b371bc66d7970d983e4598ff5b558a70c57cb"
+    },
+    {
+      "name": "jdk.editpad.jmod",
+      "size_bytes": 15353,
+      "sha256": "623fe3cfe80418fac6a0ca5ddabf7191eb534d83c77a4ca5c761d4533cb86dc0"
+    },
+    {
+      "name": "jdk.hotspot.agent.jmod",
+      "size_bytes": 2180303,
+      "sha256": "cb845e4aa436a940aaa59a976278c58034a084611e44078aee0c0ee57a115d1f"
+    },
+    {
+      "name": "jdk.httpserver.jmod",
+      "size_bytes": 171911,
+      "sha256": "f290ef953020c4e1290f8dc6d1d83626dcf69453682221a8f77c1b5c0bcf85fd"
+    },
+    {
+      "name": "jdk.incubator.vector.jmod",
+      "size_bytes": 1392176,
+      "sha256": "315f70bf16d11e6ca0e1e9d889f72f9a5f945065e8284f4cfc94c613672d1440"
+    },
+    {
+      "name": "jdk.internal.ed.jmod",
+      "size_bytes": 15220,
+      "sha256": "9a5f33840084c475911f035b460ad4635e05c0c1b25f210f15d73d1173080680"
+    },
+    {
+      "name": "jdk.internal.jvmstat.jmod",
+      "size_bytes": 95639,
+      "sha256": "bc3b895a1ad042f1ab232154331a5917f1b129600873150d2eef0e4be28ddc6f"
+    },
+    {
+      "name": "jdk.internal.le.jmod",
+      "size_bytes": 527574,
+      "sha256": "0beca97ae40b6607328b9c91637312666e18f7044b246adef1b68a65add67744"
+    },
+    {
+      "name": "jdk.internal.md.jmod",
+      "size_bytes": 254211,
+      "sha256": "6011192ad9fccc2ea9858ff4f1829ef30b9f2ce755ea573b3826b7fc31bb2511"
+    },
+    {
+      "name": "jdk.internal.opt.jmod",
+      "size_bytes": 95665,
+      "sha256": "94c2b1a3832b0a0ab3118fface7513e3945e50b5bb950846dc89480c05e6d2e0"
+    },
+    {
+      "name": "jdk.jartool.jmod",
+      "size_bytes": 250311,
+      "sha256": "f2096a2fdf610ecd87b616db9179c578f66f7767a3b0f3a168d5176e613e8848"
+    },
+    {
+      "name": "jdk.javadoc.jmod",
+      "size_bytes": 2458202,
+      "sha256": "117622db07d0db0f9c1fb51a113d2c7eba27f1f107226677f7a495846b3ec302"
+    },
+    {
+      "name": "jdk.jcmd.jmod",
+      "size_bytes": 141642,
+      "sha256": "a5477bba5813e98d75eaa211773c043ae1335e3b1bd7267e2d1f67ffb2c98a6e"
+    },
+    {
+      "name": "jdk.jconsole.jmod",
+      "size_bytes": 492048,
+      "sha256": "a86afd4f90495b92b02d4f7463723ae70b1cc00862361ab023b1c1e86012388c"
+    },
+    {
+      "name": "jdk.jdeps.jmod",
+      "size_bytes": 559562,
+      "sha256": "d2e2508438fabf8a8e7eb9a8cb00ee8cda9538ea07308a3ec05fa22d901f99cf"
+    },
+    {
+      "name": "jdk.jdi.jmod",
+      "size_bytes": 880641,
+      "sha256": "a46cfd1e68e365c79485d012f180ae61078ec16569dd379a72210cb7caae6a2c"
+    },
+    {
+      "name": "jdk.jdwp.agent.jmod",
+      "size_bytes": 157113,
+      "sha256": "a3d8f60cdaa8a6906a8677a142d1a53965099fb8401e7f4d21bbed78d6af8415"
+    },
+    {
+      "name": "jdk.jfr.jmod",
+      "size_bytes": 866865,
+      "sha256": "3bcb51fe32208356ae98b8a75e1a59f5e7f29a85daac13b9fdae51dbdd98e09c"
+    },
+    {
+      "name": "jdk.jlink.jmod",
+      "size_bytes": 528687,
+      "sha256": "1289427a5e51ee6afcc7f0031cfedccc53de0409d42938cd12b05222e4a6caa3"
+    },
+    {
+      "name": "jdk.jpackage.jmod",
+      "size_bytes": 1436518,
+      "sha256": "cacc8244066abb6915e918974a656a8813d2d02591d38bcbdfbc56206a9571d1"
+    },
+    {
+      "name": "jdk.jshell.jmod",
+      "size_bytes": 870574,
+      "sha256": "91a842a7de26fe75f6b4b76d768051574e64564c9cc4d7287314fb34fcddc5fd"
+    },
+    {
+      "name": "jdk.jstatd.jmod",
+      "size_bytes": 37398,
+      "sha256": "f2b75bbca56b740e73d22ef5c83cf6b7fae6e3a0ea978ddfdc9460e71d50b758"
+    },
+    {
+      "name": "jdk.localedata.jmod",
+      "size_bytes": 11797026,
+      "sha256": "ecb609c065666e7bc8ee97651a8601ba3e0af1d2b7f2e4f95edacd794ea83e79"
+    },
+    {
+      "name": "jdk.management.agent.jmod",
+      "size_bytes": 81151,
+      "sha256": "937ccfb645b143e69ae209ecfd42ec15fbed2da09f3f50eb3d07fcb1fa6ba781"
+    },
+    {
+      "name": "jdk.management.jfr.jmod",
+      "size_bytes": 57622,
+      "sha256": "f902ebab30992391e76863b80c9adbd89c0a50f78d2c00409b6346afb25fdb86"
+    },
+    {
+      "name": "jdk.management.jmod",
+      "size_bytes": 85217,
+      "sha256": "faa78afb8131a84a6148841a0dd37cf50b947cab9b21718d36bafc9ee82ef146"
+    },
+    {
+      "name": "jdk.naming.dns.jmod",
+      "size_bytes": 71201,
+      "sha256": "b58f9e787573731b21e66ac4eb569b73f638f918e384cb327006ce5d23f97780"
+    },
+    {
+      "name": "jdk.naming.rmi.jmod",
+      "size_bytes": 30078,
+      "sha256": "25dbc0293e1651010535b0ab3cd321f8d80a0f877dcf79498a90b6865ca461a2"
+    },
+    {
+      "name": "jdk.net.jmod",
+      "size_bytes": 31909,
+      "sha256": "1ac9fa640a25734797775fb92e18a02adb9abe5186ce26ac515ed470ae6fb3cd"
+    },
+    {
+      "name": "jdk.nio.mapmode.jmod",
+      "size_bytes": 10218,
+      "sha256": "54f155030155503df03b376b90e7b085aa14604b45ecdd65f3cd105aaacd11c9"
+    },
+    {
+      "name": "jdk.sctp.jmod",
+      "size_bytes": 91118,
+      "sha256": "e1c1bbf889fcb8daf856fc56a9b00eb085d874752493d8810216db6de733886b"
+    },
+    {
+      "name": "jdk.security.auth.jmod",
+      "size_bytes": 75820,
+      "sha256": "7807c651b33bb441992476e77bd44eacbead0bd9d14b34ff94c6e7aa64fa0bc8"
+    },
+    {
+      "name": "jdk.security.jgss.jmod",
+      "size_bytes": 31767,
+      "sha256": "4ab2c5e0cfd2c2a84b64724be1dc29a8cb88122eba4d988102fc675a428f0a5f"
+    },
+    {
+      "name": "jdk.unsupported.desktop.jmod",
+      "size_bytes": 21871,
+      "sha256": "c944a68a9775f8e9ce4a858e868b21c0c660caeb509fde63d1b90a10af132df8"
+    },
+    {
+      "name": "jdk.unsupported.jmod",
+      "size_bytes": 29452,
+      "sha256": "523d4dbcd49dfbd186d73d1f8e18fc8d0c18b7df829bb93c63af7327442821bd"
+    },
+    {
+      "name": "jdk.xml.dom.jmod",
+      "size_bytes": 49949,
+      "sha256": "0df80cafed39fbd2421d6476011dd8274132bdfccf01c8333b378b8eb2af840c"
+    },
+    {
+      "name": "jdk.zipfs.jmod",
+      "size_bytes": 115352,
+      "sha256": "2375772c6fa09d6178855921f0907e70d853c624c1d6378fb787a96ab95ab96e"
+    }
+  ],
+  "output_datasets": [
+    {
+      "name": "methods.parquet",
+      "size_bytes": 8100061,
+      "sha256": "3c325121e83f6ecdd251bbbf6bfe44230e0d7895542c023d8c474df69843085f"
+    },
+    {
+      "name": "classes.parquet",
+      "size_bytes": 511558,
+      "sha256": "f0ff91a1502f4d28f607cc974ee1cc6472603c117d65060a9539e0ba9d42b788"
+    },
+    {
+      "name": "call_sites.parquet",
+      "size_bytes": 11650379,
+      "sha256": "094f20fe293b57cd57e8a5bf06fb118a02aea45756d5fe42482ffb3aff5f20ea"
+    },
+    {
+      "name": "unresolved_calls.parquet",
+      "size_bytes": 199587,
+      "sha256": "cbf592771e17ba0b4a847523c5a9ee828afae721357d8d6e6fc2ef0b6c9eae81"
+    },
+    {
+      "name": "method_edges.parquet",
+      "size_bytes": 4935924,
+      "sha256": "7946ee087c5639426d54c2ea0182b62f0c197bde5c5b8d4637b9d7a07e8b0e61"
+    },
+    {
+      "name": "graph_core_nodes.parquet",
+      "size_bytes": 7630103,
+      "sha256": "59c369d7e13ca27cadc8dd556e97b0c4cf7cc82a27aaf6f3cef8a1034d0faee5"
+    },
+    {
+      "name": "graph_core_links.parquet",
+      "size_bytes": 4768716,
+      "sha256": "e80e8662160f054b0b17fc1590c942bdcafe13f510ba2f422e0cde78094bae57"
+    }
+  ],
+  "counts": {
+    "jmods": 65,
+    "classes": 27262,
+    "methods": 239765,
+    "raw_invocations": 874848,
+    "resolved_call_sites": 859406,
+    "unresolved_call_sites": 15442,
+    "aggregated_method_edges": 621105,
+    "aggregated_callsite_sum": 859406,
+    "graph_core_nodes": 239765,
+    "graph_core_links": 620634,
+    "graph_core_multiplicity_sum": 859406
+  }
+}
