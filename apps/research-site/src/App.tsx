@@ -11,8 +11,12 @@ const formatExact = (value: string) => BigInt(value).toLocaleString("en-US");
 const DomainCharts = lazy(() => import("./components/DomainCharts"));
 const ReuseDistributionChart = lazy(() => import("./components/ReuseDistributionChart"));
 const PathRankComparison = lazy(() => import("./components/PathRankComparison"));
+const OpenJdkReport = lazy(() => import("./components/OpenJdkReport"));
 
 function App() {
+  if (window.location.pathname.replace(/\/+$/, "") === "/openjdk") {
+    return <Suspense fallback={<main className="fatal"><p className="eyebrow">LOADING OPENJDK REPORT</p><h1>正在装载方法调用图统计…</h1></main>}><OpenJdkReport /></Suspense>;
+  }
   const [overview, setOverview] = useState<Overview | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [explorer, setExplorer] = useState<ExplorerSelection>({ kind: null });
@@ -35,6 +39,7 @@ function App() {
         <nav>
           <a className="wordmark" href="#top">KR / OBSERVATORY</a>
           <div>
+            <a className="report-switch" href="/openjdk/">OpenJDK 报告</a>
             <a href="#findings">研究结论</a>
             <a href="#construction">图的构建</a>
             <a href="#distribution">Zipf 对照</a>

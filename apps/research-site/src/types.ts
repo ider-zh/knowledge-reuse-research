@@ -362,3 +362,54 @@ export type PathRankComparison = {
 };
 
 export type ExplorerKind = "nodes" | "external" | "source" | "edges" | null;
+
+export type OpenJdkTopMethod = {
+  rank: number;
+  node_id: string;
+  label: string;
+  module: string;
+  direct_unique_callers: number;
+  direct_call_occurrences: number;
+  indirect_incoming_paths: string;
+  all_incoming_paths: string;
+  all_incoming_paths_log10: number;
+  is_cycle_boundary: boolean;
+};
+
+export type OpenJdkReuseReport = {
+  schema_version: string;
+  snapshot_id: string;
+  graph_id: string;
+  corpus: {
+    jdk_release: string;
+    source_tag: string;
+    source_commit: string;
+    node_unit: string;
+    edge_unit: string;
+  };
+  semantics: Record<string, string>;
+  population: {
+    nodes: number;
+    links: number;
+    call_occurrences: number;
+    positive_path_nodes: number;
+    zero_path_nodes: number;
+    cycle_boundary_nodes: number;
+  };
+  path_counts: {
+    maximum: string;
+    maximum_log10: number;
+    median_positive_log10: number;
+  };
+  rank_shape: Omit<PathRankComparison, "schema_version" | "snapshot_id" | "metric_definition" | "amplitude_policy" | "prime_transform" | "references">;
+  top_nodes: OpenJdkTopMethod[];
+  interpretation: {
+    primary: string;
+    prime: string;
+    scope: string;
+  };
+  references: {
+    zipf: string;
+    nth_prime: string;
+  };
+};

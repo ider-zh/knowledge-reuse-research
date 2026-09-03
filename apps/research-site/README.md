@@ -1,8 +1,10 @@
 # Knowledge Reuse Observatory
 
 This Vite/React site presents compact public evidence from the complete
-Lean/mathlib experiment. It is deliberately not a browser copy of the full
-graph.
+Lean/mathlib experiment and the OpenJDK 28+13 method-graph experiment. The
+reports are sibling views: Lean remains at the root route and OpenJDK is
+available at `/openjdk/`. The site is deliberately not a browser copy of
+either full graph.
 
 ## Data boundary
 
@@ -24,6 +26,11 @@ site publishes compact JSON evidence rather than the full graph:
 Every payload records the complete population size and the published row count.
 Samples explain records and support local audit; they are not used to estimate
 the reported full-population statistics.
+
+The OpenJDK report publishes full-population path-indegree summaries and fitted
+rank curves computed across all 239,765 method nodes. Its table contains the
+100 highest path-count methods; the complete per-node metric remains a
+rebuildable Parquet artifact under `data/software/`.
 
 Regenerate and build:
 

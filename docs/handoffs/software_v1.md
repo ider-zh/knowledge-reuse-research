@@ -33,8 +33,13 @@ The JDK archive, unpacked JDK, raw TSV facts, and generated Parquet datasets are
 large rebuildable artifacts under `vendor/` or `data/software/` and are excluded
 from Git.
 
-## Next action
+## Reuse analysis
 
-Use `graph_core_nodes.parquet` and `graph_core_links.parquet` as the input to
-the shared reuse analysis. If runtime-dispatch sensitivity is required, add a
-separate CHA/RTA projection rather than modifying the exact-reference graph.
+The graph-core projection has been analyzed with the shared
+multiplicity-weighted, cycle-bounded incoming-path metric. The complete
+per-node table remains rebuildable data; compact full-population statistics,
+rank-shape fits, deterministic display points, and the top 100 methods are
+published in the research site under the sibling OpenJDK report.
+
+If runtime-dispatch sensitivity is required, add a separate CHA/RTA projection
+rather than modifying the exact-reference graph.

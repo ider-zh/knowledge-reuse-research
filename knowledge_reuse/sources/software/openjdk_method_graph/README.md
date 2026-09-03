@@ -61,3 +61,22 @@ hierarchy metadata, and `graph-core-v1` node/link projections.
 
 The complete graph contract is frozen in the experiment
 [`SPEC.md`](../../../../experiments/software_v1/openjdk_28_b13/SPEC.md).
+
+## Reuse analysis
+
+The shared cycle-bounded path metric can be applied to the graph-core
+projection:
+
+```bash
+python -m knowledge_reuse.sources.software.openjdk_method_graph.scripts.analyze_reuse \
+  --nodes data/software/openjdk_jdk_28_b13/normalized/graph_core_nodes.parquet \
+  --links data/software/openjdk_jdk_28_b13/normalized/graph_core_links.parquet \
+  --output data/software/openjdk_jdk_28_b13/analysis \
+  --site-json apps/research-site/public/datasets/software_v1/openjdk-28-b13/method-reuse.json
+```
+
+The exact metric contract is
+[`ANALYSIS_SPEC.md`](../../../../experiments/software_v1/openjdk_28_b13/ANALYSIS_SPEC.md).
+The per-node Parquet table is rebuildable data; the compact public JSON records
+full-population statistics, fitted rank curves, and the 100 highest path-count
+methods.

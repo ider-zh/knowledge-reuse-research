@@ -3,6 +3,7 @@ import type {
   ConstructionCases,
   ExternalTargetSample,
   NodeSample,
+  OpenJdkReuseReport,
   Overview,
   PathRankComparison,
   RankFrequencyDistribution,
@@ -11,6 +12,7 @@ import type {
 } from "./types";
 
 const ROOT = "/datasets/lean_mathlib_v1/mathlib-v4.32.1";
+const OPENJDK_ROOT = "/datasets/software_v1/openjdk-28-b13";
 
 async function loadJson<T>(path: string): Promise<T> {
   const response = await fetch(`${ROOT}/${path}`);
@@ -33,6 +35,14 @@ export const loadRankFrequency = () =>
   loadJson<RankFrequencyDistribution>("reuse-rank-frequency.json");
 export const loadPathRankComparison = () =>
   loadJson<PathRankComparison>("path-rank-comparison.json");
+
+export async function loadOpenJdkReuseReport(): Promise<OpenJdkReuseReport> {
+  const response = await fetch(`${OPENJDK_ROOT}/method-reuse.json`);
+  if (!response.ok) {
+    throw new Error(`无法加载 OpenJDK 报告: HTTP ${response.status}`);
+  }
+  return response.json() as Promise<OpenJdkReuseReport>;
+}
 
 export function mathlibModuleUrl(module: string): string {
   return `https://github.com/leanprover-community/mathlib4/blob/v4.32.1/${module.replaceAll(".", "/")}.lean`;

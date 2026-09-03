@@ -26,6 +26,7 @@ a { color: var(--green); text-decoration-thickness: 1px; text-underline-offset: 
 .site-header nav { max-width: 1440px; margin: auto; padding: 14px 32px; display: flex; align-items: center; justify-content: space-between; gap: 24px; }
 .site-header nav div { display: flex; gap: 22px; font-size: 14px; }
 .wordmark { color: var(--ink); font: 500 14px/1 "DM Mono", monospace; letter-spacing: .12em; text-decoration: none; }
+.report-switch { padding: 3px 9px; border: 1px solid var(--green); text-decoration: none; }
 
 main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .hero { min-height: 590px; display: grid; grid-template-columns: 1.4fr .6fr; gap: 50px; align-items: center; padding: 86px 0 52px; }
@@ -36,10 +37,14 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .concept-card > b, .concept-card > span { display: block; font: 700 18px/1.4 "Noto Serif SC", serif; }
 .concept-card > span { margin: 8px 0; color: #78c7a4; font-size: 25px; }
 .concept-card > p:last-child { margin: 22px 0 0; color: #c9ded4; font-size: 14px; line-height: 1.7; }
+.concept-card code { color: #fff; font-size: 13px; }
+.software-hero h1 { font-size: clamp(58px,7.2vw,108px); }
 
 .metric-grid { display: grid; grid-template-columns: repeat(6,1fr); border: solid var(--ink); border-width: 1px 0; }
 .metric-card { min-width: 0; overflow: hidden; padding: 26px 18px 24px; border: 0; border-right: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; transition: background .2s, transform .2s; }
 .metric-card:last-child { border-right: 0; }
+.report-metric { cursor: default; }
+.report-metric:hover { transform: none; }
 .metric-card:hover { background: var(--card); transform: translateY(-4px); }
 .metric-card strong { display: block; max-width: 100%; margin: 16px 0 2px; font: 800 clamp(24px,2vw,34px)/1 "Noto Serif SC", serif; font-variant-numeric: tabular-nums; letter-spacing: -.04em; white-space: nowrap; }
 .metric-card strong.compact { font-size: clamp(25px,2vw,34px); letter-spacing: -.03em; }
@@ -75,6 +80,8 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .claim-card code { color: var(--muted); overflow-wrap: anywhere; }
 .claim-text { font: 600 18px/1.6 "Noto Serif SC", serif; }
 .claim-card details { margin-top: auto; color: var(--muted); font-size: 14px; }
+.claim-detail { margin-top: auto; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.software-claims .claim-card { grid-column: span 4; }
 .claim-card summary { cursor: pointer; color: var(--green); }
 
 .chart-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
@@ -113,6 +120,9 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .path-rank-conclusion b { color: var(--green-dark); font: 750 18px "Noto Serif SC", serif; }
 .path-rank-conclusion p { margin: 0; font-size: 16px; line-height: 1.8; }
 .path-rank-references { margin: 0; padding: 16px 36px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+.method-ledger { border: 1px solid var(--line); background: var(--card); max-height: 720px; }
+.method-ledger code { color: var(--blue); font-size: 13px; }
+.method-observation { border: 1px solid var(--line); border-top: 0; }
 
 .algorithm-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .algorithm-grid article { min-height: 154px; padding: 19px; background: var(--card); }
@@ -374,6 +384,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .hero { min-height: auto; }
   .concept-card { align-self: auto; margin: 0; }
   .claim-card, .claim-card:nth-child(1), .claim-card:nth-child(2) { grid-column: span 6; }
+  .software-claims .claim-card { grid-column: span 6; }
   .algorithm-grid, .method-grid, .construction-pipeline { grid-template-columns: 1fr 1fr; }
   .expr-mechanism-grid { grid-template-columns: 1fr 1fr; }
   .expr-mechanism-grid article:nth-child(2) { border-right: 0; }
@@ -412,6 +423,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .path-rank-references { padding-inline: 20px; }
   .metric-card { border-right: 0; border-bottom: 1px solid var(--line); }
   .claim-card, .claim-card:nth-child(1), .claim-card:nth-child(2) { grid-column: 1 / -1; }
+  .software-claims .claim-card { grid-column: 1 / -1; }
   .section-block { padding-top: 72px; }
   .section-heading { gap: 18px; }
   .domain-workbench { grid-template-columns: 1fr; }
