@@ -1,6 +1,6 @@
 # OpenJDK Method Reuse Analysis Specification
 
-Version: 1.0  
+Version: 1.1  
 Graph: `software/openjdk/jdk-28+13/default`
 
 ## Research question
@@ -64,3 +64,5 @@ fit cannot establish a prime-generating mechanism.
 - the same compact JSON can be written into the research-site public dataset.
 
 The full per-node table is a rebuildable data artifact and is not committed.
+Public site payload filenames are versioned when their required schema changes,
+so cached JavaScript cannot consume an older incompatible JSON shape.

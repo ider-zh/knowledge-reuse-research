@@ -338,7 +338,7 @@ def main() -> int:
             args.source_zip,
         )
     payload = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "snapshot_id": "openjdk-jdk-28+13",
         "graph_id": graph_id,
         "corpus": {

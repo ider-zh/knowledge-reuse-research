@@ -13,6 +13,7 @@ import type {
 
 const ROOT = "/datasets/lean_mathlib_v1/mathlib-v4.32.1";
 const OPENJDK_ROOT = "/datasets/software_v1/openjdk-28-b13";
+const OPENJDK_DATASET_VERSION = "v2";
 
 async function loadJson<T>(path: string): Promise<T> {
   const response = await fetch(`${ROOT}/${path}`);
@@ -37,11 +38,22 @@ export const loadPathRankComparison = () =>
   loadJson<PathRankComparison>("path-rank-comparison.json");
 
 export async function loadOpenJdkReuseReport(): Promise<OpenJdkReuseReport> {
-  const response = await fetch(`${OPENJDK_ROOT}/method-reuse.json`);
+  const response = await fetch(
+    `${OPENJDK_ROOT}/method-reuse-${OPENJDK_DATASET_VERSION}.json`,
+  );
   if (!response.ok) {
     throw new Error(`无法加载 OpenJDK 报告: HTTP ${response.status}`);
   }
-  return response.json() as Promise<OpenJdkReuseReport>;
+  const payload = await response.json() as Partial<OpenJdkReuseReport>;
+  if (
+    payload.schema_version !== "1.1"
+    || !payload.samples?.method_nodes
+    || !payload.extraction_examples?.node
+    || !payload.extraction_examples?.edge
+  ) {
+    throw new Error("OpenJDK 报告数据版本不匹配，请刷新页面");
+  }
+  return payload as OpenJdkReuseReport;
 }
 
 export function mathlibModuleUrl(module: string): string {

@@ -76,7 +76,7 @@ python -m knowledge_reuse.sources.software.openjdk_method_graph.scripts.analyze_
   --call-sites data/software/openjdk_jdk_28_b13/normalized/call_sites.parquet \
   --source-zip /path/to/jdk-28/lib/src.zip \
   --output data/software/openjdk_jdk_28_b13/analysis \
-  --site-json apps/research-site/public/datasets/software_v1/openjdk-28-b13/method-reuse.json
+  --site-json apps/research-site/public/datasets/software_v1/openjdk-28-b13/method-reuse-v2.json
 ```
 
 The exact metric contract is
