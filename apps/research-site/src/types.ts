@@ -376,6 +376,35 @@ export type OpenJdkTopMethod = {
   is_cycle_boundary: boolean;
 };
 
+export type OpenJdkMetricSample = {
+  node_id: string;
+  label: string;
+  module: string;
+  direct_unique_callers: number;
+  direct_call_occurrences: number;
+  indirect_incoming_paths: string;
+  all_incoming_paths: string;
+  is_cycle_boundary: boolean;
+};
+
+export type OpenJdkCallOccurrenceSample = {
+  caller: string;
+  callee: string;
+  invoke_kind: string;
+  instruction_ordinal: number;
+  source_line: number;
+  declared_target: string;
+  resolution: string;
+};
+
+export type OpenJdkMethodNodeSample = OpenJdkMetricSample & {
+  method_key: string;
+  source_file: string;
+  first_line: number | null;
+  last_line: number | null;
+  flags: string[];
+};
+
 export type OpenJdkReuseReport = {
   schema_version: string;
   snapshot_id: string;
@@ -403,6 +432,54 @@ export type OpenJdkReuseReport = {
   };
   rank_shape: Omit<PathRankComparison, "schema_version" | "snapshot_id" | "metric_definition" | "amplitude_policy" | "prime_transform" | "references">;
   top_nodes: OpenJdkTopMethod[];
+  samples: {
+    method_nodes: OpenJdkMethodNodeSample[];
+    call_pairs: Array<{
+      caller: string;
+      callee: string;
+      multiplicity: number;
+      relation: string;
+    }>;
+    call_occurrences: OpenJdkCallOccurrenceSample[];
+    positive_path_nodes: OpenJdkMetricSample[];
+    zero_path_nodes: OpenJdkMetricSample[];
+    cycle_boundary_nodes: OpenJdkMetricSample[];
+  };
+  extraction_examples: {
+    node: {
+      source_path: string;
+      source_lines: [number, number];
+      source_excerpt: string;
+      classfile_fields: {
+        module: string;
+        internal_class: string;
+        name: string;
+        descriptor: string;
+        access_flags: number;
+      };
+      output: OpenJdkMethodNodeSample;
+    };
+    edge: {
+      source_path: string;
+      source_lines: [number, number];
+      source_excerpt: string;
+      bytecode_reference: {
+        invoke_kind: string;
+        instruction_ordinal: number;
+        source_line: number;
+        declared_owner: string;
+        declared_name: string;
+        declared_descriptor: string;
+        resolution: string;
+      };
+      output: {
+        caller_method_key: string;
+        callee_method_key: string;
+        invoke_kind: string;
+        multiplicity: number;
+      };
+    };
+  };
   interpretation: {
     primary: string;
     prime: string;

@@ -5,7 +5,7 @@ import polars as pl
 from knowledge_reuse.sources.software.openjdk_method_graph.scripts.analyze_reuse import main
 
 
-def test_analysis_writes_direct_indirect_and_site_payload(tmp_path: Path, monkeypatch) -> None:
+def test_analysis_writes_direct_and_indirect_metrics(tmp_path: Path, monkeypatch) -> None:
     node_count = 21
     nodes = pl.DataFrame(
         {
@@ -33,7 +33,6 @@ def test_analysis_writes_direct_indirect_and_site_payload(tmp_path: Path, monkey
     node_path = tmp_path / "nodes.parquet"
     link_path = tmp_path / "links.parquet"
     output = tmp_path / "output"
-    site_json = tmp_path / "site.json"
     nodes.write_parquet(node_path)
     links.write_parquet(link_path)
     monkeypatch.setattr(
@@ -46,8 +45,6 @@ def test_analysis_writes_direct_indirect_and_site_payload(tmp_path: Path, monkey
             str(link_path),
             "--output",
             str(output),
-            "--site-json",
-            str(site_json),
         ],
     )
 
@@ -58,4 +55,3 @@ def test_analysis_writes_direct_indirect_and_site_payload(tmp_path: Path, monkey
     assert row["direct_call_occurrences"] == 3
     assert row["indirect_incoming_paths"] == "6"
     assert row["in_paths_source"] == "9"
-    assert site_json.exists()

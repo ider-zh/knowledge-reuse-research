@@ -12,7 +12,7 @@ import {
 } from "recharts";
 
 import { loadOpenJdkReuseReport } from "../data";
-import type { OpenJdkReuseReport } from "../types";
+import type { OpenJdkMetricSample, OpenJdkReuseReport } from "../types";
 
 const integer = new Intl.NumberFormat("en-US");
 const exact = (value: string) => BigInt(value).toLocaleString("en-US");
@@ -21,6 +21,7 @@ export default function OpenJdkReport() {
   const [data, setData] = useState<OpenJdkReuseReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rangeId, setRangeId] = useState<"all_positive" | "top_1pct">("all_positive");
+  const [sampleKey, setSampleKey] = useState<SampleKey | null>(null);
 
   useEffect(() => {
     loadOpenJdkReuseReport()
@@ -47,6 +48,7 @@ export default function OpenJdkReport() {
           <a className="wordmark" href="/openjdk/">KR / SOFTWARE</a>
           <div>
             <a className="report-switch" href="/">Lean 报告</a>
+            <a href="#construction">抽取示例</a>
             <a href="#findings">主要发现</a>
             <a href="#rank-shape">分布比较</a>
             <a href="#top-methods">高路径节点</a>
@@ -73,12 +75,42 @@ export default function OpenJdkReport() {
         </section>
 
         <section className="metric-grid" aria-label="OpenJDK 方法图规模">
-          <ReportMetric value={data.population.nodes} label="方法节点" detail="完整 JMOD Java 字节码总体" />
-          <ReportMetric value={data.population.links} label="调用 pair" detail="不同 caller → callee" />
-          <ReportMetric value={data.population.call_occurrences} label="调用 occurrence" detail="multiplicity 加权边总数" />
-          <ReportMetric value={data.population.positive_path_nodes} label="正路径入度节点" detail="进入 rank 曲线的总体" />
-          <ReportMetric value={data.population.zero_path_nodes} label="零路径入度节点" detail="完整总体中保留但无法取对数" />
-          <ReportMetric value={data.population.cycle_boundary_nodes} label="循环边界节点" detail="到达后停止继续传播" />
+          <ReportMetric value={data.population.nodes} label="方法节点" detail="完整 JMOD Java 字节码总体" onClick={() => setSampleKey("method_nodes")} />
+          <ReportMetric value={data.population.links} label="调用 pair" detail="不同 caller → callee" onClick={() => setSampleKey("call_pairs")} />
+          <ReportMetric value={data.population.call_occurrences} label="调用 occurrence" detail="multiplicity 加权边总数" onClick={() => setSampleKey("call_occurrences")} />
+          <ReportMetric value={data.population.positive_path_nodes} label="正路径入度节点" detail="进入 rank 曲线的总体" onClick={() => setSampleKey("positive_path_nodes")} />
+          <ReportMetric value={data.population.zero_path_nodes} label="零路径入度节点" detail="完整总体中保留但无法取对数" onClick={() => setSampleKey("zero_path_nodes")} />
+          <ReportMetric value={data.population.cycle_boundary_nodes} label="循环边界节点" detail="到达后停止继续传播" onClick={() => setSampleKey("cycle_boundary_nodes")} />
+        </section>
+
+        <section id="construction" className="section-block extraction-section">
+          <div className="section-heading">
+            <div><p className="eyebrow">CLASSFILE → GRAPH</p><h2>Node 与 Edge 抽取示例</h2></div>
+            <p>示例来自本次固定 OpenJDK 语料。Java 源码用于阅读和行号核对；节点与边的身份来自 JMOD 中的 classfile declaration 和 invoke instruction。</p>
+          </div>
+          <div className="extraction-grid">
+            <ExtractionCase title="Node：String.substring" label="METHOD DECLARATION" path={data.extraction_examples.node.source_path} lines={data.extraction_examples.node.source_lines} source={data.extraction_examples.node.source_excerpt}>
+              <dl className="extraction-fields">
+                {Object.entries(data.extraction_examples.node.classfile_fields).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{String(value)}</dd></div>)}
+              </dl>
+              <div className="extraction-output"><span>输出 method node</span><code>{data.extraction_examples.node.output.method_key}</code><small>node_id {data.extraction_examples.node.output.node_id}</small></div>
+            </ExtractionCase>
+            <ExtractionCase title="Edge：checkCapacity → newLength" label="INVOKE INSTRUCTION" path={data.extraction_examples.edge.source_path} lines={data.extraction_examples.edge.source_lines} source={data.extraction_examples.edge.source_excerpt}>
+              <dl className="extraction-fields">
+                <div><dt>opcode kind</dt><dd>{data.extraction_examples.edge.bytecode_reference.invoke_kind}</dd></div>
+                <div><dt>source line</dt><dd>{data.extraction_examples.edge.bytecode_reference.source_line}</dd></div>
+                <div><dt>declared target</dt><dd>{data.extraction_examples.edge.bytecode_reference.declared_owner}#{data.extraction_examples.edge.bytecode_reference.declared_name}{data.extraction_examples.edge.bytecode_reference.declared_descriptor}</dd></div>
+                <div><dt>resolution</dt><dd>{data.extraction_examples.edge.bytecode_reference.resolution}</dd></div>
+              </dl>
+              <div className="extraction-output"><span>输出 method edge</span><code>{data.extraction_examples.edge.output.caller_method_key}<b> → </b>{data.extraction_examples.edge.output.callee_method_key}</code><small>{data.extraction_examples.edge.output.invoke_kind} · multiplicity {data.extraction_examples.edge.output.multiplicity}</small></div>
+            </ExtractionCase>
+          </div>
+          <div className="invocation-examples">
+            <header><div><p className="eyebrow">FIVE INVOCATION KINDS</p><h3>其他调用类型的真实记录</h3></div><p>每类展示一个确定性样例；DYNAMIC 仅在 bootstrap method handle 能解析到具体方法时进入闭合图。</p></header>
+            <div className="table-scroll"><table><thead><tr><th>kind</th><th>caller</th><th>callee</th><th>line</th><th>resolution</th></tr></thead><tbody>
+              {data.samples.call_occurrences.map((row) => <tr key={row.invoke_kind}><td><b>{row.invoke_kind}</b></td><td><code>{row.caller}</code></td><td><code>{row.callee}</code></td><td className="numeric">{row.source_line}</td><td>{row.resolution}</td></tr>)}
+            </tbody></table></div>
+          </div>
         </section>
 
         <section id="findings" className="section-block findings">
@@ -183,12 +215,43 @@ export default function OpenJdkReport() {
         </section>
       </main>
       <footer><p>Knowledge Reuse Research · {data.snapshot_id}</p><p>exact bytecode-reference graph · cycle-bounded paths</p></footer>
+      {sampleKey && <SampleExplorer data={data} sampleKey={sampleKey} onClose={() => setSampleKey(null)} />}
     </>
   );
 }
 
-function ReportMetric({ value, label, detail }: { value: number; label: string; detail: string }) {
-  return <article className="metric-card report-metric"><span className="metric-link">FULL POPULATION</span><strong>{integer.format(value)}</strong><b>{label}</b><small>{detail}</small></article>;
+type SampleKey = keyof OpenJdkReuseReport["samples"];
+
+function ReportMetric({ value, label, detail, onClick }: { value: number; label: string; detail: string; onClick: () => void }) {
+  return <button className="metric-card" onClick={onClick}><span className="metric-link">OPEN SAMPLE TABLE ↗</span><strong>{integer.format(value)}</strong><b>{label}</b><small>{detail}</small></button>;
+}
+
+function ExtractionCase({ title, label, path, lines, source, children }: { title: string; label: string; path: string; lines: [number, number]; source: string; children: React.ReactNode }) {
+  return <article className="extraction-case"><header><div><p className="eyebrow">{label}</p><h3>{title}</h3></div><small>{path}<br />L{lines[0]}–{lines[1]}</small></header><pre><code>{source}</code></pre>{children}</article>;
+}
+
+function SampleExplorer({ data, sampleKey, onClose }: { data: OpenJdkReuseReport; sampleKey: SampleKey; onClose: () => void }) {
+  const titles: Record<SampleKey, string> = {
+    method_nodes: "方法节点样例",
+    call_pairs: "调用 pair 样例",
+    call_occurrences: "调用 occurrence 样例",
+    positive_path_nodes: "正路径入度节点样例",
+    zero_path_nodes: "零路径入度节点样例",
+    cycle_boundary_nodes: "循环边界节点样例",
+  };
+  const metricRows = sampleKey === "positive_path_nodes" || sampleKey === "zero_path_nodes" || sampleKey === "cycle_boundary_nodes"
+    ? data.samples[sampleKey] as OpenJdkMetricSample[]
+    : null;
+  return <div className="explorer-backdrop" role="presentation" onMouseDown={(event) => event.target === event.currentTarget && onClose()}>
+    <section className="explorer-panel sample-explorer" role="dialog" aria-modal="true" aria-labelledby="sample-title">
+      <header><div><p className="eyebrow">FULL-POPULATION SAMPLE</p><h2 id="sample-title">{titles[sampleKey]}</h2></div><button className="close-button" onClick={onClose} aria-label="关闭样例">×</button></header>
+      <p className="sample-contract">这些记录来自完整分析输出，用于解释统计单位，不用于估算总体。</p>
+      {sampleKey === "method_nodes" && <div className="table-scroll"><table><thead><tr><th>method key</th><th>flags</th><th>source</th><th className="numeric">直接 occurrence</th><th className="numeric">全部路径</th></tr></thead><tbody>{data.samples.method_nodes.map((row) => <tr key={row.node_id}><td><code>{row.method_key}</code></td><td>{row.flags.join(", ")}</td><td>{row.source_file}{row.first_line ? `:${row.first_line}–${row.last_line}` : ""}</td><td className="numeric">{integer.format(row.direct_call_occurrences)}</td><td className="numeric">{exact(row.all_incoming_paths)}</td></tr>)}</tbody></table></div>}
+      {sampleKey === "call_pairs" && <div className="table-scroll"><table><thead><tr><th>caller</th><th>callee</th><th>relation</th><th className="numeric">multiplicity</th></tr></thead><tbody>{data.samples.call_pairs.map((row, index) => <tr key={index}><td><code>{row.caller}</code></td><td><code>{row.callee}</code></td><td>{row.relation}</td><td className="numeric">{integer.format(row.multiplicity)}</td></tr>)}</tbody></table></div>}
+      {sampleKey === "call_occurrences" && <div className="table-scroll"><table><thead><tr><th>kind</th><th>caller</th><th>callee</th><th>line</th><th>resolution</th></tr></thead><tbody>{data.samples.call_occurrences.map((row) => <tr key={row.invoke_kind}><td><b>{row.invoke_kind}</b></td><td><code>{row.caller}</code></td><td><code>{row.callee}</code></td><td className="numeric">{row.source_line}</td><td>{row.resolution}</td></tr>)}</tbody></table></div>}
+      {metricRows && <div className="table-scroll"><table><thead><tr><th>method</th><th>module</th><th className="numeric">caller pair</th><th className="numeric">直接 occurrence</th><th className="numeric">间接路径</th><th className="numeric">全部路径</th></tr></thead><tbody>{metricRows.map((row) => <tr key={row.node_id}><td><code>{row.label}</code></td><td>{row.module}</td><td className="numeric">{integer.format(row.direct_unique_callers)}</td><td className="numeric">{integer.format(row.direct_call_occurrences)}</td><td className="numeric">{exact(row.indirect_incoming_paths)}</td><td className="numeric"><b>{exact(row.all_incoming_paths)}</b></td></tr>)}</tbody></table></div>}
+    </section>
+  </div>;
 }
 
 function legend(value: string) {

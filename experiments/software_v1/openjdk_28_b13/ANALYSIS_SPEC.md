@@ -59,7 +59,8 @@ fit cannot establish a prime-generating mechanism.
 
 - `node_incoming_paths.parquet`: one row for every graph node;
 - `reuse_analysis.json`: full-population summaries, rank fits, display points,
-  and the 100 highest path-count methods;
+  the 100 highest path-count methods, deterministic samples for each headline
+  metric, and classfile-to-graph extraction examples;
 - the same compact JSON can be written into the research-site public dataset.
 
 The full per-node table is a rebuildable data artifact and is not committed.

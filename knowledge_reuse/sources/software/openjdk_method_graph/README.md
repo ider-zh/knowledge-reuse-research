@@ -71,6 +71,10 @@ projection:
 python -m knowledge_reuse.sources.software.openjdk_method_graph.scripts.analyze_reuse \
   --nodes data/software/openjdk_jdk_28_b13/normalized/graph_core_nodes.parquet \
   --links data/software/openjdk_jdk_28_b13/normalized/graph_core_links.parquet \
+  --methods data/software/openjdk_jdk_28_b13/normalized/methods.parquet \
+  --method-edges data/software/openjdk_jdk_28_b13/normalized/method_edges.parquet \
+  --call-sites data/software/openjdk_jdk_28_b13/normalized/call_sites.parquet \
+  --source-zip /path/to/jdk-28/lib/src.zip \
   --output data/software/openjdk_jdk_28_b13/analysis \
   --site-json apps/research-site/public/datasets/software_v1/openjdk-28-b13/method-reuse.json
 ```

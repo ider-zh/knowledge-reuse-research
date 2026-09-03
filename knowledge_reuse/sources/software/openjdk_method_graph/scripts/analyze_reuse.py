@@ -7,6 +7,7 @@ import argparse
 import heapq
 import json
 from pathlib import Path
+from zipfile import ZipFile
 
 import polars as pl
 
@@ -20,6 +21,10 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--links", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--site-json", type=Path)
+    parser.add_argument("--methods", type=Path)
+    parser.add_argument("--method-edges", type=Path)
+    parser.add_argument("--call-sites", type=Path)
+    parser.add_argument("--source-zip", type=Path)
     return parser.parse_args()
 
 
@@ -48,6 +53,226 @@ def _top_rows(metrics: pl.DataFrame, limit: int = 100) -> list[dict]:
         }
         for rank, row in enumerate(rows, 1)
     ]
+
+
+def _metric_sample(row: dict) -> dict:
+    return {
+        "node_id": str(row["node_id"]),
+        "label": row["label"],
+        "module": row["domain"],
+        "direct_unique_callers": row["direct_unique_callers"],
+        "direct_call_occurrences": row["direct_call_occurrences"],
+        "indirect_incoming_paths": row["indirect_incoming_paths"],
+        "all_incoming_paths": row["in_paths_source"],
+        "is_cycle_boundary": row["is_path_cycle_boundary"],
+    }
+
+
+def _source_excerpt(
+    source_zip: Path, module: str, class_name: str, source_file: str, start: int, end: int
+) -> str:
+    package = class_name.rpartition("/")[0]
+    member = f"{module}/{package}/{source_file}" if package else f"{module}/{source_file}"
+    with ZipFile(source_zip) as archive:
+        lines = archive.read(member).decode("utf-8").splitlines()
+    return "\n".join(lines[start - 1 : end])
+
+
+def _site_samples(
+    metrics: pl.DataFrame,
+    links: pl.DataFrame,
+    methods_path: Path,
+    method_edges_path: Path,
+    call_sites_path: Path,
+    source_zip: Path,
+) -> tuple[dict, dict]:
+    methods = pl.read_parquet(methods_path)
+    method_edges = pl.read_parquet(method_edges_path)
+    call_sites = pl.read_parquet(call_sites_path)
+    metric_by_id = {
+        row["node_id"]: row for row in metrics.iter_rows(named=True)
+    }
+    label_by_id = dict(zip(metrics["node_id"], metrics["label"], strict=True))
+    method_by_key = {
+        row["method_key"]: row for row in methods.iter_rows(named=True)
+    }
+
+    method_keys = [
+        "java.base/java/lang/String#substring(II)Ljava/lang/String;",
+        "java.base/java/lang/System#arraycopy(Ljava/lang/Object;ILjava/lang/Object;II)V",
+        "java.base/java/lang/Runnable#run()V",
+        "java.base/java/lang/String#<init>()V",
+        "java.base/java/lang/Boolean#<clinit>()V",
+        "java.base/com/sun/crypto/provider/DESKey#lambda$new$0([B)V",
+    ]
+    method_nodes = []
+    for key in method_keys:
+        method = method_by_key[key]
+        metric = metric_by_id[method["method_id"]]
+        method_nodes.append(
+            {
+                **_metric_sample(metric),
+                "method_key": key,
+                "source_file": method["source_file"],
+                "first_line": method["first_line"],
+                "last_line": method["last_line"],
+                "flags": [
+                    name
+                    for name, present in (
+                        ("constructor", method["is_constructor"]),
+                        ("static initializer", method["is_static_init"]),
+                        ("native", method["is_native"]),
+                        ("abstract", method["is_abstract"]),
+                        ("synthetic", method["is_synthetic"]),
+                    )
+                    if present
+                ]
+                or ["ordinary"],
+            }
+        )
+
+    pair_rows = []
+    for row in links.sort(["multiplicity", "src_id", "dst_id"], descending=[True, False, False]).head(8).iter_rows(named=True):
+        pair_rows.append(
+            {
+                "caller": label_by_id[row["src_id"]],
+                "callee": label_by_id[row["dst_id"]],
+                "multiplicity": row["multiplicity"],
+                "relation": row["relation"],
+            }
+        )
+
+    call_rows = []
+    for invoke_kind in ("STATIC", "SPECIAL", "VIRTUAL", "INTERFACE", "DYNAMIC"):
+        candidates = (
+            call_sites.filter(pl.col("invoke_kind") == invoke_kind)
+            .with_columns(
+                pl.col("caller_method_id").replace_strict(label_by_id).alias("caller"),
+                pl.col("callee_method_id").replace_strict(label_by_id).alias("callee"),
+            )
+            .sort(["caller", "instruction_ordinal"])
+        )
+        row = candidates.row(0, named=True)
+        call_rows.append(
+            {
+                "caller": row["caller"],
+                "callee": row["callee"],
+                "invoke_kind": row["invoke_kind"],
+                "instruction_ordinal": row["instruction_ordinal"],
+                "source_line": row["source_line"],
+                "declared_target": (
+                    f"{row['declared_owner']}#{row['declared_name']}"
+                    f"{row['declared_descriptor']}"
+                ),
+                "resolution": row["resolution"],
+            }
+        )
+
+    positive_rows = [_metric_sample(row) for row in heapq.nlargest(
+        6,
+        metrics.iter_rows(named=True),
+        key=lambda row: (int(row["in_paths_source"]), -int(row["node_id"])),
+    )]
+    zero_labels = [
+        "java.lang.String.contentEquals(Ljava/lang/StringBuffer;)Z",
+        "java.lang.String.transform(Ljava/util/function/Function;)Ljava/lang/Object;",
+        "java.lang.Thread.activeCount()I",
+        "java.lang.Thread.getAllStackTraces()Ljava/util/Map;",
+        "java.util.List.reversed()Ljava/util/SequencedCollection;",
+        "java.lang.Math.asinh(D)D",
+    ]
+    zero_rows = [
+        _metric_sample(metrics.filter(pl.col("label") == label).row(0, named=True))
+        for label in zero_labels
+    ]
+    cycle_rows = [_metric_sample(row) for row in heapq.nlargest(
+        6,
+        metrics.filter(pl.col("is_path_cycle_boundary")).iter_rows(named=True),
+        key=lambda row: (int(row["in_paths_source"]), -int(row["node_id"])),
+    )]
+
+    node_method = method_by_key[
+        "java.base/java/lang/String#substring(II)Ljava/lang/String;"
+    ]
+    edge_caller_key = (
+        "java.base/com/sun/crypto/provider/AEADBufferedStream#checkCapacity(I)V"
+    )
+    edge_caller = method_by_key[edge_caller_key]
+    edge_call = call_sites.filter(
+        (pl.col("caller_method_id") == edge_caller["method_id"])
+        & (pl.col("declared_owner") == "jdk/internal/util/ArraysSupport")
+        & (pl.col("declared_name") == "newLength")
+    ).row(0, named=True)
+    edge_callee = methods.filter(
+        pl.col("method_id") == edge_call["callee_method_id"]
+    ).row(0, named=True)
+    extraction = {
+        "node": {
+            "source_path": "src/java.base/share/classes/java/lang/String.java",
+            "source_lines": [node_method["first_line"] - 1, node_method["last_line"]],
+            "source_excerpt": _source_excerpt(
+                source_zip,
+                node_method["module_name"],
+                node_method["class_name"],
+                node_method["source_file"],
+                node_method["first_line"] - 1,
+                node_method["last_line"],
+            ),
+            "classfile_fields": {
+                "module": node_method["module_name"],
+                "internal_class": node_method["class_name"],
+                "name": node_method["method_name"],
+                "descriptor": node_method["descriptor"],
+                "access_flags": node_method["access_flags"],
+            },
+            "output": method_nodes[0],
+        },
+        "edge": {
+            "source_path": (
+                "src/java.base/share/classes/com/sun/crypto/provider/"
+                "AEADBufferedStream.java"
+            ),
+            "source_lines": [edge_caller["first_line"] - 1, edge_caller["last_line"]],
+            "source_excerpt": _source_excerpt(
+                source_zip,
+                edge_caller["module_name"],
+                edge_caller["class_name"],
+                edge_caller["source_file"],
+                edge_caller["first_line"] - 1,
+                edge_caller["last_line"],
+            ),
+            "bytecode_reference": {
+                "invoke_kind": edge_call["invoke_kind"],
+                "instruction_ordinal": edge_call["instruction_ordinal"],
+                "source_line": edge_call["source_line"],
+                "declared_owner": edge_call["declared_owner"],
+                "declared_name": edge_call["declared_name"],
+                "declared_descriptor": edge_call["declared_descriptor"],
+                "resolution": edge_call["resolution"],
+            },
+            "output": {
+                "caller_method_key": edge_caller_key,
+                "callee_method_key": edge_callee["method_key"],
+                "invoke_kind": edge_call["invoke_kind"],
+                "multiplicity": method_edges.filter(
+                    (pl.col("caller_method_id") == edge_caller["method_id"])
+                    & (pl.col("callee_method_id") == edge_callee["method_id"])
+                    & (pl.col("invoke_kind") == edge_call["invoke_kind"])
+                )["callsite_count"][0],
+            },
+        },
+    }
+    return (
+        {
+            "method_nodes": method_nodes,
+            "call_pairs": pair_rows,
+            "call_occurrences": call_rows,
+            "positive_path_nodes": positive_rows,
+            "zero_path_nodes": zero_rows,
+            "cycle_boundary_nodes": cycle_rows,
+        },
+        extraction,
+    )
 
 
 def main() -> int:
@@ -91,6 +316,27 @@ def main() -> int:
     rank_shape = compare_rank_reference_curves(positive)
     top_rows = _top_rows(metrics)
     maximum = top_rows[0]
+    samples = {}
+    extraction_examples = {}
+    sample_inputs = (
+        args.methods,
+        args.method_edges,
+        args.call_sites,
+        args.source_zip,
+    )
+    if args.site_json and not all(sample_inputs):
+        raise ValueError(
+            "--site-json requires --methods, --method-edges, --call-sites, and --source-zip"
+        )
+    if all(sample_inputs):
+        samples, extraction_examples = _site_samples(
+            metrics,
+            links,
+            args.methods,
+            args.method_edges,
+            args.call_sites,
+            args.source_zip,
+        )
     payload = {
         "schema_version": "1.0",
         "snapshot_id": "openjdk-jdk-28+13",
@@ -134,6 +380,8 @@ def main() -> int:
         },
         "rank_shape": rank_shape,
         "top_nodes": top_rows,
+        "samples": samples,
+        "extraction_examples": extraction_examples,
         "interpretation": {
             "primary": (
                 "The incoming-path rank curve is much steeper than Zipf: the fitted "

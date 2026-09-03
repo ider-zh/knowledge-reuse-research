@@ -43,8 +43,6 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .metric-grid { display: grid; grid-template-columns: repeat(6,1fr); border: solid var(--ink); border-width: 1px 0; }
 .metric-card { min-width: 0; overflow: hidden; padding: 26px 18px 24px; border: 0; border-right: 1px solid var(--line); background: transparent; text-align: left; cursor: pointer; transition: background .2s, transform .2s; }
 .metric-card:last-child { border-right: 0; }
-.report-metric { cursor: default; }
-.report-metric:hover { transform: none; }
 .metric-card:hover { background: var(--card); transform: translateY(-4px); }
 .metric-card strong { display: block; max-width: 100%; margin: 16px 0 2px; font: 800 clamp(24px,2vw,34px)/1 "Noto Serif SC", serif; font-variant-numeric: tabular-nums; letter-spacing: -.04em; white-space: nowrap; }
 .metric-card strong.compact { font-size: clamp(25px,2vw,34px); letter-spacing: -.03em; }
@@ -123,6 +121,26 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .method-ledger { border: 1px solid var(--line); background: var(--card); max-height: 720px; }
 .method-ledger code { color: var(--blue); font-size: 13px; }
 .method-observation { border: 1px solid var(--line); border-top: 0; }
+.extraction-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 18px; }
+.extraction-case { min-width: 0; border: 1px solid var(--line); background: var(--card); }
+.extraction-case > header { display: flex; justify-content: space-between; gap: 24px; padding: 22px; }
+.extraction-case h3, .invocation-examples h3 { margin: 0; font: 750 clamp(22px,2.5vw,34px)/1.2 "Noto Serif SC", serif; }
+.extraction-case header small { max-width: 44%; color: var(--muted); font: 12px/1.6 "DM Mono", monospace; text-align: right; overflow-wrap: anywhere; }
+.extraction-case pre { min-height: 240px; margin: 0; padding: 20px; overflow: auto; background: var(--green-dark); color: #e5eee8; font: 13px/1.7 "DM Mono", monospace; }
+.extraction-fields { margin: 0; padding: 16px 22px; }
+.extraction-fields div { display: grid; grid-template-columns: 130px minmax(0,1fr); gap: 14px; padding: 8px 0; border-bottom: 1px solid #ded8ca; }
+.extraction-fields dt { color: var(--muted); font-size: 13px; }
+.extraction-fields dd { margin: 0; overflow-wrap: anywhere; color: var(--blue); font: 13px/1.6 "DM Mono", monospace; }
+.extraction-output { min-height: 142px; padding: 18px 22px; border-top: 1px solid var(--line); background: #e4eee8; }
+.extraction-output span, .extraction-output small { display: block; color: var(--muted); font-size: 13px; }
+.extraction-output code { display: block; margin: 8px 0; overflow-wrap: anywhere; color: var(--green-dark); line-height: 1.7; }
+.extraction-output code b { color: var(--gold); }
+.invocation-examples { margin-top: 18px; border: 1px solid var(--line); background: var(--card); }
+.invocation-examples > header { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; padding: 22px; border-bottom: 1px solid var(--line); }
+.invocation-examples > header > p { margin: 0; color: var(--muted); }
+.invocation-examples code, .sample-explorer code { color: var(--blue); font-size: 13px; }
+.sample-explorer { max-width: 1180px; }
+.sample-explorer > .sample-contract { display: block; }
 
 .algorithm-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .algorithm-grid article { min-height: 154px; padding: 19px; background: var(--card); }
@@ -379,6 +397,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
 
 @media (max-width: 1000px) {
   .hero, .section-heading { grid-template-columns: 1fr; }
+  .extraction-grid { grid-template-columns: 1fr; }
   .path-indegree-summary { grid-template-columns: 1fr; }
   .path-indegree-summary > aside { grid-column: auto; }
   .hero { min-height: auto; }
@@ -434,6 +453,9 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .expr-mechanism-grid article { border-right: 0; border-bottom: 1px solid var(--line); }
   .expr-mechanism > aside p { margin-top: 8px; }
   .attribution-method > header, .attribution-ledger, .context-policy, .exception-cases, .parent-module-mismatch { grid-template-columns: 1fr; }
+  .invocation-examples > header { grid-template-columns: 1fr; gap: 12px; }
+  .extraction-case > header { display: block; }
+  .extraction-case header small { display: block; max-width: none; margin-top: 10px; text-align: left; }
   .attribution-method > header { gap: 16px; }
   .attribution-ledger > article + article { border-left: 0; }
   .outside-profile > header { align-items: start; flex-direction: column; }

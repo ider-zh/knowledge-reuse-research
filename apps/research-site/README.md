@@ -30,7 +30,10 @@ the reported full-population statistics.
 The OpenJDK report publishes full-population path-indegree summaries and fitted
 rank curves computed across all 239,765 method nodes. Its table contains the
 100 highest path-count methods; the complete per-node metric remains a
-rebuildable Parquet artifact under `data/software/`.
+rebuildable Parquet artifact under `data/software/`. Every headline statistic
+opens a small deterministic sample table. The report also publishes one
+method-declaration extraction case, one detailed invoke-instruction case, and
+one call-site record for each supported invocation kind.
 
 Regenerate and build:
 
