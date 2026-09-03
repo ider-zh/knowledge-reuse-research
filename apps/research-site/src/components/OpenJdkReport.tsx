@@ -40,6 +40,10 @@ export default function OpenJdkReport() {
   const zipf = selected.models.zipf;
   const prime = selected.models.reciprocal_prime;
   const primeImprovement = 100 * (zipf.fixed_rmse_log10 - prime.fixed_rmse_log10) / zipf.fixed_rmse_log10;
+  const rankTenfoldDrop = 10 ** zipf.free_exponent_beta;
+  const zipfErrorFactor = 10 ** zipf.fixed_rmse_log10;
+  const primeErrorFactor = 10 ** prime.fixed_rmse_log10;
+  const freeErrorFactor = 10 ** zipf.free_rmse_log10;
 
   return (
     <>
@@ -89,13 +93,13 @@ export default function OpenJdkReport() {
             <p>示例来自本次固定 OpenJDK 语料。Java 源码用于阅读和行号核对；节点与边的身份来自 JMOD 中的 classfile declaration 和 invoke instruction。</p>
           </div>
           <div className="extraction-grid">
-            <ExtractionCase title="Node：String.substring" label="METHOD DECLARATION" path={data.extraction_examples.node.source_path} lines={data.extraction_examples.node.source_lines} source={data.extraction_examples.node.source_excerpt}>
+            <ExtractionCase title="Node：String.substring" label="METHOD DECLARATION" path={data.extraction_examples.node.source_path} lines={data.extraction_examples.node.source_lines} source={data.extraction_examples.node.source_excerpt} highlightLines={[data.extraction_examples.node.source_lines[0]]}>
               <dl className="extraction-fields">
                 {Object.entries(data.extraction_examples.node.classfile_fields).map(([key, value]) => <div key={key}><dt>{key}</dt><dd>{String(value)}</dd></div>)}
               </dl>
               <div className="extraction-output"><span>输出 method node</span><code>{data.extraction_examples.node.output.method_key}</code><small>node_id {data.extraction_examples.node.output.node_id}</small></div>
             </ExtractionCase>
-            <ExtractionCase title="Edge：checkCapacity → newLength" label="INVOKE INSTRUCTION" path={data.extraction_examples.edge.source_path} lines={data.extraction_examples.edge.source_lines} source={data.extraction_examples.edge.source_excerpt}>
+            <ExtractionCase title="Edge：checkCapacity → newLength" label="INVOKE INSTRUCTION" path={data.extraction_examples.edge.source_path} lines={data.extraction_examples.edge.source_lines} source={data.extraction_examples.edge.source_excerpt} highlightLines={[data.extraction_examples.edge.bytecode_reference.source_line]}>
               <dl className="extraction-fields">
                 <div><dt>opcode kind</dt><dd>{data.extraction_examples.edge.bytecode_reference.invoke_kind}</dd></div>
                 <div><dt>source line</dt><dd>{data.extraction_examples.edge.bytecode_reference.source_line}</dd></div>
@@ -155,6 +159,34 @@ export default function OpenJdkReport() {
               <article><span>经验 βrank</span><strong>{zipf.free_exponent_beta.toFixed(3)}</strong><p>Zipf 固定指数为 1</p></article>
               <article><span>Zipf R² / RMSE</span><strong>{zipf.fixed_r_squared_log10.toFixed(3)}</strong><p>{zipf.fixed_rmse_log10.toFixed(3)} decades</p></article>
               <article><span>素数倒数 R² / RMSE</span><strong>{prime.fixed_r_squared_log10.toFixed(3)}</strong><p>{prime.fixed_rmse_log10.toFixed(3)} decades</p></article>
+            </div>
+            <div className="parameter-guide">
+              <header>
+                <div><p className="eyebrow">PARAMETER INTERPRETATION</p><h3>这些数值如何理解</h3></div>
+                <p>所有拟合都在同一批节点的 log₁₀(rank)–log₁₀(path count) 空间完成，因此本范围内的 R² 与 RMSE 可以直接比较。</p>
+              </header>
+              <div className="parameter-grid">
+                <article>
+                  <span>βrank = {zipf.free_exponent_beta.toFixed(3)}</span>
+                  <p>自由指数模型为 <code>P(r)=A/r<sup>β</sup></code>。rank 增加 10 倍时，路径入度约缩小 <b>{integer.format(Math.round(rankTenfoldDrop))} 倍</b>。β 越大，头部之后下降越快。</p>
+                </article>
+                <article>
+                  <span>Zipf 固定指数 = 1</span>
+                  <p>Zipf 是预先规定的 <code>P(r)=A/r</code>，只有幅度 A 可拟合；rank 增加 10 倍时数值只下降 10 倍。经验 β 与 1 相距很大，因此“幂律形状”不等于“Zipf 定律”。</p>
+                </article>
+                <article>
+                  <span>R²：{zipf.fixed_r_squared_log10.toFixed(3)} vs {prime.fixed_r_squared_log10.toFixed(3)}</span>
+                  <p>在 log₁₀ 空间，Zipf 与素数倒数分别解释约 <b>{(100 * zipf.fixed_r_squared_log10).toFixed(1)}%</b> 和 <b>{(100 * prime.fixed_r_squared_log10).toFixed(1)}%</b> 的变化。越接近 1 越好；这里两者都只解释约一半。</p>
+                </article>
+                <article>
+                  <span>RMSE：{zipf.fixed_rmse_log10.toFixed(3)} vs {prime.fixed_rmse_log10.toFixed(3)} decades</span>
+                  <p>1 decade 等于 10 倍。两项误差的量级分别相当于约 <b>{zipfErrorFactor.toFixed(1)} 倍</b> 和 <b>{primeErrorFactor.toFixed(1)} 倍</b>；越小越好，误差可发生在预测值上方或下方。</p>
+                </article>
+              </div>
+              <aside>
+                <b>综合判断</b>
+                <p>放开指数后，经验模型的 R²={zipf.free_r_squared_log10.toFixed(3)}、RMSE={zipf.free_rmse_log10.toFixed(3)} decades（约 {freeErrorFactor.toFixed(1)} 倍）。因此数据接近一个陡峭的 rank 幂律，但不接近指数固定为 1 的 Zipf；1/pᵣ 只是比 1/r 略陡，所以数值上稍好，不能据此推断质数规律。</p>
+              </aside>
             </div>
             <figure className="distribution-chart path-rank-chart">
               <figcaption><b>方法路径入度 rank–frequency</b><span>网页按 log-rank 抽样显示；拟合使用全部观测</span></figcaption>
@@ -226,8 +258,17 @@ function ReportMetric({ value, label, detail, onClick }: { value: number; label:
   return <button className="metric-card" onClick={onClick}><span className="metric-link">OPEN SAMPLE TABLE ↗</span><strong>{integer.format(value)}</strong><b>{label}</b><small>{detail}</small></button>;
 }
 
-function ExtractionCase({ title, label, path, lines, source, children }: { title: string; label: string; path: string; lines: [number, number]; source: string; children: React.ReactNode }) {
-  return <article className="extraction-case"><header><div><p className="eyebrow">{label}</p><h3>{title}</h3></div><small>{path}<br />L{lines[0]}–{lines[1]}</small></header><pre><code>{source}</code></pre>{children}</article>;
+function ExtractionCase({ title, label, path, lines, source, highlightLines, children }: { title: string; label: string; path: string; lines: [number, number]; source: string; highlightLines: number[]; children: React.ReactNode }) {
+  return <article className="extraction-case">
+    <header><div><p className="eyebrow">{label}</p><h3>{title}</h3></div><small>{path}<br />L{lines[0]}–{lines[1]}</small></header>
+    <pre className="source-code" aria-label={`${title} 源代码`}>
+      {source.split("\n").map((text, index) => {
+        const line = lines[0] + index;
+        return <span key={line} className={highlightLines.includes(line) ? "highlight" : ""}><i>{line}</i><code>{text || " "}</code></span>;
+      })}
+    </pre>
+    {children}
+  </article>;
 }
 
 function SampleExplorer({ data, sampleKey, onClose }: { data: OpenJdkReuseReport; sampleKey: SampleKey; onClose: () => void }) {

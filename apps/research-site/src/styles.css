@@ -107,6 +107,20 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 
 .path-rank-workbench { border: 1px solid var(--line); background: var(--card); }
 .path-rank-summary span, .path-rank-summary p { font-size: 14px; }
+.parameter-guide { border-bottom: 1px solid var(--line); background: #f8f6ef; }
+.parameter-guide > header { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: end; padding: 24px; border-bottom: 1px solid var(--line); }
+.parameter-guide h3 { margin: 0; font: 750 clamp(24px,3vw,38px)/1.2 "Noto Serif SC", serif; }
+.parameter-guide > header > p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
+.parameter-grid { display: grid; grid-template-columns: 1fr 1fr; }
+.parameter-grid article { min-width: 0; padding: 22px 24px; border-bottom: 1px solid var(--line); }
+.parameter-grid article:nth-child(odd) { border-right: 1px solid var(--line); }
+.parameter-grid span { color: var(--green-dark); font: 700 15px "DM Mono", monospace; }
+.parameter-grid p { margin: 12px 0 0; color: var(--muted); font-size: 15px; line-height: 1.75; }
+.parameter-grid b { color: var(--ink); }
+.parameter-grid code { color: var(--blue); font-size: 15px; }
+.parameter-guide > aside { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 22px 24px; background: #e4eee8; }
+.parameter-guide > aside b { color: var(--green-dark); font: 750 17px "Noto Serif SC", serif; }
+.parameter-guide > aside p { margin: 0; font-size: 15px; line-height: 1.8; }
 .path-rank-chart { border-top: 1px solid var(--line); }
 .path-rank-chart .chart-method { font-size: 14px; }
 .path-rank-methods { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
@@ -126,7 +140,12 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .extraction-case > header { display: flex; justify-content: space-between; gap: 24px; padding: 22px; }
 .extraction-case h3, .invocation-examples h3 { margin: 0; font: 750 clamp(22px,2.5vw,34px)/1.2 "Noto Serif SC", serif; }
 .extraction-case header small { max-width: 44%; color: var(--muted); font: 12px/1.6 "DM Mono", monospace; text-align: right; overflow-wrap: anywhere; }
-.extraction-case pre { min-height: 240px; margin: 0; padding: 20px; overflow: auto; background: var(--green-dark); color: #e5eee8; font: 13px/1.7 "DM Mono", monospace; }
+.extraction-case pre { min-height: 240px; margin: 0; padding: 16px 0; overflow: auto; background: var(--green-dark); color: #e5eee8; font: 13px/1.7 "DM Mono", monospace; }
+.source-code > span { display: grid; grid-template-columns: 58px minmax(max-content,1fr); min-width: max-content; padding: 1px 20px 1px 0; }
+.source-code > span i { padding-right: 14px; color: #7fa292; font-style: normal; text-align: right; user-select: none; }
+.source-code > span code { color: inherit; font: inherit; white-space: pre; }
+.source-code > span.highlight { background: #d7a64a; color: #10271e; box-shadow: inset 4px 0 #fff1bb; font-weight: 700; }
+.source-code > span.highlight i { color: #5d481d; }
 .extraction-fields { margin: 0; padding: 16px 22px; }
 .extraction-fields div { display: grid; grid-template-columns: 130px minmax(0,1fr); gap: 14px; padding: 8px 0; border-bottom: 1px solid #ded8ca; }
 .extraction-fields dt { color: var(--muted); font-size: 13px; }
@@ -414,6 +433,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-summary article:nth-child(2) { border-right: 0; }
   .distribution-summary article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   .path-rank-methods { grid-template-columns: 1fr; }
+  .parameter-guide > header { grid-template-columns: 1fr; gap: 14px; }
   .construction-pipeline article::after { display: none; }
   .case-workbench { grid-template-columns: 250px 1fr; }
   .case-evidence-grid { grid-template-columns: 1fr; }
@@ -438,6 +458,10 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-chart figcaption span { display: block; margin-top: 6px; }
   .distribution-reading p { margin-top: 8px; }
   .path-rank-conclusion { display: block; padding: 20px; }
+  .parameter-grid { grid-template-columns: 1fr; }
+  .parameter-grid article:nth-child(odd) { border-right: 0; }
+  .parameter-guide > aside { display: block; }
+  .parameter-guide > aside p { margin-top: 8px; }
   .path-rank-conclusion p { margin-top: 8px; }
   .path-rank-references { padding-inline: 20px; }
   .metric-card { border-right: 0; border-bottom: 1px solid var(--line); }
