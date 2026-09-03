@@ -305,4 +305,54 @@ export type RankFrequencyDistribution = {
   series: RankFrequencySeries[];
 };
 
+export type PathRankPoint = {
+  rank: number;
+  log10_rank: number;
+  empirical_log10: number;
+  zipf_log10: number;
+  reciprocal_prime_log10: number;
+  free_rank_fit_log10: number;
+};
+
+export type PathRankModel = {
+  formula: string;
+  fixed_intercept_log10: number;
+  fixed_rmse_log10: number;
+  fixed_mae_log10: number;
+  fixed_r_squared_log10: number;
+  free_exponent_beta: number;
+  free_intercept_log10: number;
+  free_rmse_log10: number;
+  free_r_squared_log10: number;
+};
+
+export type PathRankRange = {
+  range_id: "all_positive" | "top_1pct";
+  observation_count: number;
+  maximum_log10: number;
+  minimum_log10: number;
+  models: {
+    zipf: PathRankModel;
+    reciprocal_prime: PathRankModel;
+  };
+  display_point_count: number;
+  points: PathRankPoint[];
+};
+
+export type PathRankComparison = {
+  schema_version: string;
+  snapshot_id: string;
+  metric: string;
+  metric_definition: string;
+  positive_observation_count: number;
+  comparison_space: string;
+  amplitude_policy: string;
+  prime_transform: string;
+  references: {
+    zipf_reuse: string;
+    nth_prime_asymptotic: string;
+  };
+  ranges: PathRankRange[];
+};
+
 export type ExplorerKind = "nodes" | "external" | "source" | "edges" | null;

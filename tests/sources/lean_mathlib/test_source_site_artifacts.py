@@ -89,6 +89,25 @@ def test_public_node_sample_exposes_exact_path_indegree() -> None:
     assert dfunlike["is_path_cycle_boundary"] is False
 
 
+def test_path_rank_comparison_reports_fixed_shape_evidence() -> None:
+    comparison = load("path-rank-comparison.json")
+    full = next(
+        item for item in comparison["ranges"] if item["range_id"] == "all_positive"
+    )
+    top = next(item for item in comparison["ranges"] if item["range_id"] == "top_1pct")
+
+    assert comparison["positive_observation_count"] == 178373
+    assert full["observation_count"] == 178373
+    assert top["observation_count"] == 1784
+    assert full["models"]["zipf"]["free_exponent_beta"] > 10
+    assert full["models"]["zipf"]["fixed_r_squared_log10"] < 0.2
+    assert (
+        full["models"]["reciprocal_prime"]["fixed_rmse_log10"]
+        < full["models"]["zipf"]["fixed_rmse_log10"]
+    )
+    assert comparison["references"]["nth_prime_asymptotic"].endswith("27.2#E4")
+
+
 def test_public_manifest_checksums_every_published_payload() -> None:
     manifest = load("manifest.json")
 

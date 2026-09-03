@@ -100,6 +100,20 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .distribution-reading { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 22px 36px; border-top: 1px solid var(--line); background: #e4eee8; }
 .distribution-reading p { margin: 0; line-height: 1.7; }
 
+.path-rank-workbench { border: 1px solid var(--line); background: var(--card); }
+.path-rank-summary span, .path-rank-summary p { font-size: 14px; }
+.path-rank-chart { border-top: 1px solid var(--line); }
+.path-rank-chart .chart-method { font-size: 14px; }
+.path-rank-methods { display: grid; grid-template-columns: repeat(3,1fr); gap: 1px; background: var(--line); border-top: 1px solid var(--line); }
+.path-rank-methods article { min-width: 0; padding: 22px; background: var(--card); }
+.path-rank-methods span { color: var(--green); font: 700 14px "DM Mono", monospace; letter-spacing: .05em; }
+.path-rank-methods p { margin: 12px 0 0; color: var(--muted); font-size: 15px; line-height: 1.75; }
+.path-rank-methods code { color: var(--blue); font-size: 15px; }
+.path-rank-conclusion { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 24px 36px; border-top: 1px solid var(--line); background: #e4eee8; }
+.path-rank-conclusion b { color: var(--green-dark); font: 750 18px "Noto Serif SC", serif; }
+.path-rank-conclusion p { margin: 0; font-size: 16px; line-height: 1.8; }
+.path-rank-references { margin: 0; padding: 16px 36px; border-top: 1px solid var(--line); color: var(--muted); font-size: 14px; }
+
 .algorithm-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); border: 1px solid var(--line); }
 .algorithm-grid article { min-height: 154px; padding: 19px; background: var(--card); }
 .algorithm-grid span, .method-grid span { color: var(--green); font: 500 13px/1.3 "DM Mono", monospace; letter-spacing: .06em; text-transform: uppercase; }
@@ -366,6 +380,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-summary { grid-template-columns: 1fr 1fr; }
   .distribution-summary article:nth-child(2) { border-right: 0; }
   .distribution-summary article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
+  .path-rank-methods { grid-template-columns: 1fr; }
   .construction-pipeline article::after { display: none; }
   .case-workbench { grid-template-columns: 250px 1fr; }
   .case-evidence-grid { grid-template-columns: 1fr; }
@@ -389,6 +404,9 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-chart figcaption, .distribution-reading { display: block; }
   .distribution-chart figcaption span { display: block; margin-top: 6px; }
   .distribution-reading p { margin-top: 8px; }
+  .path-rank-conclusion { display: block; padding: 20px; }
+  .path-rank-conclusion p { margin-top: 8px; }
+  .path-rank-references { padding-inline: 20px; }
   .metric-card { border-right: 0; border-bottom: 1px solid var(--line); }
   .claim-card, .claim-card:nth-child(1), .claim-card:nth-child(2) { grid-column: 1 / -1; }
   .section-block { padding-top: 72px; }

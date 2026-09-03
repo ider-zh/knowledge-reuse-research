@@ -26,6 +26,12 @@
   no saturation or algorithmic nulls remain.
 - Primary result: all-declaration reuse has Gini 0.9509; the top 1% receives
   79.90% of incoming reuse edges and the top 10% receives 93.67%.
+- Path-rank analysis: 178,373 declarations have positive multiplicity-weighted
+  incoming path counts.  The full positive rank curve has free exponent
+  beta=10.341; fixed Zipf and reciprocal-prime templates have log10-space R2
+  values 0.175 and 0.192.  The metric is a route-combination diagnostic, not
+  reuse breadth or workload.  Rebuildable evidence is stored in
+  `runs/full/source_graph_metrics/path_rank_comparison.json`.
 - Migration: v2 retains exact Expr constant occurrence multiplicity as an edge
   weight while preserving unique-consumer reuse breadth as a derived view. See
   `docs/migrations/2026-09-02-lean-edge-multiplicity.md`.

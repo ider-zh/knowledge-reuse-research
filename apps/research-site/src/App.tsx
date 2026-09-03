@@ -10,6 +10,7 @@ const format = new Intl.NumberFormat("en-US");
 const formatExact = (value: string) => BigInt(value).toLocaleString("en-US");
 const DomainCharts = lazy(() => import("./components/DomainCharts"));
 const ReuseDistributionChart = lazy(() => import("./components/ReuseDistributionChart"));
+const PathRankComparison = lazy(() => import("./components/PathRankComparison"));
 
 function App() {
   const [overview, setOverview] = useState<Overview | null>(null);
@@ -37,6 +38,7 @@ function App() {
             <a href="#findings">研究结论</a>
             <a href="#construction">图的构建</a>
             <a href="#distribution">Zipf 对照</a>
+            <a href="#path-distribution">路径分布</a>
             <a href="#domains">领域流向</a>
             <a href="#methods">数据契约</a>
             <a href="https://github.com/ider-zh/knowledge-reuse-research" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -112,6 +114,10 @@ function App() {
 
         <Suspense fallback={<section className="section-block loading">正在加载 Zipf 对照图…</section>}>
           <ReuseDistributionChart />
+        </Suspense>
+
+        <Suspense fallback={<section className="section-block loading">正在加载路径分布比较…</section>}>
+          <PathRankComparison />
         </Suspense>
 
         <Suspense fallback={<section className="section-block loading">正在加载领域图表…</section>}>

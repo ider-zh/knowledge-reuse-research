@@ -829,6 +829,23 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     )
     rank_fits = pl.read_parquet(derived_root / "rank_frequency_fits.parquet")
     powerlaw_fits = pl.read_parquet(derived_root / "powerlaw_fits.parquet")
+    path_rank_comparison = json.loads(
+        (derived_root / "path_rank_comparison.json").read_text()
+    )
+    path_rank_comparison.update(
+        {
+            "schema_version": "research-site-path-rank-comparison-v1",
+            "snapshot_id": snapshot,
+            "metric_definition": (
+                "exact multiplicity-weighted direct and indirect incoming SOURCE path count; "
+                "paths terminate at cyclic strongly connected components"
+            ),
+            "references": {
+                "zipf_reuse": "https://arxiv.org/abs/cs/0508023v3",
+                "nth_prime_asymptotic": "https://dlmf.nist.gov/27.2#E4",
+            },
+        }
+    )
 
     node_sample = public_node_sample(nodes)
     external_sample = external_target_sample(edges, external_nodes)
@@ -910,6 +927,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
         },
         "construction-cases.json": construction,
         "reuse-rank-frequency.json": rank_frequency,
+        "path-rank-comparison.json": path_rank_comparison,
     }
     legacy_path = output / "typed-edge-samples.json"
     if legacy_path.exists():

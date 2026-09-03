@@ -14,6 +14,7 @@ import polars as pl
 from knowledge_reuse.analysis.concentration import gini, top_share
 from knowledge_reuse.analysis.path_indegree import weighted_incoming_path_counts
 from knowledge_reuse.analysis.powerlaw import fit_tail
+from knowledge_reuse.analysis.rank_shape import compare_rank_reference_curves
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
     run_results_root,
@@ -187,6 +188,9 @@ def analyze_source_graph(run_kind: str = "full") -> dict[str, Any]:
     ranked_paths = node_metrics.filter(
         pl.col("in_paths_source_log10").is_not_null()
     ).sort("in_paths_source_log10", descending=True)
+    path_rank_comparison = compare_rank_reference_curves(
+        node_metrics["in_paths_source_log10"].drop_nulls().to_numpy()
+    )
     summary = {
         "schema_version": "lean-source-graph-analysis-v2",
         "graph_schema_version": "lean-source-graph-v1",
@@ -239,6 +243,9 @@ def analyze_source_graph(run_kind: str = "full") -> dict[str, Any]:
     pl.DataFrame(powerlaw_rows).write_parquet(output / "powerlaw_fits.parquet", compression="zstd")
     pl.DataFrame(rank_rows).write_parquet(
         output / "rank_frequency_fits.parquet", compression="zstd"
+    )
+    (output / "path_rank_comparison.json").write_text(
+        json.dumps(path_rank_comparison, indent=2, sort_keys=True) + "\n"
     )
     (output / "summary.json").write_text(json.dumps(summary, indent=2, sort_keys=True) + "\n")
     return summary

@@ -21,6 +21,10 @@
       "bytes": 97888,
       "sha256": "85ef17e17378ee8af6048a919754b33d1319304021443f384bb21c16f74bb5a4"
     },
+    "path-rank-comparison.json": {
+      "bytes": 120923,
+      "sha256": "6b8d3b12442db589be3b27b8eac641636669f7500d5d0eff8277d81728e32172"
+    },
     "reuse-rank-frequency.json": {
       "bytes": 111570,
       "sha256": "6957a25944cedce92c278519839cf5464c1b9a323e01b84daabf22488691ef8e"
