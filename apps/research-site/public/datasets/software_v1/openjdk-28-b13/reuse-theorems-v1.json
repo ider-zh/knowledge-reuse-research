@@ -1,0 +1,5556 @@
+{
+  "schema_version": "1.0",
+  "snapshot_id": "openjdk-jdk-28+13",
+  "phase_1": {
+    "status": "superseded",
+    "reason": "Phase 4 directly tests held-out description-length savings and Phase 5 tests temporal growth; the weaker within-snapshot vocabulary curve is omitted"
+  },
+  "phase_2": {
+    "status": "complete",
+    "methods": 239765,
+    "classes": 27262,
+    "methods_with_code": 220036,
+    "total_bytecode_bytes": 22004483,
+    "total_classfile_bytes": 135020127
+  },
+  "phase_3_erdos_kac": {
+    "definition": {
+      "program_unit": "one classfile",
+      "program_size": "serialized classfile bytes",
+      "component_count": "distinct referenced callee methods outside the selected boundary",
+      "conditioning": "20 classfile-size quantile bins; z-score within bins having >=100 programs",
+      "pre_registered_shape_rule": "abs(skew)<0.2, abs(excess kurtosis)<0.5, Q-Q R^2>0.99"
+    },
+    "primary_scope": "cross_class",
+    "scopes": {
+      "cross_class": {
+        "program_count": 27262,
+        "positive_program_count": 24585,
+        "mean_distinct_components": 12.56943731200939,
+        "median_distinct_components": 4.0,
+        "spearman_log_size_vs_components": 0.7514679655309426,
+        "log1p_component_vs_log10_size_slope": 1.6939120543188309,
+        "log1p_component_vs_log10_size_r_squared": 0.5209830546081569,
+        "standardized_observation_count": 27262,
+        "skewness": 0.6603036385050362,
+        "excess_kurtosis": 1.4718993969934981,
+        "qq_r_squared": 0.9753878994549833,
+        "dagostino_k2": 2535.8457253907386,
+        "dagostino_p_value": 0.0,
+        "anderson_statistic": 96.38128512494222,
+        "anderson_critical_5pct": 0.787,
+        "pre_registered_shape_consistent": false,
+        "size_bins": [
+          {
+            "size_median": 257.0,
+            "program_count": 1364,
+            "component_mean": 0.03812316715542522,
+            "component_stddev": 0.19156381447657136
+          },
+          {
+            "size_median": 471.0,
+            "program_count": 1371,
+            "component_mean": 0.6418672501823487,
+            "component_stddev": 0.6689990452239883
+          },
+          {
+            "size_median": 593.0,
+            "program_count": 1358,
+            "component_mean": 1.1030927835051547,
+            "component_stddev": 0.6897325800014522
+          },
+          {
+            "size_median": 779.0,
+            "program_count": 1364,
+            "component_mean": 1.6334310850439884,
+            "component_stddev": 1.1011617764448365
+          },
+          {
+            "size_median": 950.0,
+            "program_count": 1361,
+            "component_mean": 2.2894930198383543,
+            "component_stddev": 1.378388805331963
+          },
+          {
+            "size_median": 1119.0,
+            "program_count": 1364,
+            "component_mean": 2.947947214076246,
+            "component_stddev": 1.6358296232409093
+          },
+          {
+            "size_median": 1281.0,
+            "program_count": 1366,
+            "component_mean": 3.3243045387994146,
+            "component_stddev": 1.8455635527758714
+          },
+          {
+            "size_median": 1452.0,
+            "program_count": 1357,
+            "component_mean": 3.971997052321297,
+            "component_stddev": 2.251668651646036
+          },
+          {
+            "size_median": 1634.0,
+            "program_count": 1367,
+            "component_mean": 4.585954645208486,
+            "component_stddev": 2.6617031185601565
+          },
+          {
+            "size_median": 1847.0,
+            "program_count": 1364,
+            "component_mean": 5.2998533724340176,
+            "component_stddev": 3.1711233744696004
+          },
+          {
+            "size_median": 2116.0,
+            "program_count": 1359,
+            "component_mean": 6.164827078734364,
+            "component_stddev": 3.7496272504349473
+          },
+          {
+            "size_median": 2452.0,
+            "program_count": 1368,
+            "component_mean": 7.685672514619883,
+            "component_stddev": 4.385988795992411
+          },
+          {
+            "size_median": 2839.5,
+            "program_count": 1358,
+            "component_mean": 9.424889543446245,
+            "component_stddev": 4.732944692588702
+          },
+          {
+            "size_median": 3344.0,
+            "program_count": 1363,
+            "component_mean": 11.391049156272928,
+            "component_stddev": 5.581367865839223
+          },
+          {
+            "size_median": 3986.5,
+            "program_count": 1362,
+            "component_mean": 14.060939794419971,
+            "component_stddev": 6.9315930080318235
+          },
+          {
+            "size_median": 4923.5,
+            "program_count": 1364,
+            "component_mean": 18.505865102639298,
+            "component_stddev": 8.22085786845315
+          },
+          {
+            "size_median": 6301.0,
+            "program_count": 1362,
+            "component_mean": 24.842143906020556,
+            "component_stddev": 10.473824514271936
+          },
+          {
+            "size_median": 8747.0,
+            "program_count": 1363,
+            "component_mean": 32.02641232575202,
+            "component_stddev": 15.423132528823976
+          },
+          {
+            "size_median": 13545.0,
+            "program_count": 1363,
+            "component_mean": 41.754952311078505,
+            "component_stddev": 27.930059413626033
+          },
+          {
+            "size_median": 31390.5,
+            "program_count": 1364,
+            "component_mean": 59.70307917888563,
+            "component_stddev": 71.51351270691889
+          }
+        ],
+        "histogram": [
+          {
+            "z_left": -4.0,
+            "z_right": -3.8,
+            "count": 0
+          },
+          {
+            "z_left": -3.8,
+            "z_right": -3.6,
+            "count": 0
+          },
+          {
+            "z_left": -3.6,
+            "z_right": -3.4,
+            "count": 0
+          },
+          {
+            "z_left": -3.4,
+            "z_right": -3.2,
+            "count": 0
+          },
+          {
+            "z_left": -3.2,
+            "z_right": -3.0,
+            "count": 0
+          },
+          {
+            "z_left": -3.0,
+            "z_right": -2.8,
+            "count": 0
+          },
+          {
+            "z_left": -2.8,
+            "z_right": -2.5999999999999996,
+            "count": 0
+          },
+          {
+            "z_left": -2.5999999999999996,
+            "z_right": -2.4,
+            "count": 0
+          },
+          {
+            "z_left": -2.4,
+            "z_right": -2.2,
+            "count": 52
+          },
+          {
+            "z_left": -2.2,
+            "z_right": -2.0,
+            "count": 198
+          },
+          {
+            "z_left": -2.0,
+            "z_right": -1.7999999999999998,
+            "count": 292
+          },
+          {
+            "z_left": -1.7999999999999998,
+            "z_right": -1.5999999999999996,
+            "count": 314
+          },
+          {
+            "z_left": -1.5999999999999996,
+            "z_right": -1.4,
+            "count": 967
+          },
+          {
+            "z_left": -1.4,
+            "z_right": -1.1999999999999997,
+            "count": 927
+          },
+          {
+            "z_left": -1.1999999999999997,
+            "z_right": -1.0,
+            "count": 888
+          },
+          {
+            "z_left": -1.0,
+            "z_right": -0.7999999999999998,
+            "count": 2716
+          },
+          {
+            "z_left": -0.7999999999999998,
+            "z_right": -0.5999999999999996,
+            "count": 1202
+          },
+          {
+            "z_left": -0.5999999999999996,
+            "z_right": -0.3999999999999999,
+            "count": 2145
+          },
+          {
+            "z_left": -0.3999999999999999,
+            "z_right": -0.19999999999999973,
+            "count": 1416
+          },
+          {
+            "z_left": -0.19999999999999973,
+            "z_right": 0.0,
+            "count": 3744
+          },
+          {
+            "z_left": 0.0,
+            "z_right": 0.20000000000000018,
+            "count": 1798
+          },
+          {
+            "z_left": 0.20000000000000018,
+            "z_right": 0.40000000000000036,
+            "count": 1817
+          },
+          {
+            "z_left": 0.40000000000000036,
+            "z_right": 0.6000000000000005,
+            "count": 2257
+          },
+          {
+            "z_left": 0.6000000000000005,
+            "z_right": 0.8000000000000007,
+            "count": 1098
+          },
+          {
+            "z_left": 0.8000000000000007,
+            "z_right": 1.0,
+            "count": 1204
+          },
+          {
+            "z_left": 1.0,
+            "z_right": 1.2000000000000002,
+            "count": 689
+          },
+          {
+            "z_left": 1.2000000000000002,
+            "z_right": 1.4000000000000004,
+            "count": 1481
+          },
+          {
+            "z_left": 1.4000000000000004,
+            "z_right": 1.6000000000000005,
+            "count": 461
+          },
+          {
+            "z_left": 1.6000000000000005,
+            "z_right": 1.8000000000000007,
+            "count": 339
+          },
+          {
+            "z_left": 1.8000000000000007,
+            "z_right": 2.0,
+            "count": 362
+          },
+          {
+            "z_left": 2.0,
+            "z_right": 2.2,
+            "count": 395
+          },
+          {
+            "z_left": 2.2,
+            "z_right": 2.4000000000000004,
+            "count": 106
+          },
+          {
+            "z_left": 2.4000000000000004,
+            "z_right": 2.6000000000000005,
+            "count": 103
+          },
+          {
+            "z_left": 2.6000000000000005,
+            "z_right": 2.8000000000000007,
+            "count": 88
+          },
+          {
+            "z_left": 2.8000000000000007,
+            "z_right": 3.0,
+            "count": 27
+          },
+          {
+            "z_left": 3.0,
+            "z_right": 3.2,
+            "count": 65
+          },
+          {
+            "z_left": 3.2,
+            "z_right": 3.4000000000000004,
+            "count": 6
+          },
+          {
+            "z_left": 3.4000000000000004,
+            "z_right": 3.6000000000000005,
+            "count": 17
+          },
+          {
+            "z_left": 3.6000000000000005,
+            "z_right": 3.8000000000000007,
+            "count": 3
+          },
+          {
+            "z_left": 3.8000000000000007,
+            "z_right": 4.0,
+            "count": 85
+          }
+        ],
+        "qq_points": [
+          {
+            "normal_quantile": -4.127448249280723,
+            "observed_z": -2.3718312133423596
+          },
+          {
+            "normal_quantile": -3.867308273594018,
+            "observed_z": -2.3718312133423596
+          },
+          {
+            "normal_quantile": -3.740841071375147,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.655413614062127,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.590432394694754,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.5377892062164285,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.49343210213539,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.455037436567838,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.4211459385249774,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.3907797734368628,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.363250975152125,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.3380567468061004,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.3148182221069926,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.293242666278119,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.25420199775256,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.236400043531442,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.2036017975960616,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.188412560222246,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.160074676608266,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.1340675823549664,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.1100217277235704,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.087649862073611,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.0567448153920775,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.028509520191543,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -3.002499980766613,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -2.978375587249788,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -2.948688435969013,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -2.9213926000684367,
+            "observed_z": -2.2763551053898756
+          },
+          {
+            "normal_quantile": -2.8961138742361023,
+            "observed_z": -2.2510868572067153
+          },
+          {
+            "normal_quantile": -2.872560469481771,
+            "observed_z": -2.1808789974373917
+          },
+          {
+            "normal_quantile": -2.839970214665127,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.8149431996970904,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.7870663537754954,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.7570639698212323,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.7293552903703517,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.7000585758412687,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.6729107935681062,
+            "observed_z": -2.1294450509619662
+          },
+          {
+            "normal_quantile": -2.6445532256381887,
+            "observed_z": -2.0854028894849077
+          },
+          {
+            "normal_quantile": -2.6153538460004424,
+            "observed_z": -2.0765180008599753
+          },
+          {
+            "normal_quantile": -2.585616912757004,
+            "observed_z": -2.0285293406764047
+          },
+          {
+            "normal_quantile": -2.5555886206822263,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.5254645206952477,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.495397344153239,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.463588051400018,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.432317069931233,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.4016103036962257,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.3699533272707503,
+            "observed_z": -2.011680329386225
+          },
+          {
+            "normal_quantile": -2.3376714361843414,
+            "observed_z": -1.946842657912475
+          },
+          {
+            "normal_quantile": -2.3063402213559265,
+            "observed_z": -1.8842623592132297
+          },
+          {
+            "normal_quantile": -2.27345049294313,
+            "observed_z": -1.8842623592132297
+          },
+          {
+            "normal_quantile": -2.2405816322404952,
+            "observed_z": -1.8842623592132297
+          },
+          {
+            "normal_quantile": -2.2068088652399327,
+            "observed_z": -1.8617388077699326
+          },
+          {
+            "normal_quantile": -2.172450096146171,
+            "observed_z": -1.8617388077699326
+          },
+          {
+            "normal_quantile": -2.1386654991214016,
+            "observed_z": -1.8171673149649745
+          },
+          {
+            "normal_quantile": -2.1037844223787627,
+            "observed_z": -1.8021114009634858
+          },
+          {
+            "normal_quantile": -2.068938796164604,
+            "observed_z": -1.801240891325255
+          },
+          {
+            "normal_quantile": -2.033521603074395,
+            "observed_z": -1.7800523966905306
+          },
+          {
+            "normal_quantile": -1.9977725470942087,
+            "observed_z": -1.7640237827256025
+          },
+          {
+            "normal_quantile": -1.9612522238468997,
+            "observed_z": -1.7229399527056382
+          },
+          {
+            "normal_quantile": -1.9242384546295568,
+            "observed_z": -1.660992175053951
+          },
+          {
+            "normal_quantile": -1.886408205187294,
+            "observed_z": -1.660992175053951
+          },
+          {
+            "normal_quantile": -1.8485553480000572,
+            "observed_z": -1.5993050284834047
+          },
+          {
+            "normal_quantile": -1.8098589830128464,
+            "observed_z": -1.5993050284834047
+          },
+          {
+            "normal_quantile": -1.7706026165642468,
+            "observed_z": -1.5993050284834047
+          },
+          {
+            "normal_quantile": -1.730601565336363,
+            "observed_z": -1.5243250326422975
+          },
+          {
+            "normal_quantile": -1.6901158370348182,
+            "observed_z": -1.5212360197382202
+          },
+          {
+            "normal_quantile": -1.6489933425927863,
+            "observed_z": -1.4833706726704714
+          },
+          {
+            "normal_quantile": -1.6071301371373652,
+            "observed_z": -1.4833706726704714
+          },
+          {
+            "normal_quantile": -1.5644597749058426,
+            "observed_z": -1.459178862011145
+          },
+          {
+            "normal_quantile": -1.520944411540193,
+            "observed_z": -1.459178862011145
+          },
+          {
+            "normal_quantile": -1.4765673417593068,
+            "observed_z": -1.377424136795266
+          },
+          {
+            "normal_quantile": -1.4313267679249573,
+            "observed_z": -1.3559401084964748
+          },
+          {
+            "normal_quantile": -1.3852306453901164,
+            "observed_z": -1.3472406521236304
+          },
+          {
+            "normal_quantile": -1.3382924712421165,
+            "observed_z": -1.3071944333605299
+          },
+          {
+            "normal_quantile": -1.2901051301832713,
+            "observed_z": -1.2594009755467264
+          },
+          {
+            "normal_quantile": -1.2407599335413277,
+            "observed_z": -1.1908007939219054
+          },
+          {
+            "normal_quantile": -1.1903334970706094,
+            "observed_z": -1.1107309608578437
+          },
+          {
+            "normal_quantile": -1.138535542897625,
+            "observed_z": -1.0405944464352317
+          },
+          {
+            "normal_quantile": -1.0853064974041233,
+            "observed_z": -0.9715413515416225
+          },
+          {
+            "normal_quantile": -1.0307550305955202,
+            "observed_z": -0.9594441946736177
+          },
+          {
+            "normal_quantile": -0.9745173651996732,
+            "observed_z": -0.9594441946736177
+          },
+          {
+            "normal_quantile": -0.916576347251782,
+            "observed_z": -0.935507467015303
+          },
+          {
+            "normal_quantile": -0.8567723952756688,
+            "observed_z": -0.8757936257094087
+          },
+          {
+            "normal_quantile": -0.7949582114489543,
+            "observed_z": -0.8208669516692073
+          },
+          {
+            "normal_quantile": -0.7308684454914935,
+            "observed_z": -0.8068835803852619
+          },
+          {
+            "normal_quantile": -0.6642516906619613,
+            "observed_z": -0.7175610597681978
+          },
+          {
+            "normal_quantile": -0.5948549544159808,
+            "observed_z": -0.6075659655096116
+          },
+          {
+            "normal_quantile": -0.5224076289887651,
+            "observed_z": -0.5773446089829994
+          },
+          {
+            "normal_quantile": -0.4464008009180348,
+            "observed_z": -0.5123426747925809
+          },
+          {
+            "normal_quantile": -0.3663943060979175,
+            "observed_z": -0.38738244186689735
+          },
+          {
+            "normal_quantile": -0.28187064805289597,
+            "observed_z": -0.2201427503776067
+          },
+          {
+            "normal_quantile": -0.192006930774266,
+            "observed_z": -0.19901027372832858
+          },
+          {
+            "normal_quantile": -0.09572371643293126,
+            "observed_z": -0.1758807304352291
+          },
+          {
+            "normal_quantile": 0.008137299188720856,
+            "observed_z": -0.14946775967134635
+          },
+          {
+            "normal_quantile": 0.12152911693964487,
+            "observed_z": 0.012436531306785282
+          },
+          {
+            "normal_quantile": 0.24692454502220493,
+            "observed_z": 0.13547538127121928
+          },
+          {
+            "normal_quantile": 0.38821379660152405,
+            "observed_z": 0.3328928798632116
+          },
+          {
+            "normal_quantile": 0.5516153120738397,
+            "observed_z": 0.5154619490619929
+          },
+          {
+            "normal_quantile": 0.748759942532199,
+            "observed_z": 0.6466642010375355
+          },
+          {
+            "normal_quantile": 1.0037604450079765,
+            "observed_z": 0.98298794395976
+          },
+          {
+            "normal_quantile": 1.3900466594914869,
+            "observed_z": 1.3447817668310762
+          },
+          {
+            "normal_quantile": 4.127448249281212,
+            "observed_z": 8.22637426904352
+          }
+        ]
+      },
+      "cross_package": {
+        "program_count": 27262,
+        "positive_program_count": 22372,
+        "mean_distinct_components": 8.7083852982173,
+        "median_distinct_components": 3.0,
+        "spearman_log_size_vs_components": 0.7245158149105484,
+        "log1p_component_vs_log10_size_slope": 1.5954568403771758,
+        "log1p_component_vs_log10_size_r_squared": 0.48372282225253743,
+        "standardized_observation_count": 27262,
+        "skewness": 1.259005897811046,
+        "excess_kurtosis": 3.9424524615064698,
+        "qq_r_squared": 0.9272143141313547,
+        "dagostino_k2": 6959.894588359661,
+        "dagostino_p_value": 0.0,
+        "anderson_statistic": 352.59588723614434,
+        "anderson_critical_5pct": 0.787,
+        "pre_registered_shape_consistent": false,
+        "size_bins": [
+          {
+            "size_median": 257.0,
+            "program_count": 1364,
+            "component_mean": 0.016129032258064516,
+            "component_stddev": 0.12601797170718704
+          },
+          {
+            "size_median": 471.0,
+            "program_count": 1371,
+            "component_mean": 0.33406272793581326,
+            "component_stddev": 0.57120647742997
+          },
+          {
+            "size_median": 593.0,
+            "program_count": 1358,
+            "component_mean": 0.6443298969072165,
+            "component_stddev": 0.6667220599595366
+          },
+          {
+            "size_median": 779.0,
+            "program_count": 1364,
+            "component_mean": 1.0806451612903225,
+            "component_stddev": 1.0124424142417117
+          },
+          {
+            "size_median": 950.0,
+            "program_count": 1361,
+            "component_mean": 1.4864070536370315,
+            "component_stddev": 1.2175187311315137
+          },
+          {
+            "size_median": 1119.0,
+            "program_count": 1364,
+            "component_mean": 1.7697947214076246,
+            "component_stddev": 1.4605890183919283
+          },
+          {
+            "size_median": 1281.0,
+            "program_count": 1366,
+            "component_mean": 2.1427525622254757,
+            "component_stddev": 1.7086642492753428
+          },
+          {
+            "size_median": 1452.0,
+            "program_count": 1357,
+            "component_mean": 2.6204863669859986,
+            "component_stddev": 2.0273845130765595
+          },
+          {
+            "size_median": 1634.0,
+            "program_count": 1367,
+            "component_mean": 2.931967812728603,
+            "component_stddev": 2.47574958798124
+          },
+          {
+            "size_median": 1847.0,
+            "program_count": 1364,
+            "component_mean": 3.562316715542522,
+            "component_stddev": 2.953007231427309
+          },
+          {
+            "size_median": 2116.0,
+            "program_count": 1359,
+            "component_mean": 4.111111111111111,
+            "component_stddev": 3.334143249666204
+          },
+          {
+            "size_median": 2452.0,
+            "program_count": 1368,
+            "component_mean": 5.2821637426900585,
+            "component_stddev": 4.060901121553638
+          },
+          {
+            "size_median": 2839.5,
+            "program_count": 1358,
+            "component_mean": 6.399852724594993,
+            "component_stddev": 4.5067606605079025
+          },
+          {
+            "size_median": 3344.0,
+            "program_count": 1363,
+            "component_mean": 7.79457079970653,
+            "component_stddev": 5.334375803765488
+          },
+          {
+            "size_median": 3986.5,
+            "program_count": 1362,
+            "component_mean": 9.691629955947137,
+            "component_stddev": 6.701710254784764
+          },
+          {
+            "size_median": 4923.5,
+            "program_count": 1364,
+            "component_mean": 13.27492668621701,
+            "component_stddev": 7.91582191595032
+          },
+          {
+            "size_median": 6301.0,
+            "program_count": 1362,
+            "component_mean": 17.676211453744493,
+            "component_stddev": 10.117611435959962
+          },
+          {
+            "size_median": 8747.0,
+            "program_count": 1363,
+            "component_mean": 23.056493030080706,
+            "component_stddev": 13.981807196468187
+          },
+          {
+            "size_median": 13545.0,
+            "program_count": 1363,
+            "component_mean": 29.42186353631695,
+            "component_stddev": 22.52602392004773
+          },
+          {
+            "size_median": 31390.5,
+            "program_count": 1364,
+            "component_mean": 40.875366568914956,
+            "component_stddev": 54.92785111233255
+          }
+        ],
+        "histogram": [
+          {
+            "z_left": -4.0,
+            "z_right": -3.8,
+            "count": 0
+          },
+          {
+            "z_left": -3.8,
+            "z_right": -3.6,
+            "count": 0
+          },
+          {
+            "z_left": -3.6,
+            "z_right": -3.4,
+            "count": 0
+          },
+          {
+            "z_left": -3.4,
+            "z_right": -3.2,
+            "count": 0
+          },
+          {
+            "z_left": -3.2,
+            "z_right": -3.0,
+            "count": 0
+          },
+          {
+            "z_left": -3.0,
+            "z_right": -2.8,
+            "count": 0
+          },
+          {
+            "z_left": -2.8,
+            "z_right": -2.5999999999999996,
+            "count": 0
+          },
+          {
+            "z_left": -2.5999999999999996,
+            "z_right": -2.4,
+            "count": 0
+          },
+          {
+            "z_left": -2.4,
+            "z_right": -2.2,
+            "count": 0
+          },
+          {
+            "z_left": -2.2,
+            "z_right": -2.0,
+            "count": 0
+          },
+          {
+            "z_left": -2.0,
+            "z_right": -1.7999999999999998,
+            "count": 0
+          },
+          {
+            "z_left": -1.7999999999999998,
+            "z_right": -1.5999999999999996,
+            "count": 90
+          },
+          {
+            "z_left": -1.5999999999999996,
+            "z_right": -1.4,
+            "count": 372
+          },
+          {
+            "z_left": -1.4,
+            "z_right": -1.1999999999999997,
+            "count": 2016
+          },
+          {
+            "z_left": -1.1999999999999997,
+            "z_right": -1.0,
+            "count": 1355
+          },
+          {
+            "z_left": -1.0,
+            "z_right": -0.7999999999999998,
+            "count": 1958
+          },
+          {
+            "z_left": -0.7999999999999998,
+            "z_right": -0.5999999999999996,
+            "count": 2261
+          },
+          {
+            "z_left": -0.5999999999999996,
+            "z_right": -0.3999999999999999,
+            "count": 2542
+          },
+          {
+            "z_left": -0.3999999999999999,
+            "z_right": -0.19999999999999973,
+            "count": 2022
+          },
+          {
+            "z_left": -0.19999999999999973,
+            "z_right": 0.0,
+            "count": 3431
+          },
+          {
+            "z_left": 0.0,
+            "z_right": 0.20000000000000018,
+            "count": 1755
+          },
+          {
+            "z_left": 0.20000000000000018,
+            "z_right": 0.40000000000000036,
+            "count": 863
+          },
+          {
+            "z_left": 0.40000000000000036,
+            "z_right": 0.6000000000000005,
+            "count": 2250
+          },
+          {
+            "z_left": 0.6000000000000005,
+            "z_right": 0.8000000000000007,
+            "count": 875
+          },
+          {
+            "z_left": 0.8000000000000007,
+            "z_right": 1.0,
+            "count": 1264
+          },
+          {
+            "z_left": 1.0,
+            "z_right": 1.2000000000000002,
+            "count": 1120
+          },
+          {
+            "z_left": 1.2000000000000002,
+            "z_right": 1.4000000000000004,
+            "count": 671
+          },
+          {
+            "z_left": 1.4000000000000004,
+            "z_right": 1.6000000000000005,
+            "count": 496
+          },
+          {
+            "z_left": 1.6000000000000005,
+            "z_right": 1.8000000000000007,
+            "count": 482
+          },
+          {
+            "z_left": 1.8000000000000007,
+            "z_right": 2.0,
+            "count": 282
+          },
+          {
+            "z_left": 2.0,
+            "z_right": 2.2,
+            "count": 399
+          },
+          {
+            "z_left": 2.2,
+            "z_right": 2.4000000000000004,
+            "count": 183
+          },
+          {
+            "z_left": 2.4000000000000004,
+            "z_right": 2.6000000000000005,
+            "count": 108
+          },
+          {
+            "z_left": 2.6000000000000005,
+            "z_right": 2.8000000000000007,
+            "count": 80
+          },
+          {
+            "z_left": 2.8000000000000007,
+            "z_right": 3.0,
+            "count": 210
+          },
+          {
+            "z_left": 3.0,
+            "z_right": 3.2,
+            "count": 39
+          },
+          {
+            "z_left": 3.2,
+            "z_right": 3.4000000000000004,
+            "count": 19
+          },
+          {
+            "z_left": 3.4000000000000004,
+            "z_right": 3.6000000000000005,
+            "count": 29
+          },
+          {
+            "z_left": 3.6000000000000005,
+            "z_right": 3.8000000000000007,
+            "count": 17
+          },
+          {
+            "z_left": 3.8000000000000007,
+            "z_right": 4.0,
+            "count": 73
+          }
+        ],
+        "qq_points": [
+          {
+            "normal_quantile": -4.127448249280723,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.867308273594018,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.740841071375147,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.655413614062127,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.590432394694754,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.5377892062164285,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.49343210213539,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.455037436567838,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.4211459385249774,
+            "observed_z": -1.7470735623350582
+          },
+          {
+            "normal_quantile": -3.3907797734368628,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.363250975152125,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.3380567468061004,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.3148182221069926,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.293242666278119,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.25420199775256,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.236400043531442,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.2036017975960616,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.188412560222246,
+            "observed_z": -1.6770117907109727
+          },
+          {
+            "normal_quantile": -3.160074676608266,
+            "observed_z": -1.6490352574669167
+          },
+          {
+            "normal_quantile": -3.1340675823549664,
+            "observed_z": -1.6490352574669167
+          },
+          {
+            "normal_quantile": -3.1100217277235704,
+            "observed_z": -1.6490352574669167
+          },
+          {
+            "normal_quantile": -3.087649862073611,
+            "observed_z": -1.6490352574669167
+          },
+          {
+            "normal_quantile": -3.0567448153920775,
+            "observed_z": -1.6490352574669167
+          },
+          {
+            "normal_quantile": -3.028509520191543,
+            "observed_z": -1.6490352574669167
+          },
+          {
+            "normal_quantile": -3.002499980766613,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.978375587249788,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.948688435969013,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.9213926000684367,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.8961138742361023,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.872560469481771,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.839970214665127,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.8149431996970904,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.7870663537754954,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.7570639698212323,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.7293552903703517,
+            "observed_z": -1.6482360050390934
+          },
+          {
+            "normal_quantile": -2.7000585758412687,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.6729107935681062,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.6445532256381887,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.6153538460004424,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.585616912757004,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.5555886206822263,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.5254645206952477,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.495397344153239,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.463588051400018,
+            "observed_z": -1.5775137448363747
+          },
+          {
+            "normal_quantile": -2.432317069931233,
+            "observed_z": -1.5506825212279127
+          },
+          {
+            "normal_quantile": -2.4016103036962257,
+            "observed_z": -1.5506825212279127
+          },
+          {
+            "normal_quantile": -2.3699533272707503,
+            "observed_z": -1.5506825212279127
+          },
+          {
+            "normal_quantile": -2.3376714361843414,
+            "observed_z": -1.5506825212279127
+          },
+          {
+            "normal_quantile": -2.3063402213559265,
+            "observed_z": -1.5493984477431288
+          },
+          {
+            "normal_quantile": -2.27345049294313,
+            "observed_z": -1.4611964148090977
+          },
+          {
+            "normal_quantile": -2.2405816322404952,
+            "observed_z": -1.450560890447164
+          },
+          {
+            "normal_quantile": -2.2068088652399327,
+            "observed_z": -1.4344707195752913
+          },
+          {
+            "normal_quantile": -2.172450096146171,
+            "observed_z": -1.4243532517448527
+          },
+          {
+            "normal_quantile": -2.1386654991214016,
+            "observed_z": -1.4200560461699208
+          },
+          {
+            "normal_quantile": -2.1037844223787627,
+            "observed_z": -1.3517233331511995
+          },
+          {
+            "normal_quantile": -2.068938796164604,
+            "observed_z": -1.3007368523834397
+          },
+          {
+            "normal_quantile": -2.033521603074395,
+            "observed_z": -1.3007368523834397
+          },
+          {
+            "normal_quantile": -1.9977725470942087,
+            "observed_z": -1.2969271462820475
+          },
+          {
+            "normal_quantile": -1.9612522238468997,
+            "observed_z": -1.2969271462820475
+          },
+          {
+            "normal_quantile": -1.9242384546295568,
+            "observed_z": -1.2969271462820475
+          },
+          {
+            "normal_quantile": -1.886408205187294,
+            "observed_z": -1.2925453213655094
+          },
+          {
+            "normal_quantile": -1.8485553480000572,
+            "observed_z": -1.2925453213655094
+          },
+          {
+            "normal_quantile": -1.8098589830128464,
+            "observed_z": -1.2914276943142076
+          },
+          {
+            "normal_quantile": -1.7706026165642468,
+            "observed_z": -1.2737330569980285
+          },
+          {
+            "normal_quantile": -1.730601565336363,
+            "observed_z": -1.2617345891665344
+          },
+          {
+            "normal_quantile": -1.6901158370348182,
+            "observed_z": -1.2617345891665344
+          },
+          {
+            "normal_quantile": -1.6489933425927863,
+            "observed_z": -1.2617345891665344
+          },
+          {
+            "normal_quantile": -1.6071301371373652,
+            "observed_z": -1.25405126439219
+          },
+          {
+            "normal_quantile": -1.5644597749058426,
+            "observed_z": -1.25405126439219
+          },
+          {
+            "normal_quantile": -1.520944411540193,
+            "observed_z": -1.220849433877394
+          },
+          {
+            "normal_quantile": -1.4765673417593068,
+            "observed_z": -1.220849433877394
+          },
+          {
+            "normal_quantile": -1.4313267679249573,
+            "observed_z": -1.2199061816836658
+          },
+          {
+            "normal_quantile": -1.3852306453901164,
+            "observed_z": -1.2116993207001678
+          },
+          {
+            "normal_quantile": -1.3382924712421165,
+            "observed_z": -1.2063352495824093
+          },
+          {
+            "normal_quantile": -1.2901051301832713,
+            "observed_z": -1.1842747856900055
+          },
+          {
+            "normal_quantile": -1.2407599335413277,
+            "observed_z": -1.14771150400834
+          },
+          {
+            "normal_quantile": -1.1903334970706094,
+            "observed_z": -1.0673645691737368
+          },
+          {
+            "normal_quantile": -1.138535542897625,
+            "observed_z": -1.0673645691737368
+          },
+          {
+            "normal_quantile": -1.0853064974041233,
+            "observed_z": -1.045365443295673
+          },
+          {
+            "normal_quantile": -1.0307550305955202,
+            "observed_z": -0.9664145460348514
+          },
+          {
+            "normal_quantile": -0.9745173651996732,
+            "observed_z": -0.9664145460348514
+          },
+          {
+            "normal_quantile": -0.916576347251782,
+            "observed_z": -0.9331066118477598
+          },
+          {
+            "normal_quantile": -0.8567723952756688,
+            "observed_z": -0.8676974063162216
+          },
+          {
+            "normal_quantile": -0.7949582114489543,
+            "observed_z": -0.7992989768511686
+          },
+          {
+            "normal_quantile": -0.7308684454914935,
+            "observed_z": -0.7803567138241778
+          },
+          {
+            "normal_quantile": -0.6642516906619613,
+            "observed_z": -0.7259589763918879
+          },
+          {
+            "normal_quantile": -0.5948549544159808,
+            "observed_z": -0.6687987781743111
+          },
+          {
+            "normal_quantile": -0.5224076289887651,
+            "observed_z": -0.5848370792972484
+          },
+          {
+            "normal_quantile": -0.4464008009180348,
+            "observed_z": -0.5848370792972484
+          },
+          {
+            "normal_quantile": -0.3663943060979175,
+            "observed_z": -0.5290595630500339
+          },
+          {
+            "normal_quantile": -0.28187064805289597,
+            "observed_z": -0.3995068340221625
+          },
+          {
+            "normal_quantile": -0.192006930774266,
+            "observed_z": -0.33325236137419983
+          },
+          {
+            "normal_quantile": -0.09572371643293126,
+            "observed_z": -0.21860500485608023
+          },
+          {
+            "normal_quantile": 0.008137299188720856,
+            "observed_z": -0.12798993698725472
+          },
+          {
+            "normal_quantile": 0.12152911693964487,
+            "observed_z": -0.08354629195643214
+          },
+          {
+            "normal_quantile": 0.24692454502220493,
+            "observed_z": 0.038510447679456654
+          },
+          {
+            "normal_quantile": 0.38821379660152405,
+            "observed_z": 0.19522927645502677
+          },
+          {
+            "normal_quantile": 0.5516153120738397,
+            "observed_z": 0.4313975017733054
+          },
+          {
+            "normal_quantile": 0.748759942532199,
+            "observed_z": 0.6396531467104216
+          },
+          {
+            "normal_quantile": 1.0037604450079765,
+            "observed_z": 0.9758272367348032
+          },
+          {
+            "normal_quantile": 1.3900466594914869,
+            "observed_z": 1.46631039004648
+          },
+          {
+            "normal_quantile": 4.127448249281212,
+            "observed_z": 7.81251450295198
+          }
+        ]
+      },
+      "cross_module": {
+        "program_count": 27262,
+        "positive_program_count": 15062,
+        "mean_distinct_components": 3.8695620277309075,
+        "median_distinct_components": 1.0,
+        "spearman_log_size_vs_components": 0.43454072180704456,
+        "log1p_component_vs_log10_size_slope": 0.952453263505556,
+        "log1p_component_vs_log10_size_r_squared": 0.22314890755911573,
+        "standardized_observation_count": 27262,
+        "skewness": 2.1891360103647144,
+        "excess_kurtosis": 9.869278308199789,
+        "qq_r_squared": 0.7839227913189631,
+        "dagostino_k2": 13595.214139031741,
+        "dagostino_p_value": 0.0,
+        "anderson_statistic": 1636.898691007027,
+        "anderson_critical_5pct": 0.787,
+        "pre_registered_shape_consistent": false,
+        "size_bins": [
+          {
+            "size_median": 257.0,
+            "program_count": 1364,
+            "component_mean": 0.007331378299120235,
+            "component_stddev": 0.08534031058742596
+          },
+          {
+            "size_median": 471.0,
+            "program_count": 1371,
+            "component_mean": 0.19037199124726478,
+            "component_stddev": 0.45794918141905505
+          },
+          {
+            "size_median": 593.0,
+            "program_count": 1358,
+            "component_mean": 0.4425625920471281,
+            "component_stddev": 0.57778825246501
+          },
+          {
+            "size_median": 779.0,
+            "program_count": 1364,
+            "component_mean": 0.6048387096774194,
+            "component_stddev": 0.8851957866574836
+          },
+          {
+            "size_median": 950.0,
+            "program_count": 1361,
+            "component_mean": 0.8141072740631888,
+            "component_stddev": 0.9686137533556372
+          },
+          {
+            "size_median": 1119.0,
+            "program_count": 1364,
+            "component_mean": 0.9164222873900293,
+            "component_stddev": 1.240213972486736
+          },
+          {
+            "size_median": 1281.0,
+            "program_count": 1366,
+            "component_mean": 1.2503660322108345,
+            "component_stddev": 1.4571724380710445
+          },
+          {
+            "size_median": 1452.0,
+            "program_count": 1357,
+            "component_mean": 1.4826823876197495,
+            "component_stddev": 1.7647070662234436
+          },
+          {
+            "size_median": 1634.0,
+            "program_count": 1367,
+            "component_mean": 1.446964155084126,
+            "component_stddev": 1.9234822506848257
+          },
+          {
+            "size_median": 1847.0,
+            "program_count": 1364,
+            "component_mean": 1.810850439882698,
+            "component_stddev": 2.3859455526289475
+          },
+          {
+            "size_median": 2116.0,
+            "program_count": 1359,
+            "component_mean": 2.1074319352465047,
+            "component_stddev": 2.8749482850511803
+          },
+          {
+            "size_median": 2452.0,
+            "program_count": 1368,
+            "component_mean": 2.3501461988304095,
+            "component_stddev": 3.313787116792627
+          },
+          {
+            "size_median": 2839.5,
+            "program_count": 1358,
+            "component_mean": 2.858615611192931,
+            "component_stddev": 3.8494948129490862
+          },
+          {
+            "size_median": 3344.0,
+            "program_count": 1363,
+            "component_mean": 3.409391049156273,
+            "component_stddev": 4.443276016423957
+          },
+          {
+            "size_median": 3986.5,
+            "program_count": 1362,
+            "component_mean": 4.741556534508076,
+            "component_stddev": 5.97060075721181
+          },
+          {
+            "size_median": 4923.5,
+            "program_count": 1364,
+            "component_mean": 5.641495601173021,
+            "component_stddev": 6.854086150209433
+          },
+          {
+            "size_median": 6301.0,
+            "program_count": 1362,
+            "component_mean": 7.664464023494861,
+            "component_stddev": 9.115781507357871
+          },
+          {
+            "size_median": 8747.0,
+            "program_count": 1363,
+            "component_mean": 9.740278796771827,
+            "component_stddev": 11.742465910067088
+          },
+          {
+            "size_median": 13545.0,
+            "program_count": 1363,
+            "component_mean": 12.688921496698459,
+            "component_stddev": 17.035121849943945
+          },
+          {
+            "size_median": 31390.5,
+            "program_count": 1364,
+            "component_mean": 17.227272727272727,
+            "component_stddev": 31.06112527960039
+          }
+        ],
+        "histogram": [
+          {
+            "z_left": -4.0,
+            "z_right": -3.8,
+            "count": 0
+          },
+          {
+            "z_left": -3.8,
+            "z_right": -3.6,
+            "count": 0
+          },
+          {
+            "z_left": -3.6,
+            "z_right": -3.4,
+            "count": 0
+          },
+          {
+            "z_left": -3.4,
+            "z_right": -3.2,
+            "count": 0
+          },
+          {
+            "z_left": -3.2,
+            "z_right": -3.0,
+            "count": 0
+          },
+          {
+            "z_left": -3.0,
+            "z_right": -2.8,
+            "count": 0
+          },
+          {
+            "z_left": -2.8,
+            "z_right": -2.5999999999999996,
+            "count": 0
+          },
+          {
+            "z_left": -2.5999999999999996,
+            "z_right": -2.4,
+            "count": 0
+          },
+          {
+            "z_left": -2.4,
+            "z_right": -2.2,
+            "count": 0
+          },
+          {
+            "z_left": -2.2,
+            "z_right": -2.0,
+            "count": 0
+          },
+          {
+            "z_left": -2.0,
+            "z_right": -1.7999999999999998,
+            "count": 0
+          },
+          {
+            "z_left": -1.7999999999999998,
+            "z_right": -1.5999999999999996,
+            "count": 0
+          },
+          {
+            "z_left": -1.5999999999999996,
+            "z_right": -1.4,
+            "count": 0
+          },
+          {
+            "z_left": -1.4,
+            "z_right": -1.1999999999999997,
+            "count": 0
+          },
+          {
+            "z_left": -1.1999999999999997,
+            "z_right": -1.0,
+            "count": 0
+          },
+          {
+            "z_left": -1.0,
+            "z_right": -0.7999999999999998,
+            "count": 3049
+          },
+          {
+            "z_left": -0.7999999999999998,
+            "z_right": -0.5999999999999996,
+            "count": 7406
+          },
+          {
+            "z_left": -0.5999999999999996,
+            "z_right": -0.3999999999999999,
+            "count": 3089
+          },
+          {
+            "z_left": -0.3999999999999999,
+            "z_right": -0.19999999999999973,
+            "count": 1801
+          },
+          {
+            "z_left": -0.19999999999999973,
+            "z_right": 0.0,
+            "count": 2329
+          },
+          {
+            "z_left": 0.0,
+            "z_right": 0.20000000000000018,
+            "count": 1728
+          },
+          {
+            "z_left": 0.20000000000000018,
+            "z_right": 0.40000000000000036,
+            "count": 1016
+          },
+          {
+            "z_left": 0.40000000000000036,
+            "z_right": 0.6000000000000005,
+            "count": 1170
+          },
+          {
+            "z_left": 0.6000000000000005,
+            "z_right": 0.8000000000000007,
+            "count": 435
+          },
+          {
+            "z_left": 0.8000000000000007,
+            "z_right": 1.0,
+            "count": 1345
+          },
+          {
+            "z_left": 1.0,
+            "z_right": 1.2000000000000002,
+            "count": 407
+          },
+          {
+            "z_left": 1.2000000000000002,
+            "z_right": 1.4000000000000004,
+            "count": 837
+          },
+          {
+            "z_left": 1.4000000000000004,
+            "z_right": 1.6000000000000005,
+            "count": 483
+          },
+          {
+            "z_left": 1.6000000000000005,
+            "z_right": 1.8000000000000007,
+            "count": 571
+          },
+          {
+            "z_left": 1.8000000000000007,
+            "z_right": 2.0,
+            "count": 282
+          },
+          {
+            "z_left": 2.0,
+            "z_right": 2.2,
+            "count": 225
+          },
+          {
+            "z_left": 2.2,
+            "z_right": 2.4000000000000004,
+            "count": 248
+          },
+          {
+            "z_left": 2.4000000000000004,
+            "z_right": 2.6000000000000005,
+            "count": 167
+          },
+          {
+            "z_left": 2.6000000000000005,
+            "z_right": 2.8000000000000007,
+            "count": 176
+          },
+          {
+            "z_left": 2.8000000000000007,
+            "z_right": 3.0,
+            "count": 80
+          },
+          {
+            "z_left": 3.0,
+            "z_right": 3.2,
+            "count": 68
+          },
+          {
+            "z_left": 3.2,
+            "z_right": 3.4000000000000004,
+            "count": 84
+          },
+          {
+            "z_left": 3.4000000000000004,
+            "z_right": 3.6000000000000005,
+            "count": 53
+          },
+          {
+            "z_left": 3.6000000000000005,
+            "z_right": 3.8000000000000007,
+            "count": 27
+          },
+          {
+            "z_left": 3.8000000000000007,
+            "z_right": 4.0,
+            "count": 186
+          }
+        ],
+        "qq_points": [
+          {
+            "normal_quantile": -4.127448249280723,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.867308273594018,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.740841071375147,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.655413614062127,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.590432394694754,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.5377892062164285,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.49343210213539,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.455037436567838,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.4211459385249774,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.3907797734368628,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.363250975152125,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.3380567468061004,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.3148182221069926,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.293242666278119,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.25420199775256,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.236400043531442,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.2036017975960616,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.188412560222246,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.160074676608266,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.1340675823549664,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.1100217277235704,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.087649862073611,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.0567448153920775,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.028509520191543,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -3.002499980766613,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.978375587249788,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.948688435969013,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.9213926000684367,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.8961138742361023,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.872560469481771,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.839970214665127,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.8149431996970904,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.7870663537754954,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.7570639698212323,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.7293552903703517,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.7000585758412687,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.6729107935681062,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.6445532256381887,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.6153538460004424,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.585616912757004,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.5555886206822263,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.5254645206952477,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.495397344153239,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.463588051400018,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.432317069931233,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.4016103036962257,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.3699533272707503,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.3376714361843414,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.3063402213559265,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.27345049294313,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.2405816322404952,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.2068088652399327,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.172450096146171,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.1386654991214016,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.1037844223787627,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.068938796164604,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -2.033521603074395,
+            "observed_z": -0.858076916322976
+          },
+          {
+            "normal_quantile": -1.9977725470942087,
+            "observed_z": -0.8407906680637783
+          },
+          {
+            "normal_quantile": -1.9612522238468997,
+            "observed_z": -0.8407906680637783
+          },
+          {
+            "normal_quantile": -1.9242384546295568,
+            "observed_z": -0.8407906680637783
+          },
+          {
+            "normal_quantile": -1.886408205187294,
+            "observed_z": -0.8407906680637783
+          },
+          {
+            "normal_quantile": -1.8485553480000572,
+            "observed_z": -0.8407906680637783
+          },
+          {
+            "normal_quantile": -1.8098589830128464,
+            "observed_z": -0.8407906680637783
+          },
+          {
+            "normal_quantile": -1.7706026165642468,
+            "observed_z": -0.840487006552219
+          },
+          {
+            "normal_quantile": -1.730601565336363,
+            "observed_z": -0.840487006552219
+          },
+          {
+            "normal_quantile": -1.6901158370348182,
+            "observed_z": -0.840487006552219
+          },
+          {
+            "normal_quantile": -1.6489933425927863,
+            "observed_z": -0.840487006552219
+          },
+          {
+            "normal_quantile": -1.6071301371373652,
+            "observed_z": -0.840487006552219
+          },
+          {
+            "normal_quantile": -1.5644597749058426,
+            "observed_z": -0.840487006552219
+          },
+          {
+            "normal_quantile": -1.520944411540193,
+            "observed_z": -0.8401861226706366
+          },
+          {
+            "normal_quantile": -1.4765673417593068,
+            "observed_z": -0.8401861226706366
+          },
+          {
+            "normal_quantile": -1.4313267679249573,
+            "observed_z": -0.8401861226706366
+          },
+          {
+            "normal_quantile": -1.3852306453901164,
+            "observed_z": -0.8294917670079213
+          },
+          {
+            "normal_quantile": -1.3382924712421165,
+            "observed_z": -0.8294917670079213
+          },
+          {
+            "normal_quantile": -1.2901051301832713,
+            "observed_z": -0.8230850149148825
+          },
+          {
+            "normal_quantile": -1.2407599335413277,
+            "observed_z": -0.8230850149148825
+          },
+          {
+            "normal_quantile": -1.1903334970706094,
+            "observed_z": -0.7941506604307469
+          },
+          {
+            "normal_quantile": -1.138535542897625,
+            "observed_z": -0.7941506604307469
+          },
+          {
+            "normal_quantile": -1.0853064974041233,
+            "observed_z": -0.767314710261962
+          },
+          {
+            "normal_quantile": -1.0307550305955202,
+            "observed_z": -0.7659598307148501
+          },
+          {
+            "normal_quantile": -0.9745173651996732,
+            "observed_z": -0.7659598307148501
+          },
+          {
+            "normal_quantile": -0.916576347251782,
+            "observed_z": -0.7589655337639274
+          },
+          {
+            "normal_quantile": -0.8567723952756688,
+            "observed_z": -0.7589655337639274
+          },
+          {
+            "normal_quantile": -0.7949582114489543,
+            "observed_z": -0.7522628059442488
+          },
+          {
+            "normal_quantile": -0.7308684454914935,
+            "observed_z": -0.7443307788765717
+          },
+          {
+            "normal_quantile": -0.6642516906619613,
+            "observed_z": -0.7425950027460757
+          },
+          {
+            "normal_quantile": -0.5948549544159808,
+            "observed_z": -0.7389227244009544
+          },
+          {
+            "normal_quantile": -0.5224076289887651,
+            "observed_z": -0.7330329892208785
+          },
+          {
+            "normal_quantile": -0.4464008009180348,
+            "observed_z": -0.6861660045441308
+          },
+          {
+            "normal_quantile": -0.3663943060979175,
+            "observed_z": -0.6832824091507508
+          },
+          {
+            "normal_quantile": -0.28187064805289597,
+            "observed_z": -0.5546248750552144
+          },
+          {
+            "normal_quantile": -0.192006930774266,
+            "observed_z": -0.5224302912789223
+          },
+          {
+            "normal_quantile": -0.09572371643293126,
+            "observed_z": -0.41570549521970057
+          },
+          {
+            "normal_quantile": 0.008137299188720856,
+            "observed_z": -0.3852006455228429
+          },
+          {
+            "normal_quantile": 0.12152911693964487,
+            "observed_z": -0.23237238343373917
+          },
+          {
+            "normal_quantile": 0.24692454502220493,
+            "observed_z": -0.08590756523682538
+          },
+          {
+            "normal_quantile": 0.38821379660152405,
+            "observed_z": 0.036728037230099556
+          },
+          {
+            "normal_quantile": 0.5516153120738397,
+            "observed_z": 0.19610607992180734
+          },
+          {
+            "normal_quantile": 0.748759942532199,
+            "observed_z": 0.4983976096214941
+          },
+          {
+            "normal_quantile": 1.0037604450079765,
+            "observed_z": 0.9647780230468246
+          },
+          {
+            "normal_quantile": 1.3900466594914869,
+            "observed_z": 1.5761047571077316
+          },
+          {
+            "normal_quantile": 4.127448249281212,
+            "observed_z": 11.631884333066155
+          }
+        ]
+      }
+    }
+  },
+  "phase_4_component_size": {
+    "definition": {
+      "population": "concrete methods targeted by EXACT STATIC or SPECIAL bytecode calls",
+      "component_size": "Code.code_length bytes",
+      "use_count": "resolved bytecode invocation occurrences",
+      "gross_savings_proxy": "max(Code.code_length - 3-byte invoke instruction, 0)",
+      "identifier_boundary": "ceil(log2(rank)) is a global theoretical minimum; JVM call sites use a 16-bit class-local constant-pool index plus shared metadata"
+    },
+    "population": 47305,
+    "call_sites": 279950,
+    "spearman_log_use_vs_log_size": -0.010591203018435634,
+    "spearman_p_value": 0.02124735805376574,
+    "gross_savings_meets_log2_rank_fraction": 0.9783955184441391,
+    "jvm_call_operand_bits": 16,
+    "global_component_identifier_min_bits": 18,
+    "binned_points": [
+      {
+        "rank_geometric_mean": 1.0,
+        "count": 1,
+        "median_uses": 10794.0,
+        "median_bytecode_length": 1.0,
+        "median_gross_savings_bytes": 0.0,
+        "theoretical_min_identifier_bits": 0.0
+      },
+      {
+        "rank_geometric_mean": 2.0,
+        "count": 1,
+        "median_uses": 7791.0,
+        "median_bytecode_length": 14.0,
+        "median_gross_savings_bytes": 11.0,
+        "theoretical_min_identifier_bits": 1.0
+      },
+      {
+        "rank_geometric_mean": 3.0,
+        "count": 1,
+        "median_uses": 6997.0,
+        "median_bytecode_length": 7.0,
+        "median_gross_savings_bytes": 4.0,
+        "theoretical_min_identifier_bits": 1.584962500721156
+      },
+      {
+        "rank_geometric_mean": 4.0,
+        "count": 1,
+        "median_uses": 4946.0,
+        "median_bytecode_length": 6.0,
+        "median_gross_savings_bytes": 3.0,
+        "theoretical_min_identifier_bits": 2.0
+      },
+      {
+        "rank_geometric_mean": 5.477225575051661,
+        "count": 2,
+        "median_uses": 3763.0,
+        "median_bytecode_length": 18.5,
+        "median_gross_savings_bytes": 15.5,
+        "theoretical_min_identifier_bits": 2.4534452978042594
+      },
+      {
+        "rank_geometric_mean": 7.483314773547883,
+        "count": 2,
+        "median_uses": 2865.0,
+        "median_bytecode_length": 27.5,
+        "median_gross_savings_bytes": 24.5,
+        "theoretical_min_identifier_bits": 2.903677461028802
+      },
+      {
+        "rank_geometric_mean": 9.486832980505138,
+        "count": 2,
+        "median_uses": 1923.0,
+        "median_bytecode_length": 12.5,
+        "median_gross_savings_bytes": 9.5,
+        "theoretical_min_identifier_bits": 3.2459265481648374
+      },
+      {
+        "rank_geometric_mean": 12.409673645990857,
+        "count": 4,
+        "median_uses": 1262.5,
+        "median_bytecode_length": 16.0,
+        "median_gross_savings_bytes": 13.0,
+        "theoretical_min_identifier_bits": 3.6333932703474505
+      },
+      {
+        "rank_geometric_mean": 16.431676725154983,
+        "count": 4,
+        "median_uses": 1053.5,
+        "median_bytecode_length": 12.5,
+        "median_gross_savings_bytes": 9.5,
+        "theoretical_min_identifier_bits": 4.038407798525415
+      },
+      {
+        "rank_geometric_mean": 21.354156504062622,
+        "count": 6,
+        "median_uses": 865.0,
+        "median_bytecode_length": 13.0,
+        "median_gross_savings_bytes": 10.0,
+        "theoretical_min_identifier_bits": 4.416445007082371
+      },
+      {
+        "rank_geometric_mean": 28.284271247461902,
+        "count": 8,
+        "median_uses": 722.0,
+        "median_bytecode_length": 10.5,
+        "median_gross_savings_bytes": 7.5,
+        "theoretical_min_identifier_bits": 4.821928094887363
+      },
+      {
+        "rank_geometric_mean": 37.22902093797257,
+        "count": 10,
+        "median_uses": 551.5,
+        "median_bytecode_length": 12.5,
+        "median_gross_savings_bytes": 9.5,
+        "theoretical_min_identifier_bits": 5.218355771068607
+      },
+      {
+        "rank_geometric_mean": 49.07137658554119,
+        "count": 14,
+        "median_uses": 424.5,
+        "median_bytecode_length": 9.0,
+        "median_gross_savings_bytes": 6.0,
+        "theoretical_min_identifier_bits": 5.616809838379851
+      },
+      {
+        "rank_geometric_mean": 64.50581369148055,
+        "count": 17,
+        "median_uses": 315.0,
+        "median_bytecode_length": 12.0,
+        "median_gross_savings_bytes": 9.0,
+        "theoretical_min_identifier_bits": 6.011357286522379
+      },
+      {
+        "rank_geometric_mean": 84.2852300228219,
+        "count": 23,
+        "median_uses": 255.0,
+        "median_bytecode_length": 12.0,
+        "median_gross_savings_bytes": 9.0,
+        "theoretical_min_identifier_bits": 6.397207933175053
+      },
+      {
+        "rank_geometric_mean": 110.55315463612968,
+        "count": 30,
+        "median_uses": 204.0,
+        "median_bytecode_length": 10.0,
+        "median_gross_savings_bytes": 7.0,
+        "theoretical_min_identifier_bits": 6.788596382843522
+      },
+      {
+        "rank_geometric_mean": 144.75841944425892,
+        "count": 39,
+        "median_uses": 151.0,
+        "median_bytecode_length": 13.0,
+        "median_gross_savings_bytes": 10.0,
+        "theoretical_min_identifier_bits": 7.177503450508991
+      },
+      {
+        "rank_geometric_mean": 189.356806056714,
+        "count": 51,
+        "median_uses": 121.0,
+        "median_bytecode_length": 12.0,
+        "median_gross_savings_bytes": 9.0,
+        "theoretical_min_identifier_bits": 7.564963466755197
+      },
+      {
+        "rank_geometric_mean": 248.2498741187999,
+        "count": 68,
+        "median_uses": 98.5,
+        "median_bytecode_length": 11.0,
+        "median_gross_savings_bytes": 8.0,
+        "theoretical_min_identifier_bits": 7.955649175974581
+      },
+      {
+        "rank_geometric_mean": 325.6071252291633,
+        "count": 88,
+        "median_uses": 77.0,
+        "median_bytecode_length": 10.5,
+        "median_gross_savings_bytes": 7.5,
+        "theoretical_min_identifier_bits": 8.346988460080068
+      },
+      {
+        "rank_geometric_mean": 426.20534956755296,
+        "count": 115,
+        "median_uses": 63.0,
+        "median_bytecode_length": 13.0,
+        "median_gross_savings_bytes": 10.0,
+        "theoretical_min_identifier_bits": 8.73540489116879
+      },
+      {
+        "rank_geometric_mean": 557.5446170487165,
+        "count": 150,
+        "median_uses": 49.0,
+        "median_bytecode_length": 16.0,
+        "median_gross_savings_bytes": 13.0,
+        "theoretical_min_identifier_bits": 9.122943449909593
+      },
+      {
+        "rank_geometric_mean": 729.446365403242,
+        "count": 197,
+        "median_uses": 38.0,
+        "median_bytecode_length": 15.0,
+        "median_gross_savings_bytes": 12.0,
+        "theoretical_min_identifier_bits": 9.510658093604766
+      },
+      {
+        "rank_geometric_mean": 954.8926641251361,
+        "count": 258,
+        "median_uses": 31.0,
+        "median_bytecode_length": 16.0,
+        "median_gross_savings_bytes": 13.0,
+        "theoretical_min_identifier_bits": 9.899194764140633
+      },
+      {
+        "rank_geometric_mean": 1250.195984636009,
+        "count": 338,
+        "median_uses": 23.0,
+        "median_bytecode_length": 16.0,
+        "median_gross_savings_bytes": 13.0,
+        "theoretical_min_identifier_bits": 10.287938558668829
+      },
+      {
+        "rank_geometric_mean": 1636.7137807203799,
+        "count": 442,
+        "median_uses": 18.0,
+        "median_bytecode_length": 15.0,
+        "median_gross_savings_bytes": 12.0,
+        "theoretical_min_identifier_bits": 10.676586338155037
+      },
+      {
+        "rank_geometric_mean": 2142.16012473391,
+        "count": 578,
+        "median_uses": 14.0,
+        "median_bytecode_length": 16.0,
+        "median_gross_savings_bytes": 13.0,
+        "theoretical_min_identifier_bits": 11.06485060906649
+      },
+      {
+        "rank_geometric_mean": 2803.6328218937656,
+        "count": 757,
+        "median_uses": 11.0,
+        "median_bytecode_length": 17.0,
+        "median_gross_savings_bytes": 14.0,
+        "theoretical_min_identifier_bits": 11.453081703654243
+      },
+      {
+        "rank_geometric_mean": 3669.3290939897993,
+        "count": 990,
+        "median_uses": 8.0,
+        "median_bytecode_length": 17.0,
+        "median_gross_savings_bytes": 14.0,
+        "theoretical_min_identifier_bits": 11.841300587170416
+      },
+      {
+        "rank_geometric_mean": 4802.479776115669,
+        "count": 1297,
+        "median_uses": 6.0,
+        "median_bytecode_length": 20.0,
+        "median_gross_savings_bytes": 17.0,
+        "theoretical_min_identifier_bits": 12.229563823184005
+      },
+      {
+        "rank_geometric_mean": 6285.622483095847,
+        "count": 1696,
+        "median_uses": 5.0,
+        "median_bytecode_length": 26.0,
+        "median_gross_savings_bytes": 23.0,
+        "theoretical_min_identifier_bits": 12.617839910581626
+      },
+      {
+        "rank_geometric_mean": 8226.451300530503,
+        "count": 2221,
+        "median_uses": 4.0,
+        "median_bytecode_length": 23.0,
+        "median_gross_savings_bytes": 20.0,
+        "theoretical_min_identifier_bits": 13.006054504467524
+      },
+      {
+        "rank_geometric_mean": 10766.968189792333,
+        "count": 2906,
+        "median_uses": 3.0,
+        "median_bytecode_length": 22.0,
+        "median_gross_savings_bytes": 19.0,
+        "theoretical_min_identifier_bits": 13.394324446208206
+      },
+      {
+        "rank_geometric_mean": 14091.787608390923,
+        "count": 3804,
+        "median_uses": 2.0,
+        "median_bytecode_length": 21.0,
+        "median_gross_savings_bytes": 18.0,
+        "theoretical_min_identifier_bits": 13.782567015340105
+      },
+      {
+        "rank_geometric_mean": 18443.811970414357,
+        "count": 4979,
+        "median_uses": 2.0,
+        "median_bytecode_length": 25.0,
+        "median_gross_savings_bytes": 22.0,
+        "theoretical_min_identifier_bits": 14.170849242608115
+      },
+      {
+        "rank_geometric_mean": 24139.70206941254,
+        "count": 6516,
+        "median_uses": 1.0,
+        "median_bytecode_length": 20.5,
+        "median_gross_savings_bytes": 17.5,
+        "theoretical_min_identifier_bits": 14.559120250106615
+      },
+      {
+        "rank_geometric_mean": 31594.126795972697,
+        "count": 8528,
+        "median_uses": 1.0,
+        "median_bytecode_length": 20.0,
+        "median_gross_savings_bytes": 17.0,
+        "theoretical_min_identifier_bits": 14.947368772450433
+      },
+      {
+        "rank_geometric_mean": 41350.20223650666,
+        "count": 11161,
+        "median_uses": 1.0,
+        "median_bytecode_length": 20.0,
+        "median_gross_savings_bytes": 17.0,
+        "theoretical_min_identifier_bits": 15.33560676492887
+      }
+    ],
+    "display_points": [
+      {
+        "rank": 1,
+        "uses": 10794,
+        "bytecode_length": 1,
+        "gross_savings_bytes_per_use": 0,
+        "method": "java.base/java/lang/Object#<init>()V"
+      },
+      {
+        "rank": 2,
+        "uses": 7791,
+        "bytecode_length": 14,
+        "gross_savings_bytes_per_use": 11,
+        "method": "java.base/java/util/Objects#requireNonNull(Ljava/lang/Object;)Ljava/lang/Object;"
+      },
+      {
+        "rank": 3,
+        "uses": 6997,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.base/java/lang/StringBuilder#<init>()V"
+      },
+      {
+        "rank": 4,
+        "uses": 4946,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/lang/IllegalArgumentException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 5,
+        "uses": 4436,
+        "bytecode_length": 32,
+        "gross_savings_bytes_per_use": 29,
+        "method": "java.base/java/lang/Integer#valueOf(I)Ljava/lang/Integer;"
+      },
+      {
+        "rank": 6,
+        "uses": 3090,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/lang/AssertionError#<init>()V"
+      },
+      {
+        "rank": 7,
+        "uses": 3035,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "java.base/java/lang/String#valueOf(Ljava/lang/Object;)Ljava/lang/String;"
+      },
+      {
+        "rank": 8,
+        "uses": 2695,
+        "bytecode_length": 40,
+        "gross_savings_bytes_per_use": 37,
+        "method": "java.base/java/lang/Long#valueOf(J)Ljava/lang/Long;"
+      },
+      {
+        "rank": 9,
+        "uses": 1947,
+        "bytecode_length": 12,
+        "gross_savings_bytes_per_use": 9,
+        "method": "java.base/java/util/ArrayList#<init>()V"
+      },
+      {
+        "rank": 10,
+        "uses": 1899,
+        "bytecode_length": 13,
+        "gross_savings_bytes_per_use": 10,
+        "method": "jdk.compiler/com/sun/tools/javac/api/Entity#put(Ljava/lang/String;C)V"
+      },
+      {
+        "rank": 11,
+        "uses": 1343,
+        "bytecode_length": 63,
+        "gross_savings_bytes_per_use": 60,
+        "method": "java.base/java/util/EnumSet#noneOf(Ljava/lang/Class;)Ljava/util/EnumSet;"
+      },
+      {
+        "rank": 12,
+        "uses": 1312,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/io/IOException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 13,
+        "uses": 1213,
+        "bytecode_length": 11,
+        "gross_savings_bytes_per_use": 8,
+        "method": "java.base/java/util/HashMap#<init>()V"
+      },
+      {
+        "rank": 14,
+        "uses": 1185,
+        "bytecode_length": 21,
+        "gross_savings_bytes_per_use": 18,
+        "method": "java.base/java/lang/Character#valueOf(C)Ljava/lang/Character;"
+      },
+      {
+        "rank": 15,
+        "uses": 1159,
+        "bytecode_length": 25,
+        "gross_savings_bytes_per_use": 22,
+        "method": "java.base/java/lang/AssertionError#<init>(Ljava/lang/Object;)V"
+      },
+      {
+        "rank": 16,
+        "uses": 1077,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/lang/IllegalStateException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 17,
+        "uses": 1030,
+        "bytecode_length": 14,
+        "gross_savings_bytes_per_use": 11,
+        "method": "java.base/java/lang/Boolean#valueOf(Z)Ljava/lang/Boolean;"
+      },
+      {
+        "rank": 18,
+        "uses": 972,
+        "bytecode_length": 11,
+        "gross_savings_bytes_per_use": 8,
+        "method": "java.base/java/lang/Math#max(II)I"
+      },
+      {
+        "rank": 19,
+        "uses": 948,
+        "bytecode_length": 11,
+        "gross_savings_bytes_per_use": 8,
+        "method": "java.base/java/lang/Math#min(II)I"
+      },
+      {
+        "rank": 20,
+        "uses": 908,
+        "bytecode_length": 16,
+        "gross_savings_bytes_per_use": 13,
+        "method": "java.base/java/lang/String#format(Ljava/lang/String;[Ljava/lang/Object;)Ljava/lang/String;"
+      },
+      {
+        "rank": 21,
+        "uses": 881,
+        "bytecode_length": 1,
+        "gross_savings_bytes_per_use": 0,
+        "method": "java.base/java/lang/ref/Reference#reachabilityFence(Ljava/lang/Object;)V"
+      },
+      {
+        "rank": 23,
+        "uses": 829,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "java.base/java/util/Objects#requireNonNull(Ljava/lang/Object;Ljava/lang/String;)Ljava/lang/Object;"
+      },
+      {
+        "rank": 24,
+        "uses": 788,
+        "bytecode_length": 35,
+        "gross_savings_bytes_per_use": 32,
+        "method": "java.base/sun/util/resources/OpenListResourceBundle#<init>()V"
+      },
+      {
+        "rank": 26,
+        "uses": 734,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "java.desktop/java/awt/Dimension#<init>(II)V"
+      },
+      {
+        "rank": 27,
+        "uses": 729,
+        "bytecode_length": 73,
+        "gross_savings_bytes_per_use": 70,
+        "method": "java.base/java/lang/Enum#valueOf(Ljava/lang/Class;Ljava/lang/String;)Ljava/lang/Enum;"
+      },
+      {
+        "rank": 29,
+        "uses": 720,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/util/ListResourceBundle#<init>()V"
+      },
+      {
+        "rank": 31,
+        "uses": 675,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/lang/NullPointerException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 33,
+        "uses": 642,
+        "bytecode_length": 4,
+        "gross_savings_bytes_per_use": 1,
+        "method": "java.base/sun/security/ssl/SSLLogger#isOn()Z"
+      },
+      {
+        "rank": 35,
+        "uses": 625,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/lang/NullPointerException#<init>()V"
+      },
+      {
+        "rank": 37,
+        "uses": 552,
+        "bytecode_length": 21,
+        "gross_savings_bytes_per_use": 18,
+        "method": "java.base/java/lang/Integer#toString(I)Ljava/lang/String;"
+      },
+      {
+        "rank": 39,
+        "uses": 545,
+        "bytecode_length": 28,
+        "gross_savings_bytes_per_use": 25,
+        "method": "java.base/java/util/Arrays#fill([BIIB)V"
+      },
+      {
+        "rank": 42,
+        "uses": 536,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "java.desktop/javax/swing/plaf/ColorUIResource#<init>(III)V"
+      },
+      {
+        "rank": 44,
+        "uses": 492,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/lang/Record#<init>()V"
+      },
+      {
+        "rank": 47,
+        "uses": 454,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.base/java/lang/Integer#parseInt(Ljava/lang/String;)I"
+      },
+      {
+        "rank": 50,
+        "uses": 423,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "jdk.compiler/com/sun/tools/javac/util/ListBuffer#<init>()V"
+      },
+      {
+        "rank": 53,
+        "uses": 412,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/sun/security/util/DerOutputStream#<init>()V"
+      },
+      {
+        "rank": 56,
+        "uses": 358,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.base/java/util/Arrays#asList([Ljava/lang/Object;)Ljava/util/List;"
+      },
+      {
+        "rank": 60,
+        "uses": 327,
+        "bytecode_length": 51,
+        "gross_savings_bytes_per_use": 48,
+        "method": "java.desktop/javax/swing/plaf/nimbus/NimbusDefaults$LazyPainter#<init>(Ljava/lang/String;ILjava/awt/Insets;Ljava/awt/Dimension;ZLjavax/swing/plaf/nimbus/AbstractRegionPainter$PaintContext$CacheMode;DD)V"
+      },
+      {
+        "rank": 63,
+        "uses": 316,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "java.desktop/sun/awt/X11/Native#getInt(J)I"
+      },
+      {
+        "rank": 67,
+        "uses": 303,
+        "bytecode_length": 62,
+        "gross_savings_bytes_per_use": 59,
+        "method": "java.base/java/math/BigInteger#valueOf(J)Ljava/math/BigInteger;"
+      },
+      {
+        "rank": 71,
+        "uses": 292,
+        "bytecode_length": 11,
+        "gross_savings_bytes_per_use": 8,
+        "method": "java.xml/org/w3c/dom/DOMException#<init>(SLjava/lang/String;)V"
+      },
+      {
+        "rank": 76,
+        "uses": 275,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/sun/util/resources/TimeZoneNamesBundle#<init>()V"
+      },
+      {
+        "rank": 81,
+        "uses": 263,
+        "bytecode_length": 53,
+        "gross_savings_bytes_per_use": 50,
+        "method": "java.desktop/java/awt/Toolkit#getDefaultToolkit()Ljava/awt/Toolkit;"
+      },
+      {
+        "rank": 86,
+        "uses": 254,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/io/InvalidObjectException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 91,
+        "uses": 246,
+        "bytecode_length": 21,
+        "gross_savings_bytes_per_use": 18,
+        "method": "java.base/sun/security/ssl/CipherSuite#<init>(Ljava/lang/String;ILjava/lang/String;I)V"
+      },
+      {
+        "rank": 97,
+        "uses": 228,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/lang/StringBuilder#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 103,
+        "uses": 224,
+        "bytecode_length": 66,
+        "gross_savings_bytes_per_use": 63,
+        "method": "java.desktop/javax/imageio/metadata/IIOMetadataNode#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 109,
+        "uses": 213,
+        "bytecode_length": 24,
+        "gross_savings_bytes_per_use": 21,
+        "method": "java.base/java/lang/classfile/Opcode#<init>(Ljava/lang/String;IIILjava/lang/classfile/Opcode$Kind;)V"
+      },
+      {
+        "rank": 116,
+        "uses": 187,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "java.base/java/io/ObjectStreamField#<init>(Ljava/lang/String;Ljava/lang/Class;)V"
+      },
+      {
+        "rank": 123,
+        "uses": 173,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/util/stream/Stream#of([Ljava/lang/Object;)Ljava/util/stream/Stream;"
+      },
+      {
+        "rank": 130,
+        "uses": 167,
+        "bytecode_length": 33,
+        "gross_savings_bytes_per_use": 30,
+        "method": "java.base/sun/security/util/KnownOIDs#<init>(Ljava/lang/String;ILjava/lang/String;)V"
+      },
+      {
+        "rank": 139,
+        "uses": 158,
+        "bytecode_length": 20,
+        "gross_savings_bytes_per_use": 17,
+        "method": "java.base/java/lang/Error#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 147,
+        "uses": 150,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.desktop/java/awt/Rectangle#<init>()V"
+      },
+      {
+        "rank": 156,
+        "uses": 143,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.base/java/io/IOException#<init>(Ljava/lang/String;Ljava/lang/Throwable;)V"
+      },
+      {
+        "rank": 166,
+        "uses": 138,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "java.desktop/javax/sound/midi/Patch#<init>(II)V"
+      },
+      {
+        "rank": 176,
+        "uses": 132,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.desktop/sun/awt/X11/XWrapperBase#<init>()V"
+      },
+      {
+        "rank": 187,
+        "uses": 126,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "java.base/java/nio/ByteBuffer#wrap([B)Ljava/nio/ByteBuffer;"
+      },
+      {
+        "rank": 199,
+        "uses": 118,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "java.desktop/javax/swing/plaf/InsetsUIResource#<init>(IIII)V"
+      },
+      {
+        "rank": 211,
+        "uses": 113,
+        "bytecode_length": 38,
+        "gross_savings_bytes_per_use": 35,
+        "method": "java.desktop/sun/java2d/marlin/MarlinUtils#logInfo(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 224,
+        "uses": 106,
+        "bytecode_length": 4,
+        "gross_savings_bytes_per_use": 1,
+        "method": "java.base/jdk/internal/misc/Unsafe#getUnsafe()Ljdk/internal/misc/Unsafe;"
+      },
+      {
+        "rank": 238,
+        "uses": 102,
+        "bytecode_length": 39,
+        "gross_savings_bytes_per_use": 36,
+        "method": "java.base/java/lang/String#valueOf(C)Ljava/lang/String;"
+      },
+      {
+        "rank": 253,
+        "uses": 98,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "jdk.compiler/com/sun/tools/javac/tree/JCTree$Tag#<init>(Ljava/lang/String;I)V"
+      },
+      {
+        "rank": 268,
+        "uses": 94,
+        "bytecode_length": 60,
+        "gross_savings_bytes_per_use": 57,
+        "method": "jdk.jdi/com/sun/tools/jdi/PacketStream#<init>(Lcom/sun/tools/jdi/VirtualMachineImpl;II)V"
+      },
+      {
+        "rank": 285,
+        "uses": 89,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.desktop/javax/imageio/plugins/tiff/TIFFTag#<init>(Ljava/lang/String;II)V"
+      },
+      {
+        "rank": 303,
+        "uses": 83,
+        "bytecode_length": 64,
+        "gross_savings_bytes_per_use": 61,
+        "method": "java.base/java/lang/StringUTF16#getChar([BI)C"
+      },
+      {
+        "rank": 322,
+        "uses": 79,
+        "bytecode_length": 24,
+        "gross_savings_bytes_per_use": 21,
+        "method": "jdk.internal.le/jdk/internal/org/jline/keymap/KeyMap#ctrl(C)Ljava/lang/String;"
+      },
+      {
+        "rank": 341,
+        "uses": 74,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "java.base/java/util/Properties#<init>()V"
+      },
+      {
+        "rank": 363,
+        "uses": 72,
+        "bytecode_length": 26,
+        "gross_savings_bytes_per_use": 23,
+        "method": "jdk.javadoc/jdk/javadoc/internal/doclets/toolkit/util/DocPath#create(Ljava/lang/String;)Ljdk/javadoc/internal/doclets/toolkit/util/DocPath;"
+      },
+      {
+        "rank": 385,
+        "uses": 68,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/nio/channels/ClosedChannelException#<init>()V"
+      },
+      {
+        "rank": 409,
+        "uses": 65,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/java/lang/Character#isWhitespace(C)Z"
+      },
+      {
+        "rank": 434,
+        "uses": 63,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.xml/com/sun/org/apache/bcel/internal/generic/ClassGenException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 461,
+        "uses": 60,
+        "bytecode_length": 4,
+        "gross_savings_bytes_per_use": 1,
+        "method": "java.base/java/lang/Runtime#getRuntime()Ljava/lang/Runtime;"
+      },
+      {
+        "rank": 490,
+        "uses": 56,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "jdk.hotspot.agent/sun/jvm/hotspot/runtime/BasicType#getTInt()I"
+      },
+      {
+        "rank": 520,
+        "uses": 53,
+        "bytecode_length": 18,
+        "gross_savings_bytes_per_use": 15,
+        "method": "jdk.crypto.cryptoki/sun/security/pkcs11/wrapper/CK_ATTRIBUTE#<init>(JLjava/math/BigInteger;)V"
+      },
+      {
+        "rank": 552,
+        "uses": 50,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "java.base/sun/security/util/ResourcesMgr#getString(Ljava/lang/String;)Ljava/lang/String;"
+      },
+      {
+        "rank": 587,
+        "uses": 48,
+        "bytecode_length": 13,
+        "gross_savings_bytes_per_use": 10,
+        "method": "jdk.compiler/com/sun/tools/javac/util/JCDiagnostic$Warning#<init>(Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V"
+      },
+      {
+        "rank": 623,
+        "uses": 45,
+        "bytecode_length": 35,
+        "gross_savings_bytes_per_use": 32,
+        "method": "jdk.javadoc/jdk/javadoc/internal/html/HtmlAttr#<init>(Ljava/lang/String;IZ)V"
+      },
+      {
+        "rank": 662,
+        "uses": 42,
+        "bytecode_length": 151,
+        "gross_savings_bytes_per_use": 148,
+        "method": "java.base/sun/util/locale/provider/LocaleProviderAdapter#forType(Lsun/util/locale/provider/LocaleProviderAdapter$Type;)Lsun/util/locale/provider/LocaleProviderAdapter;"
+      },
+      {
+        "rank": 703,
+        "uses": 40,
+        "bytecode_length": 25,
+        "gross_savings_bytes_per_use": 22,
+        "method": "java.naming/javax/naming/NamingException#<init>()V"
+      },
+      {
+        "rank": 746,
+        "uses": 38,
+        "bytecode_length": 109,
+        "gross_savings_bytes_per_use": 106,
+        "method": "java.base/sun/security/ssl/Utilities#indent(Ljava/lang/String;Ljava/lang/String;)Ljava/lang/String;"
+      },
+      {
+        "rank": 792,
+        "uses": 36,
+        "bytecode_length": 138,
+        "gross_savings_bytes_per_use": 135,
+        "method": "java.base/java/nio/file/Files#createDirectories(Ljava/nio/file/Path;[Ljava/nio/file/attribute/FileAttribute;)Ljava/nio/file/Path;"
+      },
+      {
+        "rank": 842,
+        "uses": 34,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/io/FileNotFoundException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 894,
+        "uses": 32,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/io/IOError#<init>(Ljava/lang/Throwable;)V"
+      },
+      {
+        "rank": 949,
+        "uses": 31,
+        "bytecode_length": 54,
+        "gross_savings_bytes_per_use": 51,
+        "method": "java.desktop/javax/swing/SwingUtilities#replaceUIActionMap(Ljavax/swing/JComponent;Ljavax/swing/ActionMap;)V"
+      },
+      {
+        "rank": 1008,
+        "uses": 29,
+        "bytecode_length": 32,
+        "gross_savings_bytes_per_use": 29,
+        "method": "java.base/java/lang/System#getLogger(Ljava/lang/String;)Ljava/lang/System$Logger;"
+      },
+      {
+        "rank": 1070,
+        "uses": 28,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "jdk.jdeps/com/sun/tools/jdeps/JdepsTask$Option#<init>(Z[Ljava/lang/String;)V"
+      },
+      {
+        "rank": 1137,
+        "uses": 26,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.naming/javax/naming/ConfigurationException#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 1207,
+        "uses": 25,
+        "bytecode_length": 22,
+        "gross_savings_bytes_per_use": 19,
+        "method": "jdk.zipfs/jdk/nio/zipfs/ZipConstants#LG([BI)J"
+      },
+      {
+        "rank": 1282,
+        "uses": 23,
+        "bytecode_length": 18,
+        "gross_savings_bytes_per_use": 15,
+        "method": "java.desktop/java/awt/event/ItemEvent#<init>(Ljava/awt/ItemSelectable;ILjava/lang/Object;I)V"
+      },
+      {
+        "rank": 1361,
+        "uses": 22,
+        "bytecode_length": 73,
+        "gross_savings_bytes_per_use": 70,
+        "method": "java.xml/com/sun/org/apache/xerces/internal/impl/xpath/regex/Token#setAlias(Ljava/util/Map;Ljava/util/Map;Ljava/lang/String;Ljava/lang/String;Z)V"
+      },
+      {
+        "rank": 1446,
+        "uses": 21,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "jdk.jfr/jdk/jfr/internal/query/Function#<init>()V"
+      },
+      {
+        "rank": 1535,
+        "uses": 19,
+        "bytecode_length": 54,
+        "gross_savings_bytes_per_use": 51,
+        "method": "java.base/java/lang/Double#compare(DD)I"
+      },
+      {
+        "rank": 1631,
+        "uses": 18,
+        "bytecode_length": 19,
+        "gross_savings_bytes_per_use": 16,
+        "method": "java.base/jdk/internal/foreign/layout/ValueLayouts$AbstractValueLayout#withOrder(Ljava/nio/ByteOrder;)Ljdk/internal/foreign/layout/ValueLayouts$AbstractValueLayout;"
+      },
+      {
+        "rank": 1732,
+        "uses": 17,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/jdk/internal/classfile/impl/AbstractElement#<init>()V"
+      },
+      {
+        "rank": 1839,
+        "uses": 16,
+        "bytecode_length": 12,
+        "gross_savings_bytes_per_use": 9,
+        "method": "java.base/jdk/internal/reflect/ConstantPool$Tag#<init>(Ljava/lang/String;II)V"
+      },
+      {
+        "rank": 1953,
+        "uses": 15,
+        "bytecode_length": 65,
+        "gross_savings_bytes_per_use": 62,
+        "method": "java.base/java/security/KeyRep#<init>(Ljava/security/KeyRep$Type;Ljava/lang/String;Ljava/lang/String;[B)V"
+      },
+      {
+        "rank": 2074,
+        "uses": 14,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "java.base/java/lang/Thread#<init>(Ljava/lang/Runnable;)V"
+      },
+      {
+        "rank": 2203,
+        "uses": 14,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "jdk.compiler/com/sun/tools/javac/util/Assert#checkNull(Ljava/lang/Object;)V"
+      },
+      {
+        "rank": 2339,
+        "uses": 13,
+        "bytecode_length": 19,
+        "gross_savings_bytes_per_use": 16,
+        "method": "java.xml.crypto/com/sun/org/apache/xml/internal/security/exceptions/XMLSecurityException#<init>(Ljava/lang/Exception;Ljava/lang/String;[Ljava/lang/Object;)V"
+      },
+      {
+        "rank": 2484,
+        "uses": 12,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.desktop/java/awt/AlphaComposite#<init>(I)V"
+      },
+      {
+        "rank": 2638,
+        "uses": 11,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.base/java/security/Security#getProviders()[Ljava/security/Provider;"
+      },
+      {
+        "rank": 2802,
+        "uses": 11,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.xml/com/sun/org/apache/bcel/internal/generic/IF_ICMPEQ#<init>(Lcom/sun/org/apache/bcel/internal/generic/InstructionHandle;)V"
+      },
+      {
+        "rank": 2975,
+        "uses": 10,
+        "bytecode_length": 95,
+        "gross_savings_bytes_per_use": 92,
+        "method": "java.base/java/util/jar/JarFile#<init>(Ljava/io/File;ZILjava/lang/Runtime$Version;)V"
+      },
+      {
+        "rank": 3160,
+        "uses": 10,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "jdk.compiler/com/sun/tools/javac/tree/DCTree$DCInlineTag#<init>()V"
+      },
+      {
+        "rank": 3356,
+        "uses": 9,
+        "bytecode_length": 12,
+        "gross_savings_bytes_per_use": 9,
+        "method": "java.base/sun/security/ec/ed/EdDSAParameters#get(Ljava/util/function/Function;Ljava/security/spec/AlgorithmParameterSpec;)Lsun/security/ec/ed/EdDSAParameters;"
+      },
+      {
+        "rank": 3564,
+        "uses": 9,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "jdk.hotspot.agent/sun/jvm/hotspot/oops/Symbol#create(Lsun/jvm/hotspot/debugger/Address;)Lsun/jvm/hotspot/oops/Symbol;"
+      },
+      {
+        "rank": 3784,
+        "uses": 8,
+        "bytecode_length": 11,
+        "gross_savings_bytes_per_use": 8,
+        "method": "java.base/sun/nio/ch/IOUtil#releaseScopes(Ljava/lang/Runnable;)V"
+      },
+      {
+        "rank": 4019,
+        "uses": 8,
+        "bytecode_length": 29,
+        "gross_savings_bytes_per_use": 26,
+        "method": "jdk.compiler/com/sun/tools/javac/resources/CompilerProperties$Errors#Expected2(Lcom/sun/tools/javac/parser/Tokens$TokenKind;Lcom/sun/tools/javac/parser/Tokens$TokenKind;)Lcom/sun/tools/javac/util/JCDiagnostic$Error;"
+      },
+      {
+        "rank": 4268,
+        "uses": 7,
+        "bytecode_length": 43,
+        "gross_savings_bytes_per_use": 40,
+        "method": "java.base/jdk/internal/foreign/Utils#checkNonNegativeArgument(JLjava/lang/String;)V"
+      },
+      {
+        "rank": 4533,
+        "uses": 7,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.rmi/java/rmi/StubNotFoundException#<init>(Ljava/lang/String;Ljava/lang/Exception;)V"
+      },
+      {
+        "rank": 4814,
+        "uses": 6,
+        "bytecode_length": 28,
+        "gross_savings_bytes_per_use": 25,
+        "method": "java.base/java/lang/invoke/StringConcatFactory#stringValueOf(Ljava/lang/Class;)Ljava/lang/invoke/MethodHandle;"
+      },
+      {
+        "rank": 5112,
+        "uses": 6,
+        "bytecode_length": 34,
+        "gross_savings_bytes_per_use": 31,
+        "method": "java.base/sun/security/rsa/RSACore#rsa([BLjava/security/interfaces/RSAPrivateKey;Z)[B"
+      },
+      {
+        "rank": 5429,
+        "uses": 6,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.xml/com/sun/org/apache/bcel/internal/generic/IFNONNULL#<init>(Lcom/sun/org/apache/bcel/internal/generic/InstructionHandle;)V"
+      },
+      {
+        "rank": 5765,
+        "uses": 5,
+        "bytecode_length": 4,
+        "gross_savings_bytes_per_use": 1,
+        "method": "java.base/java/lang/classfile/Attributes#module()Ljava/lang/classfile/AttributeMapper;"
+      },
+      {
+        "rank": 6123,
+        "uses": 5,
+        "bytecode_length": 25,
+        "gross_savings_bytes_per_use": 22,
+        "method": "java.base/jdk/internal/util/random/RandomSupport$RandomLongsSpliterator#<init>(Ljava/util/random/RandomGenerator;JJJJ)V"
+      },
+      {
+        "rank": 6502,
+        "uses": 5,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "java.desktop/sun/java2d/xr/XRPMScaledBlit#<init>(Lsun/java2d/loops/SurfaceType;Lsun/java2d/loops/SurfaceType;)V"
+      },
+      {
+        "rank": 6905,
+        "uses": 5,
+        "bytecode_length": 50,
+        "gross_savings_bytes_per_use": 47,
+        "method": "jdk.incubator.vector/jdk/incubator/vector/ByteVector#intoArray0Template(Ljava/lang/Class;[BILjdk/incubator/vector/VectorMask;)V"
+      },
+      {
+        "rank": 7333,
+        "uses": 5,
+        "bytecode_length": 15,
+        "gross_savings_bytes_per_use": 12,
+        "method": "jdk.jfr/jdk/jfr/internal/util/Tokenizer#<init>(Ljava/lang/String;[C)V"
+      },
+      {
+        "rank": 7788,
+        "uses": 4,
+        "bytecode_length": 21,
+        "gross_savings_bytes_per_use": 18,
+        "method": "java.base/java/util/HexFormat#isHexDigit(I)Z"
+      },
+      {
+        "rank": 8270,
+        "uses": 4,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.base/sun/security/validator/CADistrustPolicy#<init>(Ljava/lang/String;I)V"
+      },
+      {
+        "rank": 8783,
+        "uses": 4,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.management.rmi/javax/management/remote/rmi/RMIConnectionImpl#strings([Ljava/lang/String;)Ljava/lang/String;"
+      },
+      {
+        "rank": 9327,
+        "uses": 4,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "jdk.hotspot.agent/sun/jvm/hotspot/code/CompressedReadStream#<init>(Lsun/jvm/hotspot/debugger/Address;I)V"
+      },
+      {
+        "rank": 9905,
+        "uses": 3,
+        "bytecode_length": 235,
+        "gross_savings_bytes_per_use": 232,
+        "method": "java.base/java/lang/invoke/MethodHandles$Lookup#validateAndFindInternalName([BLjava/lang/String;)Ljava/lang/String;"
+      },
+      {
+        "rank": 10519,
+        "uses": 3,
+        "bytecode_length": 12,
+        "gross_savings_bytes_per_use": 9,
+        "method": "java.base/jdk/internal/classfile/components/ClassPrinter#toYaml(Ljava/lang/classfile/CompoundElement;Ljdk/internal/classfile/components/ClassPrinter$Verbosity;Ljava/util/function/Consumer;)V"
+      },
+      {
+        "rank": 11171,
+        "uses": 3,
+        "bytecode_length": 22,
+        "gross_savings_bytes_per_use": 19,
+        "method": "java.base/sun/util/locale/provider/TimeZoneNameUtility#retrieveGenericDisplayName(Ljava/lang/String;ILjava/util/Locale;)Ljava/lang/String;"
+      },
+      {
+        "rank": 11864,
+        "uses": 3,
+        "bytecode_length": 346,
+        "gross_savings_bytes_per_use": 343,
+        "method": "java.desktop/sun/java2d/marlin/DualPivotQuicksort20191112Ext#mergeRuns([I[I[I[III[III)[I"
+      },
+      {
+        "rank": 12599,
+        "uses": 3,
+        "bytecode_length": 29,
+        "gross_savings_bytes_per_use": 26,
+        "method": "java.xml/com/sun/xml/internal/stream/events/CharacterEvent#<init>(Ljava/lang/String;)V"
+      },
+      {
+        "rank": 13380,
+        "uses": 3,
+        "bytecode_length": 34,
+        "gross_savings_bytes_per_use": 31,
+        "method": "jdk.jfr/jdk/jfr/internal/query/ViewPrinter#<init>(Ljdk/jfr/internal/query/Configuration;Ljdk/jfr/consumer/EventStream;)V"
+      },
+      {
+        "rank": 14209,
+        "uses": 2,
+        "bytecode_length": 12,
+        "gross_savings_bytes_per_use": 9,
+        "method": "java.base/java/lang/module/ModuleDescriptor$Opens$Modifier#<init>(Ljava/lang/String;II)V"
+      },
+      {
+        "rank": 15090,
+        "uses": 2,
+        "bytecode_length": 6,
+        "gross_savings_bytes_per_use": 3,
+        "method": "java.base/java/util/stream/AbstractShortCircuitTask#cancel()V"
+      },
+      {
+        "rank": 16025,
+        "uses": 2,
+        "bytecode_length": 5,
+        "gross_savings_bytes_per_use": 2,
+        "method": "java.base/sun/nio/ch/SelectorProviderImpl#<init>()V"
+      },
+      {
+        "rank": 17019,
+        "uses": 2,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.desktop/com/sun/media/sound/PortMixer$PortInfo#<init>(Ljava/lang/String;Z)V"
+      },
+      {
+        "rank": 18073,
+        "uses": 2,
+        "bytecode_length": 8,
+        "gross_savings_bytes_per_use": 5,
+        "method": "java.desktop/sun/awt/X11/XGlobalCursorManager#nativeUpdateCursor(Ljava/awt/Component;)V"
+      },
+      {
+        "rank": 19194,
+        "uses": 2,
+        "bytecode_length": 9,
+        "gross_savings_bytes_per_use": 6,
+        "method": "java.security.jgss/sun/security/krb5/internal/LocalSeqNumber#<init>()V"
+      },
+      {
+        "rank": 20383,
+        "uses": 2,
+        "bytecode_length": 26,
+        "gross_savings_bytes_per_use": 23,
+        "method": "jdk.compiler/com/sun/tools/javac/resources/CompilerProperties$Errors#ProcCantLoadClass(Ljava/lang/String;)Lcom/sun/tools/javac/util/JCDiagnostic$Error;"
+      },
+      {
+        "rank": 21647,
+        "uses": 2,
+        "bytecode_length": 62,
+        "gross_savings_bytes_per_use": 59,
+        "method": "jdk.jfr/jdk/jfr/internal/consumer/RecordingInput#<init>(Ljava/io/File;I)V"
+      },
+      {
+        "rank": 22988,
+        "uses": 1,
+        "bytecode_length": 7,
+        "gross_savings_bytes_per_use": 4,
+        "method": "java.base/java/lang/VirtualMachineError#<init>(Ljava/lang/String;Ljava/lang/Throwable;)V"
+      },
+      {
+        "rank": 24413,
+        "uses": 1,
+        "bytecode_length": 12,
+        "gross_savings_bytes_per_use": 9,
+        "method": "java.base/java/text/NumberFormat#getPercentInstance()Ljava/text/NumberFormat;"
+      },
+      {
+        "rank": 25926,
+        "uses": 1,
+        "bytecode_length": 35,
+        "gross_savings_bytes_per_use": 32,
+        "method": "java.base/java/util/zip/ZipFile$Source$Key#<init>(Ljava/io/File;Ljava/nio/file/attribute/BasicFileAttributes;Ljava/nio/charset/Charset;)V"
+      },
+      {
+        "rank": 27533,
+        "uses": 1,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "java.base/jdk/internal/util/Architecture#initArch(Ljava/lang/String;)Ljdk/internal/util/Architecture;"
+      },
+      {
+        "rank": 29240,
+        "uses": 1,
+        "bytecode_length": 29,
+        "gross_savings_bytes_per_use": 26,
+        "method": "java.base/sun/security/ssl/SSLCipher$T10BlockReadCipherGenerator$BlockReadCipher#<init>(Lsun/security/ssl/Authenticator;Lsun/security/ssl/ProtocolVersion;Ljava/lang/String;Ljava/security/Key;Ljava/security/spec/AlgorithmParameterSpec;Ljava/security/SecureRandom;)V"
+      },
+      {
+        "rank": 31052,
+        "uses": 1,
+        "bytecode_length": 341,
+        "gross_savings_bytes_per_use": 338,
+        "method": "java.desktop/java/awt/font/TextLine#fastCreateTextLine(Ljava/awt/font/FontRenderContext;[CLjava/awt/Font;Lsun/font/CoreMetrics;Ljava/util/Map;)Ljava/awt/font/TextLine;"
+      },
+      {
+        "rank": 32977,
+        "uses": 1,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "java.desktop/javax/swing/plaf/synth/SynthParser$LazyImageIcon#<init>(Ljava/net/URL;)V"
+      },
+      {
+        "rank": 35021,
+        "uses": 1,
+        "bytecode_length": 22,
+        "gross_savings_bytes_per_use": 19,
+        "method": "java.desktop/sun/swing/FilePane$DetailsTableModel$1#<init>(Lsun/swing/FilePane$DetailsTableModel;Ljavax/swing/JFileChooser;Ljava/io/File;)V"
+      },
+      {
+        "rank": 37191,
+        "uses": 1,
+        "bytecode_length": 16,
+        "gross_savings_bytes_per_use": 13,
+        "method": "java.smartcardio/sun/security/smartcardio/PCSCTerminals#initContext()V"
+      },
+      {
+        "rank": 39496,
+        "uses": 1,
+        "bytecode_length": 69,
+        "gross_savings_bytes_per_use": 66,
+        "method": "jdk.charsets/sun/nio/cs/ext/JISAutoDetect$Decoder#copyLeadingASCII(Ljava/nio/ByteBuffer;Ljava/nio/CharBuffer;)V"
+      },
+      {
+        "rank": 41944,
+        "uses": 1,
+        "bytecode_length": 10,
+        "gross_savings_bytes_per_use": 7,
+        "method": "jdk.hotspot.agent/sun/jvm/hotspot/debugger/remote/ppc64/RemotePPC64ThreadContext#<init>(Lsun/jvm/hotspot/debugger/remote/RemoteDebuggerClient;)V"
+      },
+      {
+        "rank": 44544,
+        "uses": 1,
+        "bytecode_length": 29,
+        "gross_savings_bytes_per_use": 26,
+        "method": "jdk.jconsole/sun/tools/jconsole/ProxyClient#getConnectionName(Ljava/lang/String;ILjava/lang/String;)Ljava/lang/String;"
+      },
+      {
+        "rank": 47305,
+        "uses": 1,
+        "bytecode_length": 657,
+        "gross_savings_bytes_per_use": 654,
+        "method": "jdk.zipfs/jdk/nio/zipfs/ZipUtils#toRegexPattern(Ljava/lang/String;)Ljava/lang/String;"
+      }
+    ]
+  },
+  "phase_4_mdl_incompleteness": {
+    "status": "exploratory MDL proxy; opcode macros are not verified Java APIs",
+    "definition": {
+      "eligible_methods": "non-synthetic, straight-line, exception-free methods with 4..512 instructions",
+      "candidate": "normalized opcode n-gram of length 4..8 seen in >=3 training packages; occurrences of the same candidate cannot overlap within a method",
+      "heldout_savings": "fragment bytes - 3 bytes per macro reference - definition bytes - 8 bytes per referencing class",
+      "split": "deterministic package-hash cross-validation",
+      "limitation": "stack contracts, operands, semantic naming, access rules, and verifier-safe rewriting are not yet modeled"
+    },
+    "eligible_method_count": 86055,
+    "folds": [
+      {
+        "train_methods": 74109,
+        "test_methods": 11946,
+        "selected_candidates": 168,
+        "positive_heldout_candidates": 109,
+        "best_heldout_net_savings_bytes": 4045.0,
+        "top_candidates": [
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC"
+            ],
+            "length": 5,
+            "train_occurrences": 3056,
+            "train_packages": 212,
+            "test_occurrences": 529,
+            "test_classes": 88,
+            "heldout_net_savings_bytes": 4045.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP"
+            ],
+            "length": 4,
+            "train_occurrences": 4564,
+            "train_packages": 253,
+            "test_occurrences": 670,
+            "test_classes": 116,
+            "heldout_net_savings_bytes": 3752.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 3573,
+            "train_packages": 100,
+            "test_occurrences": 421,
+            "test_classes": 91,
+            "heldout_net_savings_bytes": 3049.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 8,
+            "train_occurrences": 4275,
+            "train_packages": 54,
+            "test_occurrences": 402,
+            "test_classes": 75,
+            "heldout_net_savings_bytes": 2605.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 7,
+            "train_occurrences": 4822,
+            "train_packages": 108,
+            "test_occurrences": 437,
+            "test_classes": 95,
+            "heldout_net_savings_bytes": 2289.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 4275,
+            "train_packages": 54,
+            "test_occurrences": 402,
+            "test_classes": 75,
+            "heldout_net_savings_bytes": 2204.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC",
+              "BIPUSH"
+            ],
+            "length": 6,
+            "train_occurrences": 819,
+            "train_packages": 78,
+            "test_occurrences": 216,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 2186.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 2060,
+            "train_packages": 18,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1905.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 8,
+            "train_occurrences": 2058,
+            "train_packages": 17,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1905.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 2058,
+            "train_packages": 17,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1905.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1713,
+            "train_packages": 17,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1905.0
+          },
+          {
+            "opcodes": [
+              "ICONST_1",
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 8,
+            "train_occurrences": 1713,
+            "train_packages": 17,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1905.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 6,
+            "train_occurrences": 4822,
+            "train_packages": 108,
+            "test_occurrences": 437,
+            "test_classes": 95,
+            "heldout_net_savings_bytes": 1853.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 6,
+            "train_occurrences": 4275,
+            "train_packages": 54,
+            "test_occurrences": 402,
+            "test_classes": 75,
+            "heldout_net_savings_bytes": 1803.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0"
+            ],
+            "length": 8,
+            "train_occurrences": 2072,
+            "train_packages": 19,
+            "test_occurrences": 231,
+            "test_classes": 19,
+            "heldout_net_savings_bytes": 1685.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 7,
+            "train_occurrences": 2060,
+            "train_packages": 18,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1677.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 7,
+            "train_occurrences": 2058,
+            "train_packages": 17,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1677.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 7,
+            "train_occurrences": 1713,
+            "train_packages": 17,
+            "test_occurrences": 229,
+            "test_classes": 18,
+            "heldout_net_savings_bytes": 1677.0
+          },
+          {
+            "opcodes": [
+              "ALOAD_0",
+              "NEW",
+              "DUP",
+              "INVOKESPECIAL",
+              "PUTFIELD"
+            ],
+            "length": 5,
+            "train_occurrences": 2123,
+            "train_packages": 273,
+            "test_occurrences": 450,
+            "test_classes": 242,
+            "heldout_net_savings_bytes": 1653.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 5,
+            "train_occurrences": 4906,
+            "train_packages": 124,
+            "test_occurrences": 458,
+            "test_classes": 99,
+            "heldout_net_savings_bytes": 1490.0
+          }
+        ],
+        "fold": 0
+      },
+      {
+        "train_methods": 66014,
+        "test_methods": 20041,
+        "selected_candidates": 171,
+        "positive_heldout_candidates": 105,
+        "best_heldout_net_savings_bytes": 6844.0,
+        "top_candidates": [
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC"
+            ],
+            "length": 5,
+            "train_occurrences": 2649,
+            "train_packages": 180,
+            "test_occurrences": 936,
+            "test_classes": 196,
+            "heldout_net_savings_bytes": 6844.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP"
+            ],
+            "length": 4,
+            "train_occurrences": 4080,
+            "train_packages": 223,
+            "test_occurrences": 1154,
+            "test_classes": 271,
+            "heldout_net_savings_bytes": 5900.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 3345,
+            "train_packages": 94,
+            "test_occurrences": 649,
+            "test_classes": 64,
+            "heldout_net_savings_bytes": 5317.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 8,
+            "train_occurrences": 4048,
+            "train_packages": 50,
+            "test_occurrences": 629,
+            "test_classes": 45,
+            "heldout_net_savings_bytes": 4661.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 7,
+            "train_occurrences": 4583,
+            "train_packages": 98,
+            "test_occurrences": 676,
+            "test_classes": 78,
+            "heldout_net_savings_bytes": 4098.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 4048,
+            "train_packages": 50,
+            "test_occurrences": 629,
+            "test_classes": 45,
+            "heldout_net_savings_bytes": 4033.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 1822,
+            "train_packages": 17,
+            "test_occurrences": 467,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 4007.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 8,
+            "train_occurrences": 1822,
+            "train_packages": 17,
+            "test_occurrences": 465,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 3997.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1822,
+            "train_packages": 17,
+            "test_occurrences": 465,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 3997.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1477,
+            "train_packages": 17,
+            "test_occurrences": 465,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 3997.0
+          },
+          {
+            "opcodes": [
+              "ICONST_1",
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 8,
+            "train_occurrences": 1477,
+            "train_packages": 17,
+            "test_occurrences": 465,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 3997.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0"
+            ],
+            "length": 8,
+            "train_occurrences": 1836,
+            "train_packages": 19,
+            "test_occurrences": 467,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 3541.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 7,
+            "train_occurrences": 1822,
+            "train_packages": 17,
+            "test_occurrences": 467,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 3541.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 7,
+            "train_occurrences": 1822,
+            "train_packages": 17,
+            "test_occurrences": 465,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 3533.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 7,
+            "train_occurrences": 1477,
+            "train_packages": 17,
+            "test_occurrences": 465,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 3533.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 6,
+            "train_occurrences": 4583,
+            "train_packages": 98,
+            "test_occurrences": 676,
+            "test_classes": 78,
+            "heldout_net_savings_bytes": 3423.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 6,
+            "train_occurrences": 4048,
+            "train_packages": 50,
+            "test_occurrences": 629,
+            "test_classes": 45,
+            "heldout_net_savings_bytes": 3405.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0"
+            ],
+            "length": 7,
+            "train_occurrences": 1836,
+            "train_packages": 19,
+            "test_occurrences": 467,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 3075.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 1836,
+            "train_packages": 19,
+            "test_occurrences": 467,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 3075.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 6,
+            "train_occurrences": 1822,
+            "train_packages": 17,
+            "test_occurrences": 467,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 3075.0
+          }
+        ],
+        "fold": 1
+      },
+      {
+        "train_methods": 67580,
+        "test_methods": 18475,
+        "selected_candidates": 240,
+        "positive_heldout_candidates": 173,
+        "best_heldout_net_savings_bytes": 3563.0,
+        "top_candidates": [
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP"
+            ],
+            "length": 4,
+            "train_occurrences": 4503,
+            "train_packages": 239,
+            "test_occurrences": 731,
+            "test_classes": 193,
+            "heldout_net_savings_bytes": 3563.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC"
+            ],
+            "length": 5,
+            "train_occurrences": 3093,
+            "train_packages": 200,
+            "test_occurrences": 492,
+            "test_classes": 137,
+            "heldout_net_savings_bytes": 3320.0
+          },
+          {
+            "opcodes": [
+              "ALOAD_0",
+              "GETFIELD",
+              "ALOAD_0",
+              "GETFIELD"
+            ],
+            "length": 4,
+            "train_occurrences": 2072,
+            "train_packages": 261,
+            "test_occurrences": 1148,
+            "test_classes": 321,
+            "heldout_net_savings_bytes": 3164.0
+          },
+          {
+            "opcodes": [
+              "INVOKEVIRTUAL",
+              "ALOAD_0",
+              "GETFIELD",
+              "INVOKEVIRTUAL"
+            ],
+            "length": 4,
+            "train_occurrences": 680,
+            "train_packages": 149,
+            "test_occurrences": 435,
+            "test_classes": 146,
+            "heldout_net_savings_bytes": 1867.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTFIELD",
+              "ALOAD_0",
+              "NEW",
+              "DUP"
+            ],
+            "length": 5,
+            "train_occurrences": 1087,
+            "train_packages": 174,
+            "test_occurrences": 362,
+            "test_classes": 138,
+            "heldout_net_savings_bytes": 1781.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 3797,
+            "train_packages": 105,
+            "test_occurrences": 197,
+            "test_classes": 34,
+            "heldout_net_savings_bytes": 1489.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTFIELD",
+              "ALOAD_0",
+              "NEW"
+            ],
+            "length": 4,
+            "train_occurrences": 1087,
+            "train_packages": 174,
+            "test_occurrences": 362,
+            "test_classes": 138,
+            "heldout_net_savings_bytes": 1420.0
+          },
+          {
+            "opcodes": [
+              "ALOAD_0",
+              "NEW",
+              "DUP",
+              "INVOKESPECIAL",
+              "PUTFIELD"
+            ],
+            "length": 5,
+            "train_occurrences": 2162,
+            "train_packages": 276,
+            "test_occurrences": 411,
+            "test_classes": 244,
+            "heldout_net_savings_bytes": 1325.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC_W"
+            ],
+            "length": 5,
+            "train_occurrences": 405,
+            "train_packages": 19,
+            "test_occurrences": 133,
+            "test_classes": 7,
+            "heldout_net_savings_bytes": 1261.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 8,
+            "train_occurrences": 4514,
+            "train_packages": 54,
+            "test_occurrences": 163,
+            "test_classes": 19,
+            "heldout_net_savings_bytes": 1141.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 7,
+            "train_occurrences": 5059,
+            "train_packages": 110,
+            "test_occurrences": 200,
+            "test_classes": 37,
+            "heldout_net_savings_bytes": 1094.0
+          },
+          {
+            "opcodes": [
+              "NEW",
+              "DUP",
+              "INVOKESPECIAL",
+              "PUTFIELD",
+              "ALOAD_0"
+            ],
+            "length": 5,
+            "train_occurrences": 1616,
+            "train_packages": 232,
+            "test_occurrences": 326,
+            "test_classes": 190,
+            "heldout_net_savings_bytes": 1077.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC",
+              "BIPUSH"
+            ],
+            "length": 6,
+            "train_occurrences": 922,
+            "train_packages": 76,
+            "test_occurrences": 113,
+            "test_classes": 21,
+            "heldout_net_savings_bytes": 1061.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 4514,
+            "train_packages": 54,
+            "test_occurrences": 163,
+            "test_classes": 19,
+            "heldout_net_savings_bytes": 979.0
+          },
+          {
+            "opcodes": [
+              "PUTFIELD",
+              "ALOAD_0",
+              "NEW",
+              "DUP"
+            ],
+            "length": 4,
+            "train_occurrences": 1949,
+            "train_packages": 247,
+            "test_occurrences": 524,
+            "test_classes": 205,
+            "heldout_net_savings_bytes": 972.0
+          },
+          {
+            "opcodes": [
+              "ALOAD_0",
+              "NEW",
+              "DUP",
+              "INVOKESPECIAL",
+              "PUTFIELD",
+              "ALOAD_0",
+              "NEW",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 560,
+            "train_packages": 154,
+            "test_occurrences": 143,
+            "test_classes": 111,
+            "heldout_net_savings_bytes": 955.0
+          },
+          {
+            "opcodes": [
+              "NEW",
+              "DUP",
+              "INVOKESPECIAL",
+              "PUTFIELD"
+            ],
+            "length": 4,
+            "train_occurrences": 2169,
+            "train_packages": 276,
+            "test_occurrences": 418,
+            "test_classes": 246,
+            "heldout_net_savings_bytes": 948.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC"
+            ],
+            "length": 6,
+            "train_occurrences": 540,
+            "train_packages": 66,
+            "test_occurrences": 102,
+            "test_classes": 20,
+            "heldout_net_savings_bytes": 948.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP"
+            ],
+            "length": 5,
+            "train_occurrences": 741,
+            "train_packages": 68,
+            "test_occurrences": 123,
+            "test_classes": 20,
+            "heldout_net_savings_bytes": 935.0
+          },
+          {
+            "opcodes": [
+              "PUTFIELD",
+              "ALOAD_0",
+              "NEW",
+              "DUP",
+              "INVOKESPECIAL",
+              "PUTFIELD"
+            ],
+            "length": 6,
+            "train_occurrences": 944,
+            "train_packages": 211,
+            "test_occurrences": 155,
+            "test_classes": 96,
+            "heldout_net_savings_bytes": 923.0
+          }
+        ],
+        "fold": 2
+      },
+      {
+        "train_methods": 62961,
+        "test_methods": 23094,
+        "selected_candidates": 153,
+        "positive_heldout_candidates": 102,
+        "best_heldout_net_savings_bytes": 7646.0,
+        "top_candidates": [
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP"
+            ],
+            "length": 4,
+            "train_occurrences": 3690,
+            "train_packages": 233,
+            "test_occurrences": 1544,
+            "test_classes": 394,
+            "heldout_net_savings_bytes": 7646.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC"
+            ],
+            "length": 5,
+            "train_occurrences": 2602,
+            "train_packages": 191,
+            "test_occurrences": 983,
+            "test_classes": 213,
+            "heldout_net_savings_bytes": 7131.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 3458,
+            "train_packages": 92,
+            "test_occurrences": 536,
+            "test_classes": 59,
+            "heldout_net_savings_bytes": 4340.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 8,
+            "train_occurrences": 4175,
+            "train_packages": 48,
+            "test_occurrences": 502,
+            "test_classes": 39,
+            "heldout_net_savings_bytes": 3693.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 7,
+            "train_occurrences": 4718,
+            "train_packages": 100,
+            "test_occurrences": 541,
+            "test_classes": 60,
+            "heldout_net_savings_bytes": 3297.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 4175,
+            "train_packages": 48,
+            "test_occurrences": 502,
+            "test_classes": 39,
+            "heldout_net_savings_bytes": 3192.0
+          },
+          {
+            "opcodes": [
+              "INVOKESPECIAL",
+              "PUTSTATIC",
+              "NEW",
+              "DUP",
+              "LDC",
+              "BIPUSH"
+            ],
+            "length": 6,
+            "train_occurrences": 739,
+            "train_packages": 71,
+            "test_occurrences": 296,
+            "test_classes": 41,
+            "heldout_net_savings_bytes": 2914.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 6,
+            "train_occurrences": 4718,
+            "train_packages": 100,
+            "test_occurrences": 541,
+            "test_classes": 60,
+            "heldout_net_savings_bytes": 2757.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1616,
+            "train_packages": 17,
+            "test_occurrences": 326,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 2746.0
+          },
+          {
+            "opcodes": [
+              "ICONST_1",
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 8,
+            "train_occurrences": 1616,
+            "train_packages": 17,
+            "test_occurrences": 326,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 2746.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 6,
+            "train_occurrences": 4175,
+            "train_packages": 48,
+            "test_occurrences": 502,
+            "test_classes": 39,
+            "heldout_net_savings_bytes": 2691.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 1973,
+            "train_packages": 18,
+            "test_occurrences": 316,
+            "test_classes": 21,
+            "heldout_net_savings_bytes": 2664.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 8,
+            "train_occurrences": 1971,
+            "train_packages": 17,
+            "test_occurrences": 316,
+            "test_classes": 21,
+            "heldout_net_savings_bytes": 2664.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1971,
+            "train_packages": 17,
+            "test_occurrences": 316,
+            "test_classes": 21,
+            "heldout_net_savings_bytes": 2664.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0"
+            ],
+            "length": 8,
+            "train_occurrences": 1975,
+            "train_packages": 19,
+            "test_occurrences": 328,
+            "test_classes": 23,
+            "heldout_net_savings_bytes": 2429.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 7,
+            "train_occurrences": 1616,
+            "train_packages": 17,
+            "test_occurrences": 326,
+            "test_classes": 22,
+            "heldout_net_savings_bytes": 2421.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 7,
+            "train_occurrences": 1973,
+            "train_packages": 18,
+            "test_occurrences": 316,
+            "test_classes": 21,
+            "heldout_net_savings_bytes": 2349.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 7,
+            "train_occurrences": 1971,
+            "train_packages": 17,
+            "test_occurrences": 316,
+            "test_classes": 21,
+            "heldout_net_savings_bytes": 2349.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 5,
+            "train_occurrences": 4801,
+            "train_packages": 114,
+            "test_occurrences": 563,
+            "test_classes": 70,
+            "heldout_net_savings_bytes": 2247.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 5,
+            "train_occurrences": 4184,
+            "train_packages": 51,
+            "test_occurrences": 502,
+            "test_classes": 39,
+            "heldout_net_savings_bytes": 2190.0
+          }
+        ],
+        "fold": 3
+      },
+      {
+        "train_methods": 73556,
+        "test_methods": 12499,
+        "selected_candidates": 163,
+        "positive_heldout_candidates": 103,
+        "best_heldout_net_savings_bytes": 19517.0,
+        "top_candidates": [
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 8,
+            "train_occurrences": 1696,
+            "train_packages": 58,
+            "test_occurrences": 2981,
+            "test_classes": 540,
+            "heldout_net_savings_bytes": 19517.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1"
+            ],
+            "length": 7,
+            "train_occurrences": 1854,
+            "train_packages": 112,
+            "test_occurrences": 3405,
+            "test_classes": 579,
+            "heldout_net_savings_bytes": 19193.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 1696,
+            "train_packages": 58,
+            "test_occurrences": 2981,
+            "test_classes": 540,
+            "heldout_net_savings_bytes": 16537.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 6,
+            "train_occurrences": 1854,
+            "train_packages": 112,
+            "test_occurrences": 3405,
+            "test_classes": 579,
+            "heldout_net_savings_bytes": 15789.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP",
+              "ICONST_1",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 1803,
+            "train_packages": 105,
+            "test_occurrences": 2191,
+            "test_classes": 576,
+            "heldout_net_savings_bytes": 15099.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 6,
+            "train_occurrences": 1696,
+            "train_packages": 58,
+            "test_occurrences": 2981,
+            "test_classes": 540,
+            "heldout_net_savings_bytes": 13557.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 5,
+            "train_occurrences": 1936,
+            "train_packages": 122,
+            "test_occurrences": 3428,
+            "test_classes": 587,
+            "heldout_net_savings_bytes": 12436.0
+          },
+          {
+            "opcodes": [
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 5,
+            "train_occurrences": 1705,
+            "train_packages": 61,
+            "test_occurrences": 2981,
+            "test_classes": 540,
+            "heldout_net_savings_bytes": 10577.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 8,
+            "train_occurrences": 1113,
+            "train_packages": 21,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 9556.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 8,
+            "train_occurrences": 1111,
+            "train_packages": 20,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 9556.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1111,
+            "train_packages": 20,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 9556.0
+          },
+          {
+            "opcodes": [
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 4,
+            "train_occurrences": 1959,
+            "train_packages": 128,
+            "test_occurrences": 3430,
+            "test_classes": 587,
+            "heldout_net_savings_bytes": 9017.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0"
+            ],
+            "length": 8,
+            "train_occurrences": 1127,
+            "train_packages": 23,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 8381.0
+          },
+          {
+            "opcodes": [
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 7,
+            "train_occurrences": 1113,
+            "train_packages": 21,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 8381.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC",
+              "AASTORE"
+            ],
+            "length": 7,
+            "train_occurrences": 1111,
+            "train_packages": 20,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 8381.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0"
+            ],
+            "length": 7,
+            "train_occurrences": 1127,
+            "train_packages": 23,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 7206.0
+          },
+          {
+            "opcodes": [
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP"
+            ],
+            "length": 7,
+            "train_occurrences": 1127,
+            "train_packages": 23,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 7206.0
+          },
+          {
+            "opcodes": [
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP",
+              "ICONST_0",
+              "LDC"
+            ],
+            "length": 6,
+            "train_occurrences": 1113,
+            "train_packages": 21,
+            "test_occurrences": 1176,
+            "test_classes": 127,
+            "heldout_net_savings_bytes": 7206.0
+          },
+          {
+            "opcodes": [
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY",
+              "DUP"
+            ],
+            "length": 8,
+            "train_occurrences": 1121,
+            "train_packages": 20,
+            "test_occurrences": 821,
+            "test_classes": 91,
+            "heldout_net_savings_bytes": 6649.0
+          },
+          {
+            "opcodes": [
+              "ICONST_1",
+              "LDC",
+              "AASTORE",
+              "AASTORE",
+              "DUP",
+              "BIPUSH",
+              "ICONST_2",
+              "ANEWARRAY"
+            ],
+            "length": 8,
+            "train_occurrences": 1121,
+            "train_packages": 20,
+            "test_occurrences": 821,
+            "test_classes": 91,
+            "heldout_net_savings_bytes": 6649.0
+          }
+        ],
+        "fold": 4
+      }
+    ],
+    "folds_with_positive_candidate": 5,
+    "median_best_heldout_net_savings_bytes": 6844.0
+  },
+  "phase_5_cross_version": {
+    "status": "complete_two_snapshot_test",
+    "definition": {
+      "component_identity": "module/class#method(descriptor)",
+      "growth_test": "declarations added and removed between official binary snapshots",
+      "adoption_test": "JDK 28 resolved calls from retained method identities to added callees",
+      "savings_proxy": "sum(max(new callee Code.code_length - 3, 0) * call occurrences)",
+      "limitation": "two snapshots cannot establish unbounded growth; retained method identity does not prove an unchanged implementation, and gross bytecode savings is not causal"
+    },
+    "snapshots": [
+      {
+        "label": "JDK 17+35",
+        "jmods": 70,
+        "classes": 26163,
+        "methods": 222798,
+        "methods_with_code": 203673,
+        "bytecode_bytes": 19376509,
+        "resolved_call_sites": 790254,
+        "referenced_methods": 126703,
+        "reuse_rank_beta": 0.9604746022737026,
+        "reuse_rank_r_squared": 0.9724956478598554
+      },
+      {
+        "label": "JDK 28+13",
+        "jmods": 65,
+        "classes": 27262,
+        "methods": 239765,
+        "methods_with_code": 220036,
+        "bytecode_bytes": 22004483,
+        "resolved_call_sites": 859406,
+        "referenced_methods": 138981,
+        "reuse_rank_beta": 0.9531522274708358,
+        "reuse_rank_r_squared": 0.9723118273651653
+      }
+    ],
+    "delta": {
+      "classes_percent": 4.20058861751329,
+      "methods_percent": 7.615418450793987,
+      "bytecode_bytes_percent": 13.56268046013862,
+      "resolved_call_sites_percent": 8.750604236106362,
+      "retained_methods": 187390,
+      "added_methods": 52375,
+      "removed_methods": 35408,
+      "net_methods": 16967,
+      "retention_fraction_of_older": 0.8410757726730043
+    },
+    "new_component_adoption": {
+      "added_methods_referenced_anywhere": 33250,
+      "calls_to_added_methods": 92074,
+      "added_methods_referenced_from_retained_callers": 7182,
+      "retained_caller_calls_to_added_methods": 18643,
+      "gross_savings_proxy_bytes": 779663,
+      "top_added_components": [
+        {
+          "method_key": "jdk.compiler/com/sun/tools/javac/util/JCDiagnostic$Error#<init>(Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V",
+          "uses": 567,
+          "bytecode_length": 13,
+          "gross_bytes": 5670
+        },
+        {
+          "method_key": "java.base/sun/security/ssl/SSLLogger#isOn()Z",
+          "uses": 547,
+          "bytecode_length": 4,
+          "gross_bytes": 547
+        },
+        {
+          "method_key": "java.base/sun/security/ssl/SSLLogger#isOn(Lsun/security/ssl/SSLLogger$Opt;)Z",
+          "uses": 541,
+          "bytecode_length": 22,
+          "gross_bytes": 10279
+        },
+        {
+          "method_key": "jdk.compiler/com/sun/tools/javac/util/JCDiagnostic$Fragment#<init>(Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V",
+          "uses": 370,
+          "bytecode_length": 13,
+          "gross_bytes": 3700
+        },
+        {
+          "method_key": "java.base/java/lang/invoke/VarHandle#onStaticFieldAccess(Z)Ljava/lang/invoke/VarHandle;",
+          "uses": 246,
+          "bytecode_length": 2,
+          "gross_bytes": 0
+        },
+        {
+          "method_key": "java.base/java/nio/Buffer#session()Ljdk/internal/foreign/MemorySessionImpl;",
+          "uses": 231,
+          "bytecode_length": 20,
+          "gross_bytes": 3927
+        },
+        {
+          "method_key": "java.base/sun/security/util/DerOutputStream#write(BLsun/security/util/DerOutputStream;)Lsun/security/util/DerOutputStream;",
+          "uses": 200,
+          "bytecode_length": 28,
+          "gross_bytes": 5000
+        },
+        {
+          "method_key": "jdk.javadoc/jdk/javadoc/internal/doclets/formats/html/Contents#getContent(Ljava/lang/String;)Ljdk/javadoc/internal/html/Content;",
+          "uses": 146,
+          "bytecode_length": 12,
+          "gross_bytes": 1314
+        },
+        {
+          "method_key": "jdk.compiler/com/sun/tools/javac/tree/Pretty#print(C)V",
+          "uses": 116,
+          "bytecode_length": 9,
+          "gross_bytes": 696
+        },
+        {
+          "method_key": "java.xml/com/sun/org/apache/xerces/internal/xni/XMLString#append(C)V",
+          "uses": 85,
+          "bytecode_length": 87,
+          "gross_bytes": 7140
+        },
+        {
+          "method_key": "java.base/java/lang/invoke/VarHandle#checkAccessModeThenIsDirect(Ljava/lang/invoke/VarHandle$AccessDescriptor;)Z",
+          "uses": 79,
+          "bytecode_length": 29,
+          "gross_bytes": 2054
+        },
+        {
+          "method_key": "jdk.unsupported/sun/misc/Unsafe#beforeMemoryAccess()V",
+          "uses": 75,
+          "bytecode_length": 30,
+          "gross_bytes": 2025
+        },
+        {
+          "method_key": "java.base/jdk/internal/access/JavaNioAccess#releaseSession(Ljava/nio/Buffer;)V",
+          "uses": 72,
+          "bytecode_length": null,
+          "gross_bytes": null
+        },
+        {
+          "method_key": "jdk.incubator.vector/jdk/incubator/vector/AbstractVector#laneTypeOrdinal()I",
+          "uses": 70,
+          "bytecode_length": null,
+          "gross_bytes": null
+        },
+        {
+          "method_key": "jdk.crypto.cryptoki/sun/security/pkcs11/P11SecretKeyFactory#putKeyInfo(Lsun/security/pkcs11/P11SecretKeyFactory$KeyInfo;)V",
+          "uses": 67,
+          "bytecode_length": 35,
+          "gross_bytes": 2144
+        },
+        {
+          "method_key": "jdk.compiler/com/sun/tools/javac/tree/DocPretty#print(C)V",
+          "uses": 66,
+          "bytecode_length": 9,
+          "gross_bytes": 396
+        },
+        {
+          "method_key": "java.base/jdk/internal/constant/ClassOrInterfaceDescImpl#ofValidated(Ljava/lang/String;)Ljdk/internal/constant/ClassOrInterfaceDescImpl;",
+          "uses": 65,
+          "bytecode_length": 64,
+          "gross_bytes": 3965
+        },
+        {
+          "method_key": "jdk.compiler/com/sun/tools/javac/util/JCDiagnostic$Note#<init>(Ljava/util/Set;Ljava/lang/String;Ljava/lang/String;[Ljava/lang/Object;)V",
+          "uses": 65,
+          "bytecode_length": 13,
+          "gross_bytes": 650
+        },
+        {
+          "method_key": "java.base/sun/security/util/DerOutputStream#write(B[B)Lsun/security/util/DerOutputStream;",
+          "uses": 56,
+          "bytecode_length": 18,
+          "gross_bytes": 840
+        },
+        {
+          "method_key": "jdk.compiler/com/sun/tools/javac/util/Assert#error(Ljava/lang/String;)Ljava/lang/Error;",
+          "uses": 55,
+          "bytecode_length": 9,
+          "gross_bytes": 330
+        }
+      ]
+    },
+    "interpretation": {
+      "finite_snapshot_incomplete": "supported as a finite longitudinal observation: the newer snapshot adds methods and retained method identities call some of them",
+      "unbounded_component_supply": "not established by two versions"
+    }
+  }
+}

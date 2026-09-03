@@ -1,6 +1,6 @@
 # OpenJDK Method Reuse Analysis Specification
 
-Version: 1.2  
+Version: 1.3  
 Graph: `software/openjdk/jdk-28+13/default`
 
 ## Research question
@@ -93,3 +93,59 @@ fit cannot establish a prime-generating mechanism.
 The full per-node table is a rebuildable data artifact and is not committed.
 Public site payload filenames are versioned when their required schema changes,
 so cached JavaScript cannot consume an older incompatible JSON shape.
+
+## Paper-theorem tests: Phase 2–5
+
+Phase 1 (a single-snapshot vocabulary saturation curve) is **superseded**. It
+is skipped because Phase 4 directly asks whether held-out programs admit a new
+description-shortening component, while Phase 5 observes component vocabulary
+change over time.
+
+### Phase 2: enriched extraction
+
+For every concrete method, retain bytecode length, instruction count, max
+stack/locals, control-flow and exception-handler flags, plus opcode and encoded
+instruction-size sequences. For every classfile, retain serialized size and
+constant-pool entry count. These are attributes; node and edge semantics do not
+change.
+
+### Phase 3: conditional component-count shape
+
+One classfile is the observable program unit. Its component count is the number
+of distinct resolved callee methods beyond a selected class, package, or module
+boundary. Program size is serialized classfile bytes. Split observations into
+20 size-quantile bins, z-score component counts within bins of at least 100
+classes, and evaluate the pooled values. The pre-registered descriptive shape
+rule is `|skew|<0.2`, `|excess kurtosis|<0.5`, and Q–Q `R²>0.99`.
+
+This is an Erdős–Kac-inspired finite-sample implication, not a test of the
+number-theoretic theorem itself. Classfiles are library compilation units, not
+independent end-user applications.
+
+### Phase 4: size/cost bound and held-out incompleteness proxy
+
+The primary callable-component population is concrete methods targeted by
+exact `STATIC` or `SPECIAL` calls. Component size is Code byte length; use is
+resolved invocation occurrence count. The gross savings proxy is
+`max(code_length−3,0)` per use and is compared descriptively with `log2(rank)`.
+
+The incompleteness search uses non-synthetic, exception-free methods without
+branch/switch/throw/monitor/jsr/ret and 4–512 instructions. Opcode n-grams of
+length 4–8 discovered in four deterministic package-hash folds must occur in at
+least three training packages. Occurrences of one candidate may not overlap
+within a method. Held-out net savings subtracts three bytes per
+reference, one definition, and eight bytes per referencing class. Positive
+held-out savings is exploratory evidence only: operands, stack contracts,
+access control, semantic naming, and verifier-safe rewriting are not modeled.
+
+### Phase 5: longitudinal component growth
+
+Compare official OpenJDK RI 17+35 with OpenJDK EA 28+13 using the same extractor
+and canonical method key. Report retained, added, removed, and net method
+vocabulary; corpus bytecode and call-site growth; and JDK 28 calls from retained
+method identities to added callees. Two snapshots can support finite observed
+growth and adoption, but cannot establish an infinite component supply or
+causal code savings.
+
+The machine-readable result is `reuse_theorem_tests.json`; the versioned public
+payload is `reuse-theorems-v1.json`.

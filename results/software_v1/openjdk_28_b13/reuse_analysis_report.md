@@ -81,14 +81,76 @@ call site；方法 `v` 的 reuse count 为 `U(v)=Σ_u m(u,v)`。其中
 | 组件按使用频率排序后呈 `λ(n)≈c/n` 的 Zipf-like 曲线。 | 138,981 个被引用方法的经验 `β=0.953`；固定 `1/r` 的 `R²=0.970`、`RMSE=0.073 decades`。 | 支持 |
 | 程序员追求更短的代码，使库朝最大熵配置演化；Zipf 曲线是这种压力的结果。 | JDK 数据复现了曲线形状，但单次观察性快照不能区分最大熵、API 设计惯例、代码生成或其他形成机制。 | 形状一致，机制未验证 |
 | 问题域熵参数 `H` 限制复用潜力：最多约 `1−H` 的代码可来自库；`H` 越低，越可能出现强复用。 | 调用引用数不包含未压缩程序大小、组件带来的代码节省或问题域程序分布，不能从当前 graph 反推 `H`。 | 不可由本数据检验 |
-| 任何有限库都不完备；随着问题域扩展，总会存在更多能缩短程序的有用组件。 | OpenJDK 28+13 是固定时间点的有限快照。验证需要跨版本增长、组件加入及其实际代码节省量。 | 未检验 |
-| 组件规模、使用次数与标识成本受理论界限约束；程序使用的组件数量可能呈 Erdős–Kac 式正态行为。 | 本次分析没有估计每次复用节省的代码量，也没有按独立应用统计组件数量分布。 | 未检验 |
+| 任何有限库都不完备；随着问题域扩展，总会存在更多能缩短程序的有用组件。 | Phase 4 的 5/5 个 package 留出折均发现正净节省 opcode macro；Phase 5 从 JDK 17 到 28 观察到 method 净增 16,967，且保留 caller 已调用新增组件。 | 有限、探索性支持；无限性未证明 |
+| 组件规模、使用次数与标识成本受理论界限约束；程序使用的组件数量可能呈 Erdős–Kac 式正态行为。 | Phase 3 的条件组件数 skew=0.660、excess kurtosis=1.472、Q–Q R²=0.975，未通过预注册正态判据。Phase 4 的 use–size Spearman ρ=-0.011。 | 正态近似不支持；界限仅代理检验 |
 
 综合而言，OpenJDK 结果为论文最直接的经验命题——“库组件的静态引用
 频率近似 Zipf”——提供了新的 Java 类库证据，但不构成对论文全部信息论
 与 Kolmogorov complexity 结论的验证。路径入度的经验 `β=3.523` 进一步
 说明：把 reuse unit 从直接静态引用改为传递路径组合，会得到显著更陡的
 分布；指标定义决定了结果能否与论文比较。
+
+## Phase 2–5：理论命题检验
+
+Phase 1 的单快照 vocabulary saturation curve 被跳过，因为 Phase 4 直接
+测试留出数据是否仍存在能缩短描述的新片段，Phase 5 直接观察跨版本组件
+增长；这两项对“有限库不完备”的经验含义更强。
+
+### Phase 2：规模与指令属性
+
+增强抽取覆盖 239,765 个 method、27,262 个 class，其中 220,036 个 method
+有 Code attribute；Code 总长 22,004,483 bytes，classfile 总长
+135,020,127 bytes。新增字段包括 method bytecode length、instruction count、
+max stack/locals、控制流与异常处理标记，以及 classfile size、constant-pool
+entries。调用图仍为相同的 239,765 nodes 与 859,406 resolved call sites。
+
+### Phase 3：Erdős–Kac 式条件正态
+
+以一个 classfile 作为可观测 program，以它引用的不同边界外 method 数作为
+组件数，并在 20 个 classfile-size 分位组内标准化。预注册形状判据为
+`|skew|<0.2`、`|excess kurtosis|<0.5`、Q–Q `R²>0.99`。
+
+| 组件边界 | classes | 平均组件数 | size–count Spearman ρ | skew | excess kurtosis | Q–Q R² | 判据 |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | --- |
+| cross-class | 27,262 | 12.569 | 0.751 | 0.660 | 1.472 | 0.975 | 不通过 |
+| cross-package | 27,262 | 8.708 | 0.725 | 1.259 | 3.942 | 0.927 | 不通过 |
+| cross-module | 27,262 | 3.870 | 0.435 | 2.189 | 9.869 | 0.784 | 不通过 |
+
+因此，当前操作化下的条件组件数保持右偏、厚尾，不支持 Erdős–Kac 式正态
+近似。这是对有限 JDK classfile 总体的形状检验，不是对数论定理本身的
+检验；classfile 也不等同于独立终端应用。
+
+### Phase 4：组件规模、标识成本与留出净节省
+
+在 47,305 个被精确 `STATIC`/`SPECIAL` 调用的具体方法中，使用次数与 Code
+大小几乎没有单调关系（Spearman `ρ=-0.0106`）。以
+`max(code_length−3,0)` 作为每次调用的 gross savings，97.84% 的观察满足
+粗略的 `savings×8 ≥ ceil(log2(rank))`；但 JVM 调用点实际通过 class-local
+constant-pool index 编码，这不是对论文信息论界限的严格验证。
+
+不完备性搜索在 86,055 个无分支、无异常处理的非 synthetic 方法上抽取
+4–8 opcode n-gram，并用 package hash 做五折留出。五折均存在扣除定义、
+每次引用和引用 class 成本后仍为正的候选；每折最佳 held-out net savings
+依次为 4,045、6,844、3,563、7,646、19,517 bytes，中位数 6,844 bytes。
+这说明当前 method vocabulary 对该代理编码仍有可压缩片段，但结果仅为
+探索性：尚未建模 operands、stack contract、access rules、semantic naming
+与 verifier-safe rewriting，不能把 opcode 片段直接宣称为可发布 Java API。
+
+### Phase 5：JDK 17→28 纵向增长
+
+| 快照 | classes | methods | Code bytes | resolved calls | reuse β | R² |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: |
+| JDK 17+35 | 26,163 | 222,798 | 19,376,509 | 790,254 | 0.960 | 0.972 |
+| JDK 28+13 | 27,262 | 239,765 | 22,004,483 | 859,406 | 0.953 | 0.972 |
+
+按 canonical method key，保留 187,390、增加 52,375、移除 35,408，净增
+16,967 个方法。JDK 28 中有 33,250 个新增方法至少被调用一次；保留 method
+identity 的 caller 对其中 7,182 个新增 callee 产生 18,643 个调用点。
+静态 gross-savings proxy 为 779,663 bytes，但 retained identity 不保证方法体
+未改变，该值也不是因果节省量。
+
+这为“有限库在后续快照继续扩展，并采用新增组件”提供了直接纵向证据；两个
+版本仍不足以建立组件供给无限、所有新增组件都缩短程序，或最大熵机制。
 
 ## 路径入度方法
 

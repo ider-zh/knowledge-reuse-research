@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import {
   CartesianGrid,
+  Bar,
   ComposedChart,
   Legend,
   Line,
@@ -11,21 +12,22 @@ import {
   YAxis,
 } from "recharts";
 
-import { loadOpenJdkReuseReport } from "../data";
-import type { OpenJdkMetricSample, OpenJdkReuseReport } from "../types";
+import { loadOpenJdkReuseReport, loadReuseTheoremReport } from "../data";
+import type { OpenJdkMetricSample, OpenJdkReuseReport, ReuseTheoremReport } from "../types";
 
 const integer = new Intl.NumberFormat("en-US");
 const exact = (value: string) => BigInt(value).toLocaleString("en-US");
 
 export default function OpenJdkReport() {
   const [data, setData] = useState<OpenJdkReuseReport | null>(null);
+  const [theorems, setTheorems] = useState<ReuseTheoremReport | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [rangeId, setRangeId] = useState<"all_positive" | "top_1pct">("all_positive");
   const [sampleKey, setSampleKey] = useState<SampleKey | null>(null);
 
   useEffect(() => {
-    loadOpenJdkReuseReport()
-      .then(setData)
+    Promise.all([loadOpenJdkReuseReport(), loadReuseTheoremReport()])
+      .then(([reuse, theoremTests]) => { setData(reuse); setTheorems(theoremTests); })
       .catch((reason: unknown) => setError(reason instanceof Error ? reason.message : String(reason)));
   }, []);
 
@@ -35,7 +37,7 @@ export default function OpenJdkReport() {
   );
 
   if (error) return <main className="fatal"><h1>OpenJDK 报告加载失败</h1><p>{error}</p></main>;
-  if (!data || !selected) return <main className="fatal"><p className="eyebrow">LOADING OPENJDK REPORT</p><h1>正在装载方法调用图统计…</h1></main>;
+  if (!data || !selected || !theorems) return <main className="fatal"><p className="eyebrow">LOADING OPENJDK REPORT</p><h1>正在装载方法调用图统计…</h1></main>;
 
   const zipf = selected.models.zipf;
   const prime = selected.models.reciprocal_prime;
@@ -57,6 +59,7 @@ export default function OpenJdkReport() {
             <a href="#construction">抽取示例</a>
             <a href="#findings">主要发现</a>
             <a href="#paper-reuse">论文口径</a>
+            <a href="#theorem-tests">理论检验</a>
             <a href="#rank-shape">路径口径</a>
             <a href="#top-methods">高路径节点</a>
             <a href="#method">方法</a>
@@ -224,22 +227,24 @@ export default function OpenJdkReport() {
                     </tr>
                     <tr>
                       <td>任何有限库都不完备；随着问题域扩展，总会存在更多能缩短程序的有用组件。</td>
-                      <td>OpenJDK 28+13 是一个固定时间点的有限快照。验证该命题需要跨版本增长、组件加入及其实际节省量数据。</td>
-                      <td><span className="evidence-status untested">未检验</span></td>
+                      <td>Phase 4 在 5/5 个 package 留出折发现正净节省 opcode macro；Phase 5 从 JDK 17 到 28 观察到 method 净增 {integer.format(theorems.phase_5_cross_version.delta.net_methods)}，且保留 caller 已调用新增组件。</td>
+                      <td><span className="evidence-status bounded">有限支持；无限性未证明</span></td>
                     </tr>
                     <tr>
                       <td>组件规模、使用次数与标识成本受理论界限约束；程序使用的组件数量可能呈 Erdős–Kac 式正态行为。</td>
-                      <td>本次分析以 method call site 为单位，没有估计每次复用节省的代码量，也没有按独立应用统计组件数量分布。</td>
-                      <td><span className="evidence-status untested">未检验</span></td>
+                      <td>Phase 3 以 classfile 为 program 并按大小分层：cross-class 组件数 skew={theorems.phase_3_erdos_kac.scopes.cross_class.skewness.toFixed(3)}、Q–Q R²={theorems.phase_3_erdos_kac.scopes.cross_class.qq_r_squared.toFixed(3)}，未通过预注册正态判据。Phase 4 的 use–size Spearman ρ={theorems.phase_4_component_size.spearman_log_use_vs_log_size.toFixed(3)}。</td>
+                      <td><span className="evidence-status bounded">正态近似不支持；界限仅代理检验</span></td>
                     </tr>
                   </tbody>
                 </table>
               </div>
-              <aside><b>综合结论</b><p>OpenJDK 结果为论文最直接的经验命题——“库组件的静态引用频率近似 Zipf”——提供了新的 Java 类库证据；它不构成对论文全部信息论与 Kolmogorov complexity 结论的验证。路径入度 β={data.rank_shape.ranges[0].models.zipf.free_exponent_beta.toFixed(3)} 则说明，换成传递路径组合后分布会显著变陡，因此指标定义决定了能否与论文比较。</p></aside>
+              <aside><b>综合结论</b><p>OpenJDK 结果支持“库组件的静态引用频率近似 Zipf”；跨版本增长和留出净节省为有限库不完备提供了探索性、有限证据；条件组件数则不支持本次操作化下的 Erdős–Kac 正态近似。它们仍不构成对无限性、最大熵机制或 Kolmogorov complexity 命题的证明。路径入度 β={data.rank_shape.ranges[0].models.zipf.free_exponent_beta.toFixed(3)} 说明指标定义也会显著改变分布。</p></aside>
             </section>
             <p className="path-rank-references">论文原文：<a href={data.references.paper} target="_blank" rel="noreferrer">Veldhuizen, 2005, arXiv:cs/0508023v3 ↗</a></p>
           </div>
         </section>
+
+        <TheoryTests data={theorems} />
 
         <section id="rank-shape" className="section-block">
           <div className="section-heading compact">
@@ -350,6 +355,97 @@ export default function OpenJdkReport() {
       {sampleKey && <SampleExplorer data={data} sampleKey={sampleKey} onClose={() => setSampleKey(null)} />}
     </>
   );
+}
+
+function TheoryTests({ data }: { data: ReuseTheoremReport }) {
+  const normality = data.phase_3_erdos_kac.scopes.cross_class;
+  const qq = normality.qq_points.map((point) => ({
+    ...point,
+    normal_reference: point.normal_quantile,
+  }));
+  const component = data.phase_4_component_size;
+  const componentPoints = component.binned_points.map((point) => ({
+    log_rank: Math.log10(point.rank_geometric_mean),
+    log_uses: Math.log10(point.median_uses),
+    log_size: Math.log10(point.median_bytecode_length),
+  }));
+  const mdl = data.phase_4_mdl_incompleteness;
+  const versions = data.phase_5_cross_version;
+  const older = versions.snapshots[0];
+  const newer = versions.snapshots[1];
+
+  return <section id="theorem-tests" className="section-block theorem-tests">
+    <div className="section-heading">
+      <div><p className="eyebrow">PHASE 2–5 · PAPER CLAIM TESTS</p><h2>用 JDK 数据检验其余理论命题</h2></div>
+      <p>Phase 1 的单快照 vocabulary curve 已被覆盖：Phase 4 直接检查留出包上的净描述长度节省，Phase 5 直接观察跨版本增长与新增组件采用。</p>
+    </div>
+
+    <div className="theorem-verdicts">
+      <article className="claim-card inconclusive"><header><span>不支持</span><code>PHASE 3</code></header><p className="claim-text">条件化后的组件数不符合预注册正态形状。</p><p>cross-class：skew={normality.skewness.toFixed(3)}、excess kurtosis={normality.excess_kurtosis.toFixed(3)}、Q–Q R²={normality.qq_r_squared.toFixed(3)}；三个阈值均未通过。</p></article>
+      <article className="claim-card exploratory"><header><span>探索性支持</span><code>PHASE 4</code></header><p className="claim-text">5/5 个 package 留出折均发现正净节省 opcode macro。</p><p>{integer.format(mdl.eligible_method_count)} 个候选方法；各折最佳值的中位数为 {integer.format(mdl.median_best_heldout_net_savings_bytes)} bytes。尚未验证 operand、stack contract 与 verifier-safe rewriting。</p></article>
+      <article className="claim-card supported"><header><span>有限支持</span><code>PHASE 5</code></header><p className="claim-text">JDK 17→28 的方法词汇净增 {integer.format(versions.delta.net_methods)}。</p><p>新增 {integer.format(versions.delta.added_methods)}、移除 {integer.format(versions.delta.removed_methods)}；保留 caller 对 {integer.format(versions.new_component_adoption.added_methods_referenced_from_retained_callers)} 个新增 callee 产生调用。</p></article>
+    </div>
+
+    <div className="theorem-chart-grid">
+      <figure className="distribution-chart">
+        <figcaption><b>Phase 3 · 条件组件数 Q–Q</b><span>classfile 作为 program；按大小 20 分位分层标准化</span></figcaption>
+        <ResponsiveContainer width="100%" height={360}>
+          <ComposedChart data={qq} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
+            <CartesianGrid strokeDasharray="3 5" />
+            <XAxis type="number" dataKey="normal_quantile" label={{ value: "标准正态分位数", position: "insideBottom", offset: -18 }} />
+            <YAxis type="number" dataKey="observed_z" label={{ value: "观测 z", angle: -90, position: "insideLeft" }} />
+            <Tooltip formatter={(value) => Number(value).toFixed(3)} />
+            <Scatter dataKey="observed_z" name="观测" fill="#20495f" />
+            <Line dataKey="normal_reference" name="理想正态" stroke="#9d493d" dot={false} />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <p className="chart-method">组件数定义为每个 classfile 引用的不同外部 method。结果右偏且厚尾；cross-package 与 cross-module 的偏离更大，因此本快照不支持 Erdős–Kac 式正态近似。</p>
+      </figure>
+
+      <figure className="distribution-chart">
+        <figcaption><b>Phase 4 · 组件使用次数与规模</b><span>STATIC/SPECIAL 精确目标；对数 rank bins</span></figcaption>
+        <ResponsiveContainer width="100%" height={360}>
+          <ComposedChart data={componentPoints} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
+            <CartesianGrid strokeDasharray="3 5" />
+            <XAxis type="number" dataKey="log_rank" label={{ value: "log₁₀(use rank)", position: "insideBottom", offset: -18 }} />
+            <YAxis type="number" label={{ value: "log₁₀(value)", angle: -90, position: "insideLeft" }} />
+            <Tooltip formatter={(value) => Number(value).toFixed(3)} />
+            <Legend />
+            <Line dataKey="log_uses" name="median uses" stroke="#1f6b53" dot={false} />
+            <Line dataKey="log_size" name="median bytecode size" stroke="#c07a2b" dot={false} />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <p className="chart-method">use 与 Code 大小几乎无单调关系（Spearman ρ={component.spearman_log_use_vs_log_size.toFixed(3)}）。{(100 * component.gross_savings_meets_log2_rank_fraction).toFixed(1)}% 满足粗略 savings ≥ log₂(rank) 下界，但 JVM 实际标识经 class-local constant pool 编码，不能把该比例解释成理论证明。</p>
+      </figure>
+
+      <figure className="distribution-chart">
+        <figcaption><b>Phase 4 · package 留出净节省</b><span>每折最佳 opcode macro；已扣定义、引用与引用 class 成本</span></figcaption>
+        <ResponsiveContainer width="100%" height={330}>
+          <ComposedChart data={mdl.folds} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
+            <CartesianGrid strokeDasharray="3 5" />
+            <XAxis dataKey="fold" label={{ value: "held-out fold", position: "insideBottom", offset: -18 }} />
+            <YAxis label={{ value: "net bytes", angle: -90, position: "insideLeft" }} />
+            <Tooltip formatter={(value) => integer.format(Number(value))} />
+            <Bar dataKey="best_heldout_net_savings_bytes" name="best net savings" fill="#1f6b53" />
+          </ComposedChart>
+        </ResponsiveContainer>
+        <p className="chart-method">这是反例搜索：若训练数据发现的片段在未见 package 仍带来正净节省，则现有 method vocabulary 对这个代理编码并不完备。结论仅为探索性，不能自动提升为合法 Java API。</p>
+      </figure>
+
+      <article className="version-comparison">
+        <header><p className="eyebrow">PHASE 5 · LONGITUDINAL</p><h3>{older.label} → {newer.label}</h3></header>
+        <dl>
+          <div><dt>methods</dt><dd>{integer.format(older.methods)} → {integer.format(newer.methods)} <b>+{versions.delta.methods_percent.toFixed(2)}%</b></dd></div>
+          <div><dt>bytecode</dt><dd>{integer.format(older.bytecode_bytes)} → {integer.format(newer.bytecode_bytes)} <b>+{versions.delta.bytecode_bytes_percent.toFixed(2)}%</b></dd></div>
+          <div><dt>reuse β</dt><dd>{older.reuse_rank_beta.toFixed(3)} → {newer.reuse_rank_beta.toFixed(3)}</dd></div>
+          <div><dt>新增采用</dt><dd>{integer.format(versions.new_component_adoption.retained_caller_calls_to_added_methods)} retained-caller call sites</dd></div>
+        </dl>
+        <p>两个官方二进制快照同时显示总体扩展与 Zipf-like 稳定性，但仍不足以把有限增长外推为“组件供给无限”。gross savings proxy 为 {integer.format(versions.new_component_adoption.gross_savings_proxy_bytes)} bytes，属于静态上界而非因果节省。</p>
+      </article>
+    </div>
+
+    <aside className="paper-scope-note"><b>Phase 2 数据增强</b><p>抽取器现为每个 method 保存 Code byte length、instruction count、max stack/locals、控制流与异常处理标记，并为每个 class 保存 classfile size 与 constant-pool entries；调用图节点与边的既有定义不变。</p></aside>
+  </section>;
 }
 
 type SampleKey = keyof OpenJdkReuseReport["samples"];

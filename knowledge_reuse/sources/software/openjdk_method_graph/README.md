@@ -84,3 +84,20 @@ The exact metric contract is
 The per-node Parquet table is rebuildable data; the compact public JSON records
 full-population statistics, fitted rank curves, and the 100 highest path-count
 methods.
+
+The Phase 2–5 paper-theorem tests use the enriched method/class/code tables:
+
+```bash
+python -m knowledge_reuse.sources.software.openjdk_method_graph.scripts.analyze_reuse_theorems \
+  --methods normalized/methods.parquet --classes normalized/classes.parquet \
+  --call-sites normalized/call_sites.parquet --method-code normalized/method_code.parquet \
+  --output analysis --site-json /path/to/reuse-theorems-v1.json
+
+python -m knowledge_reuse.sources.software.openjdk_method_graph.scripts.analyze_cross_version \
+  --older /path/to/jdk17/normalized --newer normalized \
+  --older-label 'JDK 17+35' --newer-label 'JDK 28+13' \
+  --output analysis/cross_version.json --merge-into /path/to/reuse-theorems-v1.json
+```
+
+`build_graph.py` accepts snapshot/source identity arguments for reproducible
+cross-version builds; its defaults remain frozen to JDK 28+13.

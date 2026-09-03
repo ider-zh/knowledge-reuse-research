@@ -4,6 +4,7 @@ import type {
   ExternalTargetSample,
   NodeSample,
   OpenJdkReuseReport,
+  ReuseTheoremReport,
   Overview,
   PathRankComparison,
   RankFrequencyDistribution,
@@ -55,6 +56,23 @@ export async function loadOpenJdkReuseReport(): Promise<OpenJdkReuseReport> {
     throw new Error("OpenJDK 报告数据版本不匹配，请刷新页面");
   }
   return payload as OpenJdkReuseReport;
+}
+
+export async function loadReuseTheoremReport(): Promise<ReuseTheoremReport> {
+  const response = await fetch(`${OPENJDK_ROOT}/reuse-theorems-v1.json`);
+  if (!response.ok) {
+    throw new Error(`无法加载 OpenJDK 理论检验: HTTP ${response.status}`);
+  }
+  const payload = await response.json() as Partial<ReuseTheoremReport>;
+  if (
+    payload.schema_version !== "1.0"
+    || !payload.phase_3_erdos_kac?.scopes?.cross_class
+    || !payload.phase_4_mdl_incompleteness
+    || !payload.phase_5_cross_version?.snapshots
+  ) {
+    throw new Error("OpenJDK 理论检验数据版本不匹配，请刷新页面");
+  }
+  return payload as ReuseTheoremReport;
 }
 
 export function mathlibModuleUrl(module: string): string {

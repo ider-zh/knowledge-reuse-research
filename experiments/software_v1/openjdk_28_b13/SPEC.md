@@ -1,6 +1,6 @@
 # OpenJDK 28+13 Java Method Graph Specification
 
-Version: 1.0  
+Version: 1.1  
 Status: Frozen for implementation  
 Target: OpenJDK `jdk-28+13`, Linux x64 official early-access binary
 
@@ -140,6 +140,12 @@ All tabular outputs use Parquet with Zstandard compression.
 | `is_synthetic` | BOOLEAN | Synthetic access flag |
 | `is_bridge` | BOOLEAN | Bridge access flag |
 | `has_code` | BOOLEAN | Has a Code attribute |
+| `bytecode_length` | UINT32? | Code attribute byte length |
+| `instruction_count` | UINT32? | Decoded bytecode instruction count |
+| `max_stack` | UINT32? | Code attribute maximum operand-stack depth |
+| `max_locals` | UINT32? | Code attribute local-variable slots |
+| `has_control_flow` | BOOLEAN | Contains branch, switch, throw, monitor, jsr, or ret |
+| `has_exception_handlers` | BOOLEAN | Code attribute has exception handlers |
 
 ### 4.2 `call_sites.parquet`
 
@@ -167,6 +173,7 @@ All tabular outputs use Parquet with Zstandard compression.
 ### 4.4 Supporting outputs
 
 - `classes.parquet`: non-graph class hierarchy metadata
+- `method_code.parquet`: opcode and encoded-size sequence for methods with Code
 - `unresolved_calls.parquet`: retained unresolved invocation facts
 - `graph_core_nodes.parquet`: `graph-core-v1` portable method projection
 - `graph_core_links.parquet`: `graph-core-v1` caller-to-callee projection
@@ -183,6 +190,10 @@ All tabular outputs use Parquet with Zstandard compression.
 6. Resolve call targets and retain unresolved records.
 7. Produce aggregated edges and Parquet outputs atomically.
 8. Run acceptance checks and publish the validation report.
+
+The version-1.1 extractor adds analysis attributes without changing method
+identity, call resolution, node population, or edge population. A normal return
+and object allocation are not classified as non-linear control flow.
 
 A completed module partition is immutable and may be reused after interruption
 only when its JMOD checksum and extractor version match.

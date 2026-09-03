@@ -19,8 +19,10 @@ import pyarrow as pa
 import pyarrow.parquet as pq
 
 
-EXTRACTOR_VERSION = "1.0.0"
-GRAPH_ID = "software/openjdk/jdk-28+13/default"
+csv.field_size_limit(16 * 1024 * 1024)
+
+
+EXTRACTOR_VERSION = "1.1.0"
 ACC_STATIC = 0x0008
 ACC_BRIDGE = 0x0040
 ACC_NATIVE = 0x0100
@@ -34,6 +36,14 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument("--raw", type=Path, required=True)
     parser.add_argument("--output", type=Path, required=True)
     parser.add_argument("--archive", type=Path)
+    parser.add_argument("--snapshot-id", default="jdk-28+13")
+    parser.add_argument("--expected-version", default="28-ea+13")
+    parser.add_argument("--source-tag", default="jdk-28+13")
+    parser.add_argument("--source-commit", default="6870f28fe74cbd71419bdd1d1797434366bf8114")
+    parser.add_argument(
+        "--binary-url",
+        default="https://download.java.net/java/early_access/jdk28/13/GPL/openjdk-28-ea+13_linux-x64_bin.tar.gz",
+    )
     return parser.parse_args()
 
 
@@ -71,6 +81,7 @@ def write_parquet(path: Path, rows: list[dict], schema: pa.Schema) -> None:
 
 def main() -> int:
     args = parse_args()
+    graph_id = f"software/openjdk/{args.snapshot_id}/default"
     args.output.mkdir(parents=True, exist_ok=True)
     java = args.jdk / "bin" / "java"
     if not java.is_file():
@@ -78,7 +89,7 @@ def main() -> int:
     version_text = subprocess.run(
         [str(java), "-version"], capture_output=True, text=True, check=True
     ).stderr.strip()
-    if "28-ea" not in version_text or "+13" not in version_text:
+    if args.expected_version not in version_text:
         raise SystemExit(f"unexpected JDK version:\n{version_text}")
 
     raw_classes = list(read_tsv(args.raw / "classes_raw.tsv"))
@@ -100,6 +111,8 @@ def main() -> int:
             "interfaces": row["interfaces"].split(",") if row["interfaces"] else [],
             "access_flags": int(row["access_flags"]),
             "source_file": row["source_file"] or None,
+            "classfile_size": int(row["classfile_size"]),
+            "constant_pool_entries": int(row["constant_pool_entries"]),
         })
 
     method_rows: list[dict] = []
@@ -138,6 +151,24 @@ def main() -> int:
             "is_synthetic": bool(flags & ACC_SYNTHETIC),
             "is_bridge": bool(flags & ACC_BRIDGE),
             "has_code": row["has_code"] == "true",
+            "bytecode_length": nullable_int(row["bytecode_length"]),
+            "instruction_count": nullable_int(row["instruction_count"]),
+            "max_stack": nullable_int(row["max_stack"]),
+            "max_locals": nullable_int(row["max_locals"]),
+            "has_control_flow": row["has_control_flow"] == "true",
+            "has_exception_handlers": row["has_exception_handlers"] == "true",
+        })
+
+    method_code_rows = []
+    for row in read_tsv(args.raw / "method_code_raw.tsv"):
+        key = method_key(row["module_name"], row["class_name"],
+                         row["method_name"], row["descriptor"])
+        method_code_rows.append({
+            "method_id": stable_id(key),
+            "bytecode_length": int(row["bytecode_length"]),
+            "opcodes": row["opcodes"].split(",") if row["opcodes"] else [],
+            "instruction_sizes": [int(value) for value in row["instruction_sizes"].split(",")]
+            if row["instruction_sizes"] else [],
         })
 
     varhandle_polymorphic = {
@@ -267,21 +298,21 @@ def main() -> int:
         core_edge_counts[(caller, callee)] += count
     core_node_rows = [
         {
-            "graph_id": GRAPH_ID,
+            "graph_id": graph_id,
             "node_id": row["method_id"],
             "native_id": row["method_key"],
             "label": f'{row["class_name"].replace("/", ".")}.{row["method_name"]}{row["descriptor"]}',
             "node_type": "method",
             "domain": row["module_name"],
             "is_generated": row["is_synthetic"],
-            "size_source": None,
+            "size_source": row["bytecode_length"],
             "size_semantic": None,
         }
         for row in method_rows
     ]
     core_link_rows = [
         {
-            "graph_id": GRAPH_ID,
+            "graph_id": graph_id,
             "src_id": caller,
             "dst_id": callee,
             "relation": "CALLS",
@@ -300,12 +331,21 @@ def main() -> int:
         ("is_static_init", pa.bool_()), ("is_static", pa.bool_()),
         ("is_abstract", pa.bool_()), ("is_native", pa.bool_()),
         ("is_synthetic", pa.bool_()), ("is_bridge", pa.bool_()),
-        ("has_code", pa.bool_()),
+        ("has_code", pa.bool_()), ("bytecode_length", pa.uint32()),
+        ("instruction_count", pa.uint32()), ("max_stack", pa.uint16()),
+        ("max_locals", pa.uint16()), ("has_control_flow", pa.bool_()),
+        ("has_exception_handlers", pa.bool_()),
     ])
     class_schema = pa.schema([
         ("module_name", pa.string()), ("class_name", pa.string()),
         ("super_name", pa.string()), ("interfaces", pa.list_(pa.string())),
         ("access_flags", pa.int32()), ("source_file", pa.string()),
+        ("classfile_size", pa.uint32()), ("constant_pool_entries", pa.uint16()),
+    ])
+    method_code_schema = pa.schema([
+        ("method_id", pa.uint64()), ("bytecode_length", pa.uint32()),
+        ("opcodes", pa.list_(pa.string())),
+        ("instruction_sizes", pa.list_(pa.uint32())),
     ])
     callsite_schema = pa.schema([
         ("caller_method_id", pa.uint64()), ("invoke_kind", pa.string()),
@@ -341,6 +381,7 @@ def main() -> int:
 
     write_parquet(args.output / "methods.parquet", method_rows, method_schema)
     write_parquet(args.output / "classes.parquet", class_rows, class_schema)
+    write_parquet(args.output / "method_code.parquet", method_code_rows, method_code_schema)
     write_parquet(args.output / "call_sites.parquet", callsite_rows, callsite_schema)
     write_parquet(args.output / "unresolved_calls.parquet", unresolved_rows, unresolved_schema)
     write_parquet(args.output / "method_edges.parquet", edge_rows, edge_schema)
@@ -348,18 +389,18 @@ def main() -> int:
     write_parquet(args.output / "graph_core_links.parquet", core_link_rows, core_link_schema)
 
     jmods = sorted((args.jdk / "jmods").glob("*.jmod"))
-    output_names = ["methods.parquet", "classes.parquet", "call_sites.parquet",
+    output_names = ["methods.parquet", "classes.parquet", "method_code.parquet", "call_sites.parquet",
                     "unresolved_calls.parquet", "method_edges.parquet",
                     "graph_core_nodes.parquet", "graph_core_links.parquet"]
     manifest = {
         "spec_version": "1.0",
         "extractor_version": EXTRACTOR_VERSION,
-        "graph_id": GRAPH_ID,
+        "graph_id": graph_id,
         "source": {
             "repository": "https://github.com/openjdk/jdk",
-            "tag": "jdk-28+13",
-            "commit": "6870f28fe74cbd71419bdd1d1797434366bf8114",
-            "binary_url": "https://download.java.net/java/early_access/jdk28/13/GPL/openjdk-28-ea+13_linux-x64_bin.tar.gz",
+            "tag": args.source_tag,
+            "commit": args.source_commit or None,
+            "binary_url": args.binary_url or None,
         },
         "generated_at_utc": datetime.now(timezone.utc).isoformat(),
         "jdk_version": version_text.splitlines(),
@@ -424,7 +465,7 @@ def main() -> int:
     overall_pass = (endpoint_ok and aggregate_ok and core_ok and false_body_count == 0
                     and kinds_ok and constructor_count > 0 and static_init_count > 0
                     and native_count > 0 and abstract_count > 0)
-    report = f"""# OpenJDK 28+13 Method Graph Validation Report
+    report = f"""# OpenJDK {args.snapshot_id} Method Graph Validation Report
 
 Generated: {manifest['generated_at_utc']}
 

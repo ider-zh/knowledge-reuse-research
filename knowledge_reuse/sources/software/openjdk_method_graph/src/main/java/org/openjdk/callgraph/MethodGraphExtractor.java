@@ -8,8 +8,10 @@ import java.lang.classfile.ClassFile;
 import java.lang.classfile.ClassModel;
 import java.lang.classfile.CodeElement;
 import java.lang.classfile.CodeModel;
+import java.lang.classfile.Instruction;
 import java.lang.classfile.MethodModel;
 import java.lang.classfile.Opcode;
+import java.lang.classfile.attribute.CodeAttribute;
 import java.lang.classfile.attribute.SourceFileAttribute;
 import java.lang.classfile.instruction.InvokeDynamicInstruction;
 import java.lang.classfile.instruction.InvokeInstruction;
@@ -23,6 +25,7 @@ import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
 import java.util.Comparator;
 import java.util.List;
+import java.util.StringJoiner;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
@@ -34,6 +37,7 @@ public final class MethodGraphExtractor implements AutoCloseable {
     private final BufferedWriter methods;
     private final BufferedWriter calls;
     private final BufferedWriter classes;
+    private final BufferedWriter code;
     private long classCount;
     private long methodCount;
     private long callCount;
@@ -43,9 +47,11 @@ public final class MethodGraphExtractor implements AutoCloseable {
         methods = writer(outputDirectory.resolve("methods_raw.tsv"));
         calls = writer(outputDirectory.resolve("calls_raw.tsv"));
         classes = writer(outputDirectory.resolve("classes_raw.tsv"));
-        methods.write("module_name\tpackage_name\tclass_name\tmethod_name\tdescriptor\taccess_flags\tsource_file\tfirst_line\tlast_line\thas_code\n");
+        code = writer(outputDirectory.resolve("method_code_raw.tsv"));
+        methods.write("module_name\tpackage_name\tclass_name\tmethod_name\tdescriptor\taccess_flags\tsource_file\tfirst_line\tlast_line\thas_code\tbytecode_length\tinstruction_count\tmax_stack\tmax_locals\thas_control_flow\thas_exception_handlers\n");
         calls.write("caller_module\tcaller_class\tcaller_name\tcaller_descriptor\tinvoke_kind\tinstruction_ordinal\tsource_line\tdeclared_owner\tdeclared_name\tdeclared_descriptor\tresolution_hint\tbootstrap_owner\tbootstrap_name\n");
-        classes.write("module_name\tclass_name\tsuper_name\tinterfaces\taccess_flags\tsource_file\n");
+        classes.write("module_name\tclass_name\tsuper_name\tinterfaces\taccess_flags\tsource_file\tclassfile_size\tconstant_pool_entries\n");
+        code.write("module_name\tclass_name\tmethod_name\tdescriptor\tbytecode_length\topcodes\tinstruction_sizes\n");
     }
 
     private static BufferedWriter writer(Path path) throws IOException {
@@ -102,7 +108,8 @@ public final class MethodGraphExtractor implements AutoCloseable {
                             && name.endsWith(".class")
                             && !name.startsWith("classes/META-INF/")
                             && !name.equals("classes/module-info.class")) {
-                        scanClass(moduleName, CLASS_FILE.parse(zip.readAllBytes()));
+                        byte[] classBytes = zip.readAllBytes();
+                        scanClass(moduleName, classBytes.length, CLASS_FILE.parse(classBytes));
                     }
                     zip.closeEntry();
                 }
@@ -110,7 +117,7 @@ public final class MethodGraphExtractor implements AutoCloseable {
         }
     }
 
-    private void scanClass(String moduleName, ClassModel model) throws IOException {
+    private void scanClass(String moduleName, int classfileSize, ClassModel model) throws IOException {
         String className = model.thisClass().asInternalName();
         String superName = model.superclass().map(entry -> entry.asInternalName()).orElse("");
         String interfaces = String.join(",", model.interfaces().stream()
@@ -121,7 +128,8 @@ public final class MethodGraphExtractor implements AutoCloseable {
                 .map(attribute -> attribute.sourceFile().stringValue())
                 .findFirst().orElse("");
         classes.write(row(moduleName, className, superName, interfaces,
-                Integer.toString(model.flags().flagsMask()), sourceFile));
+                Integer.toString(model.flags().flagsMask()), sourceFile,
+                Integer.toString(classfileSize), Integer.toString(model.constantPool().size())));
         classes.newLine();
         classCount++;
         for (MethodModel method : model.methods()) {
@@ -136,18 +144,47 @@ public final class MethodGraphExtractor implements AutoCloseable {
         int firstLine = -1;
         int lastLine = -1;
         boolean hasCode = method.code().isPresent();
+        int bytecodeLength = 0;
+        int instructionCount = 0;
+        int maxStack = 0;
+        int maxLocals = 0;
+        boolean hasControlFlow = false;
+        boolean hasExceptionHandlers = false;
+        StringJoiner opcodes = new StringJoiner(",");
+        StringJoiner instructionSizes = new StringJoiner(",");
         if (hasCode) {
-            for (CodeElement element : method.code().orElseThrow()) {
+            CodeAttribute codeAttribute = (CodeAttribute) method.code().orElseThrow();
+            bytecodeLength = codeAttribute.codeLength();
+            maxStack = codeAttribute.maxStack();
+            maxLocals = codeAttribute.maxLocals();
+            hasExceptionHandlers = !codeAttribute.exceptionHandlers().isEmpty();
+            for (CodeElement element : codeAttribute) {
                 if (element instanceof LineNumber line) {
                     firstLine = firstLine < 0 ? line.line() : Math.min(firstLine, line.line());
                     lastLine = Math.max(lastLine, line.line());
+                } else if (element instanceof Instruction instruction) {
+                    instructionCount++;
+                    opcodes.add(instruction.opcode().name());
+                    instructionSizes.add(Integer.toString(instruction.sizeInBytes()));
+                    hasControlFlow |= isControlBoundary(instruction.opcode());
                 }
             }
         }
         methods.write(row(moduleName, packageName(className), className, name, descriptor,
                 Integer.toString(method.flags().flagsMask()), sourceFile,
-                nullableInt(firstLine), nullableInt(lastLine), Boolean.toString(hasCode)));
+                nullableInt(firstLine), nullableInt(lastLine), Boolean.toString(hasCode),
+                hasCode ? Integer.toString(bytecodeLength) : "",
+                hasCode ? Integer.toString(instructionCount) : "",
+                hasCode ? Integer.toString(maxStack) : "",
+                hasCode ? Integer.toString(maxLocals) : "",
+                Boolean.toString(hasControlFlow), Boolean.toString(hasExceptionHandlers)));
         methods.newLine();
+        if (hasCode) {
+            code.write(row(moduleName, className, name, descriptor,
+                    Integer.toString(bytecodeLength), opcodes.toString(),
+                    instructionSizes.toString()));
+            code.newLine();
+        }
         methodCount++;
         if (hasCode) {
             scanCode(moduleName, className, name, descriptor, method.code().orElseThrow());
@@ -209,6 +246,17 @@ public final class MethodGraphExtractor implements AutoCloseable {
         };
     }
 
+    private static boolean isControlBoundary(Opcode opcode) {
+        return switch (opcode.kind()) {
+            // A normal return terminates an otherwise straight-line fragment and object
+            // allocation is an ordinary instruction.  Neither disqualifies a method from
+            // the exploratory macro analysis; only non-linear/abrupt control does.
+            case BRANCH, LOOKUP_SWITCH, TABLE_SWITCH, THROW_EXCEPTION,
+                    MONITOR, DISCONTINUED_JSR, DISCONTINUED_RET -> true;
+            default -> false;
+        };
+    }
+
     private static boolean isMethodHandle(DirectMethodHandleDesc handle) {
         return switch (handle.kind()) {
             case STATIC, INTERFACE_STATIC, VIRTUAL, INTERFACE_VIRTUAL, SPECIAL,
@@ -252,5 +300,6 @@ public final class MethodGraphExtractor implements AutoCloseable {
         methods.close();
         calls.close();
         classes.close();
+        code.close();
     }
 }

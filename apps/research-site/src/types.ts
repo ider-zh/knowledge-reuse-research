@@ -516,3 +516,88 @@ export type OpenJdkReuseReport = {
     nth_prime: string;
   };
 };
+
+export type ReuseTheoremReport = {
+  schema_version: string;
+  snapshot_id: string;
+  phase_1: { status: "superseded"; reason: string };
+  phase_2: {
+    status: string;
+    methods: number;
+    classes: number;
+    methods_with_code: number;
+    total_bytecode_bytes: number;
+    total_classfile_bytes: number;
+  };
+  phase_3_erdos_kac: {
+    definition: Record<string, string>;
+    primary_scope: string;
+    scopes: Record<string, {
+      program_count: number;
+      mean_distinct_components: number;
+      spearman_log_size_vs_components: number;
+      skewness: number;
+      excess_kurtosis: number;
+      qq_r_squared: number;
+      pre_registered_shape_consistent: boolean;
+      histogram: Array<{ z_left: number; z_right: number; count: number }>;
+      qq_points: Array<{ normal_quantile: number; observed_z: number }>;
+    }>;
+  };
+  phase_4_component_size: {
+    population: number;
+    call_sites: number;
+    spearman_log_use_vs_log_size: number;
+    gross_savings_meets_log2_rank_fraction: number;
+    global_component_identifier_min_bits: number;
+    binned_points: Array<{
+      rank_geometric_mean: number;
+      median_uses: number;
+      median_bytecode_length: number;
+      theoretical_min_identifier_bits: number;
+    }>;
+  };
+  phase_4_mdl_incompleteness: {
+    status: string;
+    definition: Record<string, string>;
+    eligible_method_count: number;
+    folds_with_positive_candidate: number;
+    median_best_heldout_net_savings_bytes: number;
+    folds: Array<{
+      fold: number;
+      test_methods: number;
+      positive_heldout_candidates: number;
+      best_heldout_net_savings_bytes: number;
+    }>;
+  };
+  phase_5_cross_version: {
+    status: string;
+    definition: Record<string, string>;
+    snapshots: Array<{
+      label: string;
+      classes: number;
+      methods: number;
+      bytecode_bytes: number;
+      resolved_call_sites: number;
+      reuse_rank_beta: number;
+      reuse_rank_r_squared: number;
+    }>;
+    delta: {
+      classes_percent: number;
+      methods_percent: number;
+      bytecode_bytes_percent: number;
+      retained_methods: number;
+      added_methods: number;
+      removed_methods: number;
+      net_methods: number;
+    };
+    new_component_adoption: {
+      added_methods_referenced_anywhere: number;
+      calls_to_added_methods: number;
+      added_methods_referenced_from_retained_callers: number;
+      retained_caller_calls_to_added_methods: number;
+      gross_savings_proxy_bytes: number;
+    };
+    interpretation: Record<string, string>;
+  };
+};

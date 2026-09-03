@@ -15,6 +15,37 @@
   --line: #cac4b7;
 }
 
+.theorem-verdicts,
+.theorem-chart-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 1rem;
+  margin-top: 1.25rem;
+}
+
+.theorem-verdicts .claim-card { min-height: 0; }
+.theorem-verdicts .claim-card > p:last-child { color: var(--muted, #59645f); }
+.theorem-chart-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+.theorem-chart-grid .distribution-chart { margin: 0; min-width: 0; }
+
+.version-comparison {
+  padding: 1.5rem;
+  border: 1px solid var(--line, #d7d8d2);
+  background: #f3efe5;
+}
+
+.version-comparison h3 { margin: .2rem 0 1rem; font-size: 1.65rem; }
+.version-comparison dl { display: grid; grid-template-columns: 1fr 1fr; gap: .75rem; }
+.version-comparison dl div { padding: .8rem; background: rgba(255,255,255,.62); }
+.version-comparison dt { color: #68716c; font-size: .72rem; text-transform: uppercase; letter-spacing: .08em; }
+.version-comparison dd { margin: .3rem 0 0; }
+.theorem-tests > .paper-scope-note { margin-top: 1rem; }
+
+@media (max-width: 900px) {
+  .theorem-verdicts,
+  .theorem-chart-grid { grid-template-columns: 1fr; }
+}
+
 * { box-sizing: border-box; }
 html { scroll-behavior: smooth; }
 body { margin: 0; min-width: 320px; background: var(--paper); font-size: 16px; line-height: 1.6; }
