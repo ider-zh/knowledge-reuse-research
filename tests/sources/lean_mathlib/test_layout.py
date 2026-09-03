@@ -31,5 +31,5 @@ def test_source_graph_has_versioned_raw_and_normalized_paths() -> None:
         DATA_ROOT / snapshot / "raw" / "lean-source-graph-v1" / "full"
     )
     assert source_graph_normalized_root(snapshot, "full") == (
-        DATA_ROOT / snapshot / "normalized" / "lean-source-graph-v1" / "full"
+        DATA_ROOT / snapshot / "normalized" / "lean-source-graph-v2" / "full"
     )

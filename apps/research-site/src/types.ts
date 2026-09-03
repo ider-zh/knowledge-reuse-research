@@ -7,6 +7,7 @@ export type HeadlineMetrics = {
   self_loop_pairs: number;
   unparented_usages: number;
   unresolved_parent_usages: number;
+  parent_module_mismatch_usages: number;
 };
 
 export type DomainMetric = {
@@ -262,6 +263,11 @@ export type ConstructionCases = {
       example_context: number;
       private_or_eval_context: number;
       metaprogram_or_external_context: number;
+    };
+    parent_module_mismatch: {
+      total: number;
+      unique_parent_declarations: number;
+      policy: string;
     };
     context_policy: string;
     examples: {

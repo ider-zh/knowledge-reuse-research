@@ -2,12 +2,12 @@
   "experiment_id": "lean_mathlib_v1",
   "files": {
     "construction-cases.json": {
-      "bytes": 21226,
-      "sha256": "6bb039535eb58e52ef587c78a6379bfcc9bdb4cf4624ced5d136faf709179969"
+      "bytes": 22206,
+      "sha256": "be642b274ec7807fdc244631e2bd5be3ec93f7913a95b9394f0ffe05ae41a4a3"
     },
     "domain-edge-samples.json": {
       "bytes": 770013,
-      "sha256": "07f7893586551704283974db38ab2f48f8a76ef358db9ec4081f4182cd8b0b14"
+      "sha256": "4bd312d338687069faa2f7baba6ab99cadf1b6d49aa3d5ddfe7093013021035f"
     },
     "external-targets.json": {
       "bytes": 70469,
@@ -15,26 +15,26 @@
     },
     "nodes.json": {
       "bytes": 239626,
-      "sha256": "8dcf6b9dc6b75f85c52dfeb6ab262db34db2f3ee8759aaf19757898f0f29a3d1"
+      "sha256": "dc80321b038f82a0299ac03b31659f505e55712b8fc98035108b52b632d73846"
     },
     "overview.json": {
-      "bytes": 97888,
-      "sha256": "85ef17e17378ee8af6048a919754b33d1319304021443f384bb21c16f74bb5a4"
+      "bytes": 97920,
+      "sha256": "f197e4230013a32f13fc5ec36122bc05d9799ff5964134a98c82eb73553c0216"
     },
     "path-rank-comparison.json": {
-      "bytes": 120923,
-      "sha256": "6b8d3b12442db589be3b27b8eac641636669f7500d5d0eff8277d81728e32172"
+      "bytes": 120910,
+      "sha256": "8b1a951ff49213ec20f7617c096db331c49a8ca9e480fcf74049b524951f389b"
     },
     "reuse-rank-frequency.json": {
-      "bytes": 111570,
-      "sha256": "6957a25944cedce92c278519839cf5464c1b9a323e01b84daabf22488691ef8e"
+      "bytes": 111511,
+      "sha256": "3918a4964722e94b157d9cdb4207341f1891811ebe6989cbf4d96d3cbc0524ea"
     },
     "source-edge-samples.json": {
       "bytes": 8502,
-      "sha256": "9e15b9aacf465894cd1664c20b353abb35de33cd175053bb744c689782867c6e"
+      "sha256": "0de7ffd2e2b4f87590b2d42813edc58b533a45d7a9edf0c640e64d7ff1c04aaf"
     }
   },
-  "graph_schema_version": "lean-source-graph-v1",
+  "graph_schema_version": "lean-source-graph-v2",
   "run_kind": "full",
   "schema_version": "research-site-data-manifest-v2",
   "snapshot_id": "mathlib-v4.32.1",

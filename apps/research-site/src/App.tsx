@@ -95,6 +95,7 @@ function App() {
           <p>
             `.ilean` 中另有 {format.format(metrics.unparented_usages)} 个位置没有 parent declaration，
             {format.format(metrics.unresolved_parent_usages)} 个位置的 parent label 不在 Environment 节点集中。
+            另有 {format.format(metrics.parent_module_mismatch_usages)} 个位置的 parent label 虽存在，但其声明定义于另一个 module。
             文件路径只能确定 module；只有来源和目标都能对应持久 declaration 时，位置才进入复用主图。
             其余记录保留为源码上下文证据，具体规则与案例见下方“端点归属”。
           </p>

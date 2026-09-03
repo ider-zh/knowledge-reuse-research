@@ -50,10 +50,17 @@ def test_attribution_boundary_distinguishes_declarations_from_source_contexts(
             ]
         }
     )
+    mismatched = pl.DataFrame(
+        {
+            "parent_decl": ["Other.foreign"],
+            "parent_node_module": ["Other"],
+        }
+    )
 
     result = attribution_boundary(
         unparented,
         unresolved,
+        mismatched,
         {"Fixture.outer", "Fixture.inner"},
         tmp_path,
         tmp_path,
@@ -74,6 +81,8 @@ def test_attribution_boundary_distinguishes_declarations_from_source_contexts(
         "private_or_eval_context": 1,
         "metaprogram_or_external_context": 1,
     }
+    assert result["parent_module_mismatch"]["total"] == 1
+    assert result["parent_module_mismatch"]["unique_parent_declarations"] == 1
 
 
 def test_rank_frequency_display_uses_complete_sorted_population_and_zipf_reference() -> None:

@@ -8,7 +8,7 @@
         "snapshot_id": 0,
         "src_id": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/edges.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/edges.parquet",
       "rows": 2091,
       "sha256": "51715da9be4694b94c42983088a52e3936e58b9b4284cb46ed4c1b9f3bfb7bdf"
     },
@@ -21,9 +21,27 @@
         "target_module_hint_count": 0,
         "target_module_hints": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/external_nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/external_nodes.parquet",
       "rows": 605,
       "sha256": "1aea7c16c28d340fd266da69e15894fa4889d8455bf012638614eeef1f433f37"
+    },
+    "mismatched_parent_usages": {
+      "null_counts": {
+        "end_character": 0,
+        "end_line": 0,
+        "exclusion_reason": 0,
+        "module": 0,
+        "parent_decl": 0,
+        "parent_node_module": 0,
+        "snapshot_id": 0,
+        "start_character": 0,
+        "start_line": 0,
+        "target_decl": 0,
+        "target_module": 0
+      },
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/mismatched_parent_usages.parquet",
+      "rows": 0,
+      "sha256": "69b912f979a97ce7805a044d954bfc74e3af7002073cef56c550732468c1c445"
     },
     "modules": {
       "null_counts": {
@@ -35,7 +53,7 @@
         "unattributed_usage_count": 0,
         "usage_count": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/modules.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/modules.parquet",
       "rows": 7,
       "sha256": "41919f1cb45a6eff828d008e2ea8aa1188e6501e4c32a6a73ad108d6b38bca9a"
     },
@@ -61,7 +79,7 @@
         "value_const_unique": 3,
         "value_expr_nodes": 3
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/nodes.parquet",
       "rows": 758,
       "sha256": "efeaa58e4dfd57887cdf7b8714051c4724f272382f921f520b29da6344d6e9e8"
     },
@@ -77,7 +95,7 @@
         "target_decl": 0,
         "target_module": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/unparented_usages.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/unparented_usages.parquet",
       "rows": 61,
       "sha256": "86928a97a6bb346263884f71c1583221d13f6c60b75d21c4171c81b8bc49b2ce"
     },
@@ -94,7 +112,7 @@
         "target_decl": 0,
         "target_module": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/unresolved_parent_usages.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/unresolved_parent_usages.parquet",
       "rows": 0,
       "sha256": "41d208843905871c66b832c18a01d9aaa3727a99dbbb3a71156ea43d4f6e2d15"
     },
@@ -110,7 +128,7 @@
         "start_line": 0,
         "target_module": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/smoke/usages.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/smoke/usages.parquet",
       "rows": 2544,
       "sha256": "d154418ebf687c8cad0d3039bf52d0706a1f5c0b69a71970042e362876582806"
     }
@@ -119,12 +137,13 @@
   "edge_direction": "consumer_declaration_to_resolved_target_declaration",
   "edge_multiplicity_sum": 2544,
   "edge_type": "SOURCE",
-  "graph_schema_version": "lean-source-graph-v1",
+  "graph_schema_version": "lean-source-graph-v2",
   "multiplicity": "distinct_resolved_source_ranges",
   "node_source_graph_schema_version": "lean-graph-v2",
   "parent_labeled_usage_count": 2544,
+  "parent_module_mismatch_usage_count": 0,
   "run_kind": "smoke",
-  "schema_version": "source-graph-normalized-manifest-v1",
+  "schema_version": "source-graph-normalized-manifest-v2",
   "self_loop_edge_count": 0,
   "self_loop_multiplicity": 0,
   "snapshot_id": "mathlib-v4.32.1",

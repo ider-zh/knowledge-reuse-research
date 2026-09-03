@@ -1,0 +1,34 @@
+{
+  "external_target_count": 605,
+  "graph_schema_version": "lean-source-graph-v2",
+  "internal_declaration_count": 758,
+  "non_self_occurrence_count": 2544,
+  "non_self_pair_count": 2091,
+  "parent_module_mismatch_usage_count": 0,
+  "path_indegree": {
+    "cycle_boundary_node_count": 0,
+    "maximum_exact": "1997",
+    "maximum_log10": 3.3003780648707024,
+    "metric": "in_paths_source",
+    "semantics": "exact multiplicity-weighted direct and indirect incoming path count; paths stop when they reach a cyclic SCC",
+    "storage": "exact decimal string plus base-10 logarithm"
+  },
+  "positive_reused_target_count": 181,
+  "repeated_pair_count": 354,
+  "reuse_concentration": {
+    "gini": 0.6010232666718542,
+    "population": "positive direct non-self SOURCE indegree targets",
+    "top_10pct_share": 0.5862676056338029,
+    "top_1pct_share": 0.24119718309859156,
+    "top_5pct_share": 0.4964788732394366
+  },
+  "run_kind": "smoke",
+  "schema_version": "lean-source-graph-analysis-v2",
+  "self_loop_occurrence_count": 0,
+  "self_loop_pair_count": 0,
+  "snapshot_id": "mathlib-v4.32.1",
+  "source_occurrence_count": 2544,
+  "source_pair_count": 2091,
+  "unparented_usage_count": 61,
+  "unresolved_parent_usage_count": 0
+}

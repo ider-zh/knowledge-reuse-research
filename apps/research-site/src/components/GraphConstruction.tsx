@@ -158,7 +158,7 @@ function AttributionBoundary({ boundary }: { boundary: ConstructionCases["attrib
         <i>→</i>
         <article className="edge-contract">
           <span>进入主图的条件</span>
-          <b>parent label ∈ persistent Environment declarations</b>
+          <b>parent ∈ Environment ∧ parent.module = .ilean.module</b>
           <p>{boundary.primary_graph_rule}</p>
         </article>
         <i>→</i>
@@ -189,6 +189,11 @@ function AttributionBoundary({ boundary }: { boundary: ConstructionCases["attrib
           <p>这些 label 描述精化上下文，并不必然对应本研究语料中的持久 declaration；把它们并入节点集会改变“复用组件”的定义。</p>
         </article>
       </div>
+
+      <aside className="parent-module-mismatch">
+        <b>parent module 不一致 · {format.format(boundary.parent_module_mismatch.total)}</b>
+        <p>{boundary.parent_module_mismatch.policy}</p>
+      </aside>
 
       <section className="outside-profile" aria-labelledby="outside-profile-title">
         <header>

@@ -1,9 +1,12 @@
 import json
 import pathlib
 
+import polars as pl
+
 from knowledge_reuse.sources.lean_mathlib.ilean_graph import (
     USAGE_SCHEMA,
     SourceUsage,
+    classify_parent_usages,
     constant_identity,
     parse_ilean,
 )
@@ -90,3 +93,30 @@ def test_parse_ilean_keeps_distinct_ranges_and_unattributed_usages(
             5,
         ),
     ]
+
+
+def test_parent_attribution_requires_environment_name_and_matching_module() -> None:
+    usages = pl.DataFrame(
+        {
+            "module": ["Fixture", "Fixture", "Fixture", "Fixture"],
+            "parent_decl": ["Fixture.local", "Other.foreign", "Missing", None],
+            "target_decl": ["Target"] * 4,
+        }
+    )
+    nodes = pl.DataFrame(
+        {
+            "name": ["Fixture.local", "Other.foreign"],
+            "module": ["Fixture", "Other"],
+        }
+    )
+
+    attributed, unparented, unresolved, mismatched = classify_parent_usages(usages, nodes)
+
+    assert attributed["parent_decl"].to_list() == ["Fixture.local"]
+    assert unparented.height == 1
+    assert unresolved["parent_decl"].to_list() == ["Missing"]
+    assert mismatched.select("parent_decl", "parent_node_module").row(0) == (
+        "Other.foreign",
+        "Other",
+    )
+    assert mismatched.item(0, "exclusion_reason") == "parent_module_mismatch"

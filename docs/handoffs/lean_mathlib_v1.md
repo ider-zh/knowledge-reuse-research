@@ -32,6 +32,13 @@
   values 0.175 and 0.192.  The metric is a route-combination diagnostic, not
   reuse breadth or workload.  Rebuildable evidence is stored in
   `runs/full/source_graph_metrics/path_rank_comparison.json`.
+- SOURCE attribution now uses `lean-source-graph-v2`: a parent label must both
+  resolve to a persistent Environment declaration and have the same defining
+  module as the `.ilean` source module. Nine mismatched positions from three
+  labels are preserved outside the graph. The corrected full graph contains
+  1,837,319 SOURCE pairs and 2,384,749 accepted occurrences; raw v1 usage rows
+  remain immutable. See
+  `docs/migrations/2026-09-03-lean-source-parent-module-attribution.md`.
 - Migration: v2 retains exact Expr constant occurrence multiplicity as an edge
   weight while preserving unique-consumer reuse breadth as a derived view. See
   `docs/migrations/2026-09-02-lean-edge-multiplicity.md`.

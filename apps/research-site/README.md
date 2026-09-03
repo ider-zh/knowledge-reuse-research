@@ -6,9 +6,10 @@ graph.
 
 ## Data boundary
 
-The primary website graph is `lean-source-graph-v1`. It contains 566,238
-internal declarations, 7,299 explicit external targets, 1,837,322 distinct
-SOURCE pairs, and 2,384,758 resolved source-reference occurrences. The public
+The primary website graph is `lean-source-graph-v2`. It contains 566,238
+internal declarations, 7,299 explicit external targets, 1,837,319 distinct
+SOURCE pairs, and 2,384,749 resolved source-reference occurrences. Nine
+parent-module mismatches are preserved as exclusions. The public
 site publishes compact JSON evidence rather than the full graph:
 
 - purposefully selected internal nodes (reuse heads, per-domain heads, and Expr

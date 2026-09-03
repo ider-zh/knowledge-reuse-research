@@ -16,6 +16,7 @@ from knowledge_reuse.sources.lean_mathlib.construction_cases import build_constr
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
     ROOT,
+    SOURCE_GRAPH_SCHEMA_VERSION,
     normalized_root,
     run_results_root,
     source_graph_normalized_root,
@@ -349,6 +350,7 @@ def probable_variable_continuation(lines: list[str], line_index: int) -> bool:
 def attribution_boundary(
     unparented_usages: pl.DataFrame,
     unresolved_parent_usages: pl.DataFrame,
+    mismatched_parent_usages: pl.DataFrame,
     environment_names: set[str],
     ilean_root: pathlib.Path,
     source_root: pathlib.Path | None = None,
@@ -439,8 +441,9 @@ def attribution_boundary(
     )
     return {
         "primary_graph_rule": (
-            "只有 `.ilean` 已解析目标且 parent label 对应持久 Environment declaration "
-            "的位置，才进入 declaration reuse 主图。"
+            "只有 `.ilean` 已解析目标、parent label 对应持久 Environment declaration，"
+            "且该 declaration 的定义 module 与当前 `.ilean` module 一致的位置，"
+            "才进入 declaration reuse 主图。"
         ),
         "target_endpoint": (
             "constant reference key 提供目标 declaration 名与 module hint；不在内部语料中的"
@@ -448,7 +451,7 @@ def attribution_boundary(
         ),
         "source_endpoint": (
             "文件路径只能确定引用所在 module，不能保证存在 consumer declaration。来源端必须有"
-            " parent declaration label，或经过单独验证的唯一 declaration 范围归属。"
+            " parent declaration label，并通过 Environment 身份与定义 module 的双重校验。"
         ),
         "unparented": {"total": unparented_usages.height, **range_counts},
         "outside_declaration_profile": {
@@ -470,6 +473,14 @@ def attribution_boundary(
             "example_context": example_count,
             "private_or_eval_context": private_count,
             "metaprogram_or_external_context": other_count,
+        },
+        "parent_module_mismatch": {
+            "total": mismatched_parent_usages.height,
+            "unique_parent_declarations": mismatched_parent_usages["parent_decl"].n_unique(),
+            "policy": (
+                "parent label 虽能解析到 Environment declaration，但定义 module 与源码位置所在"
+                " `.ilean` module 不同；这些位置属于顶层命令或不可靠上下文，不成为 declaration edge。"
+            ),
         },
         "context_policy": (
             "没有可靠持久 declaration 来源的位置继续作为 source-context 记录保存。完整源码引用层"
@@ -505,6 +516,19 @@ def attribution_boundary(
                     "可复用数学声明。"
                 ),
                 "url": source_url("Mathlib/Tactic/ToAdditive.lean", 25),
+            },
+            {
+                "kind": "module 身份不一致",
+                "title": "顶层 to_additive attribute 不能归给已导入 declaration",
+                "code": (
+                    "attribute [to_additive existing (dont_translate := M) DistribMulAction]\n"
+                    "  MulDistribMulAction"
+                ),
+                "explanation": (
+                    "`.ilean` parent label 可指向已存在的 MulDistribMulAction，但该 declaration "
+                    "定义在另一个 module。v2 将此位置保存为 parent-module mismatch，不产生伪边。"
+                ),
+                "url": source_url("Mathlib/GroupTheory/GroupAction/Hom.lean", 595),
             },
             {
                 "kind": "范围歧义",
@@ -592,6 +616,7 @@ def construction_cases(
     usages: pl.DataFrame,
     unparented_usages: pl.DataFrame,
     unresolved_parent_usages: pl.DataFrame,
+    mismatched_parent_usages: pl.DataFrame,
 ) -> dict[str, Any]:
     old_root = normalized_root(snapshot, "full")
     old_nodes = pl.read_parquet(old_root / "nodes.parquet")
@@ -650,7 +675,7 @@ def construction_cases(
         ),
     ]
     return {
-        "schema_version": "lean-source-construction-cases-v2",
+        "schema_version": "lean-source-construction-cases-v3",
         "snapshot_id": snapshot,
         "edge_direction": "consumer declaration → resolved target declaration",
         "occurrence_unit": "one distinct `.ilean` resolved LSP source range",
@@ -685,8 +710,8 @@ def construction_cases(
                     "step": "聚合 SOURCE edge",
                     "code": "GROUP BY (parent_decl, target_decl)",
                     "detail": "不同 source ranges 全部保留；pair 的 multiplicity 等于其位置数。",
-                    "evidence": "项目 schema · lean-source-graph-v1",
-                    "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/schemas/lean_mathlib/lean-source-graph-v1.md",
+                    "evidence": f"项目 schema · {SOURCE_GRAPH_SCHEMA_VERSION}",
+                    "url": f"https://github.com/ider-zh/knowledge-reuse-research/blob/main/schemas/lean_mathlib/{SOURCE_GRAPH_SCHEMA_VERSION}.md",
                 },
             ],
             "module_hint": (
@@ -697,6 +722,7 @@ def construction_cases(
         "attribution_boundary": attribution_boundary(
             unparented_usages,
             unresolved_parent_usages,
+            mismatched_parent_usages,
             set(nodes["name"].to_list()),
             ROOT / "vendor" / "mathlib4" / ".lake" / "build" / "lib" / "lean",
         ),
@@ -819,6 +845,9 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
     unresolved_parent_usages = pl.read_parquet(
         graph_root / "unresolved_parent_usages.parquet"
     )
+    mismatched_parent_usages = pl.read_parquet(
+        graph_root / "mismatched_parent_usages.parquet"
+    )
     unparented_usages = pl.read_parquet(graph_root / "unparented_usages.parquet")
     external_nodes = pl.read_parquet(graph_root / "external_nodes.parquet")
     domains = pl.read_parquet(derived_root / "domain_metrics.parquet").sort(
@@ -859,14 +888,15 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
         usages,
         unparented_usages,
         unresolved_parent_usages,
+        mismatched_parent_usages,
     )
     rank_frequency = rank_frequency_distribution(nodes, rank_fits, snapshot)
     report_claims = claims(summary, rank_fits, powerlaw_fits, domains)
 
     files = {
         "overview.json": {
-            "schema_version": "research-site-source-overview-v1",
-            "graph_schema_version": "lean-source-graph-v1",
+            "schema_version": "research-site-source-overview-v2",
+            "graph_schema_version": SOURCE_GRAPH_SCHEMA_VERSION,
             "snapshot_id": snapshot,
             "run_kind": run_kind,
             "headline_metrics": {
@@ -878,6 +908,9 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
                 "self_loop_pairs": summary["self_loop_pair_count"],
                 "unparented_usages": summary["unparented_usage_count"],
                 "unresolved_parent_usages": summary["unresolved_parent_usage_count"],
+                "parent_module_mismatch_usages": summary[
+                    "parent_module_mismatch_usage_count"
+                ],
             },
             "path_indegree": summary["path_indegree"],
             "domain_algorithm": {
@@ -939,7 +972,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
         "schema_version": "research-site-data-manifest-v2",
         "source_id": "lean_mathlib",
         "experiment_id": "lean_mathlib_v1",
-        "graph_schema_version": "lean-source-graph-v1",
+        "graph_schema_version": SOURCE_GRAPH_SCHEMA_VERSION,
         "snapshot_id": snapshot,
         "run_kind": run_kind,
         "files": {

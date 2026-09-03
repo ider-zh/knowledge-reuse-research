@@ -17,6 +17,7 @@ from knowledge_reuse.analysis.powerlaw import fit_tail
 from knowledge_reuse.analysis.rank_shape import compare_rank_reference_curves
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
+    SOURCE_GRAPH_SCHEMA_VERSION,
     run_results_root,
     source_graph_normalized_root,
 )
@@ -193,7 +194,7 @@ def analyze_source_graph(run_kind: str = "full") -> dict[str, Any]:
     )
     summary = {
         "schema_version": "lean-source-graph-analysis-v2",
-        "graph_schema_version": "lean-source-graph-v1",
+        "graph_schema_version": SOURCE_GRAPH_SCHEMA_VERSION,
         "snapshot_id": snapshot,
         "run_kind": run_kind,
         "internal_declaration_count": nodes.height,
@@ -208,6 +209,9 @@ def analyze_source_graph(run_kind: str = "full") -> dict[str, Any]:
         "unparented_usage_count": int(source_manifest["unparented_usage_count"]),
         "unresolved_parent_usage_count": int(
             source_manifest["unresolved_parent_usage_count"]
+        ),
+        "parent_module_mismatch_usage_count": int(
+            source_manifest["parent_module_mismatch_usage_count"]
         ),
         "path_indegree": {
             "metric": "in_paths_source",

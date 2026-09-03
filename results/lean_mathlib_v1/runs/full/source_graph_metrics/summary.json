@@ -1,33 +1,34 @@
 {
   "external_target_count": 7299,
-  "graph_schema_version": "lean-source-graph-v1",
+  "graph_schema_version": "lean-source-graph-v2",
   "internal_declaration_count": 566238,
-  "non_self_occurrence_count": 2380044,
-  "non_self_pair_count": 1834742,
+  "non_self_occurrence_count": 2380035,
+  "non_self_pair_count": 1834739,
+  "parent_module_mismatch_usage_count": 9,
   "path_indegree": {
     "cycle_boundary_node_count": 2640,
-    "maximum_exact": "49771243065343156822021307685733",
+    "maximum_exact": "49771243065343156822021306670708",
     "maximum_log10": 31.696978487633263,
     "metric": "in_paths_source",
     "semantics": "exact multiplicity-weighted direct and indirect incoming path count; paths stop when they reach a cyclic SCC",
     "storage": "exact decimal string plus base-10 logarithm"
   },
   "positive_reused_target_count": 177996,
-  "repeated_pair_count": 353628,
+  "repeated_pair_count": 353622,
   "reuse_concentration": {
-    "gini": 0.7707525348619368,
+    "gini": 0.7707526281492392,
     "population": "positive direct non-self SOURCE indegree targets",
-    "top_10pct_share": 0.7181502788064253,
-    "top_1pct_share": 0.40609685292295383,
-    "top_5pct_share": 0.619299665276423
+    "top_10pct_share": 0.7181510285593674,
+    "top_1pct_share": 0.40609699469078275,
+    "top_5pct_share": 0.6193002224350961
   },
   "run_kind": "full",
   "schema_version": "lean-source-graph-analysis-v2",
   "self_loop_occurrence_count": 4714,
   "self_loop_pair_count": 2580,
   "snapshot_id": "mathlib-v4.32.1",
-  "source_occurrence_count": 2384758,
-  "source_pair_count": 1837322,
+  "source_occurrence_count": 2384749,
+  "source_pair_count": 1837319,
   "unparented_usage_count": 109575,
   "unresolved_parent_usage_count": 2252
 }

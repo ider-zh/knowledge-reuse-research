@@ -24,6 +24,13 @@
         "url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/Tactic/ToAdditive.lean#L25"
       },
       {
+        "code": "attribute [to_additive existing (dont_translate := M) DistribMulAction]\n  MulDistribMulAction",
+        "explanation": "`.ilean` parent label 可指向已存在的 MulDistribMulAction，但该 declaration 定义在另一个 module。v2 将此位置保存为 parent-module mismatch，不产生伪边。",
+        "kind": "module 身份不一致",
+        "title": "顶层 to_additive attribute 不能归给已导入 declaration",
+        "url": "https://github.com/leanprover-community/mathlib4/blob/v4.32.1/Mathlib/GroupTheory/GroupAction/Hom.lean#L595"
+      },
+      {
         "code": "usage range ⊆ outer declaration range ∩ generated declaration range",
         "explanation": "仅凭范围包含会得到多个候选。该位置可以审计，但 declaration 图不能按距离擅自选择其中一个。",
         "kind": "范围歧义",
@@ -46,14 +53,19 @@
       "variable_context_count": 80439,
       "variable_context_share": 0.7476716301377503
     },
+    "parent_module_mismatch": {
+      "policy": "parent label 虽能解析到 Environment declaration，但定义 module 与源码位置所在 `.ilean` module 不同；这些位置属于顶层命令或不可靠上下文，不成为 declaration edge。",
+      "total": 9,
+      "unique_parent_declarations": 3
+    },
     "parent_not_in_environment": {
       "example_context": 2090,
       "metaprogram_or_external_context": 53,
       "private_or_eval_context": 109,
       "total": 2252
     },
-    "primary_graph_rule": "只有 `.ilean` 已解析目标且 parent label 对应持久 Environment declaration 的位置，才进入 declaration reuse 主图。",
-    "source_endpoint": "文件路径只能确定引用所在 module，不能保证存在 consumer declaration。来源端必须有 parent declaration label，或经过单独验证的唯一 declaration 范围归属。",
+    "primary_graph_rule": "只有 `.ilean` 已解析目标、parent label 对应持久 Environment declaration，且该 declaration 的定义 module 与当前 `.ilean` module 一致的位置，才进入 declaration reuse 主图。",
+    "source_endpoint": "文件路径只能确定引用所在 module，不能保证存在 consumer declaration。来源端必须有 parent declaration label，并通过 Environment 身份与定义 module 的双重校验。",
     "target_endpoint": "constant reference key 提供目标 declaration 名与 module hint；不在内部语料中的目标仍保留为显式 external declaration 节点。",
     "unparented": {
       "outside_declaration_range": 107586,
@@ -293,9 +305,9 @@
       {
         "code": "GROUP BY (parent_decl, target_decl)",
         "detail": "不同 source ranges 全部保留；pair 的 multiplicity 等于其位置数。",
-        "evidence": "项目 schema · lean-source-graph-v1",
+        "evidence": "项目 schema · lean-source-graph-v2",
         "step": "聚合 SOURCE edge",
-        "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/schemas/lean_mathlib/lean-source-graph-v1.md"
+        "url": "https://github.com/ider-zh/knowledge-reuse-research/blob/main/schemas/lean_mathlib/lean-source-graph-v2.md"
       }
     ]
   },
@@ -465,7 +477,7 @@
     }
   ],
   "occurrence_unit": "one distinct `.ilean` resolved LSP source range",
-  "schema_version": "lean-source-construction-cases-v2",
+  "schema_version": "lean-source-construction-cases-v3",
   "snapshot_id": "mathlib-v4.32.1",
   "stages": [
     {

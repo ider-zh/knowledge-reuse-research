@@ -20,7 +20,7 @@ def test_public_overview_matches_full_source_graph_summary() -> None:
         (run_results_root("full") / "source-graph-summary.json").read_text()
     )
 
-    assert overview["graph_schema_version"] == "lean-source-graph-v1"
+    assert overview["graph_schema_version"] == "lean-source-graph-v2"
     assert overview["headline_metrics"]["source_pairs"] == source_graph["artifacts"][
         "edges"
     ]["rows"]
@@ -30,9 +30,10 @@ def test_public_overview_matches_full_source_graph_summary() -> None:
     assert overview["headline_metrics"]["self_loop_pairs"] == source_graph[
         "self_loop_edge_count"
     ]
+    assert overview["headline_metrics"]["parent_module_mismatch_usages"] == 9
     assert overview["path_indegree"] == {
         "cycle_boundary_node_count": 2640,
-        "maximum_exact": "49771243065343156822021307685733",
+        "maximum_exact": "49771243065343156822021306670708",
         "maximum_log10": 31.696978487633263,
         "metric": "in_paths_source",
         "semantics": (
@@ -73,6 +74,8 @@ def test_public_attribution_boundary_partitions_source_contexts() -> None:
         "private_or_eval_context": 109,
         "total": 2252,
     }
+    assert boundary["parent_module_mismatch"]["total"] == 9
+    assert boundary["parent_module_mismatch"]["unique_parent_declarations"] == 3
     profile = boundary["outside_declaration_profile"]
     assert profile["population"] == 107586
     assert profile["variable_context_count"] == 80439

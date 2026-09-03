@@ -21,6 +21,7 @@ from knowledge_reuse.sources.lean_mathlib.layout import (
     RESULTS_ROOT,
     ROOT,
     SOURCE_GRAPH_SCHEMA_VERSION,
+    SOURCE_USAGE_SCHEMA_VERSION,
     normalized_root,
     run_results_root,
     source_graph_normalized_root,
@@ -246,7 +247,7 @@ def extract_usages(run_kind: str) -> dict[str, Any]:
     modules_sha = install_immutable(temp_modules, modules_path)
     manifest = {
         "schema_version": "source-graph-raw-manifest-v1",
-        "graph_schema_version": SOURCE_GRAPH_SCHEMA_VERSION,
+        "graph_schema_version": SOURCE_USAGE_SCHEMA_VERSION,
         "snapshot_id": snapshot,
         "run_kind": run_kind,
         "source_format": "Lean .ilean v5 resolved references",
@@ -269,6 +270,53 @@ def extract_usages(run_kind: str) -> dict[str, Any]:
     return manifest
 
 
+def classify_parent_usages(
+    usages: pl.DataFrame, base_nodes: pl.DataFrame
+) -> tuple[pl.DataFrame, pl.DataFrame, pl.DataFrame, pl.DataFrame]:
+    """Partition usages by persistent parent identity and source-module agreement."""
+
+    sort_columns = [
+        column
+        for column in (
+            "parent_decl",
+            "module",
+            "target_decl",
+            "start_line",
+            "start_character",
+        )
+        if column in usages.columns
+    ]
+    parent_labeled = usages.filter(pl.col("parent_decl").is_not_null())
+    unparented = usages.filter(pl.col("parent_decl").is_null()).sort(sort_columns)
+    parent_modules = base_nodes.select(
+        pl.col("name").alias("parent_decl"),
+        pl.col("module").alias("parent_node_module"),
+    )
+    if parent_modules["parent_decl"].n_unique() != parent_modules.height:
+        raise ValueError("Environment declaration names must be unique for parent attribution")
+    unresolved = (
+        parent_labeled.join(
+            parent_modules.select("parent_decl"), on="parent_decl", how="anti"
+        )
+        .with_columns(pl.lit("parent_not_in_environment").alias("exclusion_reason"))
+        .sort(sort_columns)
+    )
+    resolved = parent_labeled.join(
+        parent_modules, on="parent_decl", how="inner", validate="m:1"
+    )
+    mismatched = (
+        resolved.filter(pl.col("module") != pl.col("parent_node_module"))
+        .with_columns(pl.lit("parent_module_mismatch").alias("exclusion_reason"))
+        .sort(sort_columns)
+    )
+    attributed = (
+        resolved.filter(pl.col("module") == pl.col("parent_node_module"))
+        .drop("parent_node_module")
+        .sort(sort_columns)
+    )
+    return attributed, unparented, unresolved, mismatched
+
+
 def normalize_source_graph(run_kind: str) -> dict[str, Any]:
     snapshot = CONFIG["snapshot_id"]
     raw_dir = source_graph_raw_root(snapshot, run_kind)
@@ -288,25 +336,15 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
 
     base_dir = normalized_root(snapshot, run_kind)
     base_nodes = pl.read_parquet(base_dir / "nodes.parquet").drop("node_id")
-    parent_labeled = usages.filter(pl.col("parent_decl").is_not_null())
-    unparented = usages.filter(pl.col("parent_decl").is_null()).sort(
-        "module", "target_decl", "start_line", "start_character"
+    attributed, unparented, unresolved_parent_usages, mismatched_parent_usages = (
+        classify_parent_usages(usages, base_nodes)
     )
-    unresolved_parent_usages = (
-        parent_labeled.join(
-            base_nodes.select(pl.col("name").alias("parent_decl")),
-            on="parent_decl",
-            how="anti",
-        )
-        .with_columns(pl.lit("parent_not_in_environment").alias("exclusion_reason"))
-        .sort("parent_decl", "module", "target_decl", "start_line", "start_character")
-    )
-    attributed = parent_labeled.join(
-        base_nodes.select(pl.col("name").alias("parent_decl")),
-        on="parent_decl",
-        how="semi",
-    )
-    if usages.height != attributed.height + unparented.height + unresolved_parent_usages.height:
+    if usages.height != (
+        attributed.height
+        + unparented.height
+        + unresolved_parent_usages.height
+        + mismatched_parent_usages.height
+    ):
         raise ValueError(
             "source usages were lost while classifying declaration-parent attribution"
         )
@@ -416,6 +454,7 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
         "usages": normalized_usages,
         "unparented_usages": unparented,
         "unresolved_parent_usages": unresolved_parent_usages,
+        "mismatched_parent_usages": mismatched_parent_usages,
         "external_nodes": external_nodes,
         "modules": modules,
     }
@@ -430,7 +469,7 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
             "null_counts": {column: frame[column].null_count() for column in frame.columns},
         }
     manifest = {
-        "schema_version": "source-graph-normalized-manifest-v1",
+        "schema_version": "source-graph-normalized-manifest-v2",
         "graph_schema_version": SOURCE_GRAPH_SCHEMA_VERSION,
         "node_source_graph_schema_version": GRAPH_SCHEMA_VERSION,
         "snapshot_id": snapshot,
@@ -438,10 +477,11 @@ def normalize_source_graph(run_kind: str) -> dict[str, Any]:
         "edge_direction": "consumer_declaration_to_resolved_target_declaration",
         "edge_type": "SOURCE",
         "multiplicity": "distinct_resolved_source_ranges",
-        "parent_labeled_usage_count": parent_labeled.height,
+        "parent_labeled_usage_count": int(usages["parent_decl"].is_not_null().sum()),
         "attributed_usage_count": attributed.height,
         "unparented_usage_count": unparented.height,
         "unresolved_parent_usage_count": unresolved_parent_usages.height,
+        "parent_module_mismatch_usage_count": mismatched_parent_usages.height,
         "target_names_with_multiple_module_hints": target_module_ambiguity_count,
         "edge_multiplicity_sum": edges.select(pl.col("multiplicity").sum()).item(),
         "self_loop_edge_count": edges.filter(pl.col("src_id") == pl.col("dst_id")).height,

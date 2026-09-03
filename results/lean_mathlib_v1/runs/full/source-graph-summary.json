@@ -8,9 +8,9 @@
         "snapshot_id": 0,
         "src_id": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/edges.parquet",
-      "rows": 1837322,
-      "sha256": "34f99235b6cd4b1c43ed9321c5bc4b579e35fd4ffd838c8c04fff2c13730843d"
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/edges.parquet",
+      "rows": 1837319,
+      "sha256": "bc48b29c1dd475e8d7c155ce0d40bd0a7709f3180a84514189418f23e42664cf"
     },
     "external_nodes": {
       "null_counts": {
@@ -21,9 +21,27 @@
         "target_module_hint_count": 0,
         "target_module_hints": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/external_nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/external_nodes.parquet",
       "rows": 7299,
       "sha256": "4e99ae9e2e6232479b776c3ccecf27284703a8eb3263068b8fa545b5c54cc352"
+    },
+    "mismatched_parent_usages": {
+      "null_counts": {
+        "end_character": 0,
+        "end_line": 0,
+        "exclusion_reason": 0,
+        "module": 0,
+        "parent_decl": 0,
+        "parent_node_module": 0,
+        "snapshot_id": 0,
+        "start_character": 0,
+        "start_line": 0,
+        "target_decl": 0,
+        "target_module": 0
+      },
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/mismatched_parent_usages.parquet",
+      "rows": 9,
+      "sha256": "21db039e1fa4984f21a85ded32d33cc5b3e833212151e3e2174339c87c2c22d5"
     },
     "modules": {
       "null_counts": {
@@ -35,7 +53,7 @@
         "unattributed_usage_count": 0,
         "usage_count": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/modules.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/modules.parquet",
       "rows": 8264,
       "sha256": "aaa8c1d226238a3879874ecb6a13a31059fbfe4dd60c2ec7416ad6230c8a4e8a"
     },
@@ -61,7 +79,7 @@
         "value_const_unique": 13115,
         "value_expr_nodes": 13115
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/nodes.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/nodes.parquet",
       "rows": 566238,
       "sha256": "c0f77a7e070bf310db18be7070172d1ab31f4019af11381673cab6fd6a581e84"
     },
@@ -77,7 +95,7 @@
         "target_decl": 0,
         "target_module": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/unparented_usages.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/unparented_usages.parquet",
       "rows": 109575,
       "sha256": "dd1b6e8b9c2331a5b04949739719a3ac55b742db6ada6e1e29602ac0c859da91"
     },
@@ -94,7 +112,7 @@
         "target_decl": 0,
         "target_module": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/unresolved_parent_usages.parquet",
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/unresolved_parent_usages.parquet",
       "rows": 2252,
       "sha256": "18d832337cf4da854388c7e204315d2bec79b7519d1eef2ad0d02eba55d78df1"
     },
@@ -110,21 +128,22 @@
         "start_line": 0,
         "target_module": 0
       },
-      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v1/full/usages.parquet",
-      "rows": 2384758,
-      "sha256": "4e375a8f53edbb9dfbe97c36669a60d4fe16be08ecb83f98509a8e9f4596dc18"
+      "path": "data/lean_mathlib/mathlib-v4.32.1/normalized/lean-source-graph-v2/full/usages.parquet",
+      "rows": 2384749,
+      "sha256": "c4317c5b71515b5e396e09a8a44d022df66cd28eb8de41ad8def01f748b87eb3"
     }
   },
-  "attributed_usage_count": 2384758,
+  "attributed_usage_count": 2384749,
   "edge_direction": "consumer_declaration_to_resolved_target_declaration",
-  "edge_multiplicity_sum": 2384758,
+  "edge_multiplicity_sum": 2384749,
   "edge_type": "SOURCE",
-  "graph_schema_version": "lean-source-graph-v1",
+  "graph_schema_version": "lean-source-graph-v2",
   "multiplicity": "distinct_resolved_source_ranges",
   "node_source_graph_schema_version": "lean-graph-v2",
   "parent_labeled_usage_count": 2387010,
+  "parent_module_mismatch_usage_count": 9,
   "run_kind": "full",
-  "schema_version": "source-graph-normalized-manifest-v1",
+  "schema_version": "source-graph-normalized-manifest-v2",
   "self_loop_edge_count": 2580,
   "self_loop_multiplicity": 4714,
   "snapshot_id": "mathlib-v4.32.1",
