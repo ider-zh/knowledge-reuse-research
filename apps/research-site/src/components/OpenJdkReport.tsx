@@ -181,6 +181,62 @@ export default function OpenJdkReport() {
               <b>可比边界</b>
               <p>论文的 Linux 数据还包含 x86 指令，SunOS 与 Mac OS X 因遗漏这类高频组件而从 n=50 起排 rank。本 JDK 曲线的组件单位始终是 method，不存在对应的“遗漏指令”层，因此从 n=1 开始且不作 offset。这里比较静态引用分布的形状，不比较运行时执行频率，也不声称复现论文三套 Unix 原始数据。</p>
             </aside>
+            <section className="paper-prime-conclusion" aria-labelledby="paper-prime-title">
+              <header>
+                <div><p className="eyebrow">PAPER CONCLUSION · PRIME ANALOGIES</p><h3 id="paper-prime-title">论文使用了素数概念，但没有建立新的素数分布</h3></div>
+                <p>素数在论文中承担理论类比与研究启发的作用，不是软件复用频率的直接生成机制。</p>
+              </header>
+              <div className="prime-analogy-grid">
+                <article><span>01</span><p><b>素数无限多</b><i>↔</i>有用软件组件可能无限多</p></article>
+                <article><span>02</span><p><b>素数作为整数因子的频率</b><i>↔</i>组件在程序中的复用频率</p></article>
+                <article><span>03</span><p><b>第 n 个素数的大小</b><i>↔</i>第 n 个组件的规模</p></article>
+                <article><span>04</span><p><b>整数所含素因子的数量</b><i>↔</i>程序使用的组件数量</p></article>
+              </div>
+              <aside>
+                <span>论文真正拟合和讨论的组件复用分布</span>
+                <strong>λ(n) ≈ c / n</strong>
+                <p>这是 Zipf-like 复用分布。因而，本报告路径章节中的 <code>1/pᵣ</code> 只能作为额外的负对照，不能表述为论文提出的软件复用模型。</p>
+              </aside>
+            </section>
+            <section className="paper-conclusion-comparison" aria-labelledby="paper-comparison-title">
+              <header>
+                <div><p className="eyebrow">PAPER CONCLUSIONS × OPENJDK EVIDENCE</p><h3 id="paper-comparison-title">论文结论与 JDK 统计的比较</h3></div>
+                <p>JDK 调用图能直接检验“组件引用频率的形状”，但不能仅凭一次静态快照识别最大熵机制、估计问题域熵 H，或证明无限性命题。</p>
+              </header>
+              <div className="table-scroll">
+                <table>
+                  <thead><tr><th>论文结论</th><th>JDK 统计结果</th><th>判断</th></tr></thead>
+                  <tbody>
+                    <tr>
+                      <td>组件按使用频率排序后呈 <code>λ(n)≈c/n</code> 的 Zipf-like 曲线。</td>
+                      <td>{integer.format(data.paper_reuse.population.referenced_methods)} 个被引用方法的 β={paperZipf.free_exponent_beta.toFixed(3)}；固定 <code>1/r</code> 的 R²={paperZipf.fixed_r_squared_log10.toFixed(3)}、RMSE={paperZipf.fixed_rmse_log10.toFixed(3)} decades。</td>
+                      <td><span className="evidence-status supported">支持</span></td>
+                    </tr>
+                    <tr>
+                      <td>程序员追求更短的代码，使库朝最大熵配置演化；Zipf 曲线是这种压力的结果。</td>
+                      <td>JDK 数据复现了曲线形状，但单次观察性快照不能区分最大熵、API 设计惯例、代码生成或其他形成机制。</td>
+                      <td><span className="evidence-status bounded">形状一致，机制未验证</span></td>
+                    </tr>
+                    <tr>
+                      <td>问题域熵参数 H 限制复用潜力：最多约 <code>1−H</code> 的代码可来自库；H 越低，越可能出现强复用。</td>
+                      <td>调用引用数不包含“未压缩程序大小”、组件带来的代码节省或问题域程序分布，不能从当前 graph 反推 H。</td>
+                      <td><span className="evidence-status untested">不可由本数据检验</span></td>
+                    </tr>
+                    <tr>
+                      <td>任何有限库都不完备；随着问题域扩展，总会存在更多能缩短程序的有用组件。</td>
+                      <td>OpenJDK 28+13 是一个固定时间点的有限快照。验证该命题需要跨版本增长、组件加入及其实际节省量数据。</td>
+                      <td><span className="evidence-status untested">未检验</span></td>
+                    </tr>
+                    <tr>
+                      <td>组件规模、使用次数与标识成本受理论界限约束；程序使用的组件数量可能呈 Erdős–Kac 式正态行为。</td>
+                      <td>本次分析以 method call site 为单位，没有估计每次复用节省的代码量，也没有按独立应用统计组件数量分布。</td>
+                      <td><span className="evidence-status untested">未检验</span></td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+              <aside><b>综合结论</b><p>OpenJDK 结果为论文最直接的经验命题——“库组件的静态引用频率近似 Zipf”——提供了新的 Java 类库证据；它不构成对论文全部信息论与 Kolmogorov complexity 结论的验证。路径入度 β={data.rank_shape.ranges[0].models.zipf.free_exponent_beta.toFixed(3)} 则说明，换成传递路径组合后分布会显著变陡，因此指标定义决定了能否与论文比较。</p></aside>
+            </section>
             <p className="path-rank-references">论文原文：<a href={data.references.paper} target="_blank" rel="noreferrer">Veldhuizen, 2005, arXiv:cs/0508023v3 ↗</a></p>
           </div>
         </section>
