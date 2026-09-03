@@ -117,6 +117,9 @@ def test_public_node_sample_explains_overlapping_selection_reasons() -> None:
             "value_expr_tree_occurrences": [100, 2],
             "in_degree_source": [20, 1],
             "in_occurrences_source": [25, 1],
+            "in_paths_source": ["125", "1"],
+            "in_paths_source_log10": [2.09691, 0.0],
+            "is_path_cycle_boundary": [False, False],
             "out_degree_source": [2, 3],
             "out_occurrences_source": [4, 3],
         }

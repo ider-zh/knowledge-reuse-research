@@ -29,6 +29,7 @@ type Props = {
 };
 
 const number = (value: number | null | undefined) => value?.toLocaleString() ?? "—";
+const exactInteger = (value: string) => BigInt(value).toLocaleString("en-US");
 
 const nodeColumns: Column<NodeSample>[] = [
   { id: "name", label: "declaration", value: (row) => row.name },
@@ -46,6 +47,14 @@ const nodeColumns: Column<NodeSample>[] = [
   { id: "kind", label: "kind", value: (row) => row.kind },
   { id: "source_degree", label: "SOURCE 直接入度", value: (row) => row.in_degree_source, align: "right" },
   { id: "source_occurrences", label: "入向 occurrence", value: (row) => row.in_occurrences_source, align: "right" },
+  {
+    id: "source_paths",
+    label: "直接+间接路径入度",
+    value: (row) => row.in_paths_source_log10,
+    render: (row) => exactInteger(row.in_paths_source),
+    align: "right",
+  },
+  { id: "cycle_boundary", label: "循环边界?", value: (row) => row.is_path_cycle_boundary },
   { id: "out_degree", label: "SOURCE 出度", value: (row) => row.out_degree_source, align: "right" },
   { id: "tokens", label: "Token", value: (row) => row.source_tokens, align: "right" },
   {
@@ -129,8 +138,8 @@ function NodeDegreeGuide({ rows }: { rows: NodeSample[] }) {
   return (
     <aside className="degree-guide" aria-labelledby="degree-guide-title">
       <header>
-        <p className="eyebrow">DIRECT INDEGREE &amp; SOURCE OCCURRENCES</p>
-        <h3 id="degree-guide-title">复用广度与源码引用次数是两个不同统计量</h3>
+        <p className="eyebrow">DIRECT DEGREE, OCCURRENCES &amp; PATHS</p>
+        <h3 id="degree-guide-title">直接复用、源码次数与传递路径是三个不同统计量</h3>
       </header>
       <div className="degree-guide-grid">
         <article>
@@ -145,11 +154,16 @@ function NodeDegreeGuide({ rows }: { rows: NodeSample[] }) {
           <b>入向 occurrence</b>
           <p>所有 A→B pair 的 multiplicity 之和，即解析到 B 的不同源码位置数。self-loop 单独保留，但不计作“被其他声明复用”。</p>
         </article>
+        <article>
+          <b>直接+间接路径入度</b>
+          <p>计算所有终止于 B 的 SOURCE 路径，并把 edge multiplicity 当作平行路径数。路径到达循环 SCC 后停止，不穿过循环继续传播；结果保留为任意精度整数。</p>
+        </article>
       </div>
       {example && (
         <p className="degree-example">
           <b>表中算例 · DFunLike.coe：</b>
-          直接入度 {number(example.in_degree_source)}，入向 occurrence {number(example.in_occurrences_source)}。后者较大，是因为部分 consumer 在不同源码位置重复引用它。
+          直接入度 {number(example.in_degree_source)}，入向 occurrence {number(example.in_occurrences_source)}，
+          直接+间接路径入度 {exactInteger(example.in_paths_source)}。路径指标回答依赖链可沿多少条不同路线到达该节点，不等于独立 consumer 数，也不代表实际执行次数。
         </p>
       )}
     </aside>

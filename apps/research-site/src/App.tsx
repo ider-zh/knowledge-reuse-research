@@ -7,6 +7,7 @@ import { loadOverview } from "./data";
 import type { Claim, ExplorerKind, Overview } from "./types";
 
 const format = new Intl.NumberFormat("en-US");
+const formatExact = (value: string) => BigInt(value).toLocaleString("en-US");
 const DomainCharts = lazy(() => import("./components/DomainCharts"));
 const ReuseDistributionChart = lazy(() => import("./components/ReuseDistributionChart"));
 
@@ -66,6 +67,25 @@ function App() {
           <MetricCard number={metrics.source_occurrences} label="源码引用 occurrence" detail="不同 resolved LSP source ranges" onClick={() => open("source")} />
           <MetricCard number={metrics.repeated_pairs} label="重复引用 pairs" detail="multiplicity 大于 1" onClick={() => open("source")} />
           <MetricCard number={metrics.self_loop_pairs} label="SOURCE self-loops" detail="递归或自引用源码位置" onClick={() => open("source")} />
+        </section>
+
+        <section className="path-indegree-summary" aria-labelledby="path-indegree-title">
+          <div>
+            <p className="eyebrow">NEW NODE METRIC</p>
+            <h2 id="path-indegree-title">直接+间接路径入度</h2>
+            <p>
+              对所有终止于节点 v 的 SOURCE 路径计数；edge multiplicity 表示平行路径数。
+              所有直接边均保留，路径到达循环 SCC 后停止，因而不会形成无限 walk。
+            </p>
+          </div>
+          <dl>
+            <div><dt>计算式</dt><dd>P(v) = Σ m(u,v) × (1 + 可延伸至 u 的路径数)</dd></div>
+            <div><dt>循环边界节点</dt><dd>{format.format(overview.path_indegree.cycle_boundary_node_count)}</dd></div>
+            <div className="path-maximum"><dt>当前最大精确值</dt><dd>{formatExact(overview.path_indegree.maximum_exact)}</dd></div>
+          </dl>
+          <aside>
+            这是依赖链路线数量，不是独立 consumer 数、执行次数或工作量。Zipf、Gini 与 Top-k 主结论继续使用直接、非 self-loop 的 SOURCE 入度。
+          </aside>
         </section>
 
         <aside className="attribution-boundary">

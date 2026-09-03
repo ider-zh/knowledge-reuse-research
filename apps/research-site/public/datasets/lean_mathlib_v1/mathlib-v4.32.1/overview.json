@@ -3317,6 +3317,14 @@
     "unparented_usages": 109575,
     "unresolved_parent_usages": 2252
   },
+  "path_indegree": {
+    "cycle_boundary_node_count": 2640,
+    "maximum_exact": "49771243065343156822021307685733",
+    "maximum_log10": 31.696978487633263,
+    "metric": "in_paths_source",
+    "semantics": "exact multiplicity-weighted direct and indirect incoming path count; paths stop when they reach a cyclic SCC",
+    "storage": "exact decimal string plus base-10 logarithm"
+  },
   "run_kind": "full",
   "sampling_policy": {
     "domain_edges": "每个非空领域 cell 按完整 source/target 名取前 3 个 SOURCE pair",

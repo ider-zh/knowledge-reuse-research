@@ -30,6 +30,17 @@ def test_public_overview_matches_full_source_graph_summary() -> None:
     assert overview["headline_metrics"]["self_loop_pairs"] == source_graph[
         "self_loop_edge_count"
     ]
+    assert overview["path_indegree"] == {
+        "cycle_boundary_node_count": 2640,
+        "maximum_exact": "49771243065343156822021307685733",
+        "maximum_log10": 31.696978487633263,
+        "metric": "in_paths_source",
+        "semantics": (
+            "exact multiplicity-weighted direct and indirect incoming path count; "
+            "paths stop when they reach a cyclic SCC"
+        ),
+        "storage": "exact decimal string plus base-10 logarithm",
+    }
 
 
 def test_dfunlike_public_case_distinguishes_graph_and_excluded_location() -> None:
@@ -66,6 +77,16 @@ def test_public_attribution_boundary_partitions_source_contexts() -> None:
     assert profile["population"] == 107586
     assert profile["variable_context_count"] == 80439
     assert sum(profile["categories"].values()) == profile["population"]
+
+
+def test_public_node_sample_exposes_exact_path_indegree() -> None:
+    nodes = load("nodes.json")["rows"]
+    dfunlike = next(row for row in nodes if row["name"] == "DFunLike.coe")
+
+    assert dfunlike["in_degree_source"] == 370
+    assert dfunlike["in_occurrences_source"] == 386
+    assert dfunlike["in_paths_source"] == "19302141636508271"
+    assert dfunlike["is_path_cycle_boundary"] is False
 
 
 def test_public_manifest_checksums_every_published_payload() -> None:

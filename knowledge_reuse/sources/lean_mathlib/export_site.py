@@ -35,6 +35,9 @@ NODE_COLUMNS = [
     "value_expr_tree_occurrences",
     "in_degree_source",
     "in_occurrences_source",
+    "in_paths_source",
+    "in_paths_source_log10",
+    "is_path_cycle_boundary",
     "out_degree_source",
     "out_occurrences_source",
 ]
@@ -64,6 +67,12 @@ def public_node_sample(nodes: pl.DataFrame) -> pl.DataFrame:
             nodes.sort("domain", "in_degree_source", "name", descending=[False, True, False])
             .group_by("domain", maintain_order=True)
             .head(5),
+        ),
+        (
+            "直接+间接 SOURCE 路径数前 60",
+            nodes.filter(pl.col("in_paths_source_log10").is_not_null())
+            .sort("in_paths_source_log10", "name", descending=[True, False])
+            .head(60),
         ),
         (
             "Value Expr 展开复杂度前 60（辅助节点属性）",
@@ -853,6 +862,7 @@ def export_site(output: pathlib.Path, run_kind: str = "full") -> dict[str, Any]:
                 "unparented_usages": summary["unparented_usage_count"],
                 "unresolved_parent_usages": summary["unresolved_parent_usage_count"],
             },
+            "path_indegree": summary["path_indegree"],
             "domain_algorithm": {
                 "classification": "Mathlib.X... → X；非 Mathlib module → 第一段",
                 "edge_direction": "consumer/source domain → resolved target domain",

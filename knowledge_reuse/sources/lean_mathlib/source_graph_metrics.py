@@ -12,6 +12,7 @@ import numpy as np
 import polars as pl
 
 from knowledge_reuse.analysis.concentration import gini, top_share
+from knowledge_reuse.analysis.path_indegree import weighted_incoming_path_counts
 from knowledge_reuse.analysis.powerlaw import fit_tail
 from knowledge_reuse.sources.lean_mathlib.layout import (
     CONFIG_PATH,
@@ -29,11 +30,16 @@ def metrics_root(run_kind: str):
 
 
 def with_source_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.DataFrame:
-    """Attach direct, non-self SOURCE reuse breadth and occurrence counts."""
+    """Attach direct SOURCE metrics and exact cycle-bounded incoming paths."""
 
     internal_ids = nodes.select("node_id")
-    internal_edges = edges.join(
-        internal_ids.rename({"node_id": "dst_id"}), on="dst_id", how="inner"
+    internal_edges = (
+        edges.join(
+            internal_ids.rename({"node_id": "src_id"}), on="src_id", how="inner"
+        )
+        .join(
+            internal_ids.rename({"node_id": "dst_id"}), on="dst_id", how="inner"
+        )
     )
     reuse_edges = internal_edges.filter(pl.col("src_id") != pl.col("dst_id"))
     incoming = reuse_edges.group_by("dst_id").agg(
@@ -44,9 +50,13 @@ def with_source_node_metrics(nodes: pl.DataFrame, edges: pl.DataFrame) -> pl.Dat
         pl.col("dst_id").n_unique().alias("out_degree_source"),
         pl.col("multiplicity").sum().alias("out_occurrences_source"),
     )
+    path_counts = weighted_incoming_path_counts(
+        nodes["node_id"], internal_edges.select("src_id", "dst_id", "multiplicity")
+    )
     return (
         nodes.join(incoming, left_on="node_id", right_on="dst_id", how="left")
         .join(outgoing, left_on="node_id", right_on="src_id", how="left")
+        .join(path_counts, on="node_id", how="left", validate="1:1")
         .with_columns(
             pl.col(column).fill_null(0).cast(pl.UInt64)
             for column in (
@@ -174,8 +184,11 @@ def analyze_source_graph(run_kind: str = "full") -> dict[str, Any]:
     ].to_numpy()
     repeated = edges.filter(pl.col("multiplicity") > 1)
     non_self = edges.filter(pl.col("src_id") != pl.col("dst_id"))
+    ranked_paths = node_metrics.filter(
+        pl.col("in_paths_source_log10").is_not_null()
+    ).sort("in_paths_source_log10", descending=True)
     summary = {
-        "schema_version": "lean-source-graph-analysis-v1",
+        "schema_version": "lean-source-graph-analysis-v2",
         "graph_schema_version": "lean-source-graph-v1",
         "snapshot_id": snapshot,
         "run_kind": run_kind,
@@ -192,6 +205,25 @@ def analyze_source_graph(run_kind: str = "full") -> dict[str, Any]:
         "unresolved_parent_usage_count": int(
             source_manifest["unresolved_parent_usage_count"]
         ),
+        "path_indegree": {
+            "metric": "in_paths_source",
+            "semantics": (
+                "exact multiplicity-weighted direct and indirect incoming path count; "
+                "paths stop when they reach a cyclic SCC"
+            ),
+            "storage": "exact decimal string plus base-10 logarithm",
+            "cycle_boundary_node_count": int(
+                node_metrics["is_path_cycle_boundary"].sum()
+            ),
+            "maximum_exact": (
+                ranked_paths.item(0, "in_paths_source") if ranked_paths.height else "0"
+            ),
+            "maximum_log10": (
+                float(ranked_paths.item(0, "in_paths_source_log10"))
+                if ranked_paths.height
+                else None
+            ),
+        },
         "positive_reused_target_count": int(positive.size),
         "reuse_concentration": {
             "population": "positive direct non-self SOURCE indegree targets",

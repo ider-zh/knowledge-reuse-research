@@ -27,6 +27,8 @@ def test_source_node_metrics_separate_direct_breadth_from_occurrences() -> None:
     assert target["in_degree_source"] == 2
     assert target["in_occurrences_source"] == 6
     assert target["out_degree_source"] == 0
+    assert target["in_paths_source"] == "19"
+    assert target["is_path_cycle_boundary"] is True
 
 
 def test_internal_domain_pairs_exclude_self_loops_and_external_targets() -> None:

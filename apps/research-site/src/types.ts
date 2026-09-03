@@ -46,6 +46,14 @@ export type Overview = {
   snapshot_id: string;
   run_kind: string;
   headline_metrics: HeadlineMetrics;
+  path_indegree: {
+    metric: string;
+    semantics: string;
+    storage: string;
+    cycle_boundary_node_count: number;
+    maximum_exact: string;
+    maximum_log10: number | null;
+  };
   graph_schema_version: string;
   domain_algorithm: Record<string, string>;
   sampling_policy: Record<string, string>;
@@ -67,6 +75,9 @@ export type NodeSample = {
   value_expr_tree_occurrences: number | null;
   in_degree_source: number;
   in_occurrences_source: number;
+  in_paths_source: string;
+  in_paths_source_log10: number | null;
+  is_path_cycle_boundary: boolean;
   out_degree_source: number;
   out_occurrences_source: number;
   sample_reason: string;

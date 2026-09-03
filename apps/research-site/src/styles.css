@@ -46,6 +46,15 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .metric-card b, .metric-card small { display: block; }
 .metric-card small { margin-top: 7px; color: var(--muted); font-size: 13px; line-height: 1.55; }
 .metric-link { color: var(--green); font: 500 13px/1 "DM Mono", monospace; letter-spacing: .06em; }
+.path-indegree-summary { display: grid; grid-template-columns: minmax(0,.85fr) minmax(0,1.15fr); gap: 32px 48px; padding: 30px 22px; border-bottom: 1px solid var(--line); background: var(--card); }
+.path-indegree-summary h2 { margin: 0; font: 750 clamp(28px,3.5vw,46px)/1.15 "Noto Serif SC", serif; }
+.path-indegree-summary > div > p:last-child { margin: 14px 0 0; color: var(--muted); font-size: 16px; line-height: 1.75; }
+.path-indegree-summary dl { min-width: 0; margin: 0; }
+.path-indegree-summary dl div { min-width: 0; display: grid; grid-template-columns: minmax(9rem,.45fr) minmax(0,1fr); gap: 20px; padding: 11px 0; border-top: 1px solid var(--line); }
+.path-indegree-summary dt { color: var(--muted); font-size: 14px; }
+.path-indegree-summary dd { min-width: 0; margin: 0; overflow-wrap: anywhere; font: 700 15px/1.65 "DM Mono", monospace; }
+.path-indegree-summary .path-maximum dd { color: var(--green-dark); font-size: clamp(15px,1.45vw,20px); }
+.path-indegree-summary > aside { grid-column: 1 / -1; padding: 15px 18px; border-left: 4px solid var(--gold); background: #f5e8d6; font-size: 15px; line-height: 1.75; }
 .attribution-boundary { display: grid; grid-template-columns: 260px 1fr; gap: 24px; padding: 20px 22px; border-bottom: 1px solid var(--line); background: #f5e8d6; }
 .attribution-boundary b { color: var(--green-dark); font: 700 16px "Noto Serif SC", serif; }
 .attribution-boundary p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
@@ -322,7 +331,7 @@ td.numeric, th.numeric { text-align: right; font-family: "DM Mono", monospace; }
 .degree-guide { margin: 16px 0 4px; border: 1px solid var(--line); background: #f8f6ef; }
 .degree-guide > header { padding: 15px 17px 13px; border-bottom: 1px solid var(--line); }
 .degree-guide h3 { margin: 4px 0 0; font: 700 18px/1.45 "Noto Serif SC", serif; }
-.degree-guide-grid { display: grid; grid-template-columns: repeat(3,1fr); }
+.degree-guide-grid { display: grid; grid-template-columns: repeat(4,1fr); }
 .degree-guide-grid article { min-width: 0; padding: 14px 17px; border-right: 1px solid var(--line); }
 .degree-guide-grid article:last-child { border-right: 0; }
 .degree-guide-grid b { color: var(--green-dark); font: 700 14px "DM Mono", monospace; }
@@ -343,6 +352,8 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
 
 @media (max-width: 1000px) {
   .hero, .section-heading { grid-template-columns: 1fr; }
+  .path-indegree-summary { grid-template-columns: 1fr; }
+  .path-indegree-summary > aside { grid-column: auto; }
   .hero { min-height: auto; }
   .concept-card { align-self: auto; margin: 0; }
   .claim-card, .claim-card:nth-child(1), .claim-card:nth-child(2) { grid-column: span 6; }
@@ -359,6 +370,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .case-workbench { grid-template-columns: 250px 1fr; }
   .case-evidence-grid { grid-template-columns: 1fr; }
   .domain-workbench { grid-template-columns: 280px 1fr; }
+  .degree-guide-grid { grid-template-columns: 1fr 1fr; }
 }
 
 @media (max-width: 720px) {
@@ -367,6 +379,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .hero { padding-top: 60px; }
   .hero h1 { font-size: 54px; }
   .metric-grid, .chart-grid, .algorithm-grid, .method-grid { grid-template-columns: 1fr; }
+  .path-indegree-summary dl div { grid-template-columns: 1fr; gap: 4px; }
   .attribution-boundary { grid-template-columns: 1fr; }
   .distribution-tabs { overflow-x: auto; }
   .distribution-tabs button { min-width: 150px; }

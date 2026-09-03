@@ -14,12 +14,12 @@
       "sha256": "b7f3bf8d79ef99595597c1f972d54d79b0db524693270a0b69d524544be8304b"
     },
     "nodes.json": {
-      "bytes": 168108,
-      "sha256": "600d81525978476f503dac773abbc767c4eefc5b3d35ac5fd5754d81c3afb11e"
+      "bytes": 239626,
+      "sha256": "8dcf6b9dc6b75f85c52dfeb6ab262db34db2f3ee8759aaf19757898f0f29a3d1"
     },
     "overview.json": {
-      "bytes": 97502,
-      "sha256": "ba50b741f7011148c66c28e5f0217e5c4a52802bf2c572e628a5aa7653832fa7"
+      "bytes": 97888,
+      "sha256": "85ef17e17378ee8af6048a919754b33d1319304021443f384bb21c16f74bb5a4"
     },
     "reuse-rank-frequency.json": {
       "bytes": 111570,
