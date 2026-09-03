@@ -107,6 +107,14 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 
 .path-rank-workbench { border: 1px solid var(--line); background: var(--card); }
 .path-rank-summary span, .path-rank-summary p { font-size: 14px; }
+.paper-method-map { display: grid; grid-template-columns: repeat(4,1fr); gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+.paper-method-map article { min-width: 0; padding: 20px; background: #f8f6ef; }
+.paper-method-map span { color: var(--green); font: 700 13px "DM Mono", monospace; letter-spacing: .04em; }
+.paper-method-map p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
+.paper-method-map code { color: var(--blue); font-size: 13px; }
+.paper-scope-note { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 22px 36px; border-top: 1px solid var(--line); background: #f5e8d6; }
+.paper-scope-note b { color: var(--green-dark); font: 750 17px "Noto Serif SC", serif; }
+.paper-scope-note p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
 .parameter-guide { border-bottom: 1px solid var(--line); background: #f8f6ef; }
 .parameter-guide > header { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: end; padding: 24px; border-bottom: 1px solid var(--line); }
 .parameter-guide h3 { margin: 0; font: 750 clamp(24px,3vw,38px)/1.2 "Noto Serif SC", serif; }
@@ -433,6 +441,7 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-summary article:nth-child(2) { border-right: 0; }
   .distribution-summary article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   .path-rank-methods { grid-template-columns: 1fr; }
+  .paper-method-map { grid-template-columns: 1fr 1fr; }
   .parameter-guide > header { grid-template-columns: 1fr; gap: 14px; }
   .construction-pipeline article::after { display: none; }
   .case-workbench { grid-template-columns: 250px 1fr; }
@@ -452,12 +461,15 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-tabs { overflow-x: auto; }
   .distribution-tabs button { min-width: 150px; }
   .distribution-summary { grid-template-columns: 1fr; }
+  .paper-method-map { grid-template-columns: 1fr; }
   .distribution-summary article { border-right: 0; border-bottom: 1px solid var(--line); }
   .distribution-chart { padding-inline: 4px; }
   .distribution-chart figcaption, .distribution-reading { display: block; }
   .distribution-chart figcaption span { display: block; margin-top: 6px; }
   .distribution-reading p { margin-top: 8px; }
   .path-rank-conclusion { display: block; padding: 20px; }
+  .paper-scope-note { display: block; padding: 20px; }
+  .paper-scope-note p { margin-top: 8px; }
   .parameter-grid { grid-template-columns: 1fr; }
   .parameter-grid article:nth-child(odd) { border-right: 0; }
   .parameter-guide > aside { display: block; }

@@ -13,7 +13,7 @@ import type {
 
 const ROOT = "/datasets/lean_mathlib_v1/mathlib-v4.32.1";
 const OPENJDK_ROOT = "/datasets/software_v1/openjdk-28-b13";
-const OPENJDK_DATASET_VERSION = "v2";
+const OPENJDK_DATASET_VERSION = "v3";
 
 async function loadJson<T>(path: string): Promise<T> {
   const response = await fetch(`${ROOT}/${path}`);
@@ -46,7 +46,8 @@ export async function loadOpenJdkReuseReport(): Promise<OpenJdkReuseReport> {
   }
   const payload = await response.json() as Partial<OpenJdkReuseReport>;
   if (
-    payload.schema_version !== "1.1"
+    payload.schema_version !== "1.2"
+    || !payload.paper_reuse?.rank_shape
     || !payload.samples?.method_nodes
     || !payload.extraction_examples?.node
     || !payload.extraction_examples?.edge

@@ -39,7 +39,9 @@ export default function OpenJdkReport() {
 
   const zipf = selected.models.zipf;
   const prime = selected.models.reciprocal_prime;
-  const primeImprovement = 100 * (zipf.fixed_rmse_log10 - prime.fixed_rmse_log10) / zipf.fixed_rmse_log10;
+  const paperRange = data.paper_reuse.rank_shape.ranges[0];
+  const paperZipf = paperRange.models.zipf;
+  const paperErrorFactor = 10 ** paperZipf.fixed_rmse_log10;
   const rankTenfoldDrop = 10 ** zipf.free_exponent_beta;
   const zipfErrorFactor = 10 ** zipf.fixed_rmse_log10;
   const primeErrorFactor = 10 ** prime.fixed_rmse_log10;
@@ -54,7 +56,8 @@ export default function OpenJdkReport() {
             <a className="report-switch" href="/">Lean 报告</a>
             <a href="#construction">抽取示例</a>
             <a href="#findings">主要发现</a>
-            <a href="#rank-shape">分布比较</a>
+            <a href="#paper-reuse">论文口径</a>
+            <a href="#rank-shape">路径口径</a>
             <a href="#top-methods">高路径节点</a>
             <a href="#method">方法</a>
             <a href="https://github.com/ider-zh/knowledge-reuse-research" target="_blank" rel="noreferrer">GitHub ↗</a>
@@ -68,7 +71,7 @@ export default function OpenJdkReport() {
             <p className="eyebrow">OPENJDK 28+13 / METHOD CALL GRAPH</p>
             <h1>Java 类库<br />方法复用分布</h1>
             <p className="hero-dek">
-              以 JVM method declaration 为节点，以已解析的字节码调用位置为边。本报告统计每个方法的直接调用入度，以及保留重复调用位置的直接+间接路径入度；路径到达循环边界即停止。
+              以 JVM method declaration 为节点，以已解析的字节码调用位置为边。本报告先按 Veldhuizen 的论文口径统计方法收到的静态引用次数，再与保留重复调用位置的直接+间接路径入度对照。
             </p>
           </div>
           <aside className="concept-card">
@@ -119,14 +122,14 @@ export default function OpenJdkReport() {
 
         <section id="findings" className="section-block findings">
           <div className="section-heading">
-            <div><p className="eyebrow">FINDINGS</p><h2>路径复用高度集中，但不服从 Zipf</h2></div>
-            <p>结论来自全部 {integer.format(data.population.nodes)} 个方法节点。零入度节点保留在总体统计中；只有正路径值可进入双对数 rank 曲线。</p>
+            <div><p className="eyebrow">FINDINGS</p><h2>直接引用近似 Zipf，路径组合不是</h2></div>
+            <p>结论来自同一批 {integer.format(data.population.nodes)} 个方法节点。两种曲线的差异来自计算定义，而不是语料变化。</p>
           </div>
           <div className="claim-grid software-claims">
             <article className="claim-card supported">
-              <header><span>supported</span><code>SOFT-PATH-01</code></header>
-              <p className="claim-text">最大直接+间接路径入度为 {exact(data.path_counts.maximum)}，路径组合跨越约 {data.path_counts.maximum_log10.toFixed(1)} 个十进数量级。</p>
-              <p className="claim-detail">路径数衡量依赖路线的分叉与汇合，不等于独立 caller 数或运行时调用频率。</p>
+              <header><span>supported</span><code>SOFT-REUSE-ZIPF-01</code></header>
+              <p className="claim-text">按论文的静态引用计数口径，经验 β={paperZipf.free_exponent_beta.toFixed(3)}，接近 Zipf 的 β=1。</p>
+              <p className="claim-detail">固定 1/r 模板达到 R²={paperZipf.fixed_r_squared_log10.toFixed(3)}、RMSE={paperZipf.fixed_rmse_log10.toFixed(3)} decades。</p>
             </article>
             <article className="claim-card inconclusive">
               <header><span>rejected fit</span><code>SOFT-ZIPF-01</code></header>
@@ -134,17 +137,58 @@ export default function OpenJdkReport() {
               <p className="claim-detail">固定 1/r 模板在 log₁₀ 空间的 R² 为 {data.rank_shape.ranges[0].models.zipf.fixed_r_squared_log10.toFixed(3)}。</p>
             </article>
             <article className="claim-card exploratory">
-              <header><span>negative control</span><code>SOFT-PRIME-01</code></header>
-              <p className="claim-text">1/pᵣ 比 1/r 的固定形状误差低 {primeImprovement.toFixed(1)}%，但仍不是充分拟合。</p>
-              <p className="claim-detail">素数倒数只是可下降的参考曲线；较小 RMSE 不能推出生成机制与素数有关。</p>
+              <header><span>metric boundary</span><code>SOFT-COMPARE-01</code></header>
+              <p className="claim-text">最大路径入度为 {exact(data.path_counts.maximum)}；路径组合与论文中的直接引用次数回答不同问题。</p>
+              <p className="claim-detail">直接引用衡量静态复用；路径入度放大上游分叉与汇合，不能互换为“number of uses”。</p>
             </article>
+          </div>
+        </section>
+
+        <section id="paper-reuse" className="section-block">
+          <div className="section-heading compact">
+            <div><p className="eyebrow">VELDHUIZEN 2005 · REUSE AND ZIPF'S LAW</p><h2>按论文“静态引用次数”重画</h2></div>
+            <p>论文遍历 Unix 安装中的可执行文件与 shared objects，统计每个库子程序被引用多少次，按次数降序排列，并在双对数坐标上与 <code>c·n⁻¹</code> 比较。这里逐项映射到 JDK 方法与已解析字节码调用点。</p>
+          </div>
+          <div className="path-rank-workbench paper-reuse-workbench">
+            <div className="distribution-summary path-rank-summary">
+              <article><span>被引用方法</span><strong>{integer.format(data.paper_reuse.population.referenced_methods)}</strong><p>零引用方法不进入 log–log 曲线</p></article>
+              <article><span>静态引用</span><strong>{integer.format(data.paper_reuse.population.references)}</strong><p>重复 bytecode call site 分别计数</p></article>
+              <article><span>经验 βrank</span><strong>{paperZipf.free_exponent_beta.toFixed(3)}</strong><p>接近论文 Zipf 基准 β=1</p></article>
+              <article><span>Zipf R² / RMSE</span><strong>{paperZipf.fixed_r_squared_log10.toFixed(3)}</strong><p>{paperZipf.fixed_rmse_log10.toFixed(3)} decades ≈ {paperErrorFactor.toFixed(2)}×</p></article>
+            </div>
+            <div className="paper-method-map" aria-label="论文方法到 OpenJDK 的计算映射">
+              <article><span>01 · component</span><p>论文：library subroutine<br />本图：JVM method declaration</p></article>
+              <article><span>02 · use</span><p>论文：目标文件中的静态 subroutine reference<br />本图：指向目标方法的已解析 bytecode invocation call site</p></article>
+              <article><span>03 · count</span><p><code>U(v)=Σ multiplicity(u,v)</code><br />只统计直接引用；不做传递闭包，不把 caller 的路径数带入。</p></article>
+              <article><span>04 · rank &amp; plot</span><p>按 U(v) 降序得到 rank n；绘制 <code>log₁₀(n)</code> 对 <code>log₁₀(U)</code>，叠加拟合幅度后的 <code>c/n</code>。</p></article>
+            </div>
+            <figure className="distribution-chart path-rank-chart">
+              <figcaption><b>OpenJDK 方法静态引用 rank–frequency</b><span>与论文 Figure 1 相同统计单位；网页按 log-rank 确定性抽样显示</span></figcaption>
+              <ResponsiveContainer width="100%" height={520}>
+                <ComposedChart data={paperRange.points} margin={{ top: 24, right: 34, bottom: 42, left: 32 }}>
+                  <CartesianGrid strokeDasharray="3 5" />
+                  <XAxis type="number" dataKey="log10_rank" domain={[0, "dataMax"]} tickFormatter={(v) => `10^${Number(v).toFixed(0)}`} label={{ value: "方法复用排名 n（log₁₀）", position: "insideBottom", offset: -22, fontSize: 14 }} />
+                  <YAxis type="number" domain={[Math.floor(paperRange.minimum_log10), Math.ceil(paperRange.maximum_log10)]} tickFormatter={(v) => `10^${Number(v).toFixed(0)}`} label={{ value: "静态引用次数 U（log₁₀）", angle: -90, position: "insideLeft", fontSize: 14 }} />
+                  <Tooltip formatter={(value, name) => [Number(value).toFixed(3), legend(String(name))]} labelFormatter={(_, payload) => payload?.[0] ? `rank ${integer.format(payload[0].payload.rank)}` : ""} />
+                  <Legend verticalAlign="top" formatter={(value) => legend(String(value))} />
+                  <Scatter name="paper_empirical_log10" dataKey="empirical_log10" fill="#1f6b53" line={{ stroke: "#1f6b53", strokeWidth: 2 }} shape="circle" />
+                  <Line name="paper_zipf_log10" dataKey="zipf_log10" stroke="#9d493d" strokeWidth={3} strokeDasharray="9 5" dot={false} />
+                </ComposedChart>
+              </ResponsiveContainer>
+              <p className="chart-method">固定 Zipf 线只拟合垂直幅度 c；β、R² 与 RMSE 是本研究为量化视觉吻合度补充的诊断量，论文 Figure 1 本身未报告这些统计量。{integer.format(data.paper_reuse.population.singleton_methods)} 个方法仅被引用一次，形成尾部台阶；论文也将大 rank 处的台阶归因于大量低频子程序。</p>
+            </figure>
+            <aside className="paper-scope-note">
+              <b>可比边界</b>
+              <p>论文的 Linux 数据还包含 x86 指令，SunOS 与 Mac OS X 因遗漏这类高频组件而从 n=50 起排 rank。本 JDK 曲线的组件单位始终是 method，不存在对应的“遗漏指令”层，因此从 n=1 开始且不作 offset。这里比较静态引用分布的形状，不比较运行时执行频率，也不声称复现论文三套 Unix 原始数据。</p>
+            </aside>
+            <p className="path-rank-references">论文原文：<a href={data.references.paper} target="_blank" rel="noreferrer">Veldhuizen, 2005, arXiv:cs/0508023v3 ↗</a></p>
           </div>
         </section>
 
         <section id="rank-shape" className="section-block">
           <div className="section-heading compact">
-            <div><p className="eyebrow">RANK–FREQUENCY COMPARISON</p><h2>全部路径入度、Zipf 与素数倒数</h2></div>
-            <p>节点按精确的直接+间接路径数降序排列。经验值和参考线都在 log₁₀ 空间比较；每个固定模板只拟合一个垂直截距。</p>
+            <div><p className="eyebrow">PATH METRIC · SEPARATE ANALYSIS</p><h2>路径入度、Zipf 与素数倒数</h2></div>
+            <p>这一节保留原先的结构性路径指标，但不再把它称为论文的 reuse count。节点按精确的直接+间接路径数降序排列；每个固定模板只拟合一个垂直截距。</p>
           </div>
           <div className="path-rank-workbench">
             <div className="distribution-tabs" role="group" aria-label="选择比较范围">
@@ -296,6 +340,8 @@ function SampleExplorer({ data, sampleKey, onClose }: { data: OpenJdkReuseReport
 }
 
 function legend(value: string) {
+  if (value === "paper_empirical_log10") return "OpenJDK 静态引用";
+  if (value === "paper_zipf_log10") return "论文基准 c/n";
   if (value === "empirical_log10") return "经验路径曲线";
   if (value === "zipf_log10") return "Zipf A/r";
   if (value === "reciprocal_prime_log10") return "素数倒数 A/pᵣ";

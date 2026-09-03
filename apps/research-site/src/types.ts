@@ -430,6 +430,31 @@ export type OpenJdkReuseReport = {
     maximum_log10: number;
     median_positive_log10: number;
   };
+  paper_reuse: {
+    paper: {
+      title: string;
+      section: string;
+      url: string;
+    };
+    method_alignment: {
+      paper_component: string;
+      openjdk_component: string;
+      paper_use: string;
+      openjdk_use: string;
+      ranking: string;
+      plot: string;
+      rank_offset: string;
+    };
+    population: {
+      all_methods: number;
+      referenced_methods: number;
+      unreferenced_methods: number;
+      references: number;
+      singleton_methods: number;
+      maximum_references: number;
+    };
+    rank_shape: Omit<PathRankComparison, "schema_version" | "snapshot_id" | "metric_definition" | "references">;
+  };
   rank_shape: Omit<PathRankComparison, "schema_version" | "snapshot_id" | "metric_definition" | "amplitude_policy" | "prime_transform" | "references">;
   top_nodes: OpenJdkTopMethod[];
   samples: {
@@ -486,6 +511,7 @@ export type OpenJdkReuseReport = {
     scope: string;
   };
   references: {
+    paper: string;
     zipf: string;
     nth_prime: string;
   };

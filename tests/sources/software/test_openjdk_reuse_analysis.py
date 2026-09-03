@@ -1,3 +1,4 @@
+import json
 from pathlib import Path
 
 import polars as pl
@@ -55,3 +56,17 @@ def test_analysis_writes_direct_and_indirect_metrics(tmp_path: Path, monkeypatch
     assert row["direct_call_occurrences"] == 3
     assert row["indirect_incoming_paths"] == "6"
     assert row["in_paths_source"] == "9"
+
+    summary = json.loads((output / "reuse_analysis.json").read_text())
+    assert summary["schema_version"] == "1.2"
+    assert summary["paper_reuse"]["population"] == {
+        "all_methods": 21,
+        "referenced_methods": 20,
+        "unreferenced_methods": 1,
+        "references": 23,
+        "singleton_methods": 18,
+        "maximum_references": 3,
+    }
+    paper_shape = summary["paper_reuse"]["rank_shape"]
+    assert paper_shape["metric"] == "direct_call_occurrences_log10"
+    assert paper_shape["ranges"][0]["observation_count"] == 20

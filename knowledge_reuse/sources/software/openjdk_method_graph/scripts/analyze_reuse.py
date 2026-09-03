@@ -68,6 +68,50 @@ def _metric_sample(row: dict) -> dict:
     }
 
 
+def _paper_reuse_analysis(metrics: pl.DataFrame) -> dict:
+    """Reproduce Veldhuizen's reference-count rank method for JVM methods."""
+
+    referenced = metrics.filter(pl.col("direct_call_occurrences") > 0)
+    log10_uses = referenced["direct_call_occurrences"].log10().to_numpy()
+    rank_shape = compare_rank_reference_curves(log10_uses)
+    rank_shape.update(
+        {
+            "metric": "direct_call_occurrences_log10",
+            "comparison_space": "ordinary least squares in log10(reference count) space",
+        }
+    )
+    return {
+        "paper": {
+            "title": "Software Libraries and Their Reuse: Entropy, Kolmogorov Complexity, and Zipf's Law",
+            "section": "Reuse and Zipf's Law / Section 6 experimental data collection",
+            "url": "https://arxiv.org/abs/cs/0508023v3",
+        },
+        "method_alignment": {
+            "paper_component": "library subroutine",
+            "openjdk_component": "JVM method declaration",
+            "paper_use": "static reference to a library subroutine in collected executable/shared objects",
+            "openjdk_use": "resolved bytecode invocation call site targeting the method",
+            "ranking": "components sorted by descending number of references",
+            "plot": "log-log rank n versus number of uses, compared with c*n^-1",
+            "rank_offset": (
+                "none; unlike the paper's SunOS and Mac OS X series, this corpus does not "
+                "omit a higher-frequency component category analogous to machine instructions"
+            ),
+        },
+        "population": {
+            "all_methods": metrics.height,
+            "referenced_methods": referenced.height,
+            "unreferenced_methods": metrics.height - referenced.height,
+            "references": int(referenced["direct_call_occurrences"].sum()),
+            "singleton_methods": referenced.filter(
+                pl.col("direct_call_occurrences") == 1
+            ).height,
+            "maximum_references": int(referenced["direct_call_occurrences"].max()),
+        },
+        "rank_shape": rank_shape,
+    }
+
+
 def _source_excerpt(
     source_zip: Path, module: str, class_name: str, source_file: str, start: int, end: int
 ) -> str:
@@ -338,7 +382,7 @@ def main() -> int:
             args.source_zip,
         )
     payload = {
-        "schema_version": "1.1",
+        "schema_version": "1.2",
         "snapshot_id": "openjdk-jdk-28+13",
         "graph_id": graph_id,
         "corpus": {
@@ -378,6 +422,7 @@ def main() -> int:
             if len(positive) == 1
             else float(pl.Series(positive).median()),
         },
+        "paper_reuse": _paper_reuse_analysis(metrics),
         "rank_shape": rank_shape,
         "top_nodes": top_rows,
         "samples": samples,
@@ -398,6 +443,7 @@ def main() -> int:
             ),
         },
         "references": {
+            "paper": "https://arxiv.org/abs/cs/0508023v3",
             "zipf": "https://en.wikipedia.org/wiki/Zipf%27s_law",
             "nth_prime": "https://dlmf.nist.gov/27.2",
         },
