@@ -411,6 +411,14 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
   const versions = data.phase_5_cross_version;
   const older = versions.snapshots[0];
   const newer = versions.snapshots[1];
+  const macroFold = mdl.folds.find((fold) => fold.fold === 1) ?? mdl.folds[0];
+  const macroExample = macroFold.top_candidates[0];
+  const addedMethodExample = versions.new_component_adoption.top_added_components[0];
+  const largestSizeBin = normality.size_bins[normality.size_bins.length - 1];
+  const stringExample = { size: 53292, components: 209 };
+  const stringExampleZ = (stringExample.components - largestSizeBin.component_mean) / largestSizeBin.component_stddev;
+  const highUseExample = component.display_points[0];
+  const largeMethodExample = component.display_points.find((point) => point.bytecode_length >= 100 && point.uses <= 50) ?? component.display_points[component.display_points.length - 1];
 
   return <section id="theorem-tests" className="section-block theorem-tests">
     <div className="section-heading">
@@ -426,6 +434,100 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
         <article><span>新组件是否持续出现并被采用</span><p><b>论文命题：</b>问题域扩展会继续产生有用组件。</p><p><b>JDK 代理：</b>比较官方 JDK 17 与 28 二进制快照，观察 method 增减，并检查旧版本已存在的 caller 是否开始引用新增 method。</p></article>
       </div>
       <aside><b>为什么没有直接复刻论文 Figure 4</b><p>Figure 4 以独立 executable/RPM 作为 program，并研究“软件规模—不同库子程序数”及其饱和区间。本分析只有 JMOD 内的 classfile 单元，也没有论文原始逐程序数据，因此采用条件 Q–Q 代理；它能反驳当前操作化下的正态形状，但不能改写论文原数据的结论。</p></aside>
+    </section>
+
+    <section className="experiment-walkthrough" aria-labelledby="library-test-title">
+      <header>
+        <div><p className="eyebrow">EXPERIMENT WALKTHROUGH · FINITE LIBRARY</p><h3 id="library-test-title">怎样寻找“库外仍有可复用组件”的证据</h3></div>
+        <p>这里采用两条互补证据链：留出实验问“未见过的 package 中是否仍存在可压缩的重复片段”；跨版本比较问“后来是否真的出现了新 method，而且旧 caller 开始使用它”。</p>
+      </header>
+      <div className="experiment-pair">
+        <article className="experiment-panel">
+          <header><span>01 · PACKAGE HOLDOUT</span><h4>先在训练包找片段，再到未见包验收</h4></header>
+          <ol className="process-steps">
+            <li><i>1</i><div><b>筛选可比较方法</b><p>保留非 synthetic、无分支、无异常处理、含 4–512 条指令的方法，共 {integer.format(mdl.eligible_method_count)} 个。</p></div></li>
+            <li><i>2</i><div><b>按 package 固定分成 5 组</b><p>每次用 4 组发现候选，把剩余 1 组完全留作测试；轮换后每组都恰好被留出一次。</p></div></li>
+            <li><i>3</i><div><b>只在训练组挖掘 macro</b><p>候选是长度 4–8 的 normalized opcode 连续片段，且至少出现在 3 个训练 package；同一方法中的重叠出现只取一次。</p></div></li>
+            <li><i>4</i><div><b>在留出组重新收费</b><p><code>净节省 = 原片段 bytes − 3×macro 引用 − macro 定义 − 8×引用 class</code>。仍大于零才算通过。</p></div></li>
+          </ol>
+          <div className="worked-example macro-example">
+            <span>真实样例 · fold {macroFold.fold}</span>
+            <div className="opcode-strip">{macroExample.opcodes.map((opcode) => <code key={opcode}>{opcode}</code>)}</div>
+            <dl>
+              <div><dt>训练集</dt><dd>{integer.format(macroExample.train_occurrences)} 次 / {integer.format(macroExample.train_packages)} packages</dd></div>
+              <div><dt>未见测试集</dt><dd>{integer.format(macroExample.test_occurrences)} 次 / {integer.format(macroExample.test_classes)} classes</dd></div>
+              <div><dt>扣费后</dt><dd><b>+{integer.format(macroExample.heldout_net_savings_bytes)} bytes</b></dd></div>
+            </dl>
+            <p>这个 opcode 顺序只从训练 package 中选出，却在未参与发现的 classes 中仍反复出现并留下正收益，因此它是“当前 method 词汇之外仍可能存在描述更短组件”的一个反例候选。</p>
+          </div>
+        </article>
+
+        <article className="experiment-panel">
+          <header><span>02 · CROSS-VERSION</span><h4>把两个 JDK 的 method 集合直接做差</h4></header>
+          <ol className="process-steps">
+            <li><i>1</i><div><b>统一 method 身份</b><p>两个快照都使用 <code>module/class#method(descriptor)</code>，避免重载方法或同名类被错误合并。</p></div></li>
+            <li><i>2</i><div><b>计算集合差</b><p><code>retained = JDK17 ∩ JDK28</code>；<code>added = JDK28 − JDK17</code>；<code>removed = JDK17 − JDK28</code>。</p></div></li>
+            <li><i>3</i><div><b>检查真实采用</b><p>在 JDK 28 的边中，只保留“retained caller → added callee”；这样不把纯粹新增模块内部的自用误当作旧代码采用。</p></div></li>
+          </ol>
+          <div className="set-balance" aria-label="JDK 17 到 JDK 28 method 集合变化">
+            <div><span>JDK 17</span><strong>{integer.format(older.methods)}</strong></div>
+            <i>− {integer.format(versions.delta.removed_methods)}<br />+ {integer.format(versions.delta.added_methods)}</i>
+            <div><span>JDK 28</span><strong>{integer.format(newer.methods)}</strong></div>
+          </div>
+          <p className="set-result"><code>{integer.format(versions.delta.added_methods)} − {integer.format(versions.delta.removed_methods)}</code><b>= 净增 {integer.format(versions.delta.net_methods)} methods</b></p>
+          <div className="worked-example version-example">
+            <span>真实新增组件样例</span>
+            <code>{addedMethodExample.method_key}</code>
+            <p>它收到来自 retained callers 的 {integer.format(addedMethodExample.uses)} 个调用位置；Code 长度 {addedMethodExample.bytecode_length} bytes，粗略复用量为 <code>({addedMethodExample.bytecode_length}−3)×{integer.format(addedMethodExample.uses)} = {integer.format(addedMethodExample.gross_bytes ?? 0)} bytes</code>。</p>
+          </div>
+        </article>
+      </div>
+      <aside><b>这两条证据共同说明什么</b><p>5/5 留出折出现正净节省，说明结果不只依赖某一组 package；JDK 17→28 又出现 {integer.format(versions.delta.added_methods)} 个新增方法，其中 {integer.format(versions.new_component_adoption.added_methods_referenced_from_retained_callers)} 个被旧身份 caller 引用。它们支持“有限快照仍可能遗漏有用组件”，但两个版本不能证明组件供给在数学意义上无限。</p></aside>
+    </section>
+
+    <section className="experiment-walkthrough" aria-labelledby="shape-test-title">
+      <header>
+        <div><p className="eyebrow">EXPERIMENT WALKTHROUGH · SHAPE &amp; SIZE</p><h3 id="shape-test-title">怎样检验组件数正态性与 use–size 关系</h3></div>
+        <p>较大的 classfile 天然会引用更多方法，所以不能把所有 class 的原始组件数直接混在一起。正态性检验先消除规模效应；use–size 检验则改以 method 为单位，观察“更常用”是否意味着“代码体更大”。</p>
+      </header>
+      <div className="experiment-pair">
+        <article className="experiment-panel">
+          <header><span>03 · CLASSFILE AS PROGRAM</span><h4>先按大小分层，再比较组件数形状</h4></header>
+          <ol className="process-steps">
+            <li><i>1</i><div><b>一个 classfile = 一个 program</b><p>大小 S 是序列化 <code>.class</code> bytes；组件数 K 是该 class 指向其他 class 的不同 callee method 数，同一 callee 的重复 call site 只计一个组件。</p></div></li>
+            <li><i>2</i><div><b>按 S 分成 20 个等量层</b><p>{integer.format(normality.program_count)} 个 classfile 依大小排序，每层约 1,360 个；在每层内部计算 K 的均值 μ 与标准差 σ。</p></div></li>
+            <li><i>3</i><div><b>把每个 class 标准化</b><p><code>z=(K−μ所在大小层)/σ所在大小层</code>，再把 20 层的 z 合并。这样比较的是“相对同尺寸 class 是否使用异常多的组件”。</p></div></li>
+            <li><i>4</i><div><b>与理想正态比较</b><p>Q–Q 点应贴近对角线，同时要求 <code>|skew|&lt;0.2</code>、<code>|excess kurtosis|&lt;0.5</code>、<code>R²&gt;0.99</code>。</p></div></li>
+          </ol>
+          <div className="worked-example classfile-example">
+            <span>真实 classfile 样例</span>
+            <code>java.base/java/lang/String.class</code>
+            <div className="classfile-flow"><b>{integer.format(stringExample.size)} bytes</b><i>→</i><b>{integer.format(stringExample.components)} 个不同 cross-class callee methods</b><i>→</i><b>最高尺寸层 z≈{stringExampleZ.toFixed(2)}</b></div>
+            <p>最高尺寸层的 μ={largestSizeBin.component_mean.toFixed(1)}、σ={largestSizeBin.component_stddev.toFixed(1)}，所以 <code>z=({stringExample.components}−{largestSizeBin.component_mean.toFixed(1)})/{largestSizeBin.component_stddev.toFixed(1)}≈{stringExampleZ.toFixed(2)}</code>。它落在同尺寸 class 的右侧尾部。</p>
+          </div>
+          <div className="threshold-ledger">
+            <div><span>skew</span><b>{normality.skewness.toFixed(3)}</b><small>要求 |值| &lt; 0.2</small></div>
+            <div><span>excess kurtosis</span><b>{normality.excess_kurtosis.toFixed(3)}</b><small>要求 |值| &lt; 0.5</small></div>
+            <div><span>Q–Q R²</span><b>{normality.qq_r_squared.toFixed(3)}</b><small>要求 &gt; 0.99</small></div>
+          </div>
+        </article>
+
+        <article className="experiment-panel">
+          <header><span>04 · METHOD USE × SIZE</span><h4>把“常用程度”和“方法体大小”分别排序</h4></header>
+          <ol className="process-steps">
+            <li><i>1</i><div><b>选择可精确定位的组件</b><p>总体为 {integer.format(component.population)} 个被 <code>STATIC</code> 或 <code>SPECIAL</code> 精确调用的具体方法，共 {integer.format(component.call_sites)} 个 call sites。</p></div></li>
+            <li><i>2</i><div><b>为每个 method 取得两个量</b><p><code>U = resolved invocation occurrences</code>；<code>S = Code.code_length bytes</code>。</p></div></li>
+            <li><i>3</i><div><b>比较排名而非绝对单位</b><p>Spearman ρ 比较 U 排名与 S 排名是否同向；接近 +1 表示越常用通常越大，接近 −1 表示越常用通常越小，接近 0 表示没有单调关系。</p></div></li>
+          </ol>
+          <div className="worked-example size-use-example">
+            <span>两个真实 method 的直观对照</span>
+            <div><code>{highUseExample.method}</code><p><b>{integer.format(highUseExample.uses)} uses</b><i style={{ width: "100%" }} /></p><small>{integer.format(highUseExample.bytecode_length)} byte Code</small><em style={{ width: "1%" }} /></div>
+            <div><code>{largeMethodExample.method}</code><p><b>{integer.format(largeMethodExample.uses)} uses</b><i style={{ width: `${Math.max(2, 100 * Math.log10(largeMethodExample.uses + 1) / Math.log10(highUseExample.uses + 1))}%` }} /></p><small>{integer.format(largeMethodExample.bytecode_length)} bytes Code</small><em style={{ width: "100%" }} /></div>
+            <p>最常用的构造器可能只有 1 byte，而较大的方法也可能只出现几十次；这种交叉排序在总体中反复出现。</p>
+          </div>
+          <div className="rho-result"><span>Spearman ρ</span><strong>{component.spearman_log_use_vs_log_size.toFixed(3)}</strong><p>数值几乎为 0：方法被静态引用得多，并不意味着其 bytecode 更大或更小。样本很大使 p={component.spearman_p_value.toFixed(3)}，但效应量仍可忽略。</p></div>
+        </article>
+      </div>
     </section>
 
     <div className="theorem-verdicts">

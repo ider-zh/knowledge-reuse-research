@@ -542,12 +542,19 @@ export type ReuseTheoremReport = {
       pre_registered_shape_consistent: boolean;
       histogram: Array<{ z_left: number; z_right: number; count: number }>;
       qq_points: Array<{ normal_quantile: number; observed_z: number }>;
+      size_bins: Array<{
+        size_median: number;
+        program_count: number;
+        component_mean: number;
+        component_stddev: number;
+      }>;
     }>;
   };
   phase_4_component_size: {
     population: number;
     call_sites: number;
     spearman_log_use_vs_log_size: number;
+    spearman_p_value: number;
     gross_savings_meets_log2_rank_fraction: number;
     global_component_identifier_min_bits: number;
     binned_points: Array<{
@@ -555,6 +562,13 @@ export type ReuseTheoremReport = {
       median_uses: number;
       median_bytecode_length: number;
       theoretical_min_identifier_bits: number;
+    }>;
+    display_points: Array<{
+      rank: number;
+      uses: number;
+      bytecode_length: number;
+      gross_savings_bytes_per_use: number;
+      method: string;
     }>;
   };
   phase_4_mdl_incompleteness: {
@@ -565,9 +579,20 @@ export type ReuseTheoremReport = {
     median_best_heldout_net_savings_bytes: number;
     folds: Array<{
       fold: number;
+      train_methods: number;
       test_methods: number;
+      selected_candidates: number;
       positive_heldout_candidates: number;
       best_heldout_net_savings_bytes: number;
+      top_candidates: Array<{
+        opcodes: string[];
+        length: number;
+        train_occurrences: number;
+        train_packages: number;
+        test_occurrences: number;
+        test_classes: number;
+        heldout_net_savings_bytes: number;
+      }>;
     }>;
   };
   phase_5_cross_version: {
@@ -597,6 +622,12 @@ export type ReuseTheoremReport = {
       added_methods_referenced_from_retained_callers: number;
       retained_caller_calls_to_added_methods: number;
       gross_savings_proxy_bytes: number;
+      top_added_components: Array<{
+        method_key: string;
+        uses: number;
+        bytecode_length: number | null;
+        gross_bytes: number | null;
+      }>;
     };
     interpretation: Record<string, string>;
   };
