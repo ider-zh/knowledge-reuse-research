@@ -159,27 +159,65 @@ export default function OpenJdkReport() {
               <article><span>经验 βrank</span><strong>{paperZipf.free_exponent_beta.toFixed(3)}</strong><p>接近论文 Zipf 基准 β=1</p></article>
               <article><span>Zipf R² / RMSE</span><strong>{paperZipf.fixed_r_squared_log10.toFixed(3)}</strong><p>{paperZipf.fixed_rmse_log10.toFixed(3)} decades ≈ {paperErrorFactor.toFixed(2)}×</p></article>
             </div>
-            <div className="paper-method-map" aria-label="论文方法到 OpenJDK 的计算映射">
-              <article><span>01 · component</span><p>论文：library subroutine<br />本图：JVM method declaration</p></article>
-              <article><span>02 · use</span><p>论文：目标文件中的静态 subroutine reference<br />本图：指向目标方法的已解析 bytecode invocation call site</p></article>
-              <article><span>03 · count</span><p><code>U(v)=Σ multiplicity(u,v)</code><br />只统计直接引用；不做传递闭包，不把 caller 的路径数带入。</p></article>
-              <article><span>04 · rank &amp; plot</span><p>按 U(v) 降序得到 rank n；绘制 <code>log₁₀(n)</code> 对 <code>log₁₀(U)</code>，叠加拟合幅度后的 <code>c/n</code>。</p></article>
+            <section className="paper-logic" aria-labelledby="paper-logic-title">
+              <header>
+                <div><p className="eyebrow">THEORY → OBSERVATION</p><h3 id="paper-logic-title">论文为什么会预期一条 Zipf 曲线</h3></div>
+                <p>这不是“先画 rank chart 再猜规律”。论文先把软件库理解为对程序的压缩，再从组件标识成本建立约束，最后用 Unix 软件语料检查真实复用频率是否接近 <code>1/n</code>。</p>
+              </header>
+              <div className="paper-theory-chain">
+                <article><span>01 · 压缩视角</span><p>程序来自某个问题域；库把重复代码替换为组件引用。问题域熵 <code>H</code> 越低，可复用的理论空间越大，最多约有 <code>1−H</code> 的代码可由库提供。</p></article>
+                <article><span>02 · 标识成本</span><p>组件按使用频率排序。要唯一解码第 <code>n</code> 个组件，其自分隔标识至少需要约 <code>log⁺n</code> bits；库越大，长尾组件越贵。</p></article>
+                <article><span>03 · 编码预算</span><p>令 <code>λ(n)</code> 为单位压缩程序中第 n 个组件的期望引用数。所有引用必须装进程序，因此 <code>Σ λ(n)log⁺n ≤ 1</code>，并导出渐近上界 <code>λ(n) ≺ 1/(n log n log⁺n)</code>。</p></article>
+                <article><span>04 · 经验假说</span><p>论文进一步主张：库在“少写代码”的选择压力下接近最大熵配置，于是实际 rank–frequency 可能呈 <code>λ(n)≈c/n</code>。Figure 1 检查的是曲线形状，并不单独证明这个形成机制。</p></article>
+              </div>
+            </section>
+            <div className="paper-procedure-heading">
+              <div><p className="eyebrow">EMPIRICAL PROCEDURE</p><h3>论文如何从二进制得到 Figure 1</h3></div>
+              <p>下列四步是论文的实证计算流程；右侧 JDK 图严格复用“组件—静态引用—降序 rank—双对数比较”这条主线。</p>
             </div>
-            <figure className="distribution-chart path-rank-chart">
-              <figcaption><b>OpenJDK 方法静态引用 rank–frequency</b><span>与论文 Figure 1 相同统计单位；网页按 log-rank 确定性抽样显示</span></figcaption>
-              <ResponsiveContainer width="100%" height={520}>
-                <ComposedChart data={paperRange.points} margin={{ top: 24, right: 34, bottom: 42, left: 32 }}>
-                  <CartesianGrid strokeDasharray="3 5" />
-                  <XAxis type="number" dataKey="log10_rank" domain={[0, "dataMax"]} tickFormatter={(v) => `10^${Number(v).toFixed(0)}`} label={{ value: "方法复用排名 n（log₁₀）", position: "insideBottom", offset: -22, fontSize: 14 }} />
-                  <YAxis type="number" domain={[Math.floor(paperRange.minimum_log10), Math.ceil(paperRange.maximum_log10)]} tickFormatter={(v) => `10^${Number(v).toFixed(0)}`} label={{ value: "静态引用次数 U（log₁₀）", angle: -90, position: "insideLeft", fontSize: 14 }} />
-                  <Tooltip formatter={(value, name) => [Number(value).toFixed(3), legend(String(name))]} labelFormatter={(_, payload) => payload?.[0] ? `rank ${integer.format(payload[0].payload.rank)}` : ""} />
-                  <Legend verticalAlign="top" formatter={(value) => legend(String(value))} />
-                  <Scatter name="paper_empirical_log10" dataKey="empirical_log10" fill="#1f6b53" line={{ stroke: "#1f6b53", strokeWidth: 2 }} shape="circle" />
-                  <Line name="paper_zipf_log10" dataKey="zipf_log10" stroke="#9d493d" strokeWidth={3} strokeDasharray="9 5" dot={false} />
-                </ComposedChart>
-              </ResponsiveContainer>
-              <p className="chart-method">固定 Zipf 线只拟合垂直幅度 c；β、R² 与 RMSE 是本研究为量化视觉吻合度补充的诊断量，论文 Figure 1 本身未报告这些统计量。{integer.format(data.paper_reuse.population.singleton_methods)} 个方法仅被引用一次，形成尾部台阶；论文也将大 rank 处的台阶归因于大量低频子程序。</p>
-            </figure>
+            <div className="paper-method-map" aria-label="论文方法到 OpenJDK 的计算映射">
+              <article><span>01 · 扫描语料</span><p>论文定位系统中的 executable objects 与 shared objects；Linux 还解码 PLT/GOT，并把 x86 指令纳入组件总体。</p></article>
+              <article><span>02 · 解析静态引用</span><p>用 <code>nm</code>、<code>objdump</code> 或反汇编恢复 relocatable symbol / subroutine reference。这里对应已解析的 bytecode invocation call site。</p></article>
+              <article><span>03 · 按组件计数</span><p>对每个组件汇总直接引用：<code>U(v)=Σ multiplicity(u,v)</code>。不做传递闭包，也不引入本报告的路径入度。</p></article>
+              <article><span>04 · 排名并比较</span><p>按 U(v) 降序得到 rank n；在双对数坐标画 <code>(n,U)</code>，再与斜率 −1 的虚线族 <code>c/n</code> 比较。</p></article>
+            </div>
+            <div className="paper-corpus-ledger table-scroll">
+              <table><thead><tr><th>论文语料</th><th className="numeric">object files</th><th className="numeric">components</th><th>读取方式与边界</th></tr></thead><tbody>
+                <tr><td>Linux / SuSE</td><td className="numeric">12,136</td><td className="numeric">455,716</td><td>反汇编 executable objects；解码 PLT/GOT；包含 x86 指令与约五十万 subroutines。</td></tr>
+                <tr><td>SunOS</td><td className="numeric">23,774</td><td className="numeric">110,306</td><td>shared objects 的 relocatable symbols；未含机器指令，绘图从 rank 50 开始。</td></tr>
+                <tr><td>Mac OS X</td><td className="numeric">2,334</td><td className="numeric">37,677</td><td>shared objects 的 relocatable symbols；未含机器指令，绘图从 rank 50 开始。</td></tr>
+              </tbody></table>
+            </div>
+            <div className="paper-figure-comparison">
+              <figure className="paper-original-figure">
+                <figcaption><b>论文 Figure 1 · 三套 Unix 软件语料</b><span>原图：组件使用频率与 <code>c·n⁻¹</code> 虚线族</span></figcaption>
+                <a href={data.references.paper} target="_blank" rel="noreferrer"><img src="/papers/cs-0508023/figure-1.png" alt="Veldhuizen 论文 Figure 1：Linux、SunOS 与 Mac OS X 的组件使用频率 rank-frequency 双对数图" /></a>
+                <p className="chart-method">原图给出视觉上的 Zipf-like 证据，没有报告 β、R² 或 RMSE。尾部的台阶来自大量只被少量引用的 subroutines。</p>
+              </figure>
+              <figure className="distribution-chart path-rank-chart paper-jdk-figure">
+                <figcaption><b>OpenJDK 28+13 · method 复现</b><span>同为静态直接引用、降序 rank 与双对数坐标</span></figcaption>
+                <ResponsiveContainer width="100%" height={440}>
+                  <ComposedChart data={paperRange.points} margin={{ top: 24, right: 24, bottom: 42, left: 24 }}>
+                    <CartesianGrid strokeDasharray="3 5" />
+                    <XAxis type="number" dataKey="log10_rank" domain={[0, "dataMax"]} tickFormatter={(v) => `10^${Number(v).toFixed(0)}`} label={{ value: "方法复用排名 n（log₁₀）", position: "insideBottom", offset: -22, fontSize: 13 }} />
+                    <YAxis type="number" domain={[Math.floor(paperRange.minimum_log10), Math.ceil(paperRange.maximum_log10)]} tickFormatter={(v) => `10^${Number(v).toFixed(0)}`} label={{ value: "静态引用次数 U（log₁₀）", angle: -90, position: "insideLeft", fontSize: 13 }} />
+                    <Tooltip formatter={(value, name) => [Number(value).toFixed(3), legend(String(name))]} labelFormatter={(_, payload) => payload?.[0] ? `rank ${integer.format(payload[0].payload.rank)}` : ""} />
+                    <Legend verticalAlign="top" formatter={(value) => legend(String(value))} />
+                    <Scatter name="paper_empirical_log10" dataKey="empirical_log10" fill="#1f6b53" line={{ stroke: "#1f6b53", strokeWidth: 2 }} shape="circle" />
+                    <Line name="paper_zipf_log10" dataKey="zipf_log10" stroke="#9d493d" strokeWidth={3} strokeDasharray="9 5" dot={false} />
+                  </ComposedChart>
+                </ResponsiveContainer>
+                <p className="chart-method">固定 Zipf 线只拟合垂直幅度 c。本研究另算 β={paperZipf.free_exponent_beta.toFixed(3)}、R²={paperZipf.fixed_r_squared_log10.toFixed(3)}、RMSE={paperZipf.fixed_rmse_log10.toFixed(3)} decades；{integer.format(data.paper_reuse.population.singleton_methods)} 个单次引用方法形成尾部台阶。</p>
+              </figure>
+            </div>
+            <div className="paper-comparison-ledger table-scroll">
+              <table><thead><tr><th>比较项</th><th>论文 Figure 1</th><th>OpenJDK 图</th><th>解释</th></tr></thead><tbody>
+                <tr><td>component</td><td>library subroutine；Linux 另含 x86 instruction</td><td>JVM method declaration</td><td>JDK 单位更窄，避免把指令与方法混为同类组件。</td></tr>
+                <tr><td>use</td><td>目标文件中的静态 reference</td><td>已解析 bytecode invocation call site</td><td>两者都不是运行时执行频率；重复静态位置分别计数。</td></tr>
+                <tr><td>rank 起点</td><td>Linux 从 1；SunOS/Mac 从 50</td><td>从 1</td><td>JDK 没有“遗漏高频机器指令”的对应缺口，不需要 offset。</td></tr>
+                <tr><td>结论强度</td><td>三套曲线与 <code>c/n</code> 视觉对照</td><td>同口径曲线 + β/R²/RMSE</td><td>两图都支持形状近似；都不能仅凭曲线证明最大熵因果机制。</td></tr>
+              </tbody></table>
+            </div>
             <aside className="paper-scope-note">
               <b>可比边界</b>
               <p>论文的 Linux 数据还包含 x86 指令，SunOS 与 Mac OS X 因遗漏这类高频组件而从 n=50 起排 rank。本 JDK 曲线的组件单位始终是 method，不存在对应的“遗漏指令”层，因此从 n=1 开始且不作 offset。这里比较静态引用分布的形状，不比较运行时执行频率，也不声称复现论文三套 Unix 原始数据。</p>
@@ -227,12 +265,12 @@ export default function OpenJdkReport() {
                     </tr>
                     <tr>
                       <td>任何有限库都不完备；随着问题域扩展，总会存在更多能缩短程序的有用组件。</td>
-                      <td>Phase 4 在 5/5 个 package 留出折发现正净节省 opcode macro；Phase 5 从 JDK 17 到 28 观察到 method 净增 {integer.format(theorems.phase_5_cross_version.delta.net_methods)}，且保留 caller 已调用新增组件。</td>
+                      <td>package 留出实验在 5/5 个折发现正净节省 opcode macro；跨版本比较从 JDK 17 到 28 观察到 method 净增 {integer.format(theorems.phase_5_cross_version.delta.net_methods)}，且保留 caller 已调用新增组件。</td>
                       <td><span className="evidence-status bounded">有限支持；无限性未证明</span></td>
                     </tr>
                     <tr>
                       <td>组件规模、使用次数与标识成本受理论界限约束；程序使用的组件数量可能呈 Erdős–Kac 式正态行为。</td>
-                      <td>Phase 3 以 classfile 为 program 并按大小分层：cross-class 组件数 skew={theorems.phase_3_erdos_kac.scopes.cross_class.skewness.toFixed(3)}、Q–Q R²={theorems.phase_3_erdos_kac.scopes.cross_class.qq_r_squared.toFixed(3)}，未通过预注册正态判据。Phase 4 的 use–size Spearman ρ={theorems.phase_4_component_size.spearman_log_use_vs_log_size.toFixed(3)}。</td>
+                      <td>以 classfile 为 program 并按大小分层后，cross-class 组件数 skew={theorems.phase_3_erdos_kac.scopes.cross_class.skewness.toFixed(3)}、Q–Q R²={theorems.phase_3_erdos_kac.scopes.cross_class.qq_r_squared.toFixed(3)}，未通过预注册正态判据；use–size Spearman ρ={theorems.phase_4_component_size.spearman_log_use_vs_log_size.toFixed(3)}。</td>
                       <td><span className="evidence-status bounded">正态近似不支持；界限仅代理检验</span></td>
                     </tr>
                   </tbody>
@@ -376,19 +414,29 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
 
   return <section id="theorem-tests" className="section-block theorem-tests">
     <div className="section-heading">
-      <div><p className="eyebrow">PHASE 2–5 · PAPER CLAIM TESTS</p><h2>用 JDK 数据检验其余理论命题</h2></div>
-      <p>Phase 1 的单快照 vocabulary curve 已被覆盖：Phase 4 直接检查留出包上的净描述长度节省，Phase 5 直接观察跨版本增长与新增组件采用。</p>
+      <div><p className="eyebrow">PAPER CLAIMS · JDK OBSERVABLES</p><h2>从论文命题到可观测的 JDK 指标</h2></div>
+      <p>Figure 1 只检验复用频率的形状。论文还讨论“每个程序使用多少组件”“有限库是否仍遗漏有用组件”，以及组件规模与标识成本的关系。下面先把抽象命题翻译为 JDK 字节码中可计算的代理量，再报告证据边界。</p>
     </div>
 
+    <section className="claim-test-map" aria-labelledby="claim-test-map-title">
+      <header><div><p className="eyebrow">OPERATIONALIZATION</p><h3 id="claim-test-map-title">三个检验分别在问什么</h3></div><p>这些不是论文原始 Unix 数据的复算，而是用同一组理论命题组织 OpenJDK 证据。代理量与原命题不等价，所以每项都保留“能说明什么 / 不能说明什么”。</p></header>
+      <div>
+        <article><span>组件数是否近似正态</span><p><b>论文类比：</b>整数的素因子数近似正态，因此一个程序使用的库组件数也可能呈 Erdős–Kac 式形状。</p><p><b>JDK 代理：</b>把一个 classfile 当作 program，计数其引用的不同外部 method；按 classfile size 的 20 个分位层标准化后做 Q–Q 检查。</p></article>
+        <article><span>有限方法词汇是否不完备</span><p><b>论文命题：</b>对足够丰富的问题域，任何有限库之外仍可能存在能缩短程序的有用组件。</p><p><b>JDK 代理：</b>只在训练 package 中发现重复 opcode 片段，再到未见 package 检查：扣除定义、引用与引用 class 成本后是否仍净省 bytes。</p></article>
+        <article><span>新组件是否持续出现并被采用</span><p><b>论文命题：</b>问题域扩展会继续产生有用组件。</p><p><b>JDK 代理：</b>比较官方 JDK 17 与 28 二进制快照，观察 method 增减，并检查旧版本已存在的 caller 是否开始引用新增 method。</p></article>
+      </div>
+      <aside><b>为什么没有直接复刻论文 Figure 4</b><p>Figure 4 以独立 executable/RPM 作为 program，并研究“软件规模—不同库子程序数”及其饱和区间。本分析只有 JMOD 内的 classfile 单元，也没有论文原始逐程序数据，因此采用条件 Q–Q 代理；它能反驳当前操作化下的正态形状，但不能改写论文原数据的结论。</p></aside>
+    </section>
+
     <div className="theorem-verdicts">
-      <article className="claim-card inconclusive"><header><span>不支持</span><code>PHASE 3</code></header><p className="claim-text">条件化后的组件数不符合预注册正态形状。</p><p>cross-class：skew={normality.skewness.toFixed(3)}、excess kurtosis={normality.excess_kurtosis.toFixed(3)}、Q–Q R²={normality.qq_r_squared.toFixed(3)}；三个阈值均未通过。</p></article>
-      <article className="claim-card exploratory"><header><span>探索性支持</span><code>PHASE 4</code></header><p className="claim-text">5/5 个 package 留出折均发现正净节省 opcode macro。</p><p>{integer.format(mdl.eligible_method_count)} 个候选方法；各折最佳值的中位数为 {integer.format(mdl.median_best_heldout_net_savings_bytes)} bytes。尚未验证 operand、stack contract 与 verifier-safe rewriting。</p></article>
-      <article className="claim-card supported"><header><span>有限支持</span><code>PHASE 5</code></header><p className="claim-text">JDK 17→28 的方法词汇净增 {integer.format(versions.delta.net_methods)}。</p><p>新增 {integer.format(versions.delta.added_methods)}、移除 {integer.format(versions.delta.removed_methods)}；保留 caller 对 {integer.format(versions.new_component_adoption.added_methods_referenced_from_retained_callers)} 个新增 callee 产生调用。</p></article>
+      <article className="claim-card inconclusive"><header><span>不支持</span><code>COMPONENT-COUNT</code></header><p className="claim-text">条件化后的组件数不符合预注册正态形状。</p><p>cross-class：skew={normality.skewness.toFixed(3)}、excess kurtosis={normality.excess_kurtosis.toFixed(3)}、Q–Q R²={normality.qq_r_squared.toFixed(3)}；三个阈值均未通过。</p></article>
+      <article className="claim-card exploratory"><header><span>探索性支持</span><code>HELD-OUT-MDL</code></header><p className="claim-text">5/5 个 package 留出折均发现正净节省 opcode macro。</p><p>{integer.format(mdl.eligible_method_count)} 个候选方法；各折最佳值的中位数为 {integer.format(mdl.median_best_heldout_net_savings_bytes)} bytes。尚未验证 operand、stack contract 与 verifier-safe rewriting。</p></article>
+      <article className="claim-card supported"><header><span>有限支持</span><code>CROSS-VERSION</code></header><p className="claim-text">JDK 17→28 的方法词汇净增 {integer.format(versions.delta.net_methods)}。</p><p>新增 {integer.format(versions.delta.added_methods)}、移除 {integer.format(versions.delta.removed_methods)}；保留 caller 对 {integer.format(versions.new_component_adoption.added_methods_referenced_from_retained_callers)} 个新增 callee 产生调用。</p></article>
     </div>
 
     <div className="theorem-chart-grid">
       <figure className="distribution-chart">
-        <figcaption><b>Phase 3 · 条件组件数 Q–Q</b><span>classfile 作为 program；按大小 20 分位分层标准化</span></figcaption>
+        <figcaption><b>条件组件数 Q–Q</b><span>classfile 作为 program；按大小 20 分位分层标准化</span></figcaption>
         <ResponsiveContainer width="100%" height={360}>
           <ComposedChart data={qq} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
             <CartesianGrid strokeDasharray="3 5" />
@@ -403,7 +451,7 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
       </figure>
 
       <figure className="distribution-chart">
-        <figcaption><b>Phase 4 · 组件使用次数与规模</b><span>STATIC/SPECIAL 精确目标；对数 rank bins</span></figcaption>
+        <figcaption><b>组件使用次数与规模</b><span>STATIC/SPECIAL 精确目标；对数 rank bins</span></figcaption>
         <ResponsiveContainer width="100%" height={360}>
           <ComposedChart data={componentPoints} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
             <CartesianGrid strokeDasharray="3 5" />
@@ -419,7 +467,7 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
       </figure>
 
       <figure className="distribution-chart">
-        <figcaption><b>Phase 4 · package 留出净节省</b><span>每折最佳 opcode macro；已扣定义、引用与引用 class 成本</span></figcaption>
+        <figcaption><b>package 留出净节省</b><span>每折最佳 opcode macro；已扣定义、引用与引用 class 成本</span></figcaption>
         <ResponsiveContainer width="100%" height={330}>
           <ComposedChart data={mdl.folds} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
             <CartesianGrid strokeDasharray="3 5" />
@@ -433,7 +481,7 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
       </figure>
 
       <article className="version-comparison">
-        <header><p className="eyebrow">PHASE 5 · LONGITUDINAL</p><h3>{older.label} → {newer.label}</h3></header>
+        <header><p className="eyebrow">CROSS-VERSION · LONGITUDINAL</p><h3>{older.label} → {newer.label}</h3></header>
         <dl>
           <div><dt>methods</dt><dd>{integer.format(older.methods)} → {integer.format(newer.methods)} <b>+{versions.delta.methods_percent.toFixed(2)}%</b></dd></div>
           <div><dt>bytecode</dt><dd>{integer.format(older.bytecode_bytes)} → {integer.format(newer.bytecode_bytes)} <b>+{versions.delta.bytecode_bytes_percent.toFixed(2)}%</b></dd></div>
@@ -444,7 +492,7 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
       </article>
     </div>
 
-    <aside className="paper-scope-note"><b>Phase 2 数据增强</b><p>抽取器现为每个 method 保存 Code byte length、instruction count、max stack/locals、控制流与异常处理标记，并为每个 class 保存 classfile size 与 constant-pool entries；调用图节点与边的既有定义不变。</p></aside>
+    <aside className="paper-scope-note"><b>为这些检验补充的数据</b><p>抽取器为每个 method 保存 Code byte length、instruction count、max stack/locals、控制流与异常处理标记，并为每个 class 保存 classfile size 与 constant-pool entries；调用图节点与边的既有定义不变。</p></aside>
   </section>;
 }
 

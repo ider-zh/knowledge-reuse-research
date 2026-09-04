@@ -143,6 +143,28 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .paper-method-map span { color: var(--green); font: 700 13px "DM Mono", monospace; letter-spacing: .04em; }
 .paper-method-map p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.7; }
 .paper-method-map code { color: var(--blue); font-size: 13px; }
+.paper-logic { border-bottom: 1px solid var(--line); background: #f8f6ef; }
+.paper-logic > header, .paper-procedure-heading, .claim-test-map > header { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: end; padding: 28px 36px; border-bottom: 1px solid var(--line); }
+.paper-logic h3, .paper-procedure-heading h3, .claim-test-map h3 { margin: 0; font: 750 clamp(24px,3vw,40px)/1.2 "Noto Serif SC", serif; letter-spacing: -.025em; }
+.paper-logic > header > p, .paper-procedure-heading > p, .claim-test-map > header > p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
+.paper-theory-chain { display: grid; grid-template-columns: repeat(4,minmax(0,1fr)); gap: 1px; background: var(--line); }
+.paper-theory-chain article { min-width: 0; padding: 22px; background: #edf3ef; }
+.paper-theory-chain span, .claim-test-map article > span { color: var(--green-dark); font: 700 13px "DM Mono", monospace; letter-spacing: .03em; }
+.paper-theory-chain p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
+.paper-theory-chain code { color: var(--blue); }
+.paper-procedure-heading { background: var(--card); }
+.paper-corpus-ledger { border-top: 1px solid var(--line); border-bottom: 1px solid var(--line); }
+.paper-corpus-ledger table, .paper-comparison-ledger table { min-width: 820px; }
+.paper-corpus-ledger td, .paper-comparison-ledger td { line-height: 1.65; }
+.paper-figure-comparison { display: grid; grid-template-columns: minmax(0,.86fr) minmax(0,1.14fr); gap: 1px; background: var(--line); border-bottom: 1px solid var(--line); }
+.paper-figure-comparison figure { min-width: 0; margin: 0; background: var(--card); }
+.paper-figure-comparison figcaption { min-height: 78px; display: flex; justify-content: space-between; gap: 18px; padding: 22px 26px 14px; }
+.paper-figure-comparison figcaption b { font-size: 17px; }
+.paper-figure-comparison figcaption span { color: var(--muted); font-size: 13px; text-align: right; }
+.paper-original-figure > a { display: flex; height: 440px; align-items: center; justify-content: center; padding: 12px 20px; background: white; }
+.paper-original-figure img { width: 100%; height: 100%; object-fit: contain; }
+.paper-figure-comparison .chart-method { min-height: 98px; margin-bottom: 16px; }
+.paper-comparison-ledger { border-bottom: 1px solid var(--line); }
 .paper-scope-note { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 22px 36px; border-top: 1px solid var(--line); background: #f5e8d6; }
 .paper-scope-note b { color: var(--green-dark); font: 750 17px "Noto Serif SC", serif; }
 .paper-scope-note p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.8; }
@@ -178,6 +200,14 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .paper-conclusion-comparison > aside { display: grid; grid-template-columns: 180px 1fr; gap: 24px; padding: 24px 36px; border-top: 1px solid var(--line); background: #e4eee8; }
 .paper-conclusion-comparison > aside b { color: var(--green-dark); font: 750 17px "Noto Serif SC", serif; }
 .paper-conclusion-comparison > aside p { margin: 0; font-size: 15px; line-height: 1.8; }
+.claim-test-map { border: 1px solid var(--line); background: var(--card); }
+.claim-test-map > div { display: grid; grid-template-columns: repeat(3,minmax(0,1fr)); gap: 1px; background: var(--line); }
+.claim-test-map article { min-width: 0; padding: 22px; background: #f8f6ef; }
+.claim-test-map article p { margin: 10px 0 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
+.claim-test-map article b { color: var(--ink); }
+.claim-test-map > aside { display: grid; grid-template-columns: 230px 1fr; gap: 24px; padding: 22px 36px; border-top: 1px solid var(--line); background: #e4eee8; }
+.claim-test-map > aside b { color: var(--green-dark); font: 750 16px "Noto Serif SC", serif; }
+.claim-test-map > aside p { margin: 0; color: var(--muted); font-size: 14px; line-height: 1.75; }
 .parameter-guide { border-bottom: 1px solid var(--line); background: #f8f6ef; }
 .parameter-guide > header { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: end; padding: 24px; border-bottom: 1px solid var(--line); }
 .parameter-guide h3 { margin: 0; font: 750 clamp(24px,3vw,38px)/1.2 "Noto Serif SC", serif; }
@@ -505,6 +535,10 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-summary article:nth-child(-n+2) { border-bottom: 1px solid var(--line); }
   .path-rank-methods { grid-template-columns: 1fr; }
   .paper-method-map { grid-template-columns: 1fr 1fr; }
+  .paper-theory-chain { grid-template-columns: 1fr 1fr; }
+  .paper-logic > header, .paper-procedure-heading, .claim-test-map > header { grid-template-columns: 1fr; gap: 14px; }
+  .paper-figure-comparison { grid-template-columns: 1fr; }
+  .claim-test-map > div { grid-template-columns: 1fr; }
   .paper-prime-conclusion > header { grid-template-columns: 1fr; gap: 14px; }
   .paper-prime-conclusion > aside { grid-template-columns: 1fr; gap: 10px; }
   .paper-conclusion-comparison > header { grid-template-columns: 1fr; gap: 14px; }
@@ -528,6 +562,13 @@ footer { display: flex; justify-content: space-between; margin-top: 80px; paddin
   .distribution-tabs button { min-width: 150px; }
   .distribution-summary { grid-template-columns: 1fr; }
   .paper-method-map { grid-template-columns: 1fr; }
+  .paper-theory-chain { grid-template-columns: 1fr; }
+  .paper-logic > header, .paper-procedure-heading, .claim-test-map > header { padding: 22px 20px; }
+  .paper-figure-comparison figcaption { display: block; min-height: 0; padding-inline: 20px; }
+  .paper-figure-comparison figcaption span { display: block; margin-top: 6px; text-align: left; }
+  .paper-original-figure > a { height: 380px; padding-inline: 8px; }
+  .claim-test-map > aside { display: block; padding: 20px; }
+  .claim-test-map > aside p { margin-top: 8px; }
   .distribution-summary article { border-right: 0; border-bottom: 1px solid var(--line); }
   .distribution-chart { padding-inline: 4px; }
   .distribution-chart figcaption, .distribution-reading { display: block; }
