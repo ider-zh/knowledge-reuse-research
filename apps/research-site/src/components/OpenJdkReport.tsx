@@ -555,9 +555,9 @@ function TheoryTests({ data }: { data: ReuseTheoremReport }) {
       <figure className="distribution-chart">
         <figcaption><b>组件使用次数与规模</b><span>STATIC/SPECIAL 精确目标；对数 rank bins</span></figcaption>
         <ResponsiveContainer width="100%" height={360}>
-          <ComposedChart data={componentPoints} margin={{ top: 18, right: 24, bottom: 34, left: 18 }}>
+          <ComposedChart data={componentPoints} margin={{ top: 18, right: 24, bottom: 52, left: 18 }}>
             <CartesianGrid strokeDasharray="3 5" />
-            <XAxis type="number" dataKey="log_rank" label={{ value: "log₁₀(use rank)", position: "insideBottom", offset: -18 }} />
+            <XAxis type="number" dataKey="log_rank" height={70} label={{ value: "log₁₀(use rank)", position: "insideBottom", offset: -4 }} />
             <YAxis type="number" label={{ value: "log₁₀(value)", angle: -90, position: "insideLeft" }} />
             <Tooltip formatter={(value) => Number(value).toFixed(3)} />
             <Legend />
