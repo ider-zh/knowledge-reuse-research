@@ -157,10 +157,10 @@ main, footer { max-width: 1440px; margin: auto; padding-inline: 32px; }
 .prime-analogy-grid p { margin: 0; color: var(--muted); font-size: 15px; line-height: 1.7; }
 .prime-analogy-grid b { display: block; color: var(--ink); font-weight: 700; }
 .prime-analogy-grid i { display: block; margin: 4px 0; color: var(--green); font-style: normal; }
-.paper-prime-conclusion > aside { display: grid; grid-template-columns: minmax(220px,.8fr) minmax(180px,.45fr) minmax(0,1.5fr); gap: 24px; align-items: center; padding: 26px 36px; background: var(--green-dark); color: white; }
+.paper-prime-conclusion > aside { display: grid; grid-template-columns: minmax(190px,.8fr) max-content minmax(260px,1.5fr); column-gap: clamp(18px,2.2vw,32px); row-gap: 12px; align-items: center; padding: 26px 36px; background: var(--green-dark); color: white; }
 .paper-prime-conclusion > aside span { color: #c9ded4; font-size: 14px; }
-.paper-prime-conclusion > aside strong { color: #fff1bb; font: 750 clamp(26px,3vw,40px) "DM Mono", monospace; white-space: nowrap; }
-.paper-prime-conclusion > aside p { margin: 0; color: #dce9e2; font-size: 14px; line-height: 1.75; }
+.paper-prime-conclusion > aside strong { justify-self: start; color: #fff1bb; font: 750 clamp(26px,3vw,40px)/1.2 "DM Mono", monospace; white-space: nowrap; }
+.paper-prime-conclusion > aside p { min-width: 0; margin: 0; color: #dce9e2; font-size: 14px; line-height: 1.75; overflow-wrap: anywhere; }
 .paper-prime-conclusion > aside code { color: #fff1bb; }
 .paper-conclusion-comparison { border-top: 1px solid var(--line); background: var(--card); }
 .paper-conclusion-comparison > header { display: grid; grid-template-columns: 1fr 1fr; gap: 42px; align-items: end; padding: 30px 36px; border-bottom: 1px solid var(--line); }
